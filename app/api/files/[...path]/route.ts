@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getCloudinaryUrl, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { getS3Url } from '@/lib/s3';
 import fs from 'fs';
 import path from 'path';
@@ -15,6 +16,12 @@ export async function GET(
 ) {
   try {
     const fileName = params.path.join('/');
+    
+    // If Cloudinary is configured, redirect to Cloudinary URL
+    if (hasCloudinaryConfig) {
+      const url = getCloudinaryUrl(fileName);
+      return NextResponse.redirect(url);
+    }
     
     // If AWS is configured, redirect to S3 signed URL
     if (hasAWSCredentials) {

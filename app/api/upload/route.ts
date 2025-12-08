@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { uploadToCloudinary, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { uploadToS3 } from '@/lib/s3';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
 
@@ -20,21 +21,43 @@ export async function POST(request: NextRequest) {
     const fileName = `inspections/${Date.now()}-${file.name}`;
     const contentType = file.type;
     
-    // Upload to S3 (or local storage if S3 not configured)
-    try {
-      await uploadToS3(buffer, fileName, contentType);
-    } catch (uploadError: any) {
-      // If upload fails, return a more user-friendly error
-      if (uploadError.message?.includes('AWS') || uploadError.message?.includes('Access Key')) {
+    let uploadedFileName: string;
+    let fileUrl: string;
+    
+    // Upload to Cloudinary if configured, otherwise try S3, then local storage
+    if (hasCloudinaryConfig) {
+      try {
+        const publicId = await uploadToCloudinary(buffer, fileName, 'inspections');
+        uploadedFileName = publicId;
+        fileUrl = `/api/files/${publicId}`;
+      } catch (cloudinaryError: any) {
         return NextResponse.json(
           { 
             success: false, 
-            error: 'File storage is not properly configured. Please contact the administrator.' 
+            error: cloudinaryError.message || 'Failed to upload to Cloudinary' 
           },
           { status: 500 }
         );
       }
-      throw uploadError;
+    } else {
+      // Fallback to S3 or local storage
+      try {
+        await uploadToS3(buffer, fileName, contentType);
+        uploadedFileName = fileName;
+        fileUrl = `/api/files/${fileName}`;
+      } catch (uploadError: any) {
+        // If upload fails, return a more user-friendly error
+        if (uploadError.message?.includes('AWS') || uploadError.message?.includes('Access Key')) {
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: 'File storage is not properly configured. Please contact the administrator.' 
+            },
+            { status: 500 }
+          );
+        }
+        throw uploadError;
+      }
     }
     
     // Extract EXIF metadata
@@ -48,8 +71,8 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json({
       success: true,
-      fileName,
-      url: `/api/files/${fileName}`,
+      fileName: uploadedFileName,
+      url: fileUrl,
       metadata: metadata ? {
         width: metadata.width,
         height: metadata.height,

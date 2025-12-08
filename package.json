@@ -17,6 +17,7 @@
     "autoprefixer": "^10.4.16",
     "aws-sdk": "^2.1509.0",
     "bcryptjs": "^3.0.3",
+    "cloudinary": "^2.8.0",
     "date-fns": "^3.0.6",
     "dotenv": "^17.2.3",
     "exifr": "^7.1.3",
