@@ -12,10 +12,10 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
   },
-  // Optimize CSS
-  experimental: {
-    optimizeCss: true,
-  },
+  // Optimize CSS - disabled due to critters dependency issue
+  // experimental: {
+  //   optimizeCss: true,
+  // },
 }
 
 module.exports = nextConfig
