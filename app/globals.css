@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 text-gray-900 antialiased;
+  }
+  
+  /* Performance optimizations */
+  * {
+    @apply will-change-auto;
+  }
+  
+  /* GPU acceleration for transforms */
+  [class*="hover:scale"],
+  [class*="hover:-translate"] {
+    @apply transform-gpu;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/80 backdrop-blur-sm border border-white/20;
+  }
+  
+  .card-hover {
+    @apply transition-transform duration-200 hover:shadow-xl hover:-translate-y-1;
+    @apply will-change-transform;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent;
+  }
+  
+  /* Optimized backdrop blur - use sparingly */
+  .backdrop-blur-optimized {
+    @apply bg-slate-800/95;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* Toast animation */
+  @keyframes slide-up {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+}
+
+
