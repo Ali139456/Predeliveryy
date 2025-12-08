@@ -20,8 +20,22 @@ export async function POST(request: NextRequest) {
     const fileName = `inspections/${Date.now()}-${file.name}`;
     const contentType = file.type;
     
-    // Upload to S3
-    await uploadToS3(buffer, fileName, contentType);
+    // Upload to S3 (or local storage if S3 not configured)
+    try {
+      await uploadToS3(buffer, fileName, contentType);
+    } catch (uploadError: any) {
+      // If upload fails, return a more user-friendly error
+      if (uploadError.message?.includes('AWS') || uploadError.message?.includes('Access Key')) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: 'File storage is not properly configured. Please contact the administrator.' 
+          },
+          { status: 500 }
+        );
+      }
+      throw uploadError;
+    }
     
     // Extract EXIF metadata
     let metadata = null;
