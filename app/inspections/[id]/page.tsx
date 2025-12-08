@@ -153,8 +153,8 @@ export default function InspectionDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-x-hidden">
+      <div className="container mx-auto px-4 py-8 overflow-x-hidden">
         <div className="flex items-center justify-between mb-6">
           <Link
             href="/inspections"

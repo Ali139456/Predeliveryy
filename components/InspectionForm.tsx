@@ -1162,7 +1162,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 overflow-x-hidden">
+    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4">
       {success && (
         <div className="p-4 bg-green-900/50 border-2 border-green-500/50 rounded-xl flex items-center animate-fade-in shadow-lg bg-slate-800/95">
           <CheckCircle className="w-6 h-6 text-green-400 mr-3 flex-shrink-0" />
@@ -1208,7 +1208,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       )}
 
       {/* Content - Step-by-step for new/editing, all at once for viewing */}
-      <div className="flex flex-col overflow-x-hidden">
+      <div className="flex flex-col">
         <div className={`w-full ${readOnly ? 'space-y-6' : ''}`}>
           {readOnly ? (
             // View mode: Show all sections at once
