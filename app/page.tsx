@@ -56,7 +56,7 @@ export default function Home() {
               <ArrowRight className="w-6 h-6 text-slate-400 group-hover:text-purple-300 group-hover:translate-x-1 transition-all" />
             </div>
             <p className="text-slate-300 ml-18">
-              Create a comprehensive hazard inspection with full checklist support, photo documentation, and GPS tracking
+              Create a comprehensive pre-delivery inspection with full checklist support, photo documentation, and GPS tracking
             </p>
           </Link>
 
