@@ -80,24 +80,45 @@ export async function sendEmailWithPDF(
     });
 
     if (error) {
-      throw new Error(
-        `Failed to send email via Resend: ${error.message || 'Unknown error'}. ` +
-        'Please check your Resend API key and from email configuration.'
-      );
+      // Check for specific Resend error types
+      if (error.message?.includes('API key') || error.message?.includes('Unauthorized')) {
+        throw new Error(
+          'Invalid Resend API key. Please check your RESEND_API_KEY environment variable in Vercel.'
+        );
+      } else if (error.message?.includes('domain') || error.message?.includes('not verified') || error.message?.includes('from')) {
+        throw new Error(
+          `Cannot send to external emails with ${fromEmail}. ` +
+          'Please verify a domain in Resend and set RESEND_FROM_EMAIL to your verified email address. ' +
+          'The default onboarding@resend.dev can only send to your Resend account email.'
+        );
+      } else {
+        throw new Error(
+          `Failed to send email via Resend: ${error.message || 'Unknown error'}. ` +
+          'Please check your Resend configuration.'
+        );
+      }
     }
 
     if (!data) {
       throw new Error('Email sending failed: No response from Resend API.');
     }
   } catch (error: any) {
+    // Re-throw if it's already a formatted error
+    if (error.message?.includes('Cannot send to external emails') || 
+        error.message?.includes('Invalid Resend API key')) {
+      throw error;
+    }
+    
     // Provide more helpful error messages
-    if (error.message?.includes('API key')) {
+    if (error.message?.includes('API key') || error.message?.includes('Unauthorized')) {
       throw new Error(
-        'Invalid Resend API key. Please check your RESEND_API_KEY environment variable.'
+        'Invalid Resend API key. Please check your RESEND_API_KEY environment variable in Vercel.'
       );
-    } else if (error.message?.includes('from')) {
+    } else if (error.message?.includes('domain') || error.message?.includes('not verified') || error.message?.includes('from')) {
       throw new Error(
-        'Invalid from email address. Please verify your email domain in Resend or set RESEND_FROM_EMAIL to a verified email.'
+        `Cannot send to external emails with ${fromEmail}. ` +
+        'Please verify a domain in Resend and set RESEND_FROM_EMAIL to your verified email address. ' +
+        'The default onboarding@resend.dev can only send to your Resend account email.'
       );
     } else {
       throw new Error(
