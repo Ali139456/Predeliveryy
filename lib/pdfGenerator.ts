@@ -216,7 +216,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(24);
   doc.setFont('helvetica', 'bold');
-  doc.text('Hazard Inspect', margin, 20);
+  doc.text('PreDelivery', margin, 20);
   
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
@@ -828,13 +828,13 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     doc.setFontSize(9);
     doc.setTextColor(79, 70, 229);
     doc.setFont('helvetica', 'bold');
-    doc.text('Hazard Inspect', pageWidth - margin, pageHeight - 8, { align: 'right' });
+    doc.text('PreDelivery', pageWidth - margin, pageHeight - 8, { align: 'right' });
     
     // Copyright
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(100, 100, 100);
-    doc.text('© 2025 Hazard Inspect - All Rights Reserved', margin, pageHeight - 8);
+    doc.text('© 2025 PreDelivery - All Rights Reserved', margin, pageHeight - 8);
   }
   
   return Buffer.from(doc.output('arraybuffer'));

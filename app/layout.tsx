@@ -3,8 +3,8 @@ import './globals.css';
 import UserHeader from '@/components/UserHeader';
 
 export const metadata: Metadata = {
-  title: 'Hazard Inspect App',
-  description: 'Comprehensive hazard inspection management system',
+  title: 'PreDelivery App',
+  description: 'Comprehensive pre-delivery inspection management system',
 };
 
 export default function RootLayout({

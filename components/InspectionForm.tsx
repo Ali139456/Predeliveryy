@@ -1132,11 +1132,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       </div>
 
       <div className="bg-slate-700/50 rounded-lg p-4 md:p-6 border border-yellow-500/30">
-        <h3 className="text-base font-bold text-yellow-200 mb-4">Hazard Inspect Pty Ltd - Inspection Disclaimer</h3>
+        <h3 className="text-base font-bold text-yellow-200 mb-4">PreDelivery Pty Ltd - Inspection Disclaimer</h3>
         <div className="text-sm text-slate-300 space-y-4 leading-relaxed">
           <p>
-            This inspection report has been prepared by <strong className="text-yellow-200">Hazard Inspect Pty Ltd</strong> 
-            {" ("}<strong className="text-yellow-200">Hazard Inspect</strong>{") "}to identify potential health or safety hazards commonly 
+            This inspection report has been prepared by <strong className="text-yellow-200">PreDelivery Pty Ltd</strong> 
+            {" ("}<strong className="text-yellow-200">PreDelivery</strong>{") "}to identify potential health or safety hazards commonly 
             associated with recovered stolen vehicles, including but not limited to sharps and meth residue.
           </p>
           <p>
@@ -1145,13 +1145,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             structural or roadworthiness assessment.
           </p>
           <p>
-            While all care has been taken to identify visible or accessible risks, Hazard Inspect cannot guarantee that all hazards—particularly 
+            While all care has been taken to identify visible or accessible risks, PreDelivery cannot guarantee that all hazards—particularly 
             those hidden, embedded, or requiring forensic-level testing—will be detected. Additional specialist cleaning, decontamination, or 
             forensic testing may be required.
           </p>
           <p>
             This report is intended for use by the client named and should not be relied upon by third parties without written consent from 
-            Hazard Inspect. Whilst Hazard Inspect its staff and/or contractors, undertake that they have taken due care in undertaking the 
+            PreDelivery. Whilst PreDelivery its staff and/or contractors, undertake that they have taken due care in undertaking the 
             inspection, it accepts no liability for any loss, injury, or damage arising from the use of this report outside its intended purpose.
           </p>
         </div>

@@ -15,7 +15,7 @@ export default function Home() {
               <FileCheck className="w-10 h-10 text-purple-300" />
             </div>
             <h1 className="text-6xl md:text-7xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300">
-              Hazard Inspect
+              PreDelivery
             </h1>
             <p className="text-xl md:text-2xl text-purple-200 max-w-2xl mx-auto mb-8">
               Professional inspection management system with advanced features
@@ -178,7 +178,7 @@ export default function Home() {
       <div className="border-t border-slate-700/50 mt-20">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center text-slate-300">
-            <p>© 2025 Hazard Inspect. All rights reserved.</p>
+            <p>© 2025 PreDelivery. All rights reserved.</p>
           </div>
         </div>
       </div>
