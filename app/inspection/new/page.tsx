@@ -160,7 +160,7 @@ export default function NewInspectionPage() {
               <FileCheck className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300 mb-2">New PreDelivery Inspection</h1>
+              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300 mb-2">New Pre delivery inspection</h1>
               <p className="text-purple-200">Complete the form below to create a new inspection report</p>
             </div>
           </div>

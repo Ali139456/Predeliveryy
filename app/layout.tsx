@@ -3,7 +3,7 @@ import './globals.css';
 import UserHeader from '@/components/UserHeader';
 
 export const metadata: Metadata = {
-  title: 'PreDelivery App',
+  title: 'Pre delivery inspection App',
   description: 'Comprehensive pre-delivery inspection management system',
 };
 

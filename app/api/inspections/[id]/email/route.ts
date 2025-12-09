@@ -78,7 +78,7 @@ export async function POST(
     const pdfFileName = `Inspection-${inspection.inspectionNumber}-${Date.now()}.pdf`;
     
     const emailBody = `
-      <h2>PreDelivery Report</h2>
+      <h2>Pre delivery inspection Report</h2>
       <p>Dear Recipient,</p>
       <p>Please find attached the pre-delivery inspection report for inspection number: <strong>${inspection.inspectionNumber}</strong></p>
       <p><strong>Inspector:</strong> ${inspection.inspectorName}</p>
@@ -90,7 +90,7 @@ export async function POST(
     try {
       await sendEmailWithPDF(
         recipients,
-        `PreDelivery Report - ${inspection.inspectionNumber}`,
+        `Pre delivery inspection Report - ${inspection.inspectionNumber}`,
         emailBody,
         pdfBuffer,
         pdfFileName

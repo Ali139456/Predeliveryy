@@ -73,7 +73,7 @@ export default function UserHeader() {
               <div className="w-8 h-8 rounded-lg bg-purple-500/30 bg-slate-800/95 flex items-center justify-center mr-2 border border-purple-400/30">
                 <span className="text-white font-bold text-sm">HI</span>
               </div>
-              PreDelivery
+              Pre delivery inspection
             </Link>
             <Link
               href="/login"
