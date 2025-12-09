@@ -1,69 +1,33 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-// Check if SMTP is configured
-function isSMTPConfigured(): boolean {
+// Check if Resend is configured
+function isResendConfigured(): boolean {
   return !!(
-    process.env.SMTP_HOST &&
-    process.env.SMTP_USER &&
-    process.env.SMTP_PASS &&
-    process.env.SMTP_FROM
+    process.env.RESEND_API_KEY &&
+    process.env.RESEND_API_KEY !== ''
   );
 }
 
-// Get SMTP configuration with defaults
-function getSMTPConfig() {
-  const host = process.env.SMTP_HOST || '';
-  const port = parseInt(process.env.SMTP_PORT || '587');
-  const user = process.env.SMTP_USER || '';
-  const pass = process.env.SMTP_PASS || '';
-  const from = process.env.SMTP_FROM || user;
-  
-  // Determine if secure based on port
-  const secure = port === 465;
-  
-  // Determine if we need STARTTLS (for ports 587, 25, etc.)
-  const requireTLS = port === 587 || port === 25;
-  
-  return {
-    host,
-    port,
-    secure,
-    requireTLS,
-    auth: {
-      user,
-      pass,
-    },
-    from,
-  };
-}
+// Initialize Resend client
+let resend: Resend | null = null;
 
-// Create transporter dynamically based on configuration
-function createTransporter() {
-  if (!isSMTPConfigured()) {
+function getResendClient(): Resend | null {
+  if (!isResendConfigured()) {
     return null;
   }
 
-  const config = getSMTPConfig();
-  
-  try {
-    return nodemailer.createTransport({
-      host: config.host,
-      port: config.port,
-      secure: config.secure,
-      requireTLS: config.requireTLS,
-      auth: config.auth,
-      tls: {
-        rejectUnauthorized: false, // Allow self-signed certificates
-      },
-    });
-  } catch (error) {
-    console.error('Failed to create email transporter:', error);
-    return null;
+  if (!resend) {
+    resend = new Resend(process.env.RESEND_API_KEY);
   }
+
+  return resend;
 }
 
-// Create transporter
-let transporter: nodemailer.Transporter | null = createTransporter();
+// Get the from email address
+function getFromEmail(): string {
+  // Use RESEND_FROM_EMAIL if set, otherwise use default Resend domain
+  return process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+}
 
 export async function sendEmailWithPDF(
   recipients: string[],
@@ -72,76 +36,74 @@ export async function sendEmailWithPDF(
   pdfBuffer: Buffer,
   pdfFileName: string
 ): Promise<void> {
-  // Check if SMTP is configured
-  if (!isSMTPConfigured()) {
-    const config = getSMTPConfig();
-    const provider = getProviderName(config.host);
-    
+  // Check if Resend is configured
+  if (!isResendConfigured()) {
     throw new Error(
-      `Email service is not configured. Please set up SMTP settings in your .env.local file.\n\n` +
-      `Example for ${provider}:\n` +
-      `SMTP_HOST=${config.host || 'smtp.example.com'}\n` +
-      `SMTP_PORT=${config.port}\n` +
-      `SMTP_USER=your_email@example.com\n` +
-      `SMTP_PASS=your_password_or_app_password\n` +
-      `SMTP_FROM=your_email@example.com\n\n` +
-      `Note: Recipients can be ANY email address. SMTP settings are for the sending service only.`
+      `Email service is not configured. Please set up Resend API key in your environment variables.\n\n` +
+      `Required environment variable:\n` +
+      `RESEND_API_KEY=your_resend_api_key\n\n` +
+      `Optional:\n` +
+      `RESEND_FROM_EMAIL=your-verified-email@yourdomain.com\n\n` +
+      `To get your Resend API key:\n` +
+      `1. Sign up at https://resend.com\n` +
+      `2. Go to API Keys section\n` +
+      `3. Create a new API key\n` +
+      `4. Add it to your environment variables\n\n` +
+      `Note: You can send to ANY email address. The from email must be verified in Resend.`
     );
   }
 
-  // Recreate transporter in case config changed
-  transporter = createTransporter();
+  const client = getResendClient();
   
-  if (!transporter) {
-    throw new Error('Email transporter is not initialized. Please check your SMTP configuration.');
+  if (!client) {
+    throw new Error('Resend client is not initialized. Please check your RESEND_API_KEY configuration.');
   }
 
-  const config = getSMTPConfig();
-
-  const mailOptions = {
-    from: config.from,
-    to: recipients.join(', '), // Recipients can be ANY email address
-    subject,
-    html: body,
-    attachments: [
-      {
-        filename: pdfFileName,
-        content: pdfBuffer,
-        contentType: 'application/pdf',
-      },
-    ],
-  };
+  const fromEmail = getFromEmail();
 
   try {
-    await transporter.sendMail(mailOptions);
+    // Convert PDF buffer to base64 for Resend attachment
+    const pdfBase64 = pdfBuffer.toString('base64');
+
+    // Send email to all recipients
+    const { data, error } = await client.emails.send({
+      from: fromEmail,
+      to: recipients,
+      subject,
+      html: body,
+      attachments: [
+        {
+          filename: pdfFileName,
+          content: pdfBase64,
+        },
+      ],
+    });
+
+    if (error) {
+      throw new Error(
+        `Failed to send email via Resend: ${error.message || 'Unknown error'}. ` +
+        'Please check your Resend API key and from email configuration.'
+      );
+    }
+
+    if (!data) {
+      throw new Error('Email sending failed: No response from Resend API.');
+    }
   } catch (error: any) {
     // Provide more helpful error messages
-    if (error.code === 'ECONNREFUSED') {
+    if (error.message?.includes('API key')) {
       throw new Error(
-        `Cannot connect to SMTP server at ${config.host}:${config.port}. ` +
-        'Please check your SMTP_HOST and SMTP_PORT settings.'
+        'Invalid Resend API key. Please check your RESEND_API_KEY environment variable.'
       );
-    } else if (error.code === 'EAUTH') {
+    } else if (error.message?.includes('from')) {
       throw new Error(
-        'SMTP authentication failed. Please check your SMTP_USER and SMTP_PASS settings. ' +
-        'Make sure you\'re using the correct credentials for your email provider.'
+        'Invalid from email address. Please verify your email domain in Resend or set RESEND_FROM_EMAIL to a verified email.'
       );
     } else {
       throw new Error(
         `Failed to send email: ${error.message || 'Unknown error'}. ` +
-        'Please check your SMTP configuration.'
+        'Please check your Resend configuration.'
       );
     }
   }
 }
-
-// Helper function to get provider name from host
-function getProviderName(host: string): string {
-  if (host.includes('gmail')) return 'Gmail';
-  if (host.includes('outlook') || host.includes('office365')) return 'Outlook/Office365';
-  if (host.includes('yahoo')) return 'Yahoo';
-  if (host.includes('icloud')) return 'iCloud';
-  return 'your email provider';
-}
-
-
