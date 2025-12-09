@@ -1,10 +1,79 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import InspectionForm from '@/components/InspectionForm';
+import Toast from '@/components/Toast';
 import { ArrowLeft, FileCheck } from 'lucide-react';
 import Link from 'next/link';
 
 export default function NewInspectionPage() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const data = await response.json();
+      if (data.success) {
+        setUser(data.user);
+      } else {
+        setToast({
+          message: 'Please login first to start an inspection',
+          type: 'error'
+        });
+        // Redirect to login after showing toast
+        setTimeout(() => {
+          router.push('/login');
+        }, 2000);
+      }
+    } catch (error) {
+      setToast({
+        message: 'Please login first to start an inspection',
+        type: 'error'
+      });
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mb-4"></div>
+          <p className="text-purple-300">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
+        )}
+        <div className="text-center">
+          <p className="text-purple-300 text-lg">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-x-hidden">
       <div className="container mx-auto px-4 py-8 overflow-x-hidden">
@@ -31,6 +100,13 @@ export default function NewInspectionPage() {
           <InspectionForm />
         </div>
       </div>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </div>
   );
 }

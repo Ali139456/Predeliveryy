@@ -312,6 +312,25 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   // Overall save function
   const onSubmit = async (data: InspectionFormData) => {
+    // Check authentication first
+    try {
+      const authResponse = await fetch('/api/auth/me');
+      const authData = await authResponse.json();
+      if (!authData.success || !authData.user) {
+        setToast({
+          message: 'Please login first to submit an inspection',
+          type: 'error'
+        });
+        return;
+      }
+    } catch (error) {
+      setToast({
+        message: 'Please login first to submit an inspection',
+        type: 'error'
+      });
+      return;
+    }
+
     // Validate all steps before submission
     const allStepsValidation = validateAllSteps();
     if (!allStepsValidation.valid) {
@@ -557,7 +576,26 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    // Check authentication before proceeding
+    try {
+      const authResponse = await fetch('/api/auth/me');
+      const authData = await authResponse.json();
+      if (!authData.success || !authData.user) {
+        setToast({
+          message: 'Please login first to continue',
+          type: 'error'
+        });
+        return;
+      }
+    } catch (error) {
+      setToast({
+        message: 'Please login first to continue',
+        type: 'error'
+      });
+      return;
+    }
+
     const validation = validateStep(currentStep);
     if (validation.valid) {
       setCurrentStep(prev => Math.min(prev + 1, totalSteps));
