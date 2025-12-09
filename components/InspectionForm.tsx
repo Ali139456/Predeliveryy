@@ -20,10 +20,16 @@ const inspectionSchema = z.object({
   location: z.any().optional(),
   barcode: z.string().optional(),
   vehicleInfo: z.object({
+    dealer: z.string().optional(),
     make: z.string().optional(),
     model: z.string().optional(),
-    year: z.string().optional(),
+    dealerStockNo: z.string().optional(),
     vin: z.string().optional(),
+    engine: z.string().optional(),
+    odometer: z.string().optional(),
+    complianceDate: z.string().optional(),
+    buildDate: z.string().optional(),
+    year: z.string().optional(),
     licensePlate: z.string().optional(),
     bookingNumber: z.string().optional(),
   }).optional(),
@@ -33,7 +39,7 @@ const inspectionSchema = z.object({
       items: z.array(
         z.object({
           item: z.string().min(1, 'Item is required'),
-          status: z.enum(['pass', 'fail', 'na']),
+          status: z.enum(['OK', 'C', 'A', 'R', 'RP', 'N', 'pass', 'fail', 'na']),
           notes: z.string().optional(),
           photos: z.array(z.object({
             fileName: z.string(),
@@ -76,42 +82,128 @@ type InspectionFormData = z.infer<typeof inspectionSchema>;
 
 const defaultChecklist = [
   {
+    category: 'Pre-Inspection',
+    items: [
+      { item: 'Check outstanding recalls/Reworks/SSP (record evidence)', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Confirm Owner\'s Manual + Warranty Booklet present', status: 'OK' as const, notes: '', photos: [] },
+    ],
+  },
+  {
     category: 'Exterior',
     items: [
-      { item: 'Paint condition', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Body panels', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Windows and glass', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Lights and signals', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Tires and wheels', status: 'pass' as const, notes: '', photos: [] },
+      { item: 'Torque all wheel nuts to spec', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Tyre pressures incl. spare', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Weather seals & glass condition', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Bonnet release & lock operation', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Tailgate, window glass, fuel lid operation', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Door operation & alignment', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Exterior lighting systems', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Headlight aiming', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Roof operation (if applicable)', status: 'N' as const, notes: '', photos: [] },
+      { item: 'Remove tow hooks & fit blanking caps', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Install: Mud flaps / Wheel caps / Aerial (if required)', status: 'OK' as const, notes: '', photos: [] },
     ],
   },
   {
-    category: 'Interior',
+    category: 'Interior – Install/Set',
     items: [
-      { item: 'Seats and upholstery', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Dashboard and controls', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Air conditioning', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Audio system', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Safety equipment', status: 'pass' as const, notes: '', photos: [] },
+      { item: 'Install fuses (if required)', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Audio/Navigation setup + presets + clock', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Set service reminder', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Bluetooth pairing check', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Navigation card/disk present', status: 'OK' as const, notes: '', photos: [] },
     ],
   },
   {
-    category: 'Mechanical',
+    category: 'Interior – Function Check',
     items: [
-      { item: 'Engine', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Transmission', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Brakes', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Suspension', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Fluid levels', status: 'pass' as const, notes: '', photos: [] },
+      { item: 'Audio operation + reception + CD test', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Seat controls + headrests + folding + warmers', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Door locks + child locks + keyless remotes', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Seatbelts + warnings + retractors', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Ignition + steering lock', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'All warning chimes', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Shift lock / starter interlock / inhibitor', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Interior lights + dash indicators', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Horn / wipers / washers', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Parking sensors + camera', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Windows (manual/power + auto return)', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'HVAC (heat/cool/all modes)', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'All keys start engine & operate locks', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Remote boot release', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Mirrors (power/auto-dim/day-night)', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Sun-visors + mirrors + lights', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Compartment doors & lids', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Sunroof operation', status: 'N' as const, notes: '', photos: [] },
+      { item: 'Tilt/telescopic steering', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Cigarette lighter/12V/USB power', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Transfer case & hub function (if applicable)', status: 'N' as const, notes: '', photos: [] },
+      { item: 'Upholstery & interior finish', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Park brake operation & adjustment', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Tool kit / jack / accessories', status: 'OK' as const, notes: '', photos: [] },
     ],
   },
   {
-    category: 'Documentation',
+    category: 'Under Vehicle',
     items: [
-      { item: 'Registration documents', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Service history', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Warranty information', status: 'pass' as const, notes: '', photos: [] },
-      { item: 'Owner manual', status: 'pass' as const, notes: '', photos: [] },
+      { item: 'Fuel/coolant/hydraulic lines for leaks', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Remove production coolant clip buckles', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Steering/suspension/exhaust tightness', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Differential oil level', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Transmission oil level', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Transfer case/PTO level', status: 'N' as const, notes: '', photos: [] },
+      { item: 'Tyres for cuts/damage/matching spec', status: 'OK' as const, notes: '', photos: [] },
+    ],
+  },
+  {
+    category: 'Under Bonnet',
+    items: [
+      { item: 'Check lines, fittings & components for leaks', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Wiring harness security', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Engine oil level', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Brake & clutch fluid level', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Washer reservoir fluid', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Coolant level + pressure test', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Power steering fluid', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Drive belt tension', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Build/compliance plates + labels', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Battery terminals tight + performance test', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Auto transmission fluid level', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Fill AdBlue (Diesel CX-7 only)', status: 'N' as const, notes: '', photos: [] },
+    ],
+  },
+  {
+    category: 'Road Test (Minimum 5 km)',
+    items: [
+      { item: 'Brake + park brake performance', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Steering alignment + control', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Instruments + warning lights', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'NVH (noise/vibration/harshness)', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Engine performance across ranges', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Manual gearbox + clutch', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Automatic transmission + activematic', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Cruise control', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Idle speed + idle-up operation', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Navigation operation (GPS lock)', status: 'OK' as const, notes: '', photos: [] },
+    ],
+  },
+  {
+    category: 'Final QC',
+    items: [
+      { item: 'Owner information materials verified', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Battery final check', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Remove protective covers/labels', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Reset trip meter/computer', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Affix 1,000 km service sticker', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Check dealer-fitted accessories', status: 'OK' as const, notes: '', photos: [] },
+    ],
+  },
+  {
+    category: 'Final Appearance',
+    items: [
+      { item: 'Transit damage check', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Manufacturing damage check', status: 'OK' as const, notes: '', photos: [] },
+      { item: 'Fallout/environmental damage check', status: 'OK' as const, notes: '', photos: [] },
     ],
   },
 ];
@@ -845,7 +937,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             </button>
           )}
         </div>
+        <div className="mb-4 p-3 bg-orange-900/20 border border-orange-500/30 rounded-lg">
+          <p className="text-xs text-orange-200 font-semibold mb-1">Header Details</p>
+          <p className="text-xs text-slate-300">Complete all vehicle information fields below</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-3">
+          <input
+            {...register('vehicleInfo.dealer')}
+            placeholder="Dealer"
+            disabled={readOnly}
+            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+          />
           <input
             {...register('vehicleInfo.make')}
             placeholder="Make"
@@ -859,14 +961,46 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
           />
           <input
-            {...register('vehicleInfo.year')}
-            placeholder="Year"
+            {...register('vehicleInfo.dealerStockNo')}
+            placeholder="Dealer Stock No"
             disabled={readOnly}
             className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
           />
           <input
             {...register('vehicleInfo.vin')}
             placeholder="VIN"
+            disabled={readOnly}
+            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+          />
+          <input
+            {...register('vehicleInfo.engine')}
+            placeholder="Engine"
+            disabled={readOnly}
+            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+          />
+          <input
+            {...register('vehicleInfo.odometer')}
+            placeholder="Odometer"
+            disabled={readOnly}
+            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+          />
+          <input
+            {...register('vehicleInfo.complianceDate')}
+            type="date"
+            placeholder="Compliance Date"
+            disabled={readOnly}
+            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+          />
+          <input
+            {...register('vehicleInfo.buildDate')}
+            type="date"
+            placeholder="Build Date"
+            disabled={readOnly}
+            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+          />
+          <input
+            {...register('vehicleInfo.year')}
+            placeholder="Year"
             disabled={readOnly}
             className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
           />
@@ -1004,6 +1138,37 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           )}
         </div>
 
+        {/* Action Codes Legend */}
+        <div className="mb-6 p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/30 rounded-xl">
+          <h3 className="text-sm font-bold text-purple-200 mb-3">Action Codes</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-green-300">OK</span>
+              <span className="text-slate-300">= Satisfactory</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-blue-300">C</span>
+              <span className="text-slate-300">= Clean</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-yellow-300">A</span>
+              <span className="text-slate-300">= Adjust</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-orange-300">R</span>
+              <span className="text-slate-300">= Repair</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-red-300">RP</span>
+              <span className="text-slate-300">= Replace</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-slate-400">N</span>
+              <span className="text-slate-300">= Not applicable</span>
+            </div>
+          </div>
+        </div>
+
         {fields.map((category, categoryIndex) => {
           const categoryName = category.category || '';
           const isExt = isExterior(categoryName);
@@ -1081,9 +1246,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                             : 'border-slate-500/50 focus:ring-purple-500 focus:border-purple-400'
                         } ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
                       >
-                        <option value="pass" className="bg-slate-700">✅ Pass</option>
-                        <option value="fail" className="bg-slate-700">❌ Fail</option>
-                        <option value="na" className="bg-slate-700">➖ N/A</option>
+                        <option value="OK" className="bg-slate-700">✅ OK - Satisfactory</option>
+                        <option value="C" className="bg-slate-700">🧹 C - Clean</option>
+                        <option value="A" className="bg-slate-700">🔧 A - Adjust</option>
+                        <option value="R" className="bg-slate-700">🔨 R - Repair</option>
+                        <option value="RP" className="bg-slate-700">🔄 RP - Replace</option>
+                        <option value="N" className="bg-slate-700">➖ N - Not applicable</option>
+                        <option value="pass" className="bg-slate-700">✅ Pass (Legacy)</option>
+                        <option value="fail" className="bg-slate-700">❌ Fail (Legacy)</option>
+                        <option value="na" className="bg-slate-700">➖ N/A (Legacy)</option>
                       </select>
                     </div>
                     <textarea
