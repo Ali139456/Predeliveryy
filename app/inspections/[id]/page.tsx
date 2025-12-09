@@ -20,17 +20,55 @@ export default function InspectionDetailPage() {
     if (params.id) {
       fetchInspection();
     }
+    
+    // Check auth when page becomes visible (user comes back to tab)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUser();
+      }
+    };
+    
+    // Check auth on browser back/forward navigation
+    const handlePopState = () => {
+      fetchUser();
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('popstate', handlePopState);
+    
+    // Periodic auth check (every 30 seconds)
+    const authInterval = setInterval(() => {
+      fetchUser();
+    }, 30000);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('popstate', handlePopState);
+      clearInterval(authInterval);
+    };
   }, [params.id]);
 
   const fetchUser = async () => {
     try {
       const response = await fetch('/api/auth/me');
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.user) {
         setUser(data.user);
+      } else {
+        // User is not logged in - redirect to login
+        if (user) {
+          // User was logged in before, session expired
+          router.push('/login');
+        } else {
+          // First time check, not logged in
+          router.push('/login');
+        }
+        setUser(null);
       }
     } catch (error) {
       console.error('Error fetching user:', error);
+      setUser(null);
+      router.push('/login');
     }
   };
 

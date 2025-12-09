@@ -15,19 +15,56 @@ export default function NewInspectionPage() {
 
   useEffect(() => {
     checkAuth();
+    
+    // Check auth when page becomes visible (user comes back to tab)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkAuth();
+      }
+    };
+    
+    // Check auth on browser back/forward navigation
+    const handlePopState = () => {
+      checkAuth();
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('popstate', handlePopState);
+    
+    // Periodic auth check (every 30 seconds)
+    const authInterval = setInterval(() => {
+      checkAuth();
+    }, 30000);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('popstate', handlePopState);
+      clearInterval(authInterval);
+    };
   }, []);
 
   const checkAuth = async () => {
     try {
       const response = await fetch('/api/auth/me');
       const data = await response.json();
-      if (data.success) {
+      if (data.success && data.user) {
         setUser(data.user);
       } else {
-        setToast({
-          message: 'Please login first to start an inspection',
-          type: 'error'
-        });
+        // User is not logged in
+        if (user) {
+          // User was logged in before, show toast
+          setToast({
+            message: 'Your session has expired. Please login again to continue',
+            type: 'error'
+          });
+        } else {
+          // First time check
+          setToast({
+            message: 'Please login first to start an inspection',
+            type: 'error'
+          });
+        }
+        setUser(null);
         // Redirect to login after showing toast
         setTimeout(() => {
           router.push('/login');
@@ -38,6 +75,7 @@ export default function NewInspectionPage() {
         message: 'Please login first to start an inspection',
         type: 'error'
       });
+      setUser(null);
       setTimeout(() => {
         router.push('/login');
       }, 2000);

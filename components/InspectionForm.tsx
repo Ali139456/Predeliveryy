@@ -145,6 +145,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   const totalSteps = 6;
   const steps = [
@@ -179,6 +180,55 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     control,
     name: 'checklist',
   });
+
+  // Check authentication periodically and on visibility change
+  useEffect(() => {
+    if (readOnly) return; // Skip auth check for read-only mode
+    
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        if (data.success && data.user) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+          setToast({
+            message: 'Your session has expired. Please login again to continue',
+            type: 'error'
+          });
+        }
+      } catch (error) {
+        setIsAuthenticated(false);
+        setToast({
+          message: 'Please login to continue',
+          type: 'error'
+        });
+      }
+    };
+    
+    // Initial check
+    checkAuth();
+    
+    // Check when page becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkAuth();
+      }
+    };
+    
+    // Periodic check (every 30 seconds)
+    const authInterval = setInterval(() => {
+      checkAuth();
+    }, 30000);
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearInterval(authInterval);
+    };
+  }, [readOnly]);
 
   useEffect(() => {
     if (barcode) {

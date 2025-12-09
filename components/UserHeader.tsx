@@ -39,10 +39,17 @@ export default function UserHeader() {
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
+      setUser(null); // Clear user state immediately
+      // Clear any cached data
+      if (typeof window !== 'undefined') {
+        // Clear any localStorage/sessionStorage if used
+        sessionStorage.clear();
+      }
       router.push('/login');
       router.refresh();
     } catch (error) {
       console.error('Logout error:', error);
+      setUser(null); // Clear user state even on error
       // Force redirect even if API call fails
       router.push('/login');
     }
