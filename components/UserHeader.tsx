@@ -153,9 +153,7 @@ export default function UserHeader() {
             <div className="flex items-center gap-3 ml-2 pl-3 border-l border-purple-500/30">
               {/* User Avatar & Name */}
               <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/60 rounded-lg border border-purple-400/20">
-                <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${getRoleColor(user.role)} flex items-center justify-center shadow-lg border-2 border-white/30`}>
-                  <User className="w-4 h-4 text-white" />
-                </div>
+                <User className={`w-4 h-4 ${getRoleColor(user.role).includes('red') ? 'text-red-400' : getRoleColor(user.role).includes('blue') ? 'text-blue-400' : 'text-green-400'}`} />
                 <div className="text-white">
                   <div className="text-sm font-bold text-white leading-tight">
                     {user.name || user.email}
