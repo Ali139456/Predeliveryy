@@ -58,17 +58,14 @@ export default function NewInspectionPage() {
             type: 'error'
           });
         } else {
-          // First time check
+          // First time check - show message but don't force redirect
           setToast({
             message: 'Please login first to start an inspection',
             type: 'error'
           });
         }
         setUser(null);
-        // Redirect to login after showing toast
-        setTimeout(() => {
-          router.push('/login');
-        }, 2000);
+        // Don't auto-redirect - let user go back if they want
       }
     } catch (error) {
       setToast({
@@ -76,9 +73,7 @@ export default function NewInspectionPage() {
         type: 'error'
       });
       setUser(null);
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
+      // Don't auto-redirect - let user go back if they want
     } finally {
       setLoading(false);
     }
@@ -97,16 +92,50 @@ export default function NewInspectionPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
-        {toast && (
-          <Toast
-            message={toast.message}
-            type={toast.type}
-            onClose={() => setToast(null)}
-          />
-        )}
-        <div className="text-center">
-          <p className="text-purple-300 text-lg">Redirecting to login...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-x-hidden">
+        <div className="container mx-auto px-4 py-8 overflow-x-hidden">
+          {toast && (
+            <Toast
+              message={toast.message}
+              type={toast.type}
+              onClose={() => setToast(null)}
+            />
+          )}
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-5 py-3 mb-8 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 hover:from-purple-600/40 hover:to-indigo-600/40 text-purple-200 hover:text-white rounded-xl border-2 border-purple-500/30 hover:border-purple-400/50 shadow-lg hover:shadow-purple-500/50 transition-all duration-300 group backdrop-blur-sm"
+          >
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+              <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
+            </div>
+            <span className="font-semibold">Back to Home</span>
+          </Link>
+
+          <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-2xl p-8 md:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-red-500/30">
+            <div className="text-center py-12">
+              <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
+                <FileCheck className="w-10 h-10 text-red-400" />
+              </div>
+              <h2 className="text-3xl font-bold text-red-300 mb-4">Login Required</h2>
+              <p className="text-purple-200 mb-8 text-lg">
+                You need to be logged in to start a new inspection.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/50"
+                >
+                  Go to Login
+                </Link>
+                <Link
+                  href="/"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-slate-700/80 text-purple-300 rounded-xl font-semibold hover:bg-slate-600/80 transition-all duration-300 hover:scale-105 border-2 border-purple-500/50"
+                >
+                  Back to Home
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
