@@ -821,7 +821,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         )}
       </div>
       
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="block text-xs font-semibold text-slate-200 mb-1.5">
             Inspector Name <span className="text-red-400">*</span>
@@ -951,7 +951,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           <p className="text-xs text-orange-200 font-semibold mb-1">Header Details</p>
           <p className="text-xs text-slate-300">Complete all vehicle information fields below</p>
         </div>
-        <div className="grid md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
             {...register('vehicleInfo.dealer')}
             placeholder="Dealer"
@@ -1382,7 +1382,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           )}
         </div>
         
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <SignaturePad
             onSave={(signature) => {
               if (!readOnly) {
@@ -1439,12 +1439,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       {/* Progress Indicator - Only show for new/editing inspections */}
       {!readOnly && (
-        <div className="bg-slate-800/95 rounded-2xl shadow-xl p-4 border-2 border-purple-500/30 mb-4">
-          <div className="grid grid-cols-6 gap-1 mb-3">
+        <div className="bg-slate-800/95 rounded-2xl shadow-xl p-3 sm:p-4 border-2 border-purple-500/30 mb-4">
+          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-1 mb-3">
             {steps.map((step, index) => (
               <div key={step.number} className="flex flex-col items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-300 ${
                     currentStep > step.number
                       ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/50'
                       : currentStep === step.number
@@ -1453,12 +1453,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   }`}
                 >
                   {currentStep > step.number ? (
-                    <Check className="w-5 h-5" />
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
-                    <span className="text-sm">{step.icon}</span>
+                    <span className="text-xs sm:text-sm">{step.icon}</span>
                   )}
                 </div>
-                <span className={`text-[10px] mt-1 font-medium text-center leading-tight ${
+                <span className={`text-[9px] sm:text-[10px] mt-1 font-medium text-center leading-tight ${
                   currentStep >= step.number ? 'text-purple-200' : 'text-slate-400'
                 }`}>
                   {step.title}

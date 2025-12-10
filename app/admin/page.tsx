@@ -105,11 +105,11 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
       {/* Tabs */}
       <div className="bg-slate-800/90 bg-slate-800/95 border-b border-slate-700/50 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex gap-1">
+        <div className="container mx-auto px-2 sm:px-4">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`px-6 py-3 font-medium transition-all rounded-t-lg ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'overview'
                   ? 'text-purple-300 border-b-2 border-purple-500 bg-slate-700/50'
                   : 'text-slate-300 hover:text-purple-300 hover:bg-slate-700/30'
@@ -119,7 +119,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`px-6 py-3 font-medium transition-all rounded-t-lg ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'users'
                   ? 'text-blue-300 border-b-2 border-blue-500 bg-slate-700/50'
                   : 'text-slate-300 hover:text-blue-300 hover:bg-slate-700/30'
@@ -129,7 +129,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('audit')}
-              className={`px-6 py-3 font-medium transition-all rounded-t-lg ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'audit'
                   ? 'text-indigo-300 border-b-2 border-indigo-500 bg-slate-700/50'
                   : 'text-slate-300 hover:text-indigo-300 hover:bg-slate-700/30'
@@ -139,7 +139,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`px-6 py-3 font-medium transition-all rounded-t-lg ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'settings'
                   ? 'text-green-300 border-b-2 border-green-500 bg-slate-700/50'
                   : 'text-slate-300 hover:text-green-300 hover:bg-slate-700/30'
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} />}
         {activeTab === 'users' && <UsersTab userRole={user?.role} />}
         {activeTab === 'audit' && <AuditLogTab />}
@@ -166,7 +166,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-blue-100">Total Inspections</h3>

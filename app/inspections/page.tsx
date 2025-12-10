@@ -126,23 +126,23 @@ export default function InspectionsPage() {
             </div>
           </div>
           
-          <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl p-6 space-y-4 border-2 border-purple-500/30">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+          <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl p-4 sm:p-6 space-y-4 border-2 border-purple-500/30">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              <div className="sm:col-span-2 relative">
+                <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
                 <input
                   type="text"
-                  placeholder="Search by inspection number, inspector, barcode, VIN, booking number..."
+                  placeholder="Search inspections..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+                  className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white hover:bg-slate-600/70"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white hover:bg-slate-600/70"
               >
                 <option value="" className="bg-slate-700">All Status</option>
                 <option value="draft" className="bg-slate-700">Draft</option>
@@ -154,15 +154,16 @@ export default function InspectionsPage() {
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 placeholder="Start Date"
-                className="px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white hover:bg-slate-600/70"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white hover:bg-slate-600/70"
               />
-
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 placeholder="End Date"
-                className="px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white hover:bg-slate-600/70"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white hover:bg-slate-600/70"
               />
             </div>
           </div>
@@ -188,83 +189,132 @@ export default function InspectionsPage() {
             </Link>
           </div>
         ) : (
-          <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl overflow-hidden border-2 border-purple-500/30">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white shadow-lg">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                      Inspection Number
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                      Inspector
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-slate-700/50 divide-y divide-slate-600/50">
-                  {inspections.map((inspection, index) => (
-                    <tr 
-                      key={inspection._id} 
-                      className={`hover:bg-slate-600/50 transition-colors ${
-                        index % 2 === 0 ? 'bg-slate-700/30' : 'bg-slate-700/50'
+          <>
+            {/* Mobile Card View */}
+            <div className="lg:hidden space-y-4">
+              {inspections.map((inspection) => (
+                <div
+                  key={inspection._id}
+                  className="bg-slate-800/95 rounded-2xl shadow-xl p-4 border-2 border-purple-500/30 space-y-3"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-purple-200 mb-1">{inspection.inspectionNumber}</div>
+                      <div className="text-xs text-slate-400">{inspection.inspectorName}</div>
+                    </div>
+                    <span
+                      className={`px-2 py-1 inline-flex text-xs leading-5 font-bold rounded-full shadow-md ${
+                        inspection.status === 'completed'
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                          : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
                       }`}
                     >
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-semibold text-purple-200">{inspection.inspectionNumber}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-slate-300">{inspection.inspectorName}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center text-sm text-slate-300">
-                          <Calendar className="w-4 h-4 mr-2 text-slate-400" />
-                          {format(new Date(inspection.inspectionDate), 'MMM dd, yyyy')}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-full shadow-md ${
-                            inspection.status === 'completed'
-                              ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-                              : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
-                          }`}
-                        >
-                          {inspection.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center space-x-3">
-                          <Link
-                            href={`/inspections/${inspection._id}`}
-                            className="inline-flex items-center px-4 py-2 text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
-                          >
-                            <Eye className="w-4 h-4 mr-1.5" />
-                            View
-                          </Link>
-                          <button
-                            onClick={() => handleExport(inspection._id)}
-                            className="inline-flex items-center px-4 py-2 text-sm font-semibold bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-lg hover:from-pink-500 hover:to-rose-500 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
-                          >
-                            <Download className="w-4 h-4 mr-1.5" />
-                            Export
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      {inspection.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center text-xs text-slate-300">
+                    <Calendar className="w-3 h-3 mr-2 text-slate-400" />
+                    {format(new Date(inspection.inspectionDate), 'MMM dd, yyyy')}
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Link
+                      href={`/inspections/${inspection._id}`}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md"
+                    >
+                      <Eye className="w-3 h-3 mr-1.5" />
+                      View
+                    </Link>
+                    <button
+                      onClick={() => handleExport(inspection._id)}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-lg hover:from-pink-500 hover:to-rose-500 transition-all shadow-md"
+                    >
+                      <Download className="w-3 h-3 mr-1.5" />
+                      Export
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl overflow-hidden border-2 border-purple-500/30">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 text-white shadow-lg">
+                    <tr>
+                      <th className="px-4 xl:px-6 py-3 xl:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                        Inspection Number
+                      </th>
+                      <th className="px-4 xl:px-6 py-3 xl:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                        Inspector
+                      </th>
+                      <th className="px-4 xl:px-6 py-3 xl:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-4 xl:px-6 py-3 xl:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-4 xl:px-6 py-3 xl:py-4 text-left text-xs font-bold text-white uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-slate-700/50 divide-y divide-slate-600/50">
+                    {inspections.map((inspection, index) => (
+                      <tr 
+                        key={inspection._id} 
+                        className={`hover:bg-slate-600/50 transition-colors ${
+                          index % 2 === 0 ? 'bg-slate-700/30' : 'bg-slate-700/50'
+                        }`}
+                      >
+                        <td className="px-4 xl:px-6 py-3 xl:py-4 whitespace-nowrap">
+                          <div className="text-sm font-semibold text-purple-200">{inspection.inspectionNumber}</div>
+                        </td>
+                        <td className="px-4 xl:px-6 py-3 xl:py-4 whitespace-nowrap">
+                          <div className="text-sm text-slate-300">{inspection.inspectorName}</div>
+                        </td>
+                        <td className="px-4 xl:px-6 py-3 xl:py-4 whitespace-nowrap">
+                          <div className="flex items-center text-sm text-slate-300">
+                            <Calendar className="w-4 h-4 mr-2 text-slate-400" />
+                            {format(new Date(inspection.inspectionDate), 'MMM dd, yyyy')}
+                          </div>
+                        </td>
+                        <td className="px-4 xl:px-6 py-3 xl:py-4 whitespace-nowrap">
+                          <span
+                            className={`px-3 py-1.5 inline-flex text-xs leading-5 font-bold rounded-full shadow-md ${
+                              inspection.status === 'completed'
+                                ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                                : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white'
+                            }`}
+                          >
+                            {inspection.status}
+                          </span>
+                        </td>
+                        <td className="px-4 xl:px-6 py-3 xl:py-4 whitespace-nowrap">
+                          <div className="flex items-center space-x-2 xl:space-x-3">
+                            <Link
+                              href={`/inspections/${inspection._id}`}
+                              className="inline-flex items-center px-3 xl:px-4 py-2 text-xs xl:text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                            >
+                              <Eye className="w-3 xl:w-4 h-3 xl:h-4 mr-1 xl:mr-1.5" />
+                              View
+                            </Link>
+                            <button
+                              onClick={() => handleExport(inspection._id)}
+                              className="inline-flex items-center px-3 xl:px-4 py-2 text-xs xl:text-sm font-semibold bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-lg hover:from-pink-500 hover:to-rose-500 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                            >
+                              <Download className="w-3 xl:w-4 h-3 xl:h-4 mr-1 xl:mr-1.5" />
+                              Export
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

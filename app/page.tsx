@@ -9,28 +9,28 @@ export default function Home() {
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-600/20 via-transparent to-indigo-600/20"></div>
-        <div className="container mx-auto px-4 py-20 relative z-10">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-500/20 bg-slate-800/95 mb-6 animate-bounce-slow border-2 border-purple-400/50">
-              <FileCheck className="w-10 h-10 text-purple-300" />
+        <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 relative z-10">
+          <div className="text-center mb-12 sm:mb-16 animate-fade-in">
+            <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-purple-500/20 bg-slate-800/95 mb-4 sm:mb-6 animate-bounce-slow border-2 border-purple-400/50">
+              <FileCheck className="w-8 h-8 sm:w-10 sm:h-10 text-purple-300" />
             </div>
-            <h1 className="text-6xl md:text-7xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-4 sm:mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300 px-2">
               Pre delivery inspection
             </h1>
-            <p className="text-xl md:text-2xl text-purple-200 max-w-2xl mx-auto mb-8">
+            <p className="text-base sm:text-xl md:text-2xl text-purple-200 max-w-2xl mx-auto mb-6 sm:mb-8 px-4">
               Professional inspection management system with advanced features
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <Link
                 href="/inspection/new"
-                className="group inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold text-lg shadow-lg shadow-purple-500/50 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 hover:scale-105"
+                className="group inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold text-base sm:text-lg shadow-lg shadow-purple-500/50 hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 hover:scale-105"
               >
                 Start New Inspection
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
                 href="/inspections"
-                className="inline-flex items-center justify-center px-8 py-4 bg-slate-800/80 bg-slate-800/95 text-purple-300 rounded-xl font-semibold text-lg shadow-lg border-2 border-purple-500/50 hover:bg-slate-700/80 transition-all duration-300 hover:scale-105"
+                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 bg-slate-800/80 bg-slate-800/95 text-purple-300 rounded-xl font-semibold text-base sm:text-lg shadow-lg border-2 border-purple-500/50 hover:bg-slate-700/80 transition-all duration-300 hover:scale-105"
               >
                 View Inspections
               </Link>
@@ -91,7 +91,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-7xl mx-auto">
           <div className="bg-slate-800/95 rounded-2xl p-8 text-center border-2 border-blue-500/30 hover:border-blue-400/50 transition-transform duration-200 hover:scale-105 will-change-transform group">
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform shadow-lg shadow-blue-500/50">
               <Camera className="w-8 h-8 text-white" />
