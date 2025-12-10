@@ -294,7 +294,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
                   </td>
                   <td className="py-3 px-2 sm:px-4">
                     <Link
-                      href={`/inspections/${inspection._id}`}
+                      href={`/inspections/${inspection._id}?view=readonly`}
                       className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                     >
                       <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />

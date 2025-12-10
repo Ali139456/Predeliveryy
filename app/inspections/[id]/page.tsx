@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { ArrowLeft, Send, Download, FileText, Lock } from 'lucide-react';
@@ -20,13 +20,17 @@ const EmailModal = dynamic(() => import('@/components/EmailModal'), {
   ssr: false,
 });
 
-export default function InspectionDetailPage() {
+function InspectionDetailContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
+  
+  // Check if view=readonly query parameter is present (from admin overview)
+  const isReadOnlyView = searchParams.get('view') === 'readonly';
 
   useEffect(() => {
     fetchUser();
@@ -247,15 +251,29 @@ export default function InspectionDetailPage() {
                 </h1>
               </div>
             </div>
-            <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
-              <Lock className="w-5 h-5 text-yellow-400 mr-2" />
-              <span className="text-yellow-300 font-semibold">View Only Mode</span>
-            </div>
+            {isReadOnlyView && (
+              <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
+                <Lock className="w-5 h-5 text-yellow-400 mr-2" />
+                <span className="text-yellow-300 font-semibold">View Only Mode</span>
+              </div>
+            )}
+            {!isReadOnlyView && user?.role === 'admin' && (
+              <div className="flex items-center px-4 py-2 bg-green-900/50 border-2 border-green-500/50 rounded-lg bg-slate-800/95">
+                <FileText className="w-5 h-5 text-green-400 mr-2" />
+                <span className="text-green-300 font-semibold">Edit Mode</span>
+              </div>
+            )}
+            {!isReadOnlyView && user?.role !== 'admin' && (
+              <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
+                <Lock className="w-5 h-5 text-yellow-400 mr-2" />
+                <span className="text-yellow-300 font-semibold">View Only Mode</span>
+              </div>
+            )}
           </div>
           <InspectionForm 
             inspectionId={params.id as string} 
             initialData={inspection}
-            readOnly={true}
+            readOnly={isReadOnlyView || user?.role !== 'admin'}
           />
         </div>
 
@@ -270,4 +288,17 @@ export default function InspectionDetailPage() {
   );
 }
 
-
+export default function InspectionDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mb-4"></div>
+          <p className="text-purple-300">Loading...</p>
+        </div>
+      </div>
+    }>
+      <InspectionDetailContent />
+    </Suspense>
+  );
+}
