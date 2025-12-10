@@ -161,7 +161,7 @@ const InspectionSchema: Schema = new Schema(
             item: { type: String, required: true },
             status: {
               type: String,
-              enum: ['pass', 'fail', 'na'],
+              enum: ['OK', 'C', 'A', 'R', 'RP', 'N', 'pass', 'fail', 'na'],
               required: true,
             },
             notes: String,
