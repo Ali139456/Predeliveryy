@@ -282,10 +282,14 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // Report metadata box
   const metaBoxWidth = 80;
   const metaBoxX = pageWidth - margin - metaBoxWidth;
+  // Use a semi-transparent effect with lighter color
   doc.setFillColor(255, 255, 255);
-  doc.setGlobalAlpha(0.15);
   doc.roundedRect(metaBoxX, 20, metaBoxWidth, 35, 3, 3, 'F');
-  doc.setGlobalAlpha(1);
+  
+  // Border for the box
+  doc.setDrawColor(255, 255, 255);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(metaBoxX, 20, metaBoxWidth, 35, 3, 3);
   
   doc.setFontSize(9);
   doc.setTextColor(255, 255, 255);
