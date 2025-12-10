@@ -35,10 +35,16 @@ export interface IInspection extends Document {
   };
   barcode?: string;
   vehicleInfo?: {
+    dealer?: string;
+    dealerStockNo?: string;
     make?: string;
     model?: string;
     year?: string;
     vin?: string;
+    engine?: string;
+    odometer?: string;
+    complianceDate?: string;
+    buildDate?: string;
     licensePlate?: string;
     bookingNumber?: string;
   };
@@ -146,10 +152,16 @@ const InspectionSchema: Schema = new Schema(
       index: true,
     },
     vehicleInfo: {
+      dealer: String,
+      dealerStockNo: String,
       make: String,
       model: String,
       year: String,
       vin: { type: String, index: true },
+      engine: String,
+      odometer: String,
+      complianceDate: String,
+      buildDate: String,
       licensePlate: { type: String, index: true },
       bookingNumber: { type: String, index: true },
     },
