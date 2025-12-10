@@ -30,7 +30,7 @@ export async function GET(
       );
     }
     
-    const inspection = await Inspection.findById(params.id).lean();
+    const inspection = await Inspection.findById(params.id).lean() as any;
     
     if (!inspection) {
       return NextResponse.json(
@@ -41,7 +41,7 @@ export async function GET(
     
     // If user is not admin, check if they own this inspection
     if (userDoc.role !== 'admin') {
-      if (inspection.inspectorEmail.toLowerCase() !== userDoc.email.toLowerCase()) {
+      if (inspection?.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()) {
         return NextResponse.json(
           { success: false, error: 'Forbidden: You can only view your own inspections' },
           { status: 403 }
