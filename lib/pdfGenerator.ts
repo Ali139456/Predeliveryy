@@ -121,30 +121,25 @@ async function addImageToPDF(
   if (imageData) {
     try {
       doc.addImage(imageData, x, y, width, height);
-      // Professional border with shadow effect
-      doc.setDrawColor(180, 180, 200);
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.2);
+      doc.rect(x, y, width, height);
+    } catch (error) {
+      doc.setFillColor(245, 245, 245);
+      doc.rect(x, y, width, height, 'F');
+      doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
       doc.rect(x, y, width, height);
-      // Inner border for depth
-      doc.setDrawColor(220, 220, 240);
-      doc.setLineWidth(0.1);
-      doc.rect(x + 1, y + 1, width - 2, height - 2);
-    } catch (error) {
-      doc.setFillColor(248, 250, 252);
-      doc.roundedRect(x, y, width, height, 2, 2, 'F');
-      doc.setDrawColor(200, 200, 220);
-      doc.setLineWidth(0.3);
-      doc.roundedRect(x, y, width, height, 2, 2);
       doc.setFontSize(8);
       doc.setTextColor(150, 150, 150);
       doc.text('Image unavailable', x + width / 2, y + height / 2, { align: 'center' });
     }
   } else {
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(x, y, width, height, 2, 2, 'F');
-    doc.setDrawColor(200, 200, 220);
+    doc.setFillColor(245, 245, 245);
+    doc.rect(x, y, width, height, 'F');
+    doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.3);
-    doc.roundedRect(x, y, width, height, 2, 2);
+    doc.rect(x, y, width, height);
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
     doc.text('Image unavailable', x + width / 2, y + height / 2, { align: 'center' });
@@ -164,150 +159,43 @@ function formatValue(value: any): string {
   return String(value);
 }
 
-// Premium card section with modern design
-function createPremiumCard(
-  doc: jsPDF,
-  title: string,
-  yPos: number,
-  margin: number,
-  contentWidth: number,
-  pageHeight: number
-): { startY: number; endY: number } {
-  if (yPos > pageHeight - 50) {
-    doc.addPage();
-    yPos = 20;
-  }
-  
-  const titleHeight = 12;
-  const cardPadding = 10;
-  
-  // Card shadow effect (simulated with lighter background)
-  doc.setFillColor(252, 252, 255);
-  doc.roundedRect(margin - 1, yPos - 1, contentWidth + 2, 25, 4, 4, 'F');
-  
-  // Main card background
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(margin, yPos, contentWidth, 23, 4, 4, 'F');
-  
-  // Elegant gradient header
-  doc.setFillColor(79, 70, 229);
-  doc.roundedRect(margin, yPos, contentWidth, titleHeight, 4, 4, 'F');
-  
-  // Accent line
-  doc.setFillColor(139, 92, 246);
-  doc.rect(margin, yPos, contentWidth, 2, 'F');
-  
-  // Title with icon space
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text(title, margin + cardPadding, yPos + 8);
-  
-  // Subtle border
-  doc.setDrawColor(220, 220, 240);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(margin, yPos, contentWidth, 23, 4, 4);
-  
-  doc.setTextColor(0, 0, 0);
-  
-  return { startY: yPos + titleHeight + 6, endY: yPos + 23 };
-}
-
-// Create elegant two-column info display
-function addInfoRow(
-  doc: jsPDF,
-  label: string,
-  value: string,
-  x: number,
-  y: number,
-  labelWidth: number,
-  valueWidth: number,
-  fontSize: number = 10
-): number {
-  // Label with background
-  doc.setFillColor(248, 250, 252);
-  doc.roundedRect(x, y - 5, labelWidth, 7, 1, 1, 'F');
-  
-  doc.setFontSize(fontSize);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(79, 70, 229);
-  doc.text(`${label}:`, x + 3, y);
-  
-  // Value
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(30, 30, 40);
-  const lines = doc.splitTextToSize(value, valueWidth);
-  doc.text(lines, x + labelWidth + 5, y);
-  
-  return y + Math.max(lines.length * (fontSize * 0.4), 8);
-}
-
 export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 18;
+  const margin = 15;
   const contentWidth = pageWidth - (margin * 2);
   
   // ============================================
-  // PREMIUM HEADER DESIGN
+  // CLEAN HEADER
   // ============================================
-  // Main header background with gradient effect
   doc.setFillColor(79, 70, 229);
-  doc.rect(0, 0, pageWidth, 60, 'F');
+  doc.rect(0, 0, pageWidth, 50, 'F');
   
-  // Gradient accent bars
-  doc.setFillColor(139, 92, 246);
-  doc.rect(0, 0, pageWidth, 4, 'F');
   doc.setFillColor(99, 102, 241);
-  doc.rect(0, 4, pageWidth, 2, 'F');
+  doc.rect(0, 0, pageWidth, 3, 'F');
   
-  // Decorative line
-  doc.setDrawColor(255, 255, 255);
-  doc.setLineWidth(0.5);
-  doc.line(0, 58, pageWidth, 58);
-  
-  // Main title
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(32);
+  doc.setFontSize(26);
   doc.setFont('helvetica', 'bold');
-  doc.text('Pre delivery inspection', margin, 32);
+  doc.text('Pre delivery inspection', margin, 28);
   
-  // Subtitle
   doc.setFontSize(11);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(240, 240, 255);
-  doc.text('Professional Vehicle Inspection Report', margin, 42);
-  
-  // Report metadata box
-  const metaBoxWidth = 80;
-  const metaBoxX = pageWidth - margin - metaBoxWidth;
-  // Use a semi-transparent effect with lighter color
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(metaBoxX, 20, metaBoxWidth, 35, 3, 3, 'F');
-  
-  // Border for the box
-  doc.setDrawColor(255, 255, 255);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(metaBoxX, 20, metaBoxWidth, 35, 3, 3);
+  doc.text('Comprehensive Vehicle Inspection Report', margin, 38);
   
   doc.setFontSize(9);
-  doc.setTextColor(255, 255, 255);
-  doc.setFont('helvetica', 'bold');
-  doc.text('REPORT DETAILS', metaBoxX + 5, 28);
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
-  doc.text(`#${inspection.inspectionNumber || 'N/A'}`, metaBoxX + 5, 35);
-  doc.text(`Status: ${inspection.status?.toUpperCase() || 'DRAFT'}`, metaBoxX + 5, 42);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, metaBoxX + 5, 49);
+  doc.text(`Report #: ${inspection.inspectionNumber || 'N/A'}`, pageWidth - margin, 28, { align: 'right' });
+  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - margin, 38, { align: 'right' });
+  doc.text(`Status: ${inspection.status?.toUpperCase() || 'DRAFT'}`, pageWidth - margin, 48, { align: 'right' });
   
   doc.setTextColor(0, 0, 0);
   
-  let yPos = 72;
+  let yPos = 60;
   
   // ============================================
-  // SECTION 1: INSPECTOR INFORMATION (Premium Table)
+  // SECTION 1: INSPECTOR INFORMATION (Table)
   // ============================================
   const inspectorData = [
     ['Inspector Name', formatValue(inspection.inspectorName)],
@@ -325,7 +213,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       fillColor: [79, 70, 229],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 13,
+      fontSize: 12,
       halign: 'left',
     },
     bodyStyles: {
@@ -333,42 +221,20 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       cellPadding: 4,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [79, 70, 229] },
+      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
     styles: { overflow: 'linebreak', cellPadding: 4 },
-    didDrawPage: (data) => {
-      // Add subtle border
-      doc.setDrawColor(220, 220, 240);
-      doc.setLineWidth(0.3);
-      doc.roundedRect(margin, yPos - 5, contentWidth, data.cursor.y - yPos + 10, 3, 3);
-    },
   });
 
-  yPos = (doc as any).lastAutoTable.finalY + 18;
+  yPos = (doc as any).lastAutoTable.finalY + 15;
 
   // ============================================
-  // SECTION 2: VEHICLE INFORMATION (Premium Table)
+  // SECTION 2: VEHICLE INFORMATION (Table)
   // ============================================
   const vehicleInfo = inspection.vehicleInfo || {};
-  const vehicleData: string[][] = [];
-  
-  if (vehicleInfo.dealer) vehicleData.push(['Dealer', formatValue(vehicleInfo.dealer)]);
-  if (vehicleInfo.dealerStockNo) vehicleData.push(['Dealer Stock No', formatValue(vehicleInfo.dealerStockNo)]);
-  if (vehicleInfo.make) vehicleData.push(['Make', formatValue(vehicleInfo.make)]);
-  if (vehicleInfo.model) vehicleData.push(['Model', formatValue(vehicleInfo.model)]);
-  if (vehicleInfo.year) vehicleData.push(['Year', formatValue(vehicleInfo.year)]);
-  if (vehicleInfo.vin) vehicleData.push(['VIN', formatValue(vehicleInfo.vin)]);
-  if (vehicleInfo.engine) vehicleData.push(['Engine', formatValue(vehicleInfo.engine)]);
-  if (vehicleInfo.odometer) vehicleData.push(['Odometer', formatValue(vehicleInfo.odometer)]);
-  if (vehicleInfo.complianceDate) vehicleData.push(['Compliance Date', formatValue(vehicleInfo.complianceDate)]);
-  if (vehicleInfo.buildDate) vehicleData.push(['Build Date', formatValue(vehicleInfo.buildDate)]);
-  if (vehicleInfo.licensePlate) vehicleData.push(['License Plate', formatValue(vehicleInfo.licensePlate)]);
-  if (vehicleInfo.bookingNumber) vehicleData.push(['Booking Number', formatValue(vehicleInfo.bookingNumber)]);
-
-  // Add all fields even if empty
-  const allVehicleFields = [
+  const vehicleData = [
     ['Dealer', formatValue(vehicleInfo.dealer)],
     ['Dealer Stock No', formatValue(vehicleInfo.dealerStockNo)],
     ['Make', formatValue(vehicleInfo.make)],
@@ -383,158 +249,88 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     ['Booking Number', formatValue(vehicleInfo.bookingNumber)],
   ];
 
-  if (allVehicleFields.length > 0) {
-    if (yPos > pageHeight - 100) {
-      doc.addPage();
-      yPos = 20;
-    }
-
-    autoTable(doc, {
-      startY: yPos,
-      head: [['Vehicle Information']],
-      body: allVehicleFields,
-      theme: 'striped',
-      headStyles: {
-        fillColor: [79, 70, 229],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold',
-        fontSize: 13,
-        halign: 'left',
-      },
-      bodyStyles: {
-        fontSize: 10,
-        cellPadding: 4,
-      },
-      columnStyles: {
-        0: { cellWidth: 50, fontStyle: 'bold', textColor: [79, 70, 229] },
-        1: { cellWidth: 'auto', textColor: [30, 30, 40] },
-      },
-      margin: { left: margin, right: margin },
-      styles: { overflow: 'linebreak', cellPadding: 4 },
-      didDrawPage: (data) => {
-        doc.setDrawColor(220, 220, 240);
-        doc.setLineWidth(0.3);
-        doc.roundedRect(margin, yPos - 5, contentWidth, data.cursor.y - yPos + 10, 3, 3);
-      },
-    });
-
-    yPos = (doc as any).lastAutoTable.finalY + 18;
+  if (yPos > pageHeight - 100) {
+    doc.addPage();
+    yPos = 20;
   }
 
+  autoTable(doc, {
+    startY: yPos,
+    head: [['Vehicle Information']],
+    body: vehicleData,
+    theme: 'striped',
+    headStyles: {
+      fillColor: [79, 70, 229],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 12,
+      halign: 'left',
+    },
+    bodyStyles: {
+      fontSize: 10,
+      cellPadding: 4,
+    },
+    columnStyles: {
+      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      1: { cellWidth: 'auto', textColor: [30, 30, 40] },
+    },
+    margin: { left: margin, right: margin },
+    styles: { overflow: 'linebreak', cellPadding: 4 },
+  });
+
+  yPos = (doc as any).lastAutoTable.finalY + 15;
+
   // ============================================
-  // SECTION 3: GPS LOCATION (Premium Table)
+  // SECTION 3: GPS LOCATION (Table)
   // ============================================
   const location = inspection.location || {};
-  const hasLocation = location.start || location.end || location.current || location.latitude;
-  
-  if (hasLocation) {
-    const locationData: string[][] = [];
-    
-    if (location.start) {
-      locationData.push(['Start Latitude', formatValue(location.start.latitude)]);
-      locationData.push(['Start Longitude', formatValue(location.start.longitude)]);
-      if (location.start.address) locationData.push(['Start Address', formatValue(location.start.address)]);
-      if (location.start.timestamp) locationData.push(['Start Time', formatValue(new Date(location.start.timestamp).toLocaleString())]);
-    }
-    
-    if (location.end) {
-      locationData.push(['End Latitude', formatValue(location.end.latitude)]);
-      locationData.push(['End Longitude', formatValue(location.end.longitude)]);
-      if (location.end.address) locationData.push(['End Address', formatValue(location.end.address)]);
-      if (location.end.timestamp) locationData.push(['End Time', formatValue(new Date(location.end.timestamp).toLocaleString())]);
-    }
-    
-    if (location.latitude && location.longitude) {
-      locationData.push(['Current Latitude', formatValue(location.latitude)]);
-      locationData.push(['Current Longitude', formatValue(location.longitude)]);
-      if (location.address) locationData.push(['Current Address', formatValue(location.address)]);
-    }
+  const locationData = [
+    ['Start Latitude', formatValue(location.start?.latitude)],
+    ['Start Longitude', formatValue(location.start?.longitude)],
+    ['Start Address', formatValue(location.start?.address)],
+    ['Start Time', formatValue(location.start?.timestamp ? new Date(location.start.timestamp).toLocaleString() : null)],
+    ['End Latitude', formatValue(location.end?.latitude)],
+    ['End Longitude', formatValue(location.end?.longitude)],
+    ['End Address', formatValue(location.end?.address)],
+    ['End Time', formatValue(location.end?.timestamp ? new Date(location.end.timestamp).toLocaleString() : null)],
+    ['Current Latitude', formatValue(location.latitude)],
+    ['Current Longitude', formatValue(location.longitude)],
+    ['Current Address', formatValue(location.address)],
+  ];
 
-    // Add all location fields even if empty
-    const allLocationFields = [
-      ['Start Latitude', formatValue(location.start?.latitude)],
-      ['Start Longitude', formatValue(location.start?.longitude)],
-      ['Start Address', formatValue(location.start?.address)],
-      ['Start Time', formatValue(location.start?.timestamp ? new Date(location.start.timestamp).toLocaleString() : null)],
-      ['End Latitude', formatValue(location.end?.latitude)],
-      ['End Longitude', formatValue(location.end?.longitude)],
-      ['End Address', formatValue(location.end?.address)],
-      ['End Time', formatValue(location.end?.timestamp ? new Date(location.end.timestamp).toLocaleString() : null)],
-      ['Current Latitude', formatValue(location.latitude)],
-      ['Current Longitude', formatValue(location.longitude)],
-      ['Current Address', formatValue(location.address)],
-    ];
-
-    if (yPos > pageHeight - 100) {
-      doc.addPage();
-      yPos = 20;
-    }
-
-    autoTable(doc, {
-      startY: yPos,
-      head: [['GPS Location']],
-      body: allLocationFields,
-      theme: 'striped',
-      headStyles: {
-        fillColor: [79, 70, 229],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold',
-        fontSize: 13,
-        halign: 'left',
-      },
-      bodyStyles: {
-        fontSize: 10,
-        cellPadding: 4,
-      },
-      columnStyles: {
-        0: { cellWidth: 50, fontStyle: 'bold', textColor: [79, 70, 229] },
-        1: { cellWidth: 'auto', textColor: [30, 30, 40] },
-      },
-      margin: { left: margin, right: margin },
-      styles: { overflow: 'linebreak', cellPadding: 4 },
-      didDrawPage: (data) => {
-        doc.setDrawColor(220, 220, 240);
-        doc.setLineWidth(0.3);
-        doc.roundedRect(margin, yPos - 5, contentWidth, data.cursor.y - yPos + 10, 3, 3);
-      },
-    });
-
-    yPos = (doc as any).lastAutoTable.finalY + 18;
-  } else {
-    // Show empty location section
-    if (yPos > pageHeight - 50) {
-      doc.addPage();
-      yPos = 20;
-    }
-
-    autoTable(doc, {
-      startY: yPos,
-      head: [['GPS Location']],
-      body: [['Location Data', 'Not provided']],
-      theme: 'striped',
-      headStyles: {
-        fillColor: [79, 70, 229],
-        textColor: [255, 255, 255],
-        fontStyle: 'bold',
-        fontSize: 13,
-      },
-      bodyStyles: {
-        fontSize: 10,
-        cellPadding: 4,
-        textColor: [150, 150, 150],
-      },
-      columnStyles: {
-        0: { cellWidth: 50, fontStyle: 'bold' },
-        1: { cellWidth: 'auto' },
-      },
-      margin: { left: margin, right: margin },
-    });
-
-    yPos = (doc as any).lastAutoTable.finalY + 18;
+  if (yPos > pageHeight - 100) {
+    doc.addPage();
+    yPos = 20;
   }
 
+  autoTable(doc, {
+    startY: yPos,
+    head: [['GPS Location']],
+    body: locationData,
+    theme: 'striped',
+    headStyles: {
+      fillColor: [79, 70, 229],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 12,
+      halign: 'left',
+    },
+    bodyStyles: {
+      fontSize: 10,
+      cellPadding: 4,
+    },
+    columnStyles: {
+      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      1: { cellWidth: 'auto', textColor: [30, 30, 40] },
+    },
+    margin: { left: margin, right: margin },
+    styles: { overflow: 'linebreak', cellPadding: 4 },
+  });
+
+  yPos = (doc as any).lastAutoTable.finalY + 15;
+
   // ============================================
-  // SECTION 4: BARCODE/QR CODE (Premium Table)
+  // SECTION 4: BARCODE (Table)
   // ============================================
   if (yPos > pageHeight - 50) {
     doc.addPage();
@@ -550,33 +346,35 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       fillColor: [79, 70, 229],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 13,
+      fontSize: 12,
+      halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
       cellPadding: 4,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [79, 70, 229] },
+      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
+    styles: { overflow: 'linebreak', cellPadding: 4 },
   });
 
-  yPos = (doc as any).lastAutoTable.finalY + 18;
+  yPos = (doc as any).lastAutoTable.finalY + 15;
 
   // ============================================
-  // SECTION 5: GENERAL PHOTOS (Premium Grid)
+  // SECTION 5: GENERAL PHOTOS
   // ============================================
-  if (yPos > pageHeight - 130) {
+  if (yPos > pageHeight - 120) {
     doc.addPage();
     yPos = 20;
   }
 
-  // Premium section header
+  // Section title
   doc.setFillColor(79, 70, 229);
-  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 3, 3, 'F');
-  doc.setFontSize(13);
+  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+  doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(255, 255, 255);
   doc.text('General Photos', margin + 6, yPos + 2);
@@ -584,7 +382,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
 
   if (inspection.photos && inspection.photos.length > 0) {
     const photosPerRow = 2;
-    const photoSpacing = 10;
+    const photoSpacing = 8;
     const photoWidth = (contentWidth - photoSpacing) / photosPerRow;
     const photoHeight = photoWidth * 0.75;
     
@@ -610,14 +408,8 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       const imageData = await loadImageAsBase64(fileName);
       await addImageToPDF(doc, imageData, x, y, photoWidth, photoHeight, fileName);
       
-      // Photo number label
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.setTextColor(79, 70, 229);
-      doc.text(`Photo ${i + 1}`, x + photoWidth / 2, y + photoHeight + 5, { align: 'center' });
-      
       if ((i + 1) % photosPerRow === 0 || i === inspection.photos.length - 1) {
-        yPos = y + photoHeight + 15;
+        yPos = y + photoHeight + photoSpacing;
       }
     }
     
@@ -631,7 +423,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   }
 
   // ============================================
-  // SECTION 6: INSPECTION CHECKLIST (Premium Design)
+  // SECTION 6: INSPECTION CHECKLIST (Table Format)
   // ============================================
   const checklist = Array.isArray(inspection.checklist) ? inspection.checklist : [];
   
@@ -643,19 +435,14 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       yPos = 20;
     }
     
-    // Premium category header
+    // Category header
     doc.setFillColor(99, 102, 241);
-    doc.roundedRect(margin, yPos - 6, contentWidth, 14, 4, 4, 'F');
+    doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
     
-    // Accent line
-    doc.setFillColor(139, 92, 246);
-    doc.rect(margin, yPos - 6, contentWidth, 2, 'F');
-    
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
-    doc.text(category.category, margin + 8, yPos + 4);
-    
+    doc.text(category.category, margin + 6, yPos + 2);
     yPos += 12;
     
     const items = Array.isArray(category.items) ? category.items : [];
@@ -669,7 +456,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       continue;
     }
     
-    // Premium table for checklist items
+    // Table for checklist items
     const tableData: any[][] = [];
     
     for (const item of items) {
@@ -713,9 +500,9 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
         cellPadding: 3,
       },
       columnStyles: {
-        0: { cellWidth: 75, fontStyle: 'bold', textColor: [30, 30, 40] },
+        0: { cellWidth: 75, fontStyle: 'bold', textColor: [30, 30, 40], halign: 'left' },
         1: { cellWidth: 28, halign: 'center', fontStyle: 'bold', textColor: [79, 70, 229] },
-        2: { cellWidth: 'auto', textColor: [60, 60, 80] },
+        2: { cellWidth: 'auto', textColor: [60, 60, 80], halign: 'left' },
         3: { cellWidth: 35, halign: 'center', fontSize: 8, textColor: [100, 100, 120] },
       },
       margin: { left: margin, right: margin },
@@ -727,7 +514,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     
     yPos = (doc as any).lastAutoTable.finalY + 12;
     
-    // Add item photos with premium styling
+    // Add item photos
     for (const item of items) {
       if (!item.photos || item.photos.length === 0) continue;
       
@@ -736,14 +523,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
         yPos = 20;
       }
       
-      // Item photo section header
-      doc.setFillColor(248, 250, 252);
-      doc.roundedRect(margin, yPos - 3, contentWidth, 8, 2, 2, 'F');
+      // Item photo header
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(79, 70, 229);
-      doc.text(`${item.item} - Photos:`, margin + 6, yPos + 2);
-      yPos += 10;
+      doc.text(`${item.item} - Photos:`, margin + 6, yPos);
+      yPos += 8;
       
       // Photos grid (3 per row)
       const itemPhotoWidth = (contentWidth - 12) / 3;
@@ -768,133 +553,102 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
         const imageData = await loadImageAsBase64(fileName);
         await addImageToPDF(doc, imageData, x, y, itemPhotoWidth, itemPhotoHeight, fileName);
         
-        // Photo label
-        doc.setFontSize(7);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(79, 70, 229);
-        doc.text(`${i + 1}`, x + itemPhotoWidth / 2, y + itemPhotoHeight + 4, { align: 'center' });
-        
         if ((i + 1) % 3 === 0 || i === item.photos.length - 1) {
-          yPos = y + itemPhotoHeight + 10;
+          yPos = y + itemPhotoHeight + photoSpacing;
         }
       }
       
       yPos += 8;
     }
     
-    yPos += 8;
+    yPos += 5;
   }
 
   // ============================================
-  // SECTION 7: SIGNATURES (Premium Design)
+  // SECTION 7: SIGNATURES (Table)
   // ============================================
-  if (yPos > pageHeight - 110) {
+  if (yPos > pageHeight - 100) {
     doc.addPage();
     yPos = 20;
   }
 
-  // Premium signature section header
-  doc.setFillColor(79, 70, 229);
-  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 3, 3, 'F');
-  doc.setFontSize(13);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text('Signatures', margin + 6, yPos + 2);
-  yPos += 12;
-
   const signatureWidth = (contentWidth - 20) / 2;
-  const signatureHeight = 38;
+  const signatureHeight = 35;
   const signatureSpacing = 20;
 
   // Technician Signature
   const techSigX = margin + 10;
   const techSigY = yPos + 5;
 
-  // Signature box with premium styling
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(techSigX, techSigY, signatureWidth, signatureHeight + 15, 3, 3, 'F');
-  doc.setDrawColor(200, 200, 220);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(techSigX, techSigY, signatureWidth, signatureHeight + 15, 3, 3);
-
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(79, 70, 229);
-  doc.text('Technician Signature', techSigX + signatureWidth / 2, techSigY + 6, { align: 'center' });
-
   if (inspection.signatures?.technician) {
     try {
-      doc.addImage(inspection.signatures.technician, 'PNG', techSigX + 5, techSigY + 10, signatureWidth - 10, signatureHeight);
-      doc.setDrawColor(180, 180, 200);
+      doc.addImage(inspection.signatures.technician, 'PNG', techSigX, techSigY, signatureWidth, signatureHeight);
+      doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
-      doc.rect(techSigX + 5, techSigY + 10, signatureWidth - 10, signatureHeight);
+      doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
     } catch (e) {
-      doc.setFillColor(248, 250, 252);
-      doc.roundedRect(techSigX + 5, techSigY + 10, signatureWidth - 10, signatureHeight, 2, 2, 'F');
-      doc.setDrawColor(200, 200, 220);
+      doc.setFillColor(250, 250, 250);
+      doc.rect(techSigX, techSigY, signatureWidth, signatureHeight, 'F');
+      doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
-      doc.roundedRect(techSigX + 5, techSigY + 10, signatureWidth - 10, signatureHeight, 2, 2);
+      doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
       doc.setFontSize(9);
       doc.setTextColor(150, 150, 150);
-      doc.text('Signature on file', techSigX + signatureWidth / 2, techSigY + 10 + signatureHeight / 2, { align: 'center' });
+      doc.text('Signature on file', techSigX + signatureWidth / 2, techSigY + signatureHeight / 2, { align: 'center' });
     }
   } else {
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(techSigX + 5, techSigY + 10, signatureWidth - 10, signatureHeight, 2, 2, 'F');
-    doc.setDrawColor(200, 200, 220);
+    doc.setFillColor(250, 250, 250);
+    doc.rect(techSigX, techSigY, signatureWidth, signatureHeight, 'F');
+    doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.3);
-    doc.roundedRect(techSigX + 5, techSigY + 10, signatureWidth - 10, signatureHeight, 2, 2);
+    doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
     doc.setFontSize(9);
     doc.setTextColor(150, 150, 150);
-    doc.text('Not signed', techSigX + signatureWidth / 2, techSigY + 10 + signatureHeight / 2, { align: 'center' });
+    doc.text('Not signed', techSigX + signatureWidth / 2, techSigY + signatureHeight / 2, { align: 'center' });
   }
 
   // Manager Signature
   const mgrSigX = margin + 10 + signatureWidth + signatureSpacing;
   const mgrSigY = yPos + 5;
 
-  doc.setFillColor(255, 255, 255);
-  doc.roundedRect(mgrSigX, mgrSigY, signatureWidth, signatureHeight + 15, 3, 3, 'F');
-  doc.setDrawColor(200, 200, 220);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(mgrSigX, mgrSigY, signatureWidth, signatureHeight + 15, 3, 3);
-
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(79, 70, 229);
-  doc.text('Manager Signature', mgrSigX + signatureWidth / 2, mgrSigY + 6, { align: 'center' });
-
   if (inspection.signatures?.manager) {
     try {
-      doc.addImage(inspection.signatures.manager, 'PNG', mgrSigX + 5, mgrSigY + 10, signatureWidth - 10, signatureHeight);
-      doc.setDrawColor(180, 180, 200);
+      doc.addImage(inspection.signatures.manager, 'PNG', mgrSigX, mgrSigY, signatureWidth, signatureHeight);
+      doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
-      doc.rect(mgrSigX + 5, mgrSigY + 10, signatureWidth - 10, signatureHeight);
+      doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight);
     } catch (e) {
-      doc.setFillColor(248, 250, 252);
-      doc.roundedRect(mgrSigX + 5, mgrSigY + 10, signatureWidth - 10, signatureHeight, 2, 2, 'F');
-      doc.setDrawColor(200, 200, 220);
+      doc.setFillColor(250, 250, 250);
+      doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight, 'F');
+      doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
-      doc.roundedRect(mgrSigX + 5, mgrSigY + 10, signatureWidth - 10, signatureHeight, 2, 2);
+      doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight);
       doc.setFontSize(9);
       doc.setTextColor(150, 150, 150);
-      doc.text('Signature on file', mgrSigX + signatureWidth / 2, mgrSigY + 10 + signatureHeight / 2, { align: 'center' });
+      doc.text('Signature on file', mgrSigX + signatureWidth / 2, mgrSigY + signatureHeight / 2, { align: 'center' });
     }
   } else {
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(mgrSigX + 5, mgrSigY + 10, signatureWidth - 10, signatureHeight, 2, 2, 'F');
-    doc.setDrawColor(200, 200, 220);
+    doc.setFillColor(250, 250, 250);
+    doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight, 'F');
+    doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.3);
-    doc.roundedRect(mgrSigX + 5, mgrSigY + 10, signatureWidth - 10, signatureHeight, 2, 2);
+    doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight);
     doc.setFontSize(9);
     doc.setTextColor(150, 150, 150);
-    doc.text('Not signed', mgrSigX + signatureWidth / 2, mgrSigY + 10 + signatureHeight / 2, { align: 'center' });
+    doc.text('Not signed', mgrSigX + signatureWidth / 2, mgrSigY + signatureHeight / 2, { align: 'center' });
   }
 
+  // Signature labels
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(60, 60, 80);
+  doc.text('Technician Signature:', techSigX, yPos);
+  doc.text('Manager Signature:', mgrSigX, yPos);
+
   // ============================================
-  // SECTION 8: ADDITIONAL INFORMATION (Premium Table)
+  // SECTION 8: ADDITIONAL INFORMATION (Table)
   // ============================================
-  yPos = mgrSigY + signatureHeight + 25;
+  yPos = mgrSigY + signatureHeight + 20;
 
   if (yPos > pageHeight - 70) {
     doc.addPage();
@@ -917,14 +671,15 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       fillColor: [79, 70, 229],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 13,
+      fontSize: 12,
+      halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
       cellPadding: 4,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [79, 70, 229] },
+      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
@@ -932,48 +687,35 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   });
 
   // ============================================
-  // PREMIUM FOOTER - On Every Page
+  // FOOTER - On Every Page
   // ============================================
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     
-    // Footer background
-    doc.setFillColor(248, 250, 252);
-    doc.rect(0, pageHeight - 20, pageWidth, 20, 'F');
-    
-    // Top border
     doc.setDrawColor(79, 70, 229);
     doc.setLineWidth(0.5);
-    doc.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
+    doc.line(margin, pageHeight - 18, pageWidth - margin, pageHeight - 18);
     
-    // Page number
-    doc.setFontSize(9);
-    doc.setTextColor(79, 70, 229);
-    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.setFont('helvetica', 'normal');
     doc.text(
       `Page ${i} of ${pageCount}`,
       pageWidth / 2,
-      pageHeight - 12,
+      pageHeight - 10,
       { align: 'center' }
     );
     
-    // Branding
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setTextColor(79, 70, 229);
     doc.setFont('helvetica', 'bold');
-    doc.text('Pre delivery inspection', pageWidth - margin, pageHeight - 12, { align: 'right' });
+    doc.text('Pre delivery inspection', pageWidth - margin, pageHeight - 10, { align: 'right' });
     
-    // Copyright
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 120);
-    doc.text('© 2025 Pre delivery inspection - All Rights Reserved', margin, pageHeight - 12);
-    
-    // Generation info
     doc.setFontSize(7);
-    doc.setTextColor(120, 120, 140);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, pageHeight - 6, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(100, 100, 100);
+    doc.text('© 2025 Pre delivery inspection - All Rights Reserved', margin, pageHeight - 10);
   }
   
   return Buffer.from(doc.output('arraybuffer'));
