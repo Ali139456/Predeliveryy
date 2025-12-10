@@ -1009,12 +1009,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
           />
           <input
-            {...register('vehicleInfo.year')}
-            placeholder="Year"
-            disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
-          />
-          <input
             {...register('vehicleInfo.licensePlate')}
             placeholder="License Plate"
             disabled={readOnly}
