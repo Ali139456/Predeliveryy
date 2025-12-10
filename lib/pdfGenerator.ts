@@ -197,6 +197,15 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   // SECTION 1: INSPECTOR INFORMATION (Table)
   // ============================================
+  // Section title
+  doc.setFillColor(79, 70, 229);
+  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Inspector Information', margin + 6, yPos + 2);
+  yPos += 12;
+
   const inspectorData = [
     ['Inspector Name', formatValue(inspection.inspectorName)],
     ['Email Address', formatValue(inspection.inspectorEmail)],
@@ -206,26 +215,29 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Inspector Information']],
+    head: [['Field', 'Value']],
     body: inspectorData,
     theme: 'striped',
     headStyles: {
-      fillColor: [79, 70, 229],
+      fillColor: [99, 102, 241],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 12,
+      fontSize: 10,
       halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
-      cellPadding: 4,
+      cellPadding: 5,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 4 },
+    styles: { overflow: 'linebreak', cellPadding: 5 },
+    alternateRowStyles: {
+      fillColor: [252, 252, 255],
+    },
   });
 
   yPos = (doc as any).lastAutoTable.finalY + 15;
@@ -233,6 +245,22 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   // SECTION 2: VEHICLE INFORMATION (Table)
   // ============================================
+  yPos = (doc as any).lastAutoTable.finalY + 15;
+
+  if (yPos > pageHeight - 100) {
+    doc.addPage();
+    yPos = 20;
+  }
+
+  // Section title
+  doc.setFillColor(79, 70, 229);
+  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Vehicle Information', margin + 6, yPos + 2);
+  yPos += 12;
+
   const vehicleInfo = inspection.vehicleInfo || {};
   const vehicleData = [
     ['Dealer', formatValue(vehicleInfo.dealer)],
@@ -249,33 +277,31 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     ['Booking Number', formatValue(vehicleInfo.bookingNumber)],
   ];
 
-  if (yPos > pageHeight - 100) {
-    doc.addPage();
-    yPos = 20;
-  }
-
   autoTable(doc, {
     startY: yPos,
-    head: [['Vehicle Information']],
+    head: [['Field', 'Value']],
     body: vehicleData,
     theme: 'striped',
     headStyles: {
-      fillColor: [79, 70, 229],
+      fillColor: [99, 102, 241],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 12,
+      fontSize: 10,
       halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
-      cellPadding: 4,
+      cellPadding: 5,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 4 },
+    styles: { overflow: 'linebreak', cellPadding: 5 },
+    alternateRowStyles: {
+      fillColor: [252, 252, 255],
+    },
   });
 
   yPos = (doc as any).lastAutoTable.finalY + 15;
@@ -283,6 +309,22 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   // SECTION 3: GPS LOCATION (Table)
   // ============================================
+  yPos = (doc as any).lastAutoTable.finalY + 15;
+
+  if (yPos > pageHeight - 100) {
+    doc.addPage();
+    yPos = 20;
+  }
+
+  // Section title
+  doc.setFillColor(79, 70, 229);
+  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text('GPS Location', margin + 6, yPos + 2);
+  yPos += 12;
+
   const location = inspection.location || {};
   const locationData = [
     ['Start Latitude', formatValue(location.start?.latitude)],
@@ -298,33 +340,31 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     ['Current Address', formatValue(location.address)],
   ];
 
-  if (yPos > pageHeight - 100) {
-    doc.addPage();
-    yPos = 20;
-  }
-
   autoTable(doc, {
     startY: yPos,
-    head: [['GPS Location']],
+    head: [['Field', 'Value']],
     body: locationData,
     theme: 'striped',
     headStyles: {
-      fillColor: [79, 70, 229],
+      fillColor: [99, 102, 241],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 12,
+      fontSize: 10,
       halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
-      cellPadding: 4,
+      cellPadding: 5,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 4 },
+    styles: { overflow: 'linebreak', cellPadding: 5 },
+    alternateRowStyles: {
+      fillColor: [252, 252, 255],
+    },
   });
 
   yPos = (doc as any).lastAutoTable.finalY + 15;
@@ -332,33 +372,47 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   // SECTION 4: BARCODE (Table)
   // ============================================
+  yPos = (doc as any).lastAutoTable.finalY + 15;
+
   if (yPos > pageHeight - 50) {
     doc.addPage();
     yPos = 20;
   }
 
+  // Section title
+  doc.setFillColor(79, 70, 229);
+  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Barcode / QR Code', margin + 6, yPos + 2);
+  yPos += 12;
+
   autoTable(doc, {
     startY: yPos,
-    head: [['Barcode / QR Code']],
+    head: [['Field', 'Value']],
     body: [['Scanned Code', formatValue(inspection.barcode)]],
     theme: 'striped',
     headStyles: {
-      fillColor: [79, 70, 229],
+      fillColor: [99, 102, 241],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 12,
+      fontSize: 10,
       halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
-      cellPadding: 4,
+      cellPadding: 5,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 4 },
+    styles: { overflow: 'linebreak', cellPadding: 5 },
+    alternateRowStyles: {
+      fillColor: [252, 252, 255],
+    },
   });
 
   yPos = (doc as any).lastAutoTable.finalY + 15;
@@ -655,6 +709,15 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     yPos = 20;
   }
 
+  // Section title
+  doc.setFillColor(79, 70, 229);
+  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  doc.text('Additional Information', margin + 6, yPos + 2);
+  yPos += 12;
+
   const additionalFields = [
     ['Privacy Consent', formatValue(inspection.privacyConsent)],
     ['Data Retention Days', formatValue(inspection.dataRetentionDays)],
@@ -664,26 +727,29 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Additional Information']],
+    head: [['Field', 'Value']],
     body: additionalFields,
     theme: 'striped',
     headStyles: {
-      fillColor: [79, 70, 229],
+      fillColor: [99, 102, 241],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
-      fontSize: 12,
+      fontSize: 10,
       halign: 'left',
     },
     bodyStyles: {
       fontSize: 10,
-      cellPadding: 4,
+      cellPadding: 5,
     },
     columnStyles: {
-      0: { cellWidth: 50, fontStyle: 'bold', textColor: [60, 60, 80] },
+      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
     margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 4 },
+    styles: { overflow: 'linebreak', cellPadding: 5 },
+    alternateRowStyles: {
+      fillColor: [252, 252, 255],
+    },
   });
 
   // ============================================
