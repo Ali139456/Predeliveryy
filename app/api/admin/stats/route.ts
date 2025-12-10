@@ -25,7 +25,8 @@ export async function GET(request: NextRequest) {
       Inspection.find()
         .sort({ createdAt: -1 })
         .limit(10)
-        .select('inspectionNumber inspectorName status createdAt'),
+        .select('inspectionNumber inspectorName status createdAt')
+        .lean(),
     ]);
 
     // Get inspections by status

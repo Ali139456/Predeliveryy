@@ -26,7 +26,7 @@ interface PhotoUploadProps {
   readOnly?: boolean;
 }
 
-export default function PhotoUpload({
+function PhotoUpload({
   photos,
   onPhotosChange,
   maxPhotos = 20,
@@ -133,15 +133,15 @@ export default function PhotoUpload({
                   className="relative aspect-square cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLightboxImage(fullImageUrl)}
                 >
-                  <Image
+                <Image
                     src={fullImageUrl}
-                    alt={`Photo ${index + 1}`}
+                  alt={`Photo ${index + 1}`}
                     width={100}
                     height={100}
                     className="w-full h-full aspect-square object-cover rounded-lg"
-                    loading="lazy"
-                    unoptimized
-                  />
+                  loading="lazy"
+                  unoptimized
+                />
                 </div>
                 {!readOnly && (
                   <button
@@ -169,5 +169,7 @@ export default function PhotoUpload({
     </div>
   );
 }
+
+export default memo(PhotoUpload);
 
 

@@ -69,11 +69,11 @@ export async function sendEmailWithPDF(
     const { data, error } = await client.emails.send({
       from: fromEmail,
       to: recipients,
-      subject,
-      html: body,
-      attachments: [
-        {
-          filename: pdfFileName,
+    subject,
+    html: body,
+    attachments: [
+      {
+        filename: pdfFileName,
           content: pdfBase64,
         },
       ],

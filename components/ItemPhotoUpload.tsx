@@ -27,7 +27,7 @@ interface ItemPhotoUploadProps {
   readOnly?: boolean;
 }
 
-export default function ItemPhotoUpload({
+function ItemPhotoUpload({
   photos,
   onPhotosChange,
   maxPhotos = 5,
@@ -131,15 +131,15 @@ export default function ItemPhotoUpload({
                   className="relative aspect-square cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLightboxImage(fullImageUrl)}
                 >
-                  <Image
+                <Image
                     src={fullImageUrl}
-                    alt={`${itemName || 'Item'} photo ${index + 1}`}
-                    width={80}
-                    height={80}
+                  alt={`${itemName || 'Item'} photo ${index + 1}`}
+                  width={80}
+                  height={80}
                     className="w-full h-full aspect-square object-cover rounded-lg border border-slate-500/50"
-                    loading="lazy"
-                    unoptimized
-                  />
+                  loading="lazy"
+                  unoptimized
+                />
                 </div>
                 {!readOnly && (
                   <button
@@ -167,4 +167,6 @@ export default function ItemPhotoUpload({
     </div>
   );
 }
+
+export default memo(ItemPhotoUpload);
 

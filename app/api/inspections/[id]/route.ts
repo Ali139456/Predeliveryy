@@ -30,7 +30,7 @@ export async function GET(
       );
     }
     
-    const inspection = await Inspection.findById(params.id);
+    const inspection = await Inspection.findById(params.id).lean();
     
     if (!inspection) {
       return NextResponse.json(
@@ -49,7 +49,9 @@ export async function GET(
       }
     }
     
-    return NextResponse.json({ success: true, data: inspection });
+    const response = NextResponse.json({ success: true, data: inspection });
+    response.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message },

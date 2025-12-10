@@ -128,9 +128,13 @@ export async function GET(request: NextRequest) {
     
     const inspections = await Inspection.find(query)
       .sort({ createdAt: -1 })
-      .limit(100);
+      .limit(100)
+      .lean(); // Use lean() for better performance
     
-    return NextResponse.json({ success: true, data: inspections });
+    // Add cache headers for GET requests
+    const response = NextResponse.json({ success: true, data: inspections });
+    response.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
+    return response;
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message },

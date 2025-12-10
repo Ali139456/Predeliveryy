@@ -1,15 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { LogOut, User, LayoutDashboard, Home } from 'lucide-react';
 
-export default function UserHeader() {
+function UserHeader() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
+
+  const checkAuth = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/me', {
+        cache: 'no-store',
+      });
+      const data = await response.json();
+      if (data.success) {
+        setUser(data.user);
+      }
+    } catch (error) {
+      // Not logged in - that's okay
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
@@ -20,23 +36,9 @@ export default function UserHeader() {
     }
     
     checkAuth();
-  }, [pathname]);
+  }, [pathname, checkAuth]);
 
-  const checkAuth = async () => {
-    try {
-      const response = await fetch('/api/auth/me');
-      const data = await response.json();
-      if (data.success) {
-        setUser(data.user);
-      }
-    } catch (error) {
-      // Not logged in - that's okay
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
+  const handleLogout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null); // Clear user state immediately
@@ -53,7 +55,7 @@ export default function UserHeader() {
       // Force redirect even if API call fails
       router.push('/login');
     }
-  };
+  }, [router]);
 
   // Don't show header on login page - AFTER all hooks
   if (pathname === '/login') {
@@ -167,13 +169,13 @@ export default function UserHeader() {
               </div>
 
               {/* Logout Button */}
-              <button
-                onClick={handleLogout}
+            <button
+              onClick={handleLogout}
                 className="flex items-center px-3 py-2 text-sm bg-red-600/40 bg-slate-800/95 text-white rounded-lg hover:bg-red-500/50 transition-all shadow-md hover:shadow-lg border border-red-400/20 hover:scale-105"
-                title="Logout"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
             </div>
           </div>
         </div>
@@ -181,3 +183,5 @@ export default function UserHeader() {
     </div>
   );
 }
+
+export default memo(UserHeader);

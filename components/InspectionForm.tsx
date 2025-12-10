@@ -6,11 +6,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import PhotoUpload from './PhotoUpload';
 import ItemPhotoUpload from './ItemPhotoUpload';
-import BarcodeScanner from './BarcodeScanner';
+import dynamic from 'next/dynamic';
 import EnhancedGPSLocation from './EnhancedGPSLocation';
-import SignaturePad from './SignaturePad';
 import EmailModal from './EmailModal';
 import Toast from './Toast';
+
+// Lazy load heavy components
+const BarcodeScanner = dynamic(() => import('./BarcodeScanner'), {
+  ssr: false,
+  loading: () => <div className="text-slate-400">Loading scanner...</div>,
+});
+
+const SignaturePad = dynamic(() => import('./SignaturePad'), {
+  ssr: false,
+  loading: () => <div className="text-slate-400">Loading signature pad...</div>,
+});
 import { Save, Send, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 
 const inspectionSchema = z.object({
@@ -534,7 +544,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           });
           // Redirect to the inspection detail page
           setTimeout(() => {
-            window.location.href = `/inspections/${result.data._id}`;
+          window.location.href = `/inspections/${result.data._id}`;
           }, 1500);
         } else {
           const errorMessage = result.error || 'Failed to create inspection. Please try again.';
@@ -1272,7 +1282,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     />
                     <ItemPhotoUpload
                       photos={itemPhotos}
-                      onPhotosChange={(newPhotos) => {
+                      onPhotosChange={(newPhotos: any) => {
                         if (!readOnly) {
                           setValue(`checklist.${categoryIndex}.items.${itemIndex}.photos`, newPhotos);
                         }

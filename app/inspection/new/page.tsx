@@ -1,11 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import InspectionForm from '@/components/InspectionForm';
+import dynamic from 'next/dynamic';
 import Toast from '@/components/Toast';
 import { ArrowLeft, FileCheck } from 'lucide-react';
 import Link from 'next/link';
+
+// Lazy load heavy components
+const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
+  loading: () => (
+    <div className="flex items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-purple-200 border-t-purple-600"></div>
+    </div>
+  ),
+  ssr: false,
+});
 
 export default function NewInspectionPage() {
   const [user, setUser] = useState<any>(null);
@@ -31,10 +41,10 @@ export default function NewInspectionPage() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('popstate', handlePopState);
     
-    // Periodic auth check (every 30 seconds)
+    // Periodic auth check (every 2 minutes - reduced frequency)
     const authInterval = setInterval(() => {
       checkAuth();
-    }, 30000);
+    }, 120000);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);

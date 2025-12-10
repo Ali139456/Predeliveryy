@@ -53,15 +53,15 @@ export async function uploadToS3(file: Buffer, fileName: string, contentType: st
 
   // Use S3 if configured - with error handling
   try {
-    const command = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: fileName,
-      Body: file,
-      ContentType: contentType,
-    });
+  const command = new PutObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: fileName,
+    Body: file,
+    ContentType: contentType,
+  });
 
-    await s3Client.send(command);
-    return fileName;
+  await s3Client.send(command);
+  return fileName;
   } catch (error: any) {
     // If S3 upload fails (e.g., invalid credentials), fall back to local storage
     console.warn('S3 upload failed, falling back to local storage:', error.message);

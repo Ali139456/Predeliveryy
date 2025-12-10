@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
 interface ToastProps {
@@ -10,7 +10,7 @@ interface ToastProps {
   onClose: () => void;
 }
 
-export default function Toast({ message, type = 'info', duration = 3000, onClose }: ToastProps) {
+function Toast({ message, type = 'info', duration = 3000, onClose }: ToastProps) {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -56,4 +56,6 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
     </div>
   );
 }
+
+export default memo(Toast);
 

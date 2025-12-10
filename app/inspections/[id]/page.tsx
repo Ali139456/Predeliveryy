@@ -1,11 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import InspectionForm from '@/components/InspectionForm';
-import EmailModal from '@/components/EmailModal';
+import dynamic from 'next/dynamic';
 import { ArrowLeft, Send, Download, FileText, Lock } from 'lucide-react';
+
+// Lazy load heavy components
+const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
+  loading: () => (
+    <div className="flex items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-purple-200 border-t-purple-600"></div>
+    </div>
+  ),
+  ssr: false,
+});
+
+const EmailModal = dynamic(() => import('@/components/EmailModal'), {
+  ssr: false,
+});
 
 export default function InspectionDetailPage() {
   const params = useParams();
@@ -36,10 +49,10 @@ export default function InspectionDetailPage() {
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('popstate', handlePopState);
     
-    // Periodic auth check (every 30 seconds)
+    // Periodic auth check (every 2 minutes - reduced frequency)
     const authInterval = setInterval(() => {
       fetchUser();
-    }, 30000);
+    }, 120000);
     
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);

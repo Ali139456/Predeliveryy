@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     } else {
       // Fallback to S3 or local storage
       try {
-        await uploadToS3(buffer, fileName, contentType);
+    await uploadToS3(buffer, fileName, contentType);
         uploadedFileName = fileName;
         fileUrl = `/api/files/${fileName}`;
       } catch (uploadError: any) {
