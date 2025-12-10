@@ -46,7 +46,7 @@ export interface IInspection extends Document {
     category: string;
     items: {
       item: string;
-      status: 'pass' | 'fail' | 'na';
+      status: 'OK' | 'C' | 'A' | 'R' | 'RP' | 'N' | 'pass' | 'fail' | 'na';
       notes?: string;
       photos?: {
         fileName: string;
