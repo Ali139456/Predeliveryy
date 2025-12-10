@@ -247,17 +247,15 @@ export default function InspectionDetailPage() {
                 </h1>
               </div>
             </div>
-            {user && user.role !== 'admin' && (
-              <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
-                <Lock className="w-5 h-5 text-yellow-400 mr-2" />
-                <span className="text-yellow-300 font-semibold">View Only Mode</span>
-              </div>
-            )}
+            <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
+              <Lock className="w-5 h-5 text-yellow-400 mr-2" />
+              <span className="text-yellow-300 font-semibold">View Only Mode</span>
+            </div>
           </div>
           <InspectionForm 
             inspectionId={params.id as string} 
             initialData={inspection}
-            readOnly={user?.role !== 'admin'}
+            readOnly={true}
           />
         </div>
 
