@@ -633,7 +633,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
-              Phone Number <span className="text-xs text-slate-400">(optional)</span>
+              Phone Number
             </label>
             <input
               type="tel"
@@ -643,6 +643,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
                 checkPhone(e.target.value);
               }}
               onBlur={() => checkPhone(formData.phoneNumber)}
+              required
               className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
                 phoneError ? 'border-red-500' : 'border-slate-500/50'
               }`}
@@ -757,7 +758,11 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
 
   // Validate phone uniqueness (only if changed)
   const checkPhone = async (phone: string) => {
-    if (!phone || !phone.trim() || phone.trim() === user.phoneNumber) {
+    if (!phone || !phone.trim()) {
+      setPhoneError('Phone number is required');
+      return;
+    }
+    if (phone.trim() === user.phoneNumber) {
       setPhoneError(null);
       return;
     }
@@ -917,7 +922,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
-              Phone Number <span className="text-xs text-slate-400">(optional)</span>
+              Phone Number
             </label>
             <input
               type="tel"
@@ -927,6 +932,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
                 checkPhone(e.target.value);
               }}
               onBlur={() => checkPhone(formData.phoneNumber)}
+              required
               className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
                 phoneError ? 'border-red-500' : 'border-slate-500/50'
               }`}
