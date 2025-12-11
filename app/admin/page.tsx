@@ -15,7 +15,8 @@ import {
   Shield,
   Download,
   Search,
-  Eye
+  Eye,
+  Edit
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 
