@@ -61,8 +61,10 @@ export function verifyAndRemoveOTP(identifier: string, otp: string): { valid: bo
 // Clean up expired OTPs (call periodically)
 export function cleanupExpiredOTPs(): void {
   const now = Date.now();
-  for (const [identifier, data] of otpStore.entries()) {
-    if (now > data.expiresAt) {
+  const identifiers = Array.from(otpStore.keys());
+  for (const identifier of identifiers) {
+    const data = otpStore.get(identifier);
+    if (data && now > data.expiresAt) {
       otpStore.delete(identifier);
     }
   }
