@@ -351,8 +351,29 @@ export default function LoginPage() {
                     setError('Passwords do not match');
                     return;
                   }
-                  if (newPassword.length < 6) {
-                    setError('Password must be at least 6 characters');
+                  if (newPassword.length < 8) {
+                    setError('Password must be at least 8 characters long');
+                    return;
+                  }
+
+                  // Validate strong password
+                  if (!/[A-Z]/.test(newPassword)) {
+                    setError('Password must contain at least one uppercase letter');
+                    return;
+                  }
+
+                  if (!/[a-z]/.test(newPassword)) {
+                    setError('Password must contain at least one lowercase letter');
+                    return;
+                  }
+
+                  if (!/[0-9]/.test(newPassword)) {
+                    setError('Password must contain at least one number');
+                    return;
+                  }
+
+                  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) {
+                    setError('Password must contain at least one special character');
                     return;
                   }
                   
@@ -421,10 +442,13 @@ export default function LoginPage() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
-                      minLength={6}
+                      minLength={8}
                       className="w-full px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
-                      placeholder="Enter new password"
+                      placeholder="Enter new password (min 8 chars)"
                     />
+                    <p className="mt-1 text-xs text-slate-400">
+                      Must contain: uppercase, lowercase, number, special character
+                    </p>
                   </div>
 
                   <div>
@@ -436,7 +460,7 @@ export default function LoginPage() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
-                      minLength={6}
+                      minLength={8}
                       className="w-full px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
                       placeholder="Confirm new password"
                     />

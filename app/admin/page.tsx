@@ -470,6 +470,10 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -521,10 +525,19 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                checkEmail(e.target.value);
+              }}
+              onBlur={() => checkEmail(formData.email)}
               required
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+                emailError ? 'border-red-500' : 'border-slate-500/50'
+              }`}
             />
+            {emailError && (
+              <p className="mt-1 text-xs text-red-400">{emailError}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
@@ -533,20 +546,52 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             <input
               type="tel"
               value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              onChange={(e) => {
+                setFormData({ ...formData, phoneNumber: e.target.value });
+                checkPhone(e.target.value);
+              }}
+              onBlur={() => checkPhone(formData.phoneNumber)}
+              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+                phoneError ? 'border-red-500' : 'border-slate-500/50'
+              }`}
               placeholder="+1234567890"
             />
+            {phoneError && (
+              <p className="mt-1 text-xs text-red-400">{phoneError}</p>
+            )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">Password</label>
+            <label className="block text-sm font-medium text-slate-200 mb-2">
+              Password <span className="text-xs text-slate-400">(min 8 chars, uppercase, lowercase, number, special char)</span>
+            </label>
             <input
               type="password"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, password: e.target.value });
+                validatePasswordStrength(e.target.value);
+              }}
               required
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              minLength={8}
+              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+                passwordError ? 'border-red-500' : passwordStrength === 'strong' ? 'border-green-500' : passwordStrength === 'medium' ? 'border-yellow-500' : 'border-slate-500/50'
+              }`}
             />
+            {formData.password && (
+              <div className="mt-1">
+                {passwordError ? (
+                  <p className="text-xs text-red-400">{passwordError}</p>
+                ) : (
+                  <p className={`text-xs ${
+                    passwordStrength === 'strong' ? 'text-green-400' : 
+                    passwordStrength === 'medium' ? 'text-yellow-400' : 
+                    'text-slate-400'
+                  }`}>
+                    Password strength: <span className="font-semibold capitalize">{passwordStrength}</span>
+                  </p>
+                )}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">Role</label>
@@ -593,9 +638,105 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
+
+  // Validate email uniqueness (only if changed)
+  const checkEmail = async (email: string) => {
+    if (!email || email.toLowerCase() === user.email?.toLowerCase()) {
+      setEmailError(null);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/users/check-email?email=${encodeURIComponent(email.toLowerCase())}`);
+      const data = await response.json();
+      if (data.exists) {
+        setEmailError('This email is already in use');
+      } else {
+        setEmailError(null);
+      }
+    } catch (err) {
+      // Silently fail - validation will happen on submit
+    }
+  };
+
+  // Validate phone uniqueness (only if changed)
+  const checkPhone = async (phone: string) => {
+    if (!phone || !phone.trim() || phone.trim() === user.phoneNumber) {
+      setPhoneError(null);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/users/check-phone?phone=${encodeURIComponent(phone.trim())}`);
+      const data = await response.json();
+      if (data.exists) {
+        setPhoneError('This phone number is already in use');
+      } else {
+        setPhoneError(null);
+      }
+    } catch (err) {
+      // Silently fail - validation will happen on submit
+    }
+  };
+
+  // Validate password strength
+  const validatePasswordStrength = (password: string) => {
+    if (!password) {
+      setPasswordError(null);
+      setPasswordStrength('weak');
+      return;
+    }
+
+    const errors: string[] = [];
+    let strength: 'weak' | 'medium' | 'strong' = 'weak';
+
+    if (password.length < 8) {
+      errors.push('At least 8 characters');
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      errors.push('One uppercase letter');
+    }
+
+    if (!/[a-z]/.test(password)) {
+      errors.push('One lowercase letter');
+    }
+
+    if (!/[0-9]/.test(password)) {
+      errors.push('One number');
+    }
+
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push('One special character');
+    }
+
+    if (errors.length === 0) {
+      if (password.length >= 12) {
+        strength = 'strong';
+      } else {
+        strength = 'medium';
+      }
+      setPasswordError(null);
+    } else {
+      setPasswordError(`Password must contain: ${errors.join(', ')}`);
+    }
+
+    setPasswordStrength(strength);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Frontend validation
+    if (emailError || phoneError || (formData.password && passwordError)) {
+      setError('Please fix the validation errors before submitting');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -668,10 +809,19 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
             <input
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, email: e.target.value });
+                checkEmail(e.target.value);
+              }}
+              onBlur={() => checkEmail(formData.email)}
               required
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+                emailError ? 'border-red-500' : 'border-slate-500/50'
+              }`}
             />
+            {emailError && (
+              <p className="mt-1 text-xs text-red-400">{emailError}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
@@ -680,22 +830,52 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
             <input
               type="tel"
               value={formData.phoneNumber}
-              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              onChange={(e) => {
+                setFormData({ ...formData, phoneNumber: e.target.value });
+                checkPhone(e.target.value);
+              }}
+              onBlur={() => checkPhone(formData.phoneNumber)}
+              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+                phoneError ? 'border-red-500' : 'border-slate-500/50'
+              }`}
               placeholder="+1234567890"
             />
+            {phoneError && (
+              <p className="mt-1 text-xs text-red-400">{phoneError}</p>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">
-              New Password <span className="text-xs text-slate-400">(leave blank to keep current)</span>
+              New Password <span className="text-xs text-slate-400">(leave blank to keep current, min 8 chars if changing)</span>
             </label>
             <input
               type="password"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              onChange={(e) => {
+                setFormData({ ...formData, password: e.target.value });
+                validatePasswordStrength(e.target.value);
+              }}
+              minLength={formData.password ? 8 : undefined}
+              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+                passwordError ? 'border-red-500' : formData.password && passwordStrength === 'strong' ? 'border-green-500' : formData.password && passwordStrength === 'medium' ? 'border-yellow-500' : 'border-slate-500/50'
+              }`}
               placeholder="Enter new password (optional)"
             />
+            {formData.password && (
+              <div className="mt-1">
+                {passwordError ? (
+                  <p className="text-xs text-red-400">{passwordError}</p>
+                ) : (
+                  <p className={`text-xs ${
+                    passwordStrength === 'strong' ? 'text-green-400' : 
+                    passwordStrength === 'medium' ? 'text-yellow-400' : 
+                    'text-slate-400'
+                  }`}>
+                    Password strength: <span className="font-semibold capitalize">{passwordStrength}</span>
+                  </p>
+                )}
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">Role</label>

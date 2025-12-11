@@ -29,9 +29,37 @@ export async function POST(request: NextRequest) {
 
     // If new password is provided, update it
     if (newPassword) {
-      if (newPassword.length < 6) {
+      if (newPassword.length < 8) {
         return NextResponse.json(
-          { success: false, error: 'Password must be at least 6 characters' },
+          { success: false, error: 'Password must be at least 8 characters long' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[A-Z]/.test(newPassword)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one uppercase letter' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[a-z]/.test(newPassword)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one lowercase letter' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[0-9]/.test(newPassword)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one number' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(newPassword)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one special character' },
           { status: 400 }
         );
       }

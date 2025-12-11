@@ -89,6 +89,42 @@ export async function PUT(
     if (isActive !== undefined) user.isActive = isActive;
     
     if (password) {
+      // Validate password strength
+      if (password.length < 8) {
+        return NextResponse.json(
+          { success: false, error: 'Password must be at least 8 characters long' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[A-Z]/.test(password)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one uppercase letter' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[a-z]/.test(password)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one lowercase letter' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[0-9]/.test(password)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one number' },
+          { status: 400 }
+        );
+      }
+
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        return NextResponse.json(
+          { success: false, error: 'Password must contain at least one special character' },
+          { status: 400 }
+        );
+      }
+
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
