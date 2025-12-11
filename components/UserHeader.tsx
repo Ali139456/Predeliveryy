@@ -604,7 +604,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
             </button>
             <button
               type="submit"
-              disabled={loading || !!emailError || !!phoneError || (formData.password && !!passwordError)}
+              disabled={loading || !!emailError || !!phoneError || (!!formData.password && !!passwordError)}
               className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-purple-500/50"
             >
               {loading ? 'Updating...' : 'Update Profile'}
