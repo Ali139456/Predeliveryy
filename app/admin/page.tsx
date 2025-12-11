@@ -380,6 +380,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
               <tr className="bg-gradient-to-r from-blue-600/50 to-purple-600/50 border-b-2 border-blue-500/50">
                 <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Name</th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Email</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Phone</th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Role</th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Status</th>
                 <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Actions</th>
@@ -395,6 +396,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
                 >
                   <td className="py-3 px-4 text-sm font-medium text-blue-200">{user.name}</td>
                   <td className="py-3 px-4 text-sm text-slate-300">{user.email}</td>
+                  <td className="py-3 px-4 text-sm text-slate-300">{user.phoneNumber || '-'}</td>
                   <td className="py-3 px-4">
                     <span className={`px-3 py-1 text-xs font-bold rounded-full ${
                       user.role === 'admin' 
@@ -462,6 +464,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phoneNumber: '',
     password: '',
     role: 'technician',
   });
@@ -521,6 +524,18 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
               className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">
+              Phone Number <span className="text-xs text-slate-400">(optional)</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              placeholder="+1234567890"
             />
           </div>
           <div>
@@ -587,6 +602,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
       const updateData: any = {
         name: formData.name,
         email: formData.email,
+        phoneNumber: formData.phoneNumber || undefined,
         role: formData.role,
         isActive: formData.isActive,
       };
@@ -654,6 +670,18 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               required
               className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">
+              Phone Number <span className="text-xs text-slate-400">(optional)</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              placeholder="+1234567890"
             />
           </div>
           <div>

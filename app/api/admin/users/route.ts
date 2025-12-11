@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     await requireAuth(['admin'])(request);
     await connectDB();
     
-    const { email, password, name, role, isActive } = await request.json();
+    const { email, phoneNumber, password, name, role, isActive } = await request.json();
 
     if (!email || !password || !name) {
       return NextResponse.json(
@@ -43,16 +43,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
+    // Check if email already exists
+    const existingUserByEmail = await User.findOne({ email: email.toLowerCase() });
+    if (existingUserByEmail) {
       return NextResponse.json(
         { success: false, error: 'User with this email already exists' },
         { status: 400 }
       );
     }
 
+    // Check if phone number already exists (if provided)
+    if (phoneNumber && phoneNumber.trim()) {
+      const existingUserByPhone = await User.findOne({ phoneNumber: phoneNumber.trim() });
+      if (existingUserByPhone) {
+        return NextResponse.json(
+          { success: false, error: 'User with this phone number already exists' },
+          { status: 400 }
+        );
+      }
+    }
+
       const user = await User.create({
         email: email.toLowerCase(),
+        phoneNumber: phoneNumber?.trim() || undefined,
         password,
         name,
         role: role || 'technician',
@@ -76,6 +89,7 @@ export async function POST(request: NextRequest) {
         data: {
           id: user._id,
           email: user.email,
+          phoneNumber: user.phoneNumber,
           name: user.name,
           role: user.role,
           isActive: user.isActive,

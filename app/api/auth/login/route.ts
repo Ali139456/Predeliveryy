@@ -6,16 +6,23 @@ import { generateToken } from '@/lib/auth';
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
-    const { email, password } = await request.json();
+    const { email, phoneNumber, password } = await request.json();
 
-    if (!email || !password) {
+    if ((!email && !phoneNumber) || !password) {
       return NextResponse.json(
-        { success: false, error: 'Email and password are required' },
+        { success: false, error: 'Email/Phone number and password are required' },
         { status: 400 }
       );
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() });
+    // Find user by email or phone number
+    let user;
+    if (email) {
+      user = await User.findOne({ email: email.toLowerCase() });
+    } else if (phoneNumber) {
+      user = await User.findOne({ phoneNumber: phoneNumber.trim() });
+    }
+
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'Invalid credentials' },
@@ -49,6 +56,7 @@ export async function POST(request: NextRequest) {
       user: {
         id: user._id,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         name: user.name,
         role: user.role,
       },

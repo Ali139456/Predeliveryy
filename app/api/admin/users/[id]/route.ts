@@ -47,7 +47,7 @@ export async function PUT(
     await requireAuth(['admin'])(request);
     await connectDB();
 
-    const { email, password, name, role, isActive } = await request.json();
+    const { email, phoneNumber, password, name, role, isActive } = await request.json();
     const user = await User.findById(params.id);
 
     if (!user) {
@@ -57,7 +57,33 @@ export async function PUT(
       );
     }
 
-    if (email) user.email = email.toLowerCase();
+    // Check if email is being changed and if it already exists
+    if (email && email.toLowerCase() !== user.email) {
+      const existingUserByEmail = await User.findOne({ email: email.toLowerCase() });
+      if (existingUserByEmail) {
+        return NextResponse.json(
+          { success: false, error: 'User with this email already exists' },
+          { status: 400 }
+        );
+      }
+      user.email = email.toLowerCase();
+    }
+
+    // Check if phone number is being changed and if it already exists
+    if (phoneNumber !== undefined) {
+      const trimmedPhone = phoneNumber?.trim() || '';
+      if (trimmedPhone && trimmedPhone !== user.phoneNumber) {
+        const existingUserByPhone = await User.findOne({ phoneNumber: trimmedPhone });
+        if (existingUserByPhone) {
+          return NextResponse.json(
+            { success: false, error: 'User with this phone number already exists' },
+            { status: 400 }
+          );
+        }
+      }
+      user.phoneNumber = trimmedPhone || undefined;
+    }
+
     if (name) user.name = name;
     if (role) user.role = role;
     if (isActive !== undefined) user.isActive = isActive;
@@ -76,7 +102,8 @@ export async function PUT(
       resourceId: user._id.toString(),
       details: {
         email: user.email,
-        changes: Object.keys({ email, name, role, isActive, password: password ? '***' : undefined }).filter(k => k),
+        phoneNumber: user.phoneNumber,
+        changes: Object.keys({ email, phoneNumber, name, role, isActive, password: password ? '***' : undefined }).filter(k => k),
       },
     });
 
@@ -85,6 +112,7 @@ export async function PUT(
       data: {
         id: user._id,
         email: user.email,
+        phoneNumber: user.phoneNumber,
         name: user.name,
         role: user.role,
         isActive: user.isActive,
