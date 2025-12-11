@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
   email: string;
-  phoneNumber?: string;
+  phoneNumber: string;
   password: string;
   name: string;
   role: 'technician' | 'manager' | 'admin';
@@ -25,8 +25,8 @@ const UserSchema: Schema = new Schema(
     },
     phoneNumber: {
       type: String,
+      required: true,
       unique: true,
-      sparse: true,
       trim: true,
       index: true,
     },

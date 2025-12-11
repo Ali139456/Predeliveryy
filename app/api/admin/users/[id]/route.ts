@@ -72,7 +72,13 @@ export async function PUT(
     // Check if phone number is being changed and if it already exists
     if (phoneNumber !== undefined) {
       const trimmedPhone = phoneNumber?.trim() || '';
-      if (trimmedPhone && trimmedPhone !== user.phoneNumber) {
+      if (!trimmedPhone) {
+        return NextResponse.json(
+          { success: false, error: 'Phone number is required' },
+          { status: 400 }
+        );
+      }
+      if (trimmedPhone !== user.phoneNumber) {
         const existingUserByPhone = await User.findOne({ phoneNumber: trimmedPhone });
         if (existingUserByPhone) {
           return NextResponse.json(
@@ -81,7 +87,7 @@ export async function PUT(
           );
         }
       }
-      user.phoneNumber = trimmedPhone || undefined;
+      user.phoneNumber = trimmedPhone;
     }
 
     if (name) user.name = name;

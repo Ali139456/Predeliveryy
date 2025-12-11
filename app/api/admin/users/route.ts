@@ -36,9 +36,16 @@ export async function POST(request: NextRequest) {
     
     const { email, phoneNumber, password, name, role, isActive } = await request.json();
 
-    if (!email || !password || !name) {
+    if (!email || !password || !name || !phoneNumber) {
       return NextResponse.json(
-        { success: false, error: 'Email, password, and name are required' },
+        { success: false, error: 'Email, phone number, password, and name are required' },
+        { status: 400 }
+      );
+    }
+
+    if (!phoneNumber.trim()) {
+      return NextResponse.json(
+        { success: false, error: 'Phone number is required' },
         { status: 400 }
       );
     }
@@ -88,20 +95,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if phone number already exists (if provided)
-    if (phoneNumber && phoneNumber.trim()) {
-      const existingUserByPhone = await User.findOne({ phoneNumber: phoneNumber.trim() });
-      if (existingUserByPhone) {
-        return NextResponse.json(
-          { success: false, error: 'User with this phone number already exists' },
-          { status: 400 }
-        );
-      }
+    // Check if phone number already exists
+    const existingUserByPhone = await User.findOne({ phoneNumber: phoneNumber.trim() });
+    if (existingUserByPhone) {
+      return NextResponse.json(
+        { success: false, error: 'User with this phone number already exists' },
+        { status: 400 }
+      );
     }
 
       const user = await User.create({
         email: email.toLowerCase(),
-        phoneNumber: phoneNumber?.trim() || undefined,
+        phoneNumber: phoneNumber.trim(),
         password,
         name,
         role: role || 'technician',

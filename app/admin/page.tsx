@@ -498,7 +498,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   // Validate phone uniqueness
   const checkPhone = async (phone: string) => {
     if (!phone || !phone.trim()) {
-      setPhoneError(null);
+      setPhoneError('Phone number is required');
       return;
     }
     
