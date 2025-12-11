@@ -586,6 +586,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
   const [formData, setFormData] = useState({
     name: user.name || '',
     email: user.email || '',
+    phoneNumber: user.phoneNumber || '',
     password: '',
     role: user.role || 'technician',
     isActive: user.isActive !== undefined ? user.isActive : true,
