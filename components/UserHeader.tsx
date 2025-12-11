@@ -3,12 +3,14 @@
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LogOut, User, LayoutDashboard, Home, Menu, X } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit } from 'lucide-react';
 
 function UserHeader() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -244,6 +246,18 @@ function UserHeader() {
                   </div>
                 </div>
               </div>
+
+              {/* Profile Edit Button */}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  setShowProfileModal(true);
+                }}
+                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-slate-800/60 text-white rounded-lg hover:bg-slate-700/80 transition-all shadow-md border border-purple-400/20 mb-2"
+              >
+                <Settings className="w-4 h-4 mr-2 text-purple-400" />
+                <span>Edit Profile</span>
+              </button>
 
               {/* Logout Button */}
               <button

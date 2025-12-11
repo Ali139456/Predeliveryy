@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
       user: {
         id: userDoc._id,
         email: userDoc.email,
+        phoneNumber: userDoc.phoneNumber,
         name: userDoc.name,
         role: userDoc.role,
         isActive: userDoc.isActive,
