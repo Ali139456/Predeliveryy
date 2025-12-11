@@ -475,8 +475,100 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
 
+  // Validate email uniqueness
+  const checkEmail = async (email: string) => {
+    if (!email) {
+      setEmailError(null);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/users/check-email?email=${encodeURIComponent(email.toLowerCase())}`);
+      const data = await response.json();
+      if (data.exists) {
+        setEmailError('This email is already in use');
+      } else {
+        setEmailError(null);
+      }
+    } catch (err) {
+      // Silently fail - validation will happen on submit
+    }
+  };
+
+  // Validate phone uniqueness
+  const checkPhone = async (phone: string) => {
+    if (!phone || !phone.trim()) {
+      setPhoneError(null);
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/users/check-phone?phone=${encodeURIComponent(phone.trim())}`);
+      const data = await response.json();
+      if (data.exists) {
+        setPhoneError('This phone number is already in use');
+      } else {
+        setPhoneError(null);
+      }
+    } catch (err) {
+      // Silently fail - validation will happen on submit
+    }
+  };
+
+  // Validate password strength
+  const validatePasswordStrength = (password: string) => {
+    if (!password) {
+      setPasswordError(null);
+      setPasswordStrength('weak');
+      return;
+    }
+
+    const errors: string[] = [];
+    let strength: 'weak' | 'medium' | 'strong' = 'weak';
+
+    if (password.length < 8) {
+      errors.push('At least 8 characters');
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      errors.push('One uppercase letter');
+    }
+
+    if (!/[a-z]/.test(password)) {
+      errors.push('One lowercase letter');
+    }
+
+    if (!/[0-9]/.test(password)) {
+      errors.push('One number');
+    }
+
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      errors.push('One special character');
+    }
+
+    if (errors.length === 0) {
+      if (password.length >= 12) {
+        strength = 'strong';
+      } else {
+        strength = 'medium';
+      }
+      setPasswordError(null);
+    } else {
+      setPasswordError(`Password must contain: ${errors.join(', ')}`);
+    }
+
+    setPasswordStrength(strength);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Frontend validation
+    if (emailError || phoneError || passwordError) {
+      setError('Please fix the validation errors before submitting');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
