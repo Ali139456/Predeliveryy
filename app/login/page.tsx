@@ -301,8 +301,8 @@ export default function LoginPage() {
                     </div>
                     <p className="mt-2 text-xs text-slate-400">
                       {resetUsePhone 
-                        ? 'Enter your phone number and we'll send you an OTP to reset your password.'
-                        : 'Enter your email address and we'll send you instructions to reset your password.'}
+                        ? "Enter your phone number and we'll send you an OTP to reset your password."
+                        : "Enter your email address and we'll send you instructions to reset your password."}
                     </p>
                   </div>
 
