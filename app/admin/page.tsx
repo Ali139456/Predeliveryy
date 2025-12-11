@@ -322,6 +322,8 @@ function UsersTab({ userRole }: { userRole?: string }) {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<any>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -414,7 +416,13 @@ function UsersTab({ userRole }: { userRole?: string }) {
                   </td>
                   <td className="py-3 px-4">
                     {userRole === 'admin' && (
-                      <button className="text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline">
+                      <button
+                        onClick={() => {
+                          setEditingUser(user);
+                          setShowEditModal(true);
+                        }}
+                        className="text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline cursor-pointer transition-colors"
+                      >
                         Edit
                       </button>
                     )}
@@ -430,6 +438,17 @@ function UsersTab({ userRole }: { userRole?: string }) {
         <AddUserModal
           onClose={() => {
             setShowAddModal(false);
+            fetchUsers();
+          }}
+        />
+      )}
+
+      {showEditModal && editingUser && (
+        <EditUserModal
+          user={editingUser}
+          onClose={() => {
+            setShowEditModal(false);
+            setEditingUser(null);
             fetchUsers();
           }}
         />
@@ -539,6 +558,152 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
               className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-purple-500/50"
             >
               {loading ? 'Creating...' : 'Create User'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
+  const [formData, setFormData] = useState({
+    name: user.name || '',
+    email: user.email || '',
+    password: '',
+    role: user.role || 'technician',
+    isActive: user.isActive !== undefined ? user.isActive : true,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const updateData: any = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+        isActive: formData.isActive,
+      };
+
+      // Only include password if it's provided
+      if (formData.password && formData.password.trim() !== '') {
+        updateData.password = formData.password;
+      }
+
+      const response = await fetch(`/api/admin/users/${user._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        onClose();
+      } else {
+        setError(data.error || 'Failed to update user');
+      }
+    } catch (err: any) {
+      setError(err.message || 'Failed to update user');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50 p-4">
+      <div className="bg-slate-800/95 bg-slate-800/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-purple-500/30 max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-purple-200 flex items-center">
+            <Edit className="w-6 h-6 mr-2" />
+            Edit User
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-200 transition-colors text-2xl"
+          >
+            ✕
+          </button>
+        </div>
+        {error && (
+          <div className="p-3 mb-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg bg-slate-800/95">
+            {error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Name</label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Email</label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              required
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">
+              New Password <span className="text-xs text-slate-400">(leave blank to keep current)</span>
+            </label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              placeholder="Enter new password (optional)"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Role</label>
+            <select
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white hover:bg-slate-600/70"
+            >
+              <option value="technician" className="bg-slate-700">Technician</option>
+              <option value="manager" className="bg-slate-700">Manager</option>
+              <option value="admin" className="bg-slate-700">Admin</option>
+            </select>
+          </div>
+          <div>
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                className="mr-3 w-5 h-5 rounded border-slate-500 text-purple-500 focus:ring-2 focus:ring-purple-500 bg-slate-600/50 cursor-pointer"
+              />
+              <span className="text-sm font-medium text-slate-200">Active User</span>
+            </label>
+          </div>
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-slate-500/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-purple-500/50"
+            >
+              {loading ? 'Updating...' : 'Update User'}
             </button>
           </div>
         </form>

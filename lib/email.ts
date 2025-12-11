@@ -29,6 +29,81 @@ function getFromEmail(): string {
   return process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 }
 
+export async function sendEmail(
+  recipients: string[],
+  subject: string,
+  body: string
+): Promise<void> {
+  // Check if Resend is configured
+  if (!isResendConfigured()) {
+    throw new Error(
+      `Email service is not configured. Please set up Resend API key in your environment variables.`
+    );
+  }
+
+  const client = getResendClient();
+  
+  if (!client) {
+    throw new Error('Resend client is not initialized. Please check your RESEND_API_KEY configuration.');
+  }
+
+  const fromEmail = getFromEmail();
+
+  try {
+    // Send email to all recipients
+    const { data, error } = await client.emails.send({
+      from: fromEmail,
+      to: recipients,
+      subject,
+      html: body,
+    });
+
+    if (error) {
+      // Check for specific Resend error types
+      if (error.message?.includes('API key') || error.message?.includes('Unauthorized')) {
+        throw new Error(
+          'Invalid Resend API key. Please check your RESEND_API_KEY environment variable.'
+        );
+      } else if (error.message?.includes('domain') || error.message?.includes('not verified') || error.message?.includes('from')) {
+        throw new Error(
+          `Cannot send to external emails with ${fromEmail}. ` +
+          'Please verify a domain in Resend and set RESEND_FROM_EMAIL to your verified email address.'
+        );
+      } else {
+        throw new Error(
+          `Failed to send email via Resend: ${error.message || 'Unknown error'}.`
+        );
+      }
+    }
+
+    if (!data) {
+      throw new Error('Email sending failed: No response from Resend API.');
+    }
+  } catch (error: any) {
+    // Re-throw if it's already a formatted error
+    if (error.message?.includes('Cannot send to external emails') || 
+        error.message?.includes('Invalid Resend API key')) {
+      throw error;
+    }
+    
+    // Provide more helpful error messages
+    if (error.message?.includes('API key') || error.message?.includes('Unauthorized')) {
+      throw new Error(
+        'Invalid Resend API key. Please check your RESEND_API_KEY environment variable.'
+      );
+    } else if (error.message?.includes('domain') || error.message?.includes('not verified') || error.message?.includes('from')) {
+      throw new Error(
+        `Cannot send to external emails with ${fromEmail}. ` +
+        'Please verify a domain in Resend and set RESEND_FROM_EMAIL to your verified email address.'
+      );
+    } else {
+      throw new Error(
+        `Failed to send email: ${error.message || 'Unknown error'}.`
+      );
+    }
+  }
+}
+
 export async function sendEmailWithPDF(
   recipients: string[],
   subject: string,
