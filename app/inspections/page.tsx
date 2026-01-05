@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Download, Eye, Calendar, FileText, ArrowLeft, Check } from 'lucide-react';
+import { Search, Download, Eye, Calendar, FileText, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Inspection {
@@ -104,71 +104,6 @@ export default function InspectionsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-black">
-        {/* Subtle light streaks effect */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-          <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Column - Content */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white leading-tight">
-                Inspection History
-              </h1>
-              
-              {/* Bullet Points */}
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Search and manage all your inspection reports
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Filter by status, date, and search terms
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Export PDF reports and view detailed inspection data
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column - Visual Element */}
-            <div className="relative hidden lg:block">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[#3833FF]/20 rounded-2xl blur-2xl transform rotate-6"></div>
-                <div className="relative bg-gradient-to-br from-[#3833FF]/10 to-black/50 rounded-2xl p-8 border border-[#3833FF]/30 backdrop-blur-sm">
-                  <div className="flex items-center justify-center h-64">
-                    <div className="text-center">
-                      <div className="w-24 h-24 rounded-2xl bg-[#3833FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#3833FF]/50">
-                        <FileText className="w-12 h-12 text-white" />
-                      </div>
-                      <p className="text-white/80 text-lg">Inspection Management</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-8">
         <Link
           href="/"

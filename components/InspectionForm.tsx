@@ -1449,10 +1449,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               return (
                 <div key={step.number} className="flex flex-col items-center group cursor-pointer" onClick={() => currentStep > step.number && setCurrentStep(step.number)}>
                   <div className="relative w-full flex justify-center">
-                    {/* Outer ring for active step */}
-                    {isActive && (
-                      <div className="absolute inset-0 rounded-full bg-blue-400/20 animate-pulse scale-125 -inset-2"></div>
-                    )}
                     <div
                       className={`relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-300 transform ${
                         isCompleted
