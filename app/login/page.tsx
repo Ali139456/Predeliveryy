@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LogIn, Mail, Lock, AlertCircle, KeyRound, User, Home } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -146,13 +146,13 @@ export default function LoginPage() {
                 <p className="text-black/70 text-sm sm:text-base">Sign in to your account to continue</p>
               </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {error && (
-            <div className="p-4 bg-red-900/50 border-2 border-red-500/50 rounded-xl flex items-start bg-slate-800/95">
-              <AlertCircle className="w-5 h-5 text-red-400 mr-3 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-300">{error}</p>
-            </div>
-          )}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
+                    <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-700 font-medium">{error}</p>
+                  </div>
+                )}
 
                 <div>
                   <div className="flex items-center gap-4 mb-2">
@@ -312,7 +312,7 @@ export default function LoginPage() {
                     <div className="relative">
                       {resetUsePhone ? (
                         <>
-                          <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                           <input
                             type="tel"
                             value={resetPhone}
@@ -325,7 +325,7 @@ export default function LoginPage() {
                         </>
                       ) : (
                         <>
-                          <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+                          <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                           <input
                             type="email"
                             value={resetEmail}
