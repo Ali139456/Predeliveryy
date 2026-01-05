@@ -7,7 +7,7 @@ import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, E
 
 function UserHeader() {
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -15,6 +15,12 @@ function UserHeader() {
   const pathname = usePathname();
 
   const checkAuth = useCallback(async () => {
+    // Skip auth check on login page
+    if (pathname === '/login') {
+      return;
+    }
+    
+    setLoading(true);
     try {
       const response = await fetch('/api/auth/me', {
         cache: 'no-store',
@@ -28,18 +34,12 @@ function UserHeader() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pathname]);
 
   // All hooks must be called before any conditional returns
   useEffect(() => {
-    // Don't fetch auth on login page
-    if (pathname === '/login') {
-      setLoading(false);
-      return;
-    }
-    
     checkAuth();
-  }, [pathname, checkAuth]);
+  }, [checkAuth]);
 
   const handleLogout = useCallback(async () => {
     try {
@@ -65,10 +65,7 @@ function UserHeader() {
     return null;
   }
 
-  if (loading) {
-    return null;
-  }
-
+  // Render navbar immediately - show logged out state while loading
   if (!user) {
     return (
       <div className="bg-black shadow-lg border-b border-[#3833FF]/30">
