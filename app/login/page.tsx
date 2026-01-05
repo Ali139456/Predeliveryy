@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogIn, Mail, Lock, AlertCircle, KeyRound, Check, FileCheck } from 'lucide-react';
+import Link from 'next/link';
+import { LogIn, Mail, Lock, AlertCircle, KeyRound, User, Home } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -103,78 +104,47 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-black">
-        {/* Subtle light streaks effect */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-          <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Column - Content */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white leading-tight">
-                Sign In
-              </h1>
-              
-              {/* Bullet Points */}
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Access your inspection dashboard
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Manage and track all your inspections
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Secure authentication with email or phone
-                  </p>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      {/* Navbar */}
+      <nav className="bg-black shadow-lg border-b border-[#3833FF]/30">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="text-lg sm:text-xl font-bold text-white hover:text-[#3833FF] transition-colors flex items-center group">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#3833FF] flex items-center justify-center mr-3 border border-[#3833FF]/30 group-hover:scale-110 transition-transform shadow-lg shadow-[#3833FF]/50">
+                <span className="text-white font-bold text-xs sm:text-sm">HI</span>
               </div>
-            </div>
-            
-            {/* Right Column - Visual Element */}
-            <div className="relative hidden lg:block">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[#3833FF]/20 rounded-2xl blur-2xl transform rotate-6"></div>
-                <div className="relative bg-gradient-to-br from-[#3833FF]/10 to-black/50 rounded-2xl p-8 border border-[#3833FF]/30 backdrop-blur-sm">
-                  <div className="flex items-center justify-center h-64">
-                    <div className="text-center">
-                      <div className="w-24 h-24 rounded-2xl bg-[#3833FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#3833FF]/50">
-                        <LogIn className="w-12 h-12 text-white" />
-                      </div>
-                      <p className="text-white/80 text-lg">Secure Login</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <span className="hidden sm:inline">Pre Delivery Inspection</span>
+              <span className="sm:hidden">Pre Delivery</span>
+            </Link>
+            <Link
+              href="/"
+              className="flex items-center px-4 sm:px-6 py-2 text-sm bg-[#3833FF]/10 hover:bg-[#3833FF]/20 text-white rounded-lg hover:scale-105 transition-all border border-[#3833FF]/30 font-semibold"
+            >
+              <Home className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Home</span>
+            </Link>
           </div>
         </div>
-      </div>
+      </nav>
 
-      <div className="flex items-center justify-center bg-white p-4 -mt-20 relative z-10">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#3833FF]/30">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-black mb-2">Pre delivery inspection</h1>
-          <p className="text-black/70">Sign in to your account</p>
-        </div>
+      {/* Main Content */}
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-4 py-8">
+        <div className="w-full max-w-md">
+          {/* Decorative Background Elements */}
+          <div className="relative">
+            <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#3833FF]/5 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
+            
+            {/* Login Card */}
+            <div className="relative bg-white rounded-3xl shadow-2xl w-full p-8 sm:p-10 border-2 border-[#3833FF]/20 backdrop-blur-sm">
+              {/* Icon Header */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#3833FF] to-blue-600 mb-6 shadow-lg shadow-[#3833FF]/50">
+                  <LogIn className="w-10 h-10 text-white" />
+                </div>
+                <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2">Welcome Back</h1>
+                <p className="text-black/70 text-sm sm:text-base">Sign in to your account to continue</p>
+              </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
@@ -184,104 +154,107 @@ export default function LoginPage() {
             </div>
           )}
 
-          <div>
-            <div className="flex items-center gap-4 mb-2">
-              <label className="block text-sm font-semibold text-slate-200">
-                {usePhone ? 'Phone Number' : 'Email Address'}
-              </label>
-              <button
-                type="button"
-                onClick={() => {
-                  setUsePhone(!usePhone);
-                  setEmail('');
-                  setPhoneNumber('');
-                }}
-                className="text-xs text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors"
-              >
-                {usePhone ? 'Use Email' : 'Use Phone'}
-              </button>
-            </div>
-            <div className="relative">
-              {usePhone ? (
-                <>
-                  <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
-                    placeholder="+1234567890"
-                  />
-                </>
-              ) : (
-                <>
-                  <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
-                    placeholder="your@email.com"
-                  />
-                </>
-              )}
+                <div>
+                  <div className="flex items-center gap-4 mb-2">
+                    <label className="block text-sm font-semibold text-black">
+                      {usePhone ? 'Phone Number' : 'Email Address'}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUsePhone(!usePhone);
+                        setEmail('');
+                        setPhoneNumber('');
+                      }}
+                      className="text-xs text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors font-medium"
+                    >
+                      {usePhone ? 'Use Email' : 'Use Phone'}
+                    </button>
+                  </div>
+                  <div className="relative">
+                    {usePhone ? (
+                      <>
+                        <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <input
+                          type="tel"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          required
+                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300"
+                          placeholder="+1234567890"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300"
+                          placeholder="your@email.com"
+                        />
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-semibold text-black">
+                      Password
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowResetPassword(true)}
+                      className="text-sm text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors font-medium"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300"
+                      placeholder="••••••••"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#3833FF] to-blue-600 text-white rounded-xl font-bold hover:from-[#3833FF]/90 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#3833FF]/50 hover:shadow-xl hover:shadow-[#3833FF]/70 hover:scale-[1.02] transform"
+                >
+                  {loading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Signing in...
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-5 h-5 mr-2" />
+                      Sign In
+                    </>
+                  )}
+                </button>
+              </form>
             </div>
           </div>
+        </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-semibold text-slate-200">
-                Password
-              </label>
-              <button
-                type="button"
-                onClick={() => setShowResetPassword(true)}
-                className="text-sm text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors"
-              >
-                Forgot password?
-              </button>
-            </div>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#3833FF]/50"
-          >
-            {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Signing in...
-              </>
-            ) : (
-              <>
-                <LogIn className="w-5 h-5 mr-2" />
-                Sign In
-              </>
-            )}
-          </button>
-        </form>
-
-        {/* Reset Password Modal */}
-        {showResetPassword && (
-          <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#3833FF]/30">
+      {/* Reset Password Modal */}
+      {showResetPassword && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 sm:p-10 border-2 border-[#3833FF]/20">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-black">
                   Reset Password
@@ -293,23 +266,23 @@ export default function LoginPage() {
                     setResetMessage(null);
                     setError(null);
                   }}
-                  className="text-slate-400 hover:text-slate-200 transition-colors"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   ✕
                 </button>
               </div>
 
               {resetMessage && (
-                <div className="p-4 bg-green-900/50 border-2 border-green-500/50 rounded-xl flex items-start mb-4 bg-slate-800/95">
-                  <AlertCircle className="w-5 h-5 text-green-400 mr-3 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-green-300">{resetMessage}</p>
+                <div className="p-4 bg-green-50 border-2 border-green-200 rounded-xl flex items-start mb-4">
+                  <AlertCircle className="w-5 h-5 text-green-600 mr-3 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-green-700 font-medium">{resetMessage}</p>
                 </div>
               )}
 
               {error && !resetMessage && (
-                <div className="p-4 bg-red-900/50 border-2 border-red-500/50 rounded-xl flex items-start mb-4 bg-slate-800/95">
-                  <AlertCircle className="w-5 h-5 text-red-400 mr-3 flex-shrink-0 mt-0.5" />
-                  <p className="text-sm text-red-300">{error}</p>
+                <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start mb-4">
+                  <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700 font-medium">{error}</p>
                 </div>
               )}
 
@@ -317,7 +290,7 @@ export default function LoginPage() {
                 <form onSubmit={handleResetPassword} className="space-y-6">
                   <div>
                     <div className="flex items-center gap-4 mb-2">
-                      <label className="block text-sm font-semibold text-slate-200">
+                      <label className="block text-sm font-semibold text-black">
                         {resetUsePhone ? 'Phone Number' : 'Email Address'}
                       </label>
                       <button
@@ -346,7 +319,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetPhone(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 disabled:opacity-50"
+                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 disabled:opacity-50"
                             placeholder="+1234567890"
                           />
                         </>
@@ -359,13 +332,13 @@ export default function LoginPage() {
                             onChange={(e) => setResetEmail(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 disabled:opacity-50"
+                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 disabled:opacity-50"
                             placeholder="your@email.com"
                           />
                         </>
                       )}
                     </div>
-                    <p className="mt-2 text-xs text-slate-400">
+                    <p className="mt-2 text-xs text-gray-500">
                       {resetUsePhone 
                         ? "Enter your phone number and we'll send you an OTP to reset your password."
                         : "Enter your email address and we'll send you instructions to reset your password."}
@@ -384,7 +357,7 @@ export default function LoginPage() {
                         setError(null);
                         setOtpSent(false);
                       }}
-                      className="flex-1 px-6 py-3 bg-slate-700 text-white rounded-xl font-semibold hover:bg-slate-600 transition-all"
+                      className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
                     >
                       Cancel
                     </button>
@@ -482,7 +455,7 @@ export default function LoginPage() {
                   }
                 }} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-slate-200 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       Enter OTP
                     </label>
                     <input
@@ -494,13 +467,13 @@ export default function LoginPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50 text-center text-2xl tracking-widest font-bold"
                       placeholder="000000"
                     />
-                    <p className="mt-2 text-xs text-slate-400 text-center">
+                    <p className="mt-2 text-xs text-gray-500 text-center">
                       Enter the 6-digit OTP sent to {resetPhone}
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-200 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       New Password
                     </label>
                     <input
@@ -512,13 +485,13 @@ export default function LoginPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
                       placeholder="Enter new password (min 8 chars)"
                     />
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-gray-500">
                       Must contain: uppercase, lowercase, number, special character
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-slate-200 mb-2">
+                    <label className="block text-sm font-semibold text-black mb-2">
                       Confirm Password
                     </label>
                     <input
@@ -543,7 +516,7 @@ export default function LoginPage() {
                         setResetMessage(null);
                         setError(null);
                       }}
-                      className="flex-1 px-6 py-3 bg-slate-700 text-white rounded-xl font-semibold hover:bg-slate-600 transition-all"
+                      className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
                     >
                       Back
                     </button>
