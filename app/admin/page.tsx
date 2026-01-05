@@ -16,7 +16,8 @@ import {
   Download,
   Search,
   Eye,
-  Edit
+  Edit,
+  Check
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 
@@ -95,27 +96,27 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mb-4"></div>
-          <p className="text-purple-300">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#3833FF] mb-4"></div>
+          <p className="text-black">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900">
+    <div className="min-h-screen bg-white">
       {/* Tabs */}
-      <div className="bg-slate-800/90 bg-slate-800/95 border-b border-slate-700/50 shadow-lg">
+      <div className="bg-white border-b border-[#3833FF]/30 shadow-lg">
         <div className="container mx-auto px-2 sm:px-4">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('overview')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'overview'
-                  ? 'text-purple-300 border-b-2 border-purple-500 bg-slate-700/50'
-                  : 'text-slate-300 hover:text-purple-300 hover:bg-slate-700/30'
+                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
+                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
               }`}
             >
               📊 Overview
@@ -124,8 +125,8 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('users')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'users'
-                  ? 'text-blue-300 border-b-2 border-blue-500 bg-slate-700/50'
-                  : 'text-slate-300 hover:text-blue-300 hover:bg-slate-700/30'
+                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
+                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
               }`}
             >
               👥 Users
@@ -134,8 +135,8 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('audit')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'audit'
-                  ? 'text-indigo-300 border-b-2 border-indigo-500 bg-slate-700/50'
-                  : 'text-slate-300 hover:text-indigo-300 hover:bg-slate-700/30'
+                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
+                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
               }`}
             >
               🔒 Audit Logs
@@ -144,8 +145,8 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('settings')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'settings'
-                  ? 'text-green-300 border-b-2 border-green-500 bg-slate-700/50'
-                  : 'text-slate-300 hover:text-green-300 hover:bg-slate-700/30'
+                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
+                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
               }`}
             >
               ⚙️ Settings
@@ -196,40 +197,40 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
+        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#3833FF]/30">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-blue-100">Total Inspections</h3>
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center bg-slate-800/95">
+            <h3 className="text-sm font-medium text-white/80">Total Inspections</h3>
+            <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center">
               <FileText className="w-6 h-6 text-white" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.total || 0}</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
+        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#3833FF]/30">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-green-100">Completed</h3>
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center bg-slate-800/95">
+            <h3 className="text-sm font-medium text-white/80">Completed</h3>
+            <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.completed || 0}</p>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
+        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#3833FF]/30">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-yellow-100">Drafts</h3>
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center bg-slate-800/95">
+            <h3 className="text-sm font-medium text-white/80">Drafts</h3>
+            <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center">
               <Clock className="w-6 h-6 text-white" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.draft || 0}</p>
         </div>
 
-        <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
+        <div className="bg-[#3833FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-purple-100">Total Users</h3>
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center bg-slate-800/95">
+            <h3 className="text-sm font-medium text-white">Total Users</h3>
+            <div className="w-12 h-12 rounded-xl bg-[#3833FF]/10 flex items-center justify-center bg-white">
               <Users className="w-6 h-6 text-white" />
             </div>
           </div>
@@ -238,24 +239,24 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
       </div>
 
       {/* Recent Inspections */}
-      <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-purple-500/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-3 shadow-lg shadow-purple-500/50">
+            <div className="w-10 h-10 rounded-xl bg-[#3833FF] flex items-center justify-center mr-3 shadow-lg shadow-[#3833FF]/50">
               <FileText className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-purple-200">Recent Inspections</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-black">Recent Inspections</h2>
           </div>
           
           {/* Search Bar */}
           <div className="relative flex-1 sm:flex-initial sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 sm:w-5 sm:h-5" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="text"
               placeholder="Search inspections..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
             />
           </div>
         </div>
@@ -263,40 +264,40 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gradient-to-r from-purple-600/50 to-pink-600/50 border-b-2 border-purple-500/50">
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-purple-200">Inspection #</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-purple-200">Inspector</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-purple-200">Status</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-purple-200">Date</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-purple-200">Actions</th>
+              <tr className="bg-[#3833FF] border-b-2 border-[#3833FF]/50">
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspection #</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspector</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Status</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Date</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredInspections.map((inspection, index) => (
                 <tr 
                   key={inspection._id} 
-                  className={`border-b border-slate-700/50 hover:bg-slate-700/50 transition-colors duration-150 ${
-                    index % 2 === 0 ? 'bg-slate-800/30' : 'bg-slate-800/50'
+                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                   }`}
                 >
-                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-purple-200">{inspection.inspectionNumber}</td>
-                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-slate-300">{inspection.inspectorName}</td>
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">{inspection.inspectionNumber}</td>
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{inspection.inspectorName}</td>
                   <td className="py-3 px-2 sm:px-4">
                     <span className={`px-2 sm:px-3 py-1 text-xs font-bold rounded-full ${
                       inspection.status === 'completed' 
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-md' 
-                        : 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-md'
+                        ? 'bg-green-100 text-green-700 shadow-md' 
+                        : 'bg-yellow-100 text-yellow-700 shadow-md'
                     }`}>
                       {inspection.status}
                     </span>
                   </td>
-                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-slate-300">
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
                     {new Date(inspection.createdAt).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-2 sm:px-4">
                     <Link
                       href={`/inspections/${inspection._id}?view=readonly`}
-                      className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-500 hover:to-indigo-500 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                      className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                     >
                       <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
                       <span className="hidden sm:inline">View</span>
@@ -347,8 +348,8 @@ function UsersTab({ userRole }: { userRole?: string }) {
   if (loading) {
     return (
       <div className="text-center py-8">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600"></div>
-        <p className="mt-4 text-purple-300">Loading users...</p>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#3833FF]"></div>
+        <p className="mt-4 text-black">Loading users...</p>
       </div>
     );
   }
@@ -357,15 +358,15 @@ function UsersTab({ userRole }: { userRole?: string }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mr-4 shadow-lg shadow-blue-500/50">
+          <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
             <Users className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-blue-200">Users</h2>
+          <h2 className="text-2xl font-bold text-black">Users</h2>
         </div>
         {userRole === 'admin' && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-purple-500 transition-all shadow-lg shadow-blue-500/50 hover:shadow-xl transform hover:scale-105"
+            className="flex items-center px-6 py-3 bg-[#3833FF] text-white rounded-xl hover:bg-[#3833FF]/90 transition-all shadow-lg shadow-[#3833FF]/50 hover:shadow-xl transform hover:scale-105"
           >
             <UserPlus className="w-5 h-5 mr-2" />
             Add User
@@ -373,58 +374,58 @@ function UsersTab({ userRole }: { userRole?: string }) {
         )}
       </div>
 
-      <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl p-6 border-2 border-blue-500/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gradient-to-r from-blue-600/50 to-purple-600/50 border-b-2 border-blue-500/50">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Name</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Email</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Phone</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Role</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-blue-200">Actions</th>
+              <tr className="bg-[#3833FF] border-b-2 border-[#3833FF]/50">
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Name</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Email</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Phone</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Role</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Status</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Actions</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user, index) => (
                 <tr 
                   key={user._id} 
-                  className={`border-b border-slate-700/50 hover:bg-slate-700/50 transition-colors duration-150 ${
-                    index % 2 === 0 ? 'bg-slate-800/30' : 'bg-slate-800/50'
+                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 ${
+                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                   }`}
                 >
-                  <td className="py-3 px-4 text-sm font-medium text-blue-200">{user.name}</td>
-                  <td className="py-3 px-4 text-sm text-slate-300">{user.email}</td>
-                  <td className="py-3 px-4 text-sm text-slate-300">{user.phoneNumber || '-'}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">{user.name}</td>
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{user.email}</td>
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{user.phoneNumber || '-'}</td>
+                  <td className="py-3 px-2 sm:px-4">
+                    <span className={`px-2 sm:px-3 py-1 text-xs font-bold rounded-full ${
                       user.role === 'admin' 
-                        ? 'bg-gradient-to-r from-red-500 to-pink-500 text-white'
+                        ? 'bg-red-100 text-red-700'
                         : user.role === 'manager'
-                        ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white'
-                        : 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-green-100 text-green-700'
                     } shadow-md`}>
                       {user.role}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
-                    <span className={`px-3 py-1 text-xs font-bold rounded-full shadow-md ${
+                  <td className="py-3 px-2 sm:px-4">
+                    <span className={`px-2 sm:px-3 py-1 text-xs font-bold rounded-full shadow-md ${
                       user.isActive 
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white' 
-                        : 'bg-gradient-to-r from-red-500 to-rose-500 text-white'
+                        ? 'bg-green-100 text-green-700' 
+                        : 'bg-red-100 text-red-700'
                     }`}>
                       {user.isActive ? '✓ Active' : '✗ Inactive'}
                     </span>
                   </td>
-                  <td className="py-3 px-4">
+                  <td className="py-3 px-2 sm:px-4">
                     {userRole === 'admin' && (
                       <button
                         onClick={() => {
                           setEditingUser(user);
                           setShowEditModal(true);
                         }}
-                        className="text-sm font-medium text-blue-400 hover:text-blue-300 hover:underline cursor-pointer transition-colors"
+                        className="text-xs sm:text-sm font-medium text-[#3833FF] hover:text-[#3833FF]/80 hover:underline cursor-pointer transition-colors"
                       >
                         Edit
                       </button>
@@ -594,8 +595,8 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50">
-      <div className="bg-slate-800/95 bg-slate-800/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-purple-500/30">
-        <h2 className="text-2xl font-bold mb-6 text-purple-200">Add User</h2>
+      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#3833FF]/30">
+        <h2 className="text-2xl font-bold mb-6 text-white">Add User</h2>
         {error && (
           <div className="p-3 mb-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg bg-slate-800/95">
             {error}
@@ -709,7 +710,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-purple-500/50"
+              className="flex-1 px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#3833FF]/50"
             >
               {loading ? 'Creating...' : 'Create User'}
             </button>
@@ -872,9 +873,9 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-800/95 bg-slate-800/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-purple-500/30 max-h-[90vh] overflow-y-auto">
+      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#3833FF]/30 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-purple-200 flex items-center">
+          <h2 className="text-2xl font-bold text-white flex items-center">
             <Edit className="w-6 h-6 mr-2" />
             Edit User
           </h2>
@@ -993,7 +994,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="mr-3 w-5 h-5 rounded border-slate-500 text-purple-500 focus:ring-2 focus:ring-purple-500 bg-slate-600/50 cursor-pointer"
+                className="mr-3 w-5 h-5 rounded border-white/20 text-[#3833FF] focus:ring-2 focus:ring-[#3833FF] bg-black/50 cursor-pointer"
               />
               <span className="text-sm font-medium text-slate-200">Active User</span>
             </label>
@@ -1009,7 +1010,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-purple-500/50"
+              className="flex-1 px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#3833FF]/50"
             >
               {loading ? 'Updating...' : 'Update User'}
             </button>

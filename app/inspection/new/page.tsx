@@ -11,7 +11,7 @@ import Link from 'next/link';
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
   loading: () => (
     <div className="flex items-center justify-center py-12">
-      <div className="animate-spin rounded-full h-8 w-8 border-4 border-purple-200 border-t-purple-600"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-gray-200 border-t-[#3833FF]"></div>
     </div>
   ),
   ssr: false,
@@ -91,10 +91,10 @@ export default function NewInspectionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mb-4"></div>
-          <p className="text-purple-300">Loading...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#3833FF] mb-4"></div>
+          <p className="text-black">Loading...</p>
         </div>
       </div>
     );
@@ -102,7 +102,7 @@ export default function NewInspectionPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-x-hidden">
+      <div className="min-h-screen bg-white overflow-x-hidden">
         <div className="container mx-auto px-4 py-8 overflow-x-hidden">
           {toast && (
             <Toast
@@ -113,33 +113,33 @@ export default function NewInspectionPage() {
           )}
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-5 py-3 mb-8 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 hover:from-purple-600/40 hover:to-indigo-600/40 text-purple-200 hover:text-white rounded-xl border-2 border-purple-500/30 hover:border-purple-400/50 shadow-lg hover:shadow-purple-500/50 transition-all duration-300 group backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-5 py-3 mb-8 bg-[#3833FF]/10 hover:bg-[#3833FF]/20 text-black rounded-xl border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 shadow-lg transition-all duration-300 group"
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
               <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
             </div>
             <span className="font-semibold">Back to Home</span>
           </Link>
 
-          <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-2xl p-8 md:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-red-500/30">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-red-500/30">
             <div className="text-center py-12">
               <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-6">
                 <FileCheck className="w-10 h-10 text-red-400" />
               </div>
-              <h2 className="text-3xl font-bold text-red-300 mb-4">Login Required</h2>
-              <p className="text-purple-200 mb-8 text-lg">
+              <h2 className="text-3xl font-bold text-red-600 mb-4">Login Required</h2>
+              <p className="text-black mb-8 text-lg">
                 You need to be logged in to start a new inspection.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   href="/login"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-500 hover:to-indigo-500 transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/50"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all duration-300 hover:scale-105 shadow-lg"
                 >
                   Go to Login
                 </Link>
                 <Link
                   href="/"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-slate-700/80 text-purple-300 rounded-xl font-semibold hover:bg-slate-600/80 transition-all duration-300 hover:scale-105 border-2 border-purple-500/50"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-gray-100 text-black rounded-xl font-semibold hover:bg-gray-200 transition-all duration-300 hover:scale-105 border-2 border-[#3833FF]/50"
                 >
                   Back to Home
                 </Link>
@@ -152,26 +152,26 @@ export default function NewInspectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 overflow-x-hidden">
+    <div className="min-h-screen bg-white overflow-x-hidden">
       <div className="container mx-auto px-4 py-8 overflow-x-hidden">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-5 py-3 mb-8 bg-gradient-to-r from-purple-600/20 to-indigo-600/20 hover:from-purple-600/40 hover:to-indigo-600/40 text-purple-200 hover:text-white rounded-xl border-2 border-purple-500/30 hover:border-purple-400/50 shadow-lg hover:shadow-purple-500/50 transition-all duration-300 group backdrop-blur-sm"
+          className="inline-flex items-center gap-2 px-5 py-3 mb-8 bg-[#3833FF]/10 hover:bg-[#3833FF]/20 text-black rounded-xl border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 shadow-lg transition-all duration-300 group"
         >
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+          <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
             <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
           </div>
           <span className="font-semibold">Back to Home</span>
         </Link>
 
-        <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-2xl p-8 md:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-purple-500/30">
+        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#3833FF]/30">
           <div className="flex items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mr-4 shadow-lg shadow-purple-500/50">
+            <div className="w-16 h-16 rounded-2xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
               <FileCheck className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300 mb-2">New Pre delivery inspection</h1>
-              <p className="text-purple-200">Complete the form below to create a new inspection report</p>
+              <h1 className="text-4xl font-bold text-black mb-2">New Pre Delivery Inspection</h1>
+              <p className="text-black/70">Complete the form below to create a new inspection report</p>
             </div>
           </div>
           <InspectionForm />

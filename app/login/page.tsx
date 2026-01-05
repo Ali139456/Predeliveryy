@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { LogIn, Mail, Lock, AlertCircle, KeyRound } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle, KeyRound, Check, FileCheck } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -103,11 +103,77 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-indigo-900 p-4">
-      <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-purple-500/30">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-black">
+        {/* Subtle light streaks effect */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
+          <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left Column - Content */}
+            <div>
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white leading-tight">
+                Sign In
+              </h1>
+              
+              {/* Bullet Points */}
+              <div className="space-y-4">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-lg sm:text-xl text-white/90">
+                    Access your inspection dashboard
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-lg sm:text-xl text-white/90">
+                    Manage and track all your inspections
+                  </p>
+                </div>
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
+                    <Check className="w-4 h-4 text-white" />
+                  </div>
+                  <p className="text-lg sm:text-xl text-white/90">
+                    Secure authentication with email or phone
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Right Column - Visual Element */}
+            <div className="relative hidden lg:block">
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#3833FF]/20 rounded-2xl blur-2xl transform rotate-6"></div>
+                <div className="relative bg-gradient-to-br from-[#3833FF]/10 to-black/50 rounded-2xl p-8 border border-[#3833FF]/30 backdrop-blur-sm">
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                      <div className="w-24 h-24 rounded-2xl bg-[#3833FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#3833FF]/50">
+                        <LogIn className="w-12 h-12 text-white" />
+                      </div>
+                      <p className="text-white/80 text-lg">Secure Login</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center bg-white p-4 -mt-20 relative z-10">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#3833FF]/30">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300 mb-2">Pre delivery inspection</h1>
-          <p className="text-purple-200">Sign in to your account</p>
+          <h1 className="text-3xl font-bold text-black mb-2">Pre delivery inspection</h1>
+          <p className="text-black/70">Sign in to your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -130,7 +196,7 @@ export default function LoginPage() {
                   setEmail('');
                   setPhoneNumber('');
                 }}
-                className="text-xs text-purple-300 hover:text-purple-200 hover:underline transition-colors"
+                className="text-xs text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors"
               >
                 {usePhone ? 'Use Email' : 'Use Phone'}
               </button>
@@ -144,7 +210,7 @@ export default function LoginPage() {
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
                     required
-                    className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
                     placeholder="+1234567890"
                   />
                 </>
@@ -156,7 +222,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
                     placeholder="your@email.com"
                   />
                 </>
@@ -172,7 +238,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowResetPassword(true)}
-                className="text-sm text-purple-300 hover:text-purple-200 hover:underline transition-colors"
+                className="text-sm text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors"
               >
                 Forgot password?
               </button>
@@ -184,7 +250,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+                className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
                 placeholder="••••••••"
               />
             </div>
@@ -193,7 +259,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50"
+            className="w-full flex items-center justify-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#3833FF]/50"
           >
             {loading ? (
               <>
@@ -215,9 +281,9 @@ export default function LoginPage() {
         {/* Reset Password Modal */}
         {showResetPassword && (
           <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50 p-4">
-            <div className="bg-slate-800/95 rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-purple-500/30">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#3833FF]/30">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-indigo-300">
+                <h2 className="text-2xl font-bold text-black">
                   Reset Password
                 </h2>
                 <button
@@ -265,7 +331,7 @@ export default function LoginPage() {
                         setNewPassword('');
                         setConfirmPassword('');
                       }}
-                        className="text-xs text-purple-300 hover:text-purple-200 hover:underline transition-colors"
+                        className="text-xs text-[#3833FF] hover:text-[#3833FF]/80 hover:underline transition-colors"
                       >
                         {resetUsePhone ? 'Use Email' : 'Use Phone'}
                       </button>
@@ -280,7 +346,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetPhone(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 disabled:opacity-50"
+                            className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 disabled:opacity-50"
                             placeholder="+1234567890"
                           />
                         </>
@@ -293,7 +359,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetEmail(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 disabled:opacity-50"
+                            className="w-full pl-12 pr-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 disabled:opacity-50"
                             placeholder="your@email.com"
                           />
                         </>
@@ -325,7 +391,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={resetLoading}
-                      className="flex-1 flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50"
+                      className="flex-1 flex items-center justify-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#3833FF]/50"
                     >
                       {resetLoading ? (
                         <>
@@ -425,7 +491,7 @@ export default function LoginPage() {
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       required
                       maxLength={6}
-                      className="w-full px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 text-center text-2xl tracking-widest font-bold"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50 text-center text-2xl tracking-widest font-bold"
                       placeholder="000000"
                     />
                     <p className="mt-2 text-xs text-slate-400 text-center">
@@ -443,7 +509,7 @@ export default function LoginPage() {
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
                       placeholder="Enter new password (min 8 chars)"
                     />
                     <p className="mt-1 text-xs text-slate-400">
@@ -461,7 +527,7 @@ export default function LoginPage() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full px-4 py-3 border border-slate-500/50 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
                       placeholder="Confirm new password"
                     />
                   </div>
@@ -484,7 +550,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={resetLoading || otp.length !== 6 || !newPassword || !confirmPassword}
-                      className="flex-1 flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-500 hover:to-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-500/50"
+                      className="flex-1 flex items-center justify-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#3833FF]/50"
                     >
                       {resetLoading ? (
                         <>

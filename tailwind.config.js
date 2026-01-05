@@ -8,6 +8,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        autograb: {
+          blue: '#3833FF',
+        },
         primary: {
           50: '#eff6ff',
           100: '#dbeafe',

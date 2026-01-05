@@ -103,7 +103,7 @@ function ItemPhotoUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading || photos.length >= maxPhotos}
-            className="flex items-center px-2 py-1 text-xs bg-purple-600/50 text-purple-200 rounded-lg hover:bg-purple-600/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center px-2 py-1 text-xs bg-[#3833FF]/50 text-white rounded-lg hover:bg-[#3833FF]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Upload className="w-3 h-3 mr-1" />
             {uploading ? 'Uploading...' : 'Add'}

@@ -115,7 +115,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
             <button
               type="button"
               onClick={startScanning}
-              className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 shadow-md"
+              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 shadow-md"
             >
               <QrCode className="w-4 h-4 mr-2" />
               {scanType === 'VIN' ? 'Scan VIN' : scanType === 'COMPLIANCE' ? 'Scan Compliance Plate' : 'Scan Barcode'}

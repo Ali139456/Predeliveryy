@@ -245,7 +245,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-200 flex items-center">
+        <label className="text-sm font-medium text-black flex items-center">
           <Navigation className="w-4 h-4 mr-2" />
           GPS Location Tracking
         </label>
@@ -258,7 +258,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
               type="button"
               onClick={captureStartLocation}
               disabled={loading}
-              className="flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors"
+              className="flex items-center justify-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-colors"
             >
               <Play className="w-4 h-4 mr-2" />
               Capture Start
@@ -267,7 +267,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
               type="button"
               onClick={captureEndLocation}
               disabled={loading}
-              className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+              className="flex items-center justify-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-colors"
             >
               <Square className="w-4 h-4 mr-2" />
               Capture End
@@ -279,7 +279,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
               type="button"
               onClick={startRoadTest}
               disabled={loading}
-              className="w-full flex items-center justify-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-colors"
+              className="w-full flex items-center justify-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-colors"
             >
               <Navigation className="w-4 h-4 mr-2" />
               Start Road Test
@@ -299,18 +299,18 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
       )}
 
       {value?.start && (
-        <div className="p-4 bg-green-900/40 border border-green-500/50 rounded-lg bg-slate-800/95">
+        <div className="p-4 bg-green-50 border border-green-300 rounded-lg">
           <div className="flex items-start">
-            <MapPin className="w-5 h-5 text-green-400 mr-2 mt-0.5" />
+            <MapPin className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-green-200">Start Location</p>
-              <p className="text-sm text-green-300">
+              <p className="text-sm font-medium text-black">Start Location</p>
+              <p className="text-sm text-black">
                 {value.start.latitude.toFixed(6)}, {value.start.longitude.toFixed(6)}
               </p>
               {value.start.address && (
-                <p className="text-xs text-green-400 mt-1">{value.start.address}</p>
+                <p className="text-xs text-black/70 mt-1">{value.start.address}</p>
               )}
-              <p className="text-xs text-green-400 mt-1">
+              <p className="text-xs text-black/70 mt-1">
                 {new Date(value.start.timestamp).toLocaleString()}
               </p>
             </div>
@@ -319,18 +319,18 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
       )}
 
       {value?.end && (
-        <div className="p-4 bg-red-900/40 border border-red-500/50 rounded-lg bg-slate-800/95">
+        <div className="p-4 bg-red-50 border border-red-300 rounded-lg">
           <div className="flex items-start">
-            <MapPin className="w-5 h-5 text-red-400 mr-2 mt-0.5" />
+            <MapPin className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-red-200">End Location</p>
-              <p className="text-sm text-red-300">
+              <p className="text-sm font-medium text-black">End Location</p>
+              <p className="text-sm text-black">
                 {value.end.latitude.toFixed(6)}, {value.end.longitude.toFixed(6)}
               </p>
               {value.end.address && (
-                <p className="text-xs text-red-400 mt-1">{value.end.address}</p>
+                <p className="text-xs text-black/70 mt-1">{value.end.address}</p>
               )}
-              <p className="text-xs text-red-400 mt-1">
+              <p className="text-xs text-black/70 mt-1">
                 {new Date(value.end.timestamp).toLocaleString()}
               </p>
             </div>
@@ -339,18 +339,18 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
       )}
 
       {value?.roadTest && (
-        <div className="p-4 bg-blue-900/40 border border-blue-500/50 rounded-lg bg-slate-800/95">
+        <div className="p-4 bg-blue-50 border border-blue-300 rounded-lg">
           <div className="flex items-start">
-            <Navigation className="w-5 h-5 text-blue-400 mr-2 mt-0.5" />
+            <Navigation className="w-5 h-5 text-blue-600 mr-2 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-blue-200">Road Test</p>
-              <p className="text-sm text-blue-300">
+              <p className="text-sm font-medium text-black">Road Test</p>
+              <p className="text-sm text-black">
                 Distance: {value.roadTest.distance?.toFixed(2) || '0.00'} km
               </p>
-              <p className="text-sm text-blue-300">
+              <p className="text-sm text-black">
                 Duration: {value.roadTest.duration || 0} minutes
               </p>
-              <p className="text-xs text-blue-400 mt-1">
+              <p className="text-xs text-black/70 mt-1">
                 Route points: {value.roadTest.route?.length || 0}
               </p>
             </div>
@@ -359,16 +359,16 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
       )}
 
       {value?.current && (
-        <div className="p-4 bg-slate-700/50 border border-slate-500/50 rounded-lg bg-slate-800/95">
+        <div className="p-4 bg-gray-50 border border-gray-300 rounded-lg">
           <div className="flex items-start">
-            <MapPin className="w-5 h-5 text-slate-300 mr-2 mt-0.5" />
+            <MapPin className="w-5 h-5 text-gray-600 mr-2 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-slate-200">Current Location</p>
-              <p className="text-sm text-slate-300">
+              <p className="text-sm font-medium text-black">Current Location</p>
+              <p className="text-sm text-black">
                 {value.current.latitude.toFixed(6)}, {value.current.longitude.toFixed(6)}
               </p>
               {value.current.address && (
-                <p className="text-xs text-slate-400 mt-1">{value.current.address}</p>
+                <p className="text-xs text-black/70 mt-1">{value.current.address}</p>
               )}
             </div>
           </div>
@@ -376,7 +376,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
       )}
 
       {error && (
-        <div className="p-3 bg-red-900/50 border border-red-500/50 rounded-lg text-red-300 text-sm bg-slate-800/95">
+        <div className="p-3 bg-red-50 border border-red-300 rounded-lg text-red-700 text-sm">
           {error}
         </div>
       )}

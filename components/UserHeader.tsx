@@ -71,11 +71,11 @@ function UserHeader() {
 
   if (!user) {
     return (
-      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 shadow-lg border-b border-purple-700">
+      <div className="bg-black shadow-lg border-b border-[#3833FF]/30">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg sm:text-xl font-bold text-white hover:text-purple-200 transition-colors flex items-center">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-500/30 bg-slate-800/95 flex items-center justify-center mr-2 border border-purple-400/30">
+            <Link href="/" className="text-lg sm:text-xl font-bold text-white hover:text-[#3833FF] transition-colors flex items-center">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#3833FF] flex items-center justify-center mr-2 border border-[#3833FF]/30">
                 <span className="text-white font-bold text-xs sm:text-sm">HI</span>
               </div>
               <span className="hidden sm:inline">Pre delivery inspection</span>
@@ -83,7 +83,7 @@ function UserHeader() {
             </Link>
             <Link
               href="/login"
-              className="flex items-center px-4 sm:px-6 py-2 text-xs sm:text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-all shadow-lg hover:shadow-xl font-semibold border border-purple-400/30"
+              className="flex items-center px-4 sm:px-6 py-2 text-xs sm:text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-lg hover:shadow-xl font-semibold border border-[#3833FF]/30"
             >
               <User className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Login</span>
@@ -117,12 +117,12 @@ function UserHeader() {
   };
 
   return (
-    <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 shadow-lg border-b border-purple-700">
+    <div className="bg-black shadow-lg border-b border-[#3833FF]/30">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="text-lg sm:text-xl font-bold text-white hover:text-purple-200 transition-colors flex items-center">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-purple-500/30 bg-slate-800/95 flex items-center justify-center mr-2 border border-purple-400/30">
+          <Link href="/" className="text-lg sm:text-xl font-bold text-white hover:text-[#3833FF] transition-colors flex items-center">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#3833FF] flex items-center justify-center mr-2 border border-[#3833FF]/30">
               <span className="text-white font-bold text-xs sm:text-sm">HI</span>
             </div>
             <span className="hidden sm:inline">PreDelivery</span>
@@ -137,8 +137,8 @@ function UserHeader() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
                 pathname === '/'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-400/50 shadow-purple-500/50'
-                  : 'bg-slate-800/80 text-purple-200 hover:bg-slate-700/80 border-purple-500/30 hover:border-purple-400/50'
+                  ? 'bg-[#3833FF] text-white border-[#3833FF]/50 shadow-[#3833FF]/50'
+                  : 'bg-black/50 text-white hover:bg-black/70 border-[#3833FF]/30 hover:border-[#3833FF]/50'
               }`}
             >
               <Home className="w-4 h-4 mr-2" />
@@ -152,8 +152,8 @@ function UserHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
                   pathname === '/admin'
-                    ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white border-indigo-400/50 shadow-indigo-500/50'
-                    : 'bg-slate-800/80 text-indigo-200 hover:bg-slate-700/80 border-indigo-500/30 hover:border-indigo-400/50'
+                    ? 'bg-[#3833FF] text-white border-[#3833FF]/50 shadow-[#3833FF]/50'
+                    : 'bg-white text-black hover:bg-gray-50 border-[#3833FF]/30 hover:border-[#3833FF]/50'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -162,9 +162,9 @@ function UserHeader() {
             )}
 
             {/* User Info Section */}
-            <div className="flex items-center gap-3 ml-2 pl-3 border-l border-purple-500/30">
+            <div className="flex items-center gap-3 ml-2 pl-3 border-l border-[#3833FF]/30">
               {/* User Avatar & Name */}
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/60 rounded-lg border border-purple-400/20">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-black/50 rounded-lg border border-[#3833FF]/30">
                 <User className={`w-4 h-4 ${getRoleColor(user.role).includes('red') ? 'text-red-400' : getRoleColor(user.role).includes('blue') ? 'text-blue-400' : 'text-green-400'}`} />
                 <div className="text-white">
                   <div className="text-sm font-bold text-white leading-tight">
@@ -182,7 +182,7 @@ function UserHeader() {
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center px-3 py-2 text-sm bg-slate-800/60 text-white rounded-lg hover:bg-slate-700/80 transition-all shadow-md hover:shadow-lg border border-purple-400/20 hover:scale-105"
+                  className="flex items-center px-3 py-2 text-sm bg-black/50 text-white rounded-lg hover:bg-black/70 transition-all shadow-md hover:shadow-lg border border-[#3833FF]/30 hover:scale-105"
                   title="Profile Menu"
                 >
                   <MoreVertical className="w-4 h-4" />
@@ -195,16 +195,16 @@ function UserHeader() {
                       className="fixed inset-0 z-10"
                       onClick={() => setProfileDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-slate-800/95 rounded-lg shadow-xl border-2 border-purple-500/30 z-20 overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-56 bg-black rounded-lg shadow-xl border-2 border-[#3833FF]/30 z-20 overflow-hidden">
                       <div className="py-2">
                         <button
                           onClick={() => {
                             setProfileDropdownOpen(false);
                             setShowProfileModal(true);
                           }}
-                          className="w-full flex items-center px-4 py-3 text-left text-sm text-slate-200 hover:bg-slate-700/50 transition-colors"
+                          className="w-full flex items-center px-4 py-3 text-left text-sm text-white hover:bg-black/80 transition-colors"
                         >
-                          <Settings className="w-4 h-4 mr-3 text-purple-400" />
+                          <Settings className="w-4 h-4 mr-3 text-[#3833FF]" />
                           <span>Edit Profile</span>
                         </button>
                         <button
@@ -212,7 +212,7 @@ function UserHeader() {
                             setProfileDropdownOpen(false);
                             handleLogout();
                           }}
-                          className="w-full flex items-center px-4 py-3 text-left text-sm text-red-300 hover:bg-red-900/30 transition-colors"
+                          className="w-full flex items-center px-4 py-3 text-left text-sm text-red-400 hover:bg-red-900/30 transition-colors"
                         >
                           <LogOut className="w-4 h-4 mr-3" />
                           <span>Logout</span>
@@ -228,7 +228,7 @@ function UserHeader() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-10 h-10 text-white hover:bg-purple-700/50 rounded-lg transition-colors"
+            className="lg:hidden flex items-center justify-center w-10 h-10 text-white hover:bg-[#3833FF]/50 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -237,15 +237,15 @@ function UserHeader() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4 border-t border-purple-700/50 pt-4 space-y-3">
+          <div className="lg:hidden mt-4 pb-4 border-t border-[#3833FF]/30 pt-4 space-y-3">
             {/* Home Button */}
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center w-full px-4 py-3 rounded-lg font-semibold transition-all shadow-md border ${
                 pathname === '/'
-                  ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white border-purple-400/50'
-                  : 'bg-slate-800/80 text-purple-200 border-purple-500/30'
+                  ? 'bg-[#3833FF] text-white border-[#3833FF]/50'
+                  : 'bg-black/50 text-white border-[#3833FF]/30 hover:bg-black/70'
               }`}
             >
               <Home className="w-5 h-5 mr-3" />
@@ -259,8 +259,8 @@ function UserHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center w-full px-4 py-3 rounded-lg font-semibold transition-all shadow-md border ${
                   pathname === '/admin'
-                    ? 'bg-gradient-to-r from-indigo-600 to-blue-600 text-white border-indigo-400/50'
-                    : 'bg-slate-800/80 text-indigo-200 border-indigo-500/30'
+                    ? 'bg-[#3833FF] text-white border-[#3833FF]/50'
+                    : 'bg-white text-black border-[#3833FF]/30'
                 }`}
               >
                 <LayoutDashboard className="w-5 h-5 mr-3" />
@@ -269,7 +269,7 @@ function UserHeader() {
             )}
 
             {/* User Info Section */}
-            <div className="px-4 py-3 bg-slate-800/60 rounded-lg border border-purple-400/20 space-y-3">
+            <div className="px-4 py-3 bg-black/50 rounded-lg border border-[#3833FF]/30 space-y-3">
               {/* User Avatar & Name */}
               <div className="flex items-center gap-3">
                 <User className={`w-5 h-5 ${getRoleColor(user.role).includes('red') ? 'text-red-400' : getRoleColor(user.role).includes('blue') ? 'text-blue-400' : 'text-green-400'}`} />
@@ -289,9 +289,9 @@ function UserHeader() {
                   setMobileMenuOpen(false);
                   setShowProfileModal(true);
                 }}
-                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-slate-800/60 text-white rounded-lg hover:bg-slate-700/80 transition-all shadow-md border border-purple-400/20 mb-2"
+                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-black/70 text-white rounded-lg hover:bg-black/90 transition-all shadow-md border border-[#3833FF]/30 mb-2"
               >
-                <Settings className="w-4 h-4 mr-2 text-purple-400" />
+                <Settings className="w-4 h-4 mr-2 text-[#3833FF]" />
                 <span>Edit Profile</span>
               </button>
 
@@ -301,7 +301,7 @@ function UserHeader() {
                   setMobileMenuOpen(false);
                   handleLogout();
                 }}
-                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-red-600/40 bg-slate-800/95 text-white rounded-lg hover:bg-red-500/50 transition-all shadow-md border border-red-400/20"
+                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-all shadow-md border border-red-300"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 <span>Logout</span>
@@ -478,21 +478,21 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-slate-800/95 rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-purple-500/30 relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#3833FF]/30 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+          className="absolute top-4 right-4 text-black/60 hover:text-black transition-colors"
           title="Close"
         >
           <X className="w-6 h-6" />
         </button>
         
         <div className="flex items-center mb-6">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mr-4 shadow-lg shadow-purple-500/50">
+          <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
             <Settings className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-purple-200">Edit Profile</h2>
+          <h2 className="text-2xl font-bold text-black">Edit Profile</h2>
         </div>
 
         {success && (
@@ -515,7 +515,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50"
             />
           </div>
 
@@ -530,7 +530,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               }}
               onBlur={() => checkEmail(formData.email)}
               required
-              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50 ${
                 emailError ? 'border-red-500' : 'border-slate-500/50'
               }`}
             />
@@ -550,7 +550,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               }}
               onBlur={() => checkPhone(formData.phoneNumber)}
               required
-              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50 ${
                 phoneError ? 'border-red-500' : 'border-slate-500/50'
               }`}
               placeholder="+1234567890"
@@ -572,7 +572,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
                 validatePasswordStrength(e.target.value);
               }}
               minLength={formData.password ? 8 : undefined}
-              className={`w-full px-4 py-2 border rounded-lg bg-slate-600/50 text-white placeholder-slate-400 hover:bg-slate-600/70 ${
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50 ${
                 passwordError ? 'border-red-500' : formData.password && passwordStrength === 'strong' ? 'border-green-500' : formData.password && passwordStrength === 'medium' ? 'border-yellow-500' : 'border-slate-500/50'
               }`}
               placeholder="Enter new password (optional)"
@@ -598,14 +598,14 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-slate-500/50 text-slate-300 rounded-lg hover:bg-slate-700/50 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-300 text-black rounded-lg hover:bg-gray-100 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading || !!emailError || !!phoneError || (!!formData.password && !!passwordError)}
-              className="flex-1 px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 transition-all shadow-lg shadow-purple-500/50"
+              className="flex-1 px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#3833FF]/50"
             >
               {loading ? 'Updating...' : 'Update Profile'}
             </button>

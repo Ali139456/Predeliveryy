@@ -14,14 +14,14 @@ import Toast from './Toast';
 // Lazy load heavy components
 const BarcodeScanner = dynamic(() => import('./BarcodeScanner'), {
   ssr: false,
-  loading: () => <div className="text-slate-400">Loading scanner...</div>,
+  loading: () => <div className="text-black">Loading scanner...</div>,
 });
 
 const SignaturePad = dynamic(() => import('./SignaturePad'), {
   ssr: false,
-  loading: () => <div className="text-slate-400">Loading signature pad...</div>,
+  loading: () => <div className="text-black">Loading signature pad...</div>,
 });
-import { Save, Send, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, Check } from 'lucide-react';
+import { Save, Send, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, Check, User, Car, MapPin, ClipboardCheck, FileText, PenTool } from 'lucide-react';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -251,12 +251,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const totalSteps = 6;
   const steps = [
-    { number: 1, title: 'Inspector Info', icon: '👤' },
-    { number: 2, title: 'Vehicle & Barcode', icon: '🚗' },
-    { number: 3, title: 'GPS & Photos', icon: '📍' },
-    { number: 4, title: 'Checklist', icon: '✅' },
-    { number: 5, title: 'Disclaimer', icon: '📋' },
-    { number: 6, title: 'Signatures', icon: '✍️' },
+    { number: 1, title: 'Inspector Info', icon: User },
+    { number: 2, title: 'Vehicle & Barcode', icon: Car },
+    { number: 3, title: 'GPS & Photos', icon: MapPin },
+    { number: 4, title: 'Checklist', icon: ClipboardCheck },
+    { number: 5, title: 'Disclaimer', icon: FileText },
+    { number: 6, title: 'Signatures', icon: PenTool },
   ];
 
   const {
@@ -786,20 +786,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStep1 = () => (
-    <div className="bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-blue-500/30">
-      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-blue-400/30">
+    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30">
+      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
         <div className="flex items-center flex-1">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mr-3 shadow-lg shadow-blue-500/50 flex-shrink-0">
-            <span className="text-white font-bold text-base">1</span>
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+            <span className="text-white font-bold text-lg">1</span>
           </div>
-          <h2 className="text-xl font-bold text-blue-200">Inspector Information</h2>
+          <h2 className="text-xl font-bold text-black">Inspector Information</h2>
         </div>
         {!readOnly && inspectionId && (
           <button
             type="button"
             onClick={saveInspectorInfo}
             disabled={sectionSaving.inspectorInfo}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+            className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
           >
             {sectionSaving.inspectorInfo ? (
               <>
@@ -823,13 +823,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+          <label className="block text-xs font-semibold text-black mb-1.5">
             Inspector Name <span className="text-red-400">*</span>
           </label>
           <input
             {...register('inspectorName')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           {errors.inspectorName && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorName.message}</p>
@@ -837,14 +837,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+          <label className="block text-xs font-semibold text-black mb-1.5">
             Inspector Email <span className="text-red-400">*</span>
           </label>
           <input
             type="email"
             {...register('inspectorEmail')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           {errors.inspectorEmail && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorEmail.message}</p>
@@ -852,14 +852,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-200 mb-1.5">
+          <label className="block text-xs font-semibold text-black mb-1.5">
             Inspection Date <span className="text-red-400">*</span>
           </label>
           <input
             type="date"
             {...register('inspectionDate')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-400 transition-all bg-slate-600/50 text-white ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           {errors.inspectionDate && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectionDate.message}</p>
@@ -871,15 +871,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep2 = () => (
     <>
-      <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 border-2 border-purple-500/30 ${readOnly ? '' : 'mb-4'}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-purple-200">Barcode / QR Code</h3>
+          <h3 className="text-base font-bold text-black">Barcode / QR Code</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveBarcode}
               disabled={sectionSaving.barcode}
-              className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.barcode ? (
                 <>
@@ -913,20 +913,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         />
       </div>
 
-      <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-orange-500/30 ${readOnly ? 'mt-6' : ''}`}>
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-orange-400/30">
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30 ${readOnly ? 'mt-6' : ''}`}>
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
           <div className="flex items-center flex-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center mr-3 shadow-lg shadow-orange-500/50 flex-shrink-0">
-              <span className="text-white font-bold text-base">2</span>
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+              <span className="text-white font-bold text-lg">2</span>
             </div>
-            <h2 className="text-xl font-bold text-orange-200">Vehicle Information</h2>
+            <h2 className="text-xl font-bold text-black">Vehicle Information</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveVehicleInfo}
               disabled={sectionSaving.vehicleInfo}
-              className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.vehicleInfo ? (
                 <>
@@ -947,76 +947,76 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             </button>
           )}
         </div>
-        <div className="mb-4 p-3 bg-orange-900/20 border border-orange-500/30 rounded-lg">
-          <p className="text-xs text-orange-200 font-semibold mb-1">Header Details</p>
-          <p className="text-xs text-slate-300">Complete all vehicle information fields below</p>
+        <div className="mb-4 p-3 bg-[#3833FF]/10 border border-[#3833FF]/30 rounded-lg">
+          <p className="text-xs text-black font-semibold mb-1">Header Details</p>
+          <p className="text-xs text-black/70">Complete all vehicle information fields below</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
             {...register('vehicleInfo.dealer')}
             placeholder="Dealer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <input
             {...register('vehicleInfo.make')}
             placeholder="Make"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <input
             {...register('vehicleInfo.model')}
             placeholder="Model"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <input
             {...register('vehicleInfo.dealerStockNo')}
             placeholder="Dealer Stock No"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <input
             {...register('vehicleInfo.vin')}
             placeholder="VIN"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <input
             {...register('vehicleInfo.engine')}
             placeholder="Engine"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <input
             {...register('vehicleInfo.odometer')}
             placeholder="Odometer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Compliance Date</label>
+            <label className="block text-xs text-black mb-1">Compliance Date</label>
             <input
               {...register('vehicleInfo.complianceDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
             />
           </div>
           <div>
-            <label className="block text-xs text-slate-300 mb-1">Build Date</label>
+            <label className="block text-xs text-black mb-1">Build Date</label>
             <input
               {...register('vehicleInfo.buildDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
             />
           </div>
           <input
             {...register('vehicleInfo.licensePlate')}
             placeholder="License Plate"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
         </div>
         <div>
@@ -1024,7 +1024,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {...register('vehicleInfo.bookingNumber')}
             placeholder="Booking Number"
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-slate-500/50 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-400 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
           />
         </div>
       </div>
@@ -1033,15 +1033,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep3 = () => (
     <>
-      <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 border-2 border-green-500/30 ${readOnly ? '' : 'mb-4'}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-green-200">GPS Location & Road Test</h3>
+          <h3 className="text-base font-bold text-black">GPS Location & Road Test</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveGPSLocation}
               disabled={sectionSaving.location}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.location ? (
                 <>
@@ -1065,15 +1065,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <EnhancedGPSLocation onLocationChange={setLocation} value={location} readOnly={readOnly} />
       </div>
 
-      <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 border-2 border-pink-500/30 ${readOnly ? 'mt-6' : ''}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? 'mt-6' : ''}`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-pink-200">General Photos</h3>
+          <h3 className="text-base font-bold text-black">General Photos</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={savePhotos}
               disabled={sectionSaving.photos}
-              className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.photos ? (
                 <>
@@ -1111,20 +1111,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     };
 
     return (
-      <div className="bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-purple-500/30">
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-purple-400/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30">
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
           <div className="flex items-center flex-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mr-3 shadow-lg shadow-purple-500/50 flex-shrink-0">
-              <span className="text-white font-bold text-base">3</span>
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+              <span className="text-white font-bold text-lg">4</span>
             </div>
-            <h2 className="text-xl font-bold text-purple-200">Inspection Checklist</h2>
+            <h2 className="text-xl font-bold text-black">Inspection Checklist</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveChecklist}
               disabled={sectionSaving.checklist}
-              className="flex items-center px-3 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-3 py-1.5 text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.checklist ? (
                 <>
@@ -1147,15 +1147,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         {/* Action Codes Legend */}
-        <div className="mb-6 p-4 bg-gradient-to-r from-purple-900/40 to-indigo-900/40 border-2 border-purple-500/30 rounded-xl">
-          <h3 className="text-sm font-bold text-purple-200 mb-3">Action Codes</h3>
+        <div className="mb-6 p-4 bg-[#3833FF]/10 border-2 border-[#3833FF]/30 rounded-xl">
+          <h3 className="text-sm font-bold text-black mb-3">Action Codes</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
             <div className="flex items-center gap-2">
               <span className="font-bold text-green-300">OK</span>
-              <span className="text-slate-300">= Satisfactory</span>
+              <span className="text-black">= Satisfactory</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-blue-300">C</span>
+              <span className="font-bold text-black">C</span>
               <span className="text-slate-300">= Clean</span>
             </div>
             <div className="flex items-center gap-2">
@@ -1163,7 +1163,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <span className="text-slate-300">= Adjust</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-orange-300">R</span>
+              <span className="font-bold text-black">R</span>
               <span className="text-slate-300">= Repair</span>
             </div>
             <div className="flex items-center gap-2">
@@ -1171,7 +1171,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <span className="text-slate-300">= Replace</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-slate-400">N</span>
+              <span className="font-bold text-black">N</span>
               <span className="text-slate-300">= Not applicable</span>
             </div>
           </div>
@@ -1187,19 +1187,19 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               key={category.id} 
               className={`border-2 rounded-xl p-4 ${
                 isExt 
-                  ? 'border-blue-500/50 bg-blue-900/20' 
+                  ? 'border-blue-200 bg-blue-50' 
                   : isInt 
-                  ? 'border-amber-500/50 bg-amber-900/20' 
-                  : 'border-slate-500/30 bg-slate-700/50'
+                  ? 'border-amber-200 bg-amber-50' 
+                  : 'border-gray-200 bg-gray-50'
               }`}
             >
               <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
-                isExt ? 'border-blue-400/30' : isInt ? 'border-amber-400/30' : 'border-slate-500/30'
+                isExt ? 'border-blue-300' : isInt ? 'border-amber-300' : 'border-gray-300'
               }`}>
                 {isExt && <span className="text-2xl">🚗</span>}
                 {isInt && <span className="text-2xl">🚙</span>}
                 <h3 className={`text-base font-bold ${
-                  isExt ? 'text-blue-200' : isInt ? 'text-amber-200' : 'text-purple-200'
+                  isExt ? 'text-blue-700' : isInt ? 'text-amber-700' : 'text-black'
                 }`}>
                   {categoryName || `Category ${categoryIndex + 1}`}
                 </h3>
@@ -1207,13 +1207,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <input
                 {...register(`checklist.${categoryIndex}.category`)}
                 disabled={readOnly}
-                className={`w-full px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${
+                className={`w-full px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 transition-all bg-white text-black placeholder-gray-400 ${
                   isExt 
-                    ? 'border-blue-500/50 focus:ring-blue-500 focus:border-blue-400' 
+                    ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                     : isInt 
-                    ? 'border-amber-500/50 focus:ring-amber-500 focus:border-amber-400' 
-                    : 'border-slate-500/50 focus:ring-purple-500 focus:border-purple-400'
-                } ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+                    ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
+                    : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
                 placeholder="Category name"
               />
 
@@ -1224,58 +1224,58 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     key={itemIndex} 
                     className={`mb-3 p-3 rounded-lg border ${
                       isExt 
-                        ? 'bg-blue-900/10 border-blue-500/30' 
+                        ? 'bg-blue-50 border-blue-200' 
                         : isInt 
-                        ? 'bg-amber-900/10 border-amber-500/30' 
-                        : 'bg-gradient-to-r from-slate-600/50 to-slate-700/50 border-slate-500/30'
+                        ? 'bg-amber-50 border-amber-200' 
+                        : 'bg-gray-50 border-gray-200'
                     }`}
                   >
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
                       <input
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)}
                         disabled={readOnly}
-                        className={`flex-1 w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-slate-600/50 text-white placeholder-slate-400 ${
+                        className={`flex-1 w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-white text-black placeholder-gray-400 ${
                           isExt 
-                            ? 'border-blue-500/50 focus:ring-blue-500 focus:border-blue-400' 
+                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
-                            ? 'border-amber-500/50 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-slate-500/50 focus:ring-purple-500 focus:border-purple-400'
-                        } ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+                            ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
+                            : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
                         placeholder="Item name"
                       />
                       <select
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.status`)}
                         disabled={readOnly}
-                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-slate-600/50 text-white font-medium w-full sm:w-auto ${
+                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-white text-black font-medium w-full sm:w-auto ${
                           isExt 
-                            ? 'border-blue-500/50 focus:ring-blue-500 focus:border-blue-400' 
+                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
-                            ? 'border-amber-500/50 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-slate-500/50 focus:ring-purple-500 focus:border-purple-400'
-                        } ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+                            ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
+                            : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
                       >
-                        <option value="OK" className="bg-slate-700">✅ OK - Satisfactory</option>
-                        <option value="C" className="bg-slate-700">🧹 C - Clean</option>
-                        <option value="A" className="bg-slate-700">🔧 A - Adjust</option>
-                        <option value="R" className="bg-slate-700">🔨 R - Repair</option>
-                        <option value="RP" className="bg-slate-700">🔄 RP - Replace</option>
-                        <option value="N" className="bg-slate-700">➖ N - Not applicable</option>
-                        <option value="pass" className="bg-slate-700">✅ Pass (Legacy)</option>
-                        <option value="fail" className="bg-slate-700">❌ Fail (Legacy)</option>
-                        <option value="na" className="bg-slate-700">➖ N/A (Legacy)</option>
+                        <option value="OK">✅ OK - Satisfactory</option>
+                        <option value="C">🧹 C - Clean</option>
+                        <option value="A">🔧 A - Adjust</option>
+                        <option value="R">🔨 R - Repair</option>
+                        <option value="RP">🔄 RP - Replace</option>
+                        <option value="N">➖ N - Not applicable</option>
+                        <option value="pass">✅ Pass (Legacy)</option>
+                        <option value="fail">❌ Fail (Legacy)</option>
+                        <option value="na">➖ N/A (Legacy)</option>
                       </select>
                     </div>
                     <textarea
                       {...register(`checklist.${categoryIndex}.items.${itemIndex}.notes`)}
                       placeholder="Notes (optional)"
                       disabled={readOnly}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-slate-600/50 text-white placeholder-slate-400 resize-none mb-2 ${
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-white text-black placeholder-gray-400 resize-none mb-2 ${
                         isExt 
-                          ? 'border-blue-500/50 focus:ring-blue-500 focus:border-blue-400' 
+                          ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                           : isInt 
-                          ? 'border-amber-500/50 focus:ring-amber-500 focus:border-amber-400' 
-                          : 'border-slate-500/50 focus:ring-purple-500 focus:border-purple-400'
-                      } ${readOnly ? 'bg-slate-700/50 cursor-not-allowed opacity-60' : 'hover:bg-slate-600/70'}`}
+                          ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
+                          : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                      } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
                       rows={2}
                     />
                     <ItemPhotoUpload
@@ -1300,22 +1300,22 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStep5 = () => (
-    <div className="bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-yellow-500/30">
-      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-yellow-400/30">
+    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30">
+      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
         <div className="flex items-center flex-1">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center mr-3 shadow-lg shadow-yellow-500/50 flex-shrink-0">
-            <span className="text-white font-bold text-base">5</span>
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+            <span className="text-white font-bold text-lg">5</span>
           </div>
-          <h2 className="text-xl font-bold text-yellow-200">Disclaimer & Terms</h2>
+          <h2 className="text-xl font-bold text-black">Disclaimer & Terms</h2>
         </div>
       </div>
 
-      <div className="bg-slate-700/50 rounded-lg p-4 md:p-6 border border-yellow-500/30">
-        <h3 className="text-base font-bold text-yellow-200 mb-4">Pre delivery inspection Pty Ltd - Inspection Disclaimer</h3>
-        <div className="text-sm text-slate-300 space-y-4 leading-relaxed">
+      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-[#3833FF]/30">
+        <h3 className="text-base font-bold text-black mb-4">Pre delivery inspection Pty Ltd - Inspection Disclaimer</h3>
+        <div className="text-sm text-black space-y-4 leading-relaxed">
           <p>
-            This inspection report has been prepared by <strong className="text-yellow-200">Pre delivery inspection Pty Ltd</strong> 
-            {" ("}<strong className="text-yellow-200">Pre delivery inspection</strong>{") "}to identify potential health or safety hazards commonly 
+            This inspection report has been prepared by <strong className="text-black">Pre delivery inspection Pty Ltd</strong> 
+            {" ("}<strong className="text-black">Pre delivery inspection</strong>{") "}to identify potential health or safety hazards commonly 
             associated with recovered stolen vehicles, including but not limited to sharps and meth residue.
           </p>
           <p>
@@ -1336,8 +1336,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
       </div>
 
-      <div className="bg-yellow-900/20 border-2 border-yellow-500/50 rounded-lg p-4">
-        <p className="text-sm text-yellow-200 font-semibold text-center">
+      <div className="bg-[#3833FF]/10 border-2 border-[#3833FF]/50 rounded-lg p-4">
+        <p className="text-sm text-black font-semibold text-center">
           By proceeding with the signature step, you acknowledge that you have read, understood, and agree to the terms and conditions 
           outlined in this disclaimer.
         </p>
@@ -1347,20 +1347,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep6 = () => (
     <>
-      <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-green-500/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-green-400/30">
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
           <div className="flex items-center flex-1">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mr-3 shadow-lg shadow-green-500/50 flex-shrink-0">
-              <span className="text-white font-bold text-base">6</span>
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+              <span className="text-white font-bold text-lg">6</span>
             </div>
-            <h2 className="text-xl font-bold text-green-200">Signatures</h2>
+            <h2 className="text-xl font-bold text-black">Signatures</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveSignatures}
               disabled={sectionSaving.signatures}
-              className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.signatures ? (
                 <>
@@ -1439,36 +1439,53 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       {/* Progress Indicator - Only show for new/editing inspections */}
       {!readOnly && (
-        <div className="bg-slate-800/95 rounded-2xl shadow-xl p-3 sm:p-4 border-2 border-purple-500/30 mb-4">
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-1 mb-3">
-            {steps.map((step, index) => (
-              <div key={step.number} className="flex flex-col items-center">
-                <div
-                  className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-300 ${
-                    currentStep > step.number
-                      ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white shadow-lg shadow-green-500/50'
-                      : currentStep === step.number
-                      ? 'bg-gradient-to-br from-purple-500 to-indigo-500 text-white shadow-lg shadow-purple-500/50 scale-110'
-                      : 'bg-slate-700 text-slate-400'
-                  }`}
-                >
-                  {currentStep > step.number ? (
-                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                  ) : (
-                    <span className="text-xs sm:text-sm">{step.icon}</span>
-                  )}
+        <div className="bg-white rounded-2xl shadow-xl p-3 sm:p-4 md:p-6 border-2 border-[#3833FF]/30 mb-4">
+          <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4">
+            {steps.map((step, index) => {
+              const IconComponent = step.icon;
+              const isCompleted = currentStep > step.number;
+              const isActive = currentStep === step.number;
+              
+              return (
+                <div key={step.number} className="flex flex-col items-center group cursor-pointer" onClick={() => currentStep > step.number && setCurrentStep(step.number)}>
+                  <div className="relative w-full flex justify-center">
+                    {/* Outer ring for active step */}
+                    {isActive && (
+                      <div className="absolute inset-0 rounded-full bg-blue-400/20 animate-pulse scale-125 -inset-2"></div>
+                    )}
+                    <div
+                      className={`relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-300 transform ${
+                        isCompleted
+                          ? 'bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 text-white hover:scale-110'
+                          : isActive
+                          ? 'bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white scale-105 sm:scale-110 ring-2 sm:ring-4 ring-blue-400/30'
+                          : 'bg-gradient-to-br from-sky-400 via-sky-500 to-cyan-500 text-white hover:from-sky-500 hover:to-cyan-600'
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" strokeWidth={2.5} />
+                      ) : (
+                        <IconComponent className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${isActive ? 'animate-pulse' : ''}`} strokeWidth={2} />
+                      )}
+                    </div>
+                  </div>
+                  <span className={`text-[9px] sm:text-[10px] md:text-xs mt-1.5 sm:mt-2 font-semibold text-center leading-tight transition-colors px-0.5 ${
+                    isActive 
+                      ? 'text-blue-600 font-bold' 
+                      : isCompleted 
+                      ? 'text-green-600' 
+                      : 'text-sky-600'
+                  }`}>
+                    <span className="hidden sm:inline">{step.title}</span>
+                    <span className="sm:hidden">{step.number}</span>
+                  </span>
                 </div>
-                <span className={`text-[9px] sm:text-[10px] mt-1 font-medium text-center leading-tight ${
-                  currentStep >= step.number ? 'text-purple-200' : 'text-slate-400'
-                }`}>
-                  {step.title}
-                </span>
-              </div>
-            ))}
+              );
+            })}
           </div>
-          <div className="text-center">
-            <p className="text-xs text-slate-300">
-              Step {currentStep} of {totalSteps}
+          <div className="text-center pt-2 border-t border-gray-200">
+            <p className="text-xs sm:text-sm font-semibold text-black">
+              Step <span className="text-[#3833FF]">{currentStep}</span> of <span className="text-gray-600">{totalSteps}</span>
             </p>
           </div>
         </div>
@@ -1503,8 +1520,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             disabled={currentStep === 1}
             className={`flex items-center justify-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md w-full sm:w-auto ${
               currentStep === 1
-                ? 'bg-slate-700/50 text-slate-500 cursor-not-allowed'
-                : 'bg-slate-700 text-slate-200 hover:bg-slate-600 hover:scale-105'
+                ? 'bg-red-500 text-white cursor-not-allowed'
+                : 'bg-black text-white hover:bg-gray-800 hover:scale-105'
             }`}
           >
             <ChevronLeft className="w-4 h-4 mr-1.5" />
@@ -1516,7 +1533,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center justify-center px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-500/50 hover:scale-105 w-full sm:w-auto"
+                className="flex items-center justify-center px-4 py-2 text-sm bg-[#3833FF] text-white rounded-lg font-semibold hover:bg-[#3833FF]/90 transition-all shadow-lg shadow-[#3833FF]/50 hover:scale-105 w-full sm:w-auto"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1.5" />
@@ -1528,7 +1545,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     type="button"
                     onClick={() => handleSubmit(onSubmit)()}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-purple-500/50 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#3833FF] text-white rounded-lg font-bold shadow-lg shadow-[#3833FF]/50 hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
                   >
                     {submitting ? (
                       <>
@@ -1567,7 +1584,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       )();
                     }}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-bold shadow-lg shadow-purple-500/50 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#3833FF] text-white rounded-lg font-bold shadow-lg shadow-[#3833FF]/50 hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
                   >
                     <Save className="w-4 h-4 mr-1.5" />
                     {submitting ? 'Completing...' : 'Complete Inspection'}

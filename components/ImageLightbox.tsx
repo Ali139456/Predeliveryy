@@ -29,7 +29,7 @@ export default function ImageLightbox({ isOpen, imageUrl, onClose }: ImageLightb
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm"
       onClick={onClose}
     >
-      <div className="relative max-w-2xl w-full mx-4 bg-slate-800 rounded-xl shadow-2xl border-2 border-purple-500/30 p-4" onClick={(e) => e.stopPropagation()}>
+      <div className="relative max-w-2xl w-full mx-4 bg-slate-800 rounded-xl shadow-2xl border-2 border-[#3833FF]/30 p-4" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
           className="absolute top-2 right-2 z-10 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-1.5 transition-all shadow-lg"

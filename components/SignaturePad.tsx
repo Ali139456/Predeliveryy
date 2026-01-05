@@ -50,8 +50,8 @@ export default function SignaturePad({ onSave, label, value, width = 400, height
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm font-medium text-slate-200 mb-2">{label}</label>
-      <div className="border-2 border-slate-500/50 rounded-lg bg-slate-800 relative">
+      <label className="block text-sm font-medium text-black mb-2">{label}</label>
+      <div className="border-2 border-gray-300 rounded-lg bg-white relative">
         <SignatureCanvas
           ref={sigPadRef}
           canvasProps={{
@@ -60,12 +60,12 @@ export default function SignaturePad({ onSave, label, value, width = 400, height
             className: `w-full h-full rounded-lg ${readOnly ? 'pointer-events-none opacity-75' : ''}`,
           }}
           onEnd={readOnly ? undefined : handleEnd}
-          backgroundColor="#1e293b"
-          penColor="#ffffff"
+          backgroundColor="#ffffff"
+          penColor="#000000"
         />
         {isEmpty && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <p className="text-slate-400 text-sm">Sign here</p>
+            <p className="text-gray-400 text-sm">Sign here</p>
           </div>
         )}
       </div>
@@ -74,7 +74,7 @@ export default function SignaturePad({ onSave, label, value, width = 400, height
           <button
             type="button"
             onClick={clear}
-            className="flex items-center px-3 py-1.5 text-sm bg-slate-600 text-slate-200 rounded-lg hover:bg-slate-500 transition-colors"
+            className="flex items-center px-3 py-1.5 text-sm bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition-colors"
           >
             <RotateCcw className="w-4 h-4 mr-1" />
             Clear
@@ -83,15 +83,15 @@ export default function SignaturePad({ onSave, label, value, width = 400, height
             type="button"
             onClick={save}
             disabled={isEmpty}
-            className="flex items-center px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center px-3 py-1.5 text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             Save Signature
           </button>
         </div>
       )}
       {value && !isEmpty && (
-        <div className="p-2 bg-green-900/50 border border-green-500/50 rounded-lg bg-slate-800/95">
-          <p className="text-xs text-green-300">✓ Signature saved</p>
+        <div className="p-2 bg-green-50 border border-green-300 rounded-lg">
+          <p className="text-xs text-green-700">✓ Signature saved</p>
         </div>
       )}
     </div>
