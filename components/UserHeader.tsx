@@ -232,79 +232,107 @@ function UserHeader() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Full Screen Overlay */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4 border-t border-[#3833FF]/30 pt-4 space-y-3">
-            {/* Home Button */}
-            <Link
-              href="/"
+          <>
+            {/* Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 lg:hidden"
               onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center w-full px-4 py-3 rounded-lg font-semibold transition-all shadow-md border ${
-                pathname === '/'
-                  ? 'bg-[#3833FF] text-white border-[#3833FF]/50'
-                  : 'bg-black/50 text-white border-[#3833FF]/30 hover:bg-black/70'
-              }`}
-            >
-              <Home className="w-5 h-5 mr-3" />
-              <span>Home</span>
-            </Link>
-
-            {/* Dashboard Button */}
-            {(user.role === 'admin' || user.role === 'manager') && (
-              <Link
-                href="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center w-full px-4 py-3 rounded-lg font-semibold transition-all shadow-md border ${
-                  pathname === '/admin'
-                    ? 'bg-[#3833FF] text-white border-[#3833FF]/50'
-                    : 'bg-white text-black border-[#3833FF]/30'
-                }`}
-              >
-                <LayoutDashboard className="w-5 h-5 mr-3" />
-                <span>Dashboard</span>
-              </Link>
-            )}
-
-            {/* User Info Section */}
-            <div className="px-4 py-3 bg-black/50 rounded-lg border border-[#3833FF]/30 space-y-3">
-              {/* User Avatar & Name */}
-              <div className="flex items-center gap-3">
-                <User className={`w-5 h-5 ${getRoleColor(user.role).includes('red') ? 'text-red-400' : getRoleColor(user.role).includes('blue') ? 'text-blue-400' : 'text-green-400'}`} />
-                <div className="flex-1">
-                  <div className="text-sm font-bold text-white">
-                    {user.name || user.email}
+            />
+            {/* Full Screen Menu */}
+            <div className="fixed inset-0 bg-black z-50 lg:hidden flex flex-col">
+              {/* Header with Close Button */}
+              <div className="flex items-center justify-between px-4 py-4 border-b border-[#3833FF]/30">
+                <Link href="/" className="text-lg font-bold text-white hover:text-[#3833FF] transition-colors flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                  <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center mr-2 border border-[#3833FF]/30">
+                    <span className="text-white font-bold text-sm">HI</span>
                   </div>
-                  <div className={`mt-1 inline-block px-2 py-1 rounded border text-xs font-semibold uppercase tracking-wider ${getRoleBadgeColor(user.role)}`}>
-                    {user.role}
-                  </div>
-                </div>
+                  <span>PD</span>
+                </Link>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center w-10 h-10 text-white hover:bg-[#3833FF]/50 rounded-lg transition-colors"
+                  aria-label="Close menu"
+                >
+                  <X className="w-6 h-6" />
+                </button>
               </div>
 
-              {/* Profile Edit Button */}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setShowProfileModal(true);
-                }}
-                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-black/70 text-white rounded-lg hover:bg-black/90 transition-all shadow-md border border-[#3833FF]/30 mb-2"
-              >
-                <Settings className="w-4 h-4 mr-2 text-[#3833FF]" />
-                <span>Edit Profile</span>
-              </button>
+              {/* Menu Items */}
+              <div className="flex-1 px-4 py-6 space-y-3 overflow-y-auto">
+                {/* Home Button */}
+                <Link
+                  href="/"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                    pathname === '/'
+                      ? 'bg-[#3833FF] text-white border-white'
+                      : 'bg-black/50 text-white border-white hover:bg-black/70'
+                  }`}
+                >
+                  <Home className="w-5 h-5 mr-3" />
+                  <span>Home</span>
+                </Link>
 
-              {/* Logout Button */}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleLogout();
-                }}
-                className="flex items-center justify-center w-full px-4 py-2 text-sm bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-all shadow-md border border-red-300"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                <span>Logout</span>
-              </button>
+                {/* Dashboard Button */}
+                {(user.role === 'admin' || user.role === 'manager') && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                      pathname === '/admin'
+                        ? 'bg-[#3833FF] text-white border-white'
+                        : 'bg-black/50 text-white border-white hover:bg-black/70'
+                    }`}
+                  >
+                    <LayoutDashboard className="w-5 h-5 mr-3" />
+                    <span>Dashboard</span>
+                  </Link>
+                )}
+
+                {/* User Info Section */}
+                <div className="px-4 py-4 bg-black/50 rounded-lg border-2 border-white space-y-4 mt-4">
+                  {/* User Avatar & Name */}
+                  <div className="flex items-center gap-3">
+                    <User className={`w-5 h-5 ${getRoleColor(user.role).includes('red') ? 'text-red-400' : getRoleColor(user.role).includes('blue') ? 'text-blue-400' : 'text-green-400'}`} />
+                    <div className="flex-1">
+                      <div className="text-sm font-bold text-white">
+                        {user.name || user.email}
+                      </div>
+                      <div className={`mt-1 inline-block px-2 py-1 rounded border text-xs font-semibold uppercase tracking-wider ${getRoleBadgeColor(user.role)}`}>
+                        {user.role}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Profile Edit Button */}
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setShowProfileModal(true);
+                    }}
+                    className="flex items-center justify-center w-full px-4 py-3 text-sm bg-black/70 text-white rounded-lg hover:bg-black/90 transition-all shadow-md border-2 border-white"
+                  >
+                    <Settings className="w-4 h-4 mr-2 text-[#3833FF]" />
+                    <span>Edit Profile</span>
+                  </button>
+
+                  {/* Logout Button */}
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    className="flex items-center justify-center w-full px-4 py-3 text-sm bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all shadow-md border-2 border-white"
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         )}
 
         {/* Profile Edit Modal */}
