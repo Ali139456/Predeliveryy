@@ -3,6 +3,10 @@ import { uploadToCloudinary, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { uploadToS3 } from '@/lib/s3';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
 
+// Ensure Node.js runtime for file uploads
+export const runtime = 'nodejs';
+export const maxDuration = 30; // 30 seconds max for uploads
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
@@ -24,6 +28,10 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    const fileName = `inspections/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const contentType = file.type || 'application/octet-stream';
+    
+    // Convert file to buffer first (can only read once)
     let bytes: ArrayBuffer;
     let buffer: Buffer;
     
@@ -38,8 +46,25 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const fileName = `inspections/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const contentType = file.type || 'application/octet-stream';
+    // Extract EXIF metadata using the buffer (non-blocking - don't fail upload if this fails)
+    let metadata = null;
+    try {
+      // Only extract EXIF if file is an image
+      if (contentType && contentType.startsWith('image/')) {
+        try {
+          // Use buffer directly for EXIF extraction
+          metadata = await extractEXIFMetadata(buffer, file.name, file.size, contentType);
+        } catch (exifError: any) {
+          // If EXIF extraction fails, skip it (non-critical)
+          console.warn('EXIF extraction failed (non-critical, upload continues):', exifError.message || exifError);
+          metadata = null;
+        }
+      }
+    } catch (exifError: any) {
+      // If EXIF extraction fails, continue without metadata - this is non-critical
+      console.warn('EXIF extraction failed (non-critical, upload continues):', exifError.message || exifError);
+      metadata = null;
+    }
     
     let uploadedFileName: string;
     let fileUrl: string;
@@ -47,15 +72,27 @@ export async function POST(request: NextRequest) {
     // Upload to Cloudinary if configured, otherwise try S3, then local storage
     if (hasCloudinaryConfig) {
       try {
+        console.log('Uploading to Cloudinary:', { fileName, contentType, size: buffer.length });
         const publicId = await uploadToCloudinary(buffer, fileName, 'inspections');
         uploadedFileName = publicId;
         fileUrl = `/api/files/${publicId}`;
+        console.log('Cloudinary upload successful:', { publicId, fileUrl });
       } catch (cloudinaryError: any) {
-        console.error('Cloudinary upload error:', cloudinaryError);
+        console.error('Cloudinary upload error:', {
+          message: cloudinaryError.message,
+          error: cloudinaryError,
+          stack: cloudinaryError.stack
+        });
+        
+        // Return a proper error response
+        const errorMessage = cloudinaryError.message || 
+          cloudinaryError.error?.message || 
+          'Failed to upload to Cloudinary. Please check your configuration and try again.';
+        
         return NextResponse.json(
           { 
             success: false, 
-            error: cloudinaryError.message || 'Failed to upload to Cloudinary. Please check your configuration.' 
+            error: errorMessage
           },
           { status: 500 }
         );
@@ -93,16 +130,8 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Extract EXIF metadata
-    let metadata = null;
-    try {
-      metadata = await extractEXIFMetadata(file);
-    } catch (exifError) {
-      // If EXIF extraction fails, continue without metadata
-      console.warn('EXIF extraction failed:', exifError);
-    }
-    
-    return NextResponse.json({
+    // Always return a proper JSON response
+    const responseData = {
       success: true,
       fileName: uploadedFileName,
       url: fileUrl,
@@ -115,7 +144,11 @@ export async function POST(request: NextRequest) {
         latitude: metadata.latitude,
         longitude: metadata.longitude,
       } : null,
-    });
+    };
+    
+    console.log('Upload successful, returning response:', { fileName: uploadedFileName, hasMetadata: !!metadata });
+    
+    return NextResponse.json(responseData, { status: 200 });
   } catch (error: any) {
     console.error('Unexpected upload error:', error);
     return NextResponse.json(
@@ -124,5 +157,6 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
 
 

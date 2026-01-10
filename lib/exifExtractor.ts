@@ -16,8 +16,31 @@ export interface PhotoMetadata {
   [key: string]: any;
 }
 
-export async function extractEXIFMetadata(file: File): Promise<PhotoMetadata> {
-  const arrayBuffer = await file.arrayBuffer();
+export async function extractEXIFMetadata(file: File | Buffer | ArrayBuffer, fileName?: string, fileSize?: number, mimeType?: string): Promise<PhotoMetadata> {
+  let arrayBuffer: ArrayBuffer;
+  let metadataFileName: string;
+  let metadataFileSize: number;
+  let metadataMimeType: string;
+
+  // Handle different input types
+  if (file instanceof File) {
+    arrayBuffer = await file.arrayBuffer();
+    metadataFileName = file.name;
+    metadataFileSize = file.size;
+    metadataMimeType = file.type;
+  } else if (Buffer.isBuffer(file)) {
+    arrayBuffer = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+    metadataFileName = fileName || 'unknown';
+    metadataFileSize = fileSize || file.length;
+    metadataMimeType = mimeType || 'application/octet-stream';
+  } else {
+    // Already an ArrayBuffer
+    arrayBuffer = file;
+    metadataFileName = fileName || 'unknown';
+    metadataFileSize = fileSize || arrayBuffer.byteLength;
+    metadataMimeType = mimeType || 'application/octet-stream';
+  }
+
   const metadata: any = await exifr.parse(arrayBuffer, {
     pick: [
       'Make',
@@ -33,9 +56,9 @@ export async function extractEXIFMetadata(file: File): Promise<PhotoMetadata> {
   });
 
   return {
-    fileName: file.name,
-    fileSize: file.size,
-    mimeType: file.type,
+    fileName: metadataFileName,
+    fileSize: metadataFileSize,
+    mimeType: metadataMimeType,
     width: metadata?.ImageWidth,
     height: metadata?.ImageHeight,
     make: metadata?.Make,
