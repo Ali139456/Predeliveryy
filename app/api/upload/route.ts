@@ -8,6 +8,7 @@ import path from 'path';
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
 export const maxDuration = 30; // 30 seconds max for uploads
+export const dynamic = 'force-dynamic'; // Force dynamic rendering on Vercel
 
 // Handle OPTIONS for CORS preflight
 export async function OPTIONS(request: NextRequest) {
@@ -17,19 +18,35 @@ export async function OPTIONS(request: NextRequest) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Max-Age': '86400',
     },
   });
 }
 
 export async function POST(request: NextRequest) {
+  // Add CORS headers immediately
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+  
   try {
+    // Check request method explicitly (shouldn't be needed but helps with debugging)
+    if (request.method !== 'POST') {
+      return NextResponse.json(
+        { success: false, error: `Method ${request.method} not allowed. Only POST is supported.` },
+        { status: 405, headers: corsHeaders }
+      );
+    }
+    
     const formData = await request.formData();
     const file = formData.get('file') as File;
     
     if (!file) {
       return NextResponse.json(
         { success: false, error: 'No file provided' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
     
@@ -38,7 +55,7 @@ export async function POST(request: NextRequest) {
     if (file.size > maxSize) {
       return NextResponse.json(
         { success: false, error: 'File size exceeds maximum allowed size of 10MB' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
     
@@ -56,7 +73,7 @@ export async function POST(request: NextRequest) {
       console.error('Error converting file to buffer:', bufferError);
       return NextResponse.json(
         { success: false, error: 'Failed to process file. Please try again.' },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
     
@@ -108,7 +125,7 @@ export async function POST(request: NextRequest) {
               success: false, 
               error: cloudinaryError.message || 'Failed to upload to Cloudinary. Please check your Cloudinary configuration on Vercel.' 
             },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
           );
         }
         
@@ -137,7 +154,7 @@ export async function POST(request: NextRequest) {
                 success: false, 
                 error: 'S3 upload failed. Please check your AWS credentials.' 
               },
-              { status: 500 }
+              { status: 500, headers: corsHeaders }
             );
           }
           
@@ -154,7 +171,7 @@ export async function POST(request: NextRequest) {
               success: false, 
               error: 'File storage is not properly configured. Please configure Cloudinary or AWS S3 for file uploads on Vercel.' 
             },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
           );
         }
         
@@ -181,7 +198,7 @@ export async function POST(request: NextRequest) {
               success: false, 
               error: `Failed to save file to local storage: ${localError.message}` 
             },
-            { status: 500 }
+            { status: 500, headers: corsHeaders }
           );
         }
       }
@@ -194,7 +211,7 @@ export async function POST(request: NextRequest) {
           success: false, 
           error: 'Failed to upload file. Please try again.' 
         },
-        { status: 500 }
+        { status: 500, headers: corsHeaders }
       );
     }
     
@@ -218,17 +235,13 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(responseData, { 
       status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      },
+      headers: corsHeaders,
     });
   } catch (error: any) {
     console.error('Unexpected upload error:', error);
     return NextResponse.json(
       { success: false, error: error.message || 'An unexpected error occurred during upload' },
-      { status: 500 }
+      { status: 500, headers: corsHeaders }
     );
   }
 }
