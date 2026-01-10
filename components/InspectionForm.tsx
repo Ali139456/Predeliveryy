@@ -231,6 +231,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [draftId, setDraftId] = useState<string | null>(inspectionId || null);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
 
   const totalSteps = 6;
   const steps = [
@@ -266,6 +269,102 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     name: 'checklist',
   });
 
+  // Auto-fetch inspector email from logged-in user and load existing draft
+  useEffect(() => {
+    if (readOnly || initialData || inspectionId) return; // Skip if read-only, has initial data, or editing existing inspection
+    
+    const fetchUserAndDraft = async () => {
+      try {
+        // Fetch user email first
+        const userResponse = await fetch('/api/auth/me');
+        const userData = await userResponse.json();
+        if (userData.success && userData.user && userData.user.email) {
+          // Auto-populate inspector email and name
+          setValue('inspectorEmail', userData.user.email);
+          if (userData.user.name && !getValues('inspectorName')) {
+            setValue('inspectorName', userData.user.name);
+          }
+          
+          // Check for existing draft
+          const draftResponse = await fetch('/api/inspections?status=draft');
+          const draftData = await draftResponse.json();
+          
+          if (draftData.success && draftData.data && draftData.data.length > 0) {
+            // Find the most recent draft for this user
+            const userDrafts = draftData.data.filter((draft: any) => 
+              draft.inspectorEmail?.toLowerCase() === userData.user.email.toLowerCase() && 
+              draft.status === 'draft'
+            );
+            
+            if (userDrafts.length > 0) {
+              // Sort by updatedAt descending to get the most recent
+              const mostRecentDraft = userDrafts.sort((a: any, b: any) => 
+                new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime()
+              )[0];
+              
+              // Load draft data into form
+              setDraftId(mostRecentDraft._id);
+              
+              // Update form values with draft data
+              if (mostRecentDraft.inspectorName) {
+                setValue('inspectorName', mostRecentDraft.inspectorName);
+              }
+              if (mostRecentDraft.inspectorEmail) {
+                setValue('inspectorEmail', mostRecentDraft.inspectorEmail);
+              }
+              if (mostRecentDraft.inspectionDate) {
+                const date = new Date(mostRecentDraft.inspectionDate);
+                setValue('inspectionDate', date.toISOString().split('T')[0]);
+              }
+              if (mostRecentDraft.vehicleInfo) {
+                Object.entries(mostRecentDraft.vehicleInfo).forEach(([key, value]) => {
+                  if (value) {
+                    setValue(`vehicleInfo.${key}` as any, value);
+                  }
+                });
+              }
+              if (mostRecentDraft.checklist && mostRecentDraft.checklist.length > 0) {
+                setValue('checklist', mostRecentDraft.checklist);
+              }
+              if (mostRecentDraft.barcode) {
+                setBarcode(mostRecentDraft.barcode);
+              }
+              if (mostRecentDraft.location) {
+                setLocation(mostRecentDraft.location);
+              }
+              if (mostRecentDraft.photos && mostRecentDraft.photos.length > 0) {
+                setPhotos(mostRecentDraft.photos.map((p: any) => 
+                  typeof p === 'string' ? { fileName: p } : p
+                ));
+              }
+              if (mostRecentDraft.signatures) {
+                setSignatures(mostRecentDraft.signatures);
+              }
+              if (mostRecentDraft.privacyConsent !== undefined) {
+                setValue('privacyConsent', mostRecentDraft.privacyConsent);
+              }
+              
+              // Update URL to show draft ID without reloading
+              if (typeof window !== 'undefined') {
+                window.history.replaceState({}, '', `/inspection/${mostRecentDraft._id}`);
+              }
+              
+              // Show notification that draft was loaded
+              setToast({
+                message: 'Draft loaded successfully. Continuing where you left off...',
+                type: 'info'
+              });
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch user email or draft:', error);
+      }
+    };
+    
+    fetchUserAndDraft();
+  }, [readOnly, initialData, inspectionId, setValue, getValues]);
+
   // Check authentication periodically and on visibility change
   useEffect(() => {
     if (readOnly) return; // Skip auth check for read-only mode
@@ -276,6 +375,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         const data = await response.json();
         if (data.success && data.user) {
           setIsAuthenticated(true);
+          // Update inspector email if user email changed
+          if (!initialData?.inspectorEmail && data.user.email) {
+            setValue('inspectorEmail', data.user.email);
+          }
         } else {
           setIsAuthenticated(false);
           setToast({
@@ -313,7 +416,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       clearInterval(authInterval);
     };
-  }, [readOnly]);
+  }, [readOnly, initialData, setValue]);
 
   useEffect(() => {
     if (barcode) {
@@ -334,19 +437,162 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     setValue('photos', photos);
   }, [photos, setValue]);
 
+  // Auto-save draft function
+  const saveDraft = useCallback(async (silent = true) => {
+    if (readOnly || isSavingDraft) return; // Skip if read-only or already saving
+    
+    const values = getValues();
+    
+    // Don't save empty drafts
+    if (!values.inspectorName && !values.inspectorEmail && !values.inspectionDate) {
+      return;
+    }
+    
+    setIsSavingDraft(true);
+    
+    try {
+      const draftData = {
+        inspectorName: values.inspectorName || '',
+        inspectorEmail: values.inspectorEmail || '',
+        inspectionDate: values.inspectionDate || new Date().toISOString().split('T')[0],
+        vehicleInfo: values.vehicleInfo || {},
+        checklist: values.checklist || defaultChecklist,
+        location: location.start || location.current ? location : {},
+        barcode: barcode || undefined,
+        photos: photos || [],
+        signatures: signatures.technician || signatures.manager ? signatures : undefined,
+        status: 'draft' as const,
+        privacyConsent: values.privacyConsent || false,
+      };
+      
+      let savedDraftId = draftId;
+      
+      if (!savedDraftId) {
+        // Create new draft
+        const response = await fetch('/api/inspections', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(draftData),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data?._id) {
+          savedDraftId = result.data._id;
+          setDraftId(savedDraftId);
+          
+          // Update URL without reloading page
+          if (typeof window !== 'undefined' && !inspectionId) {
+            window.history.replaceState({}, '', `/inspection/${savedDraftId}`);
+          }
+          
+          if (!silent) {
+            setToast({
+              message: 'Draft saved successfully',
+              type: 'success'
+            });
+          }
+        } else {
+          throw new Error(result.error || 'Failed to create draft');
+        }
+      } else {
+        // Update existing draft
+        const response = await fetch(`/api/inspections/${savedDraftId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(draftData),
+        });
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to update draft');
+        }
+        
+        if (!silent) {
+          setToast({
+            message: 'Draft saved successfully',
+            type: 'success'
+          });
+        }
+      }
+      
+      setLastSaved(new Date());
+    } catch (error: any) {
+      console.error('Auto-save draft error:', error);
+      // Don't show error toast for silent saves to avoid annoying the user
+      if (!silent) {
+        setToast({
+          message: `Failed to save draft: ${error.message}`,
+          type: 'error'
+        });
+      }
+    } finally {
+      setIsSavingDraft(false);
+    }
+  }, [readOnly, isSavingDraft, getValues, location, barcode, photos, signatures, draftId, inspectionId, setDraftId, setToast]);
+
+  // Auto-save draft periodically and when data changes
+  useEffect(() => {
+    if (readOnly || !isAuthenticated) return; // Skip if read-only or not authenticated
+    
+    // Auto-save every 30 seconds
+    const autoSaveInterval = setInterval(() => {
+      saveDraft(true); // Silent save
+    }, 30000); // 30 seconds
+    
+    // Auto-save when page becomes hidden (user switches tabs/windows)
+    const handleBeforeUnload = () => {
+      saveDraft(true); // Silent save on page unload
+    };
+    
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        saveDraft(true); // Silent save when tab becomes hidden
+      }
+    };
+    
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      clearInterval(autoSaveInterval);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [readOnly, isAuthenticated, saveDraft]);
+  
+  // Auto-save when form data changes (debounced)
+  useEffect(() => {
+    if (readOnly || !isAuthenticated) return;
+    
+    const debounceTimer = setTimeout(() => {
+      const values = getValues();
+      // Only save if there's actual data entered
+      if (values.inspectorName || values.inspectorEmail || values.inspectionDate || barcode || photos.length > 0) {
+        saveDraft(true); // Silent save
+      }
+    }, 5000); // Debounce for 5 seconds after last change
+    
+    return () => clearTimeout(debounceTimer);
+  }, [readOnly, isAuthenticated, getValues, barcode, photos, location, saveDraft]);
+
   // Helper function to save a specific section
   const saveSection = async (sectionName: string, sectionData: any) => {
-    if (!inspectionId) {
+    if (!inspectionId && !draftId) {
       alert('Cannot save section: Inspection ID is required');
       return;
     }
+
+    const idToUse = inspectionId || draftId;
+    if (!idToUse) return;
 
     setSectionSaving(prev => ({ ...prev, [sectionName]: true }));
     setSectionSaved(prev => ({ ...prev, [sectionName]: false }));
 
     try {
       // Get current inspection data
-      const currentResponse = await fetch(`/api/inspections/${inspectionId}`);
+      const currentResponse = await fetch(`/api/inspections/${idToUse}`);
       const currentResult = await currentResponse.json();
       
       if (!currentResult.success) {
@@ -361,7 +607,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         ...sectionData,
       };
 
-      const response = await fetch(`/api/inspections/${inspectionId}`, {
+      const response = await fetch(`/api/inspections/${idToUse}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
@@ -480,8 +726,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       return;
     }
 
-    if (!inspectionId) {
-      // For new inspections, use the regular flow
+    // Use draftId if exists, otherwise use inspectionId
+    const idToUse = draftId || inspectionId;
+    
+    if (!idToUse) {
+      // For completely new inspections, create new
       setSubmitting(true);
       setSuccess(false);
 
@@ -505,7 +754,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           barcode: barcode || undefined,
           photos: photos || [],
           signatures: (signatures.technician || signatures.manager) ? signatures : undefined,
-          status: 'completed', // Set to completed when user submits
+          status: 'completed' as const, // Set to completed when user submits
         };
 
         console.log('Submitting inspection data:', inspectionData);
@@ -521,6 +770,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
         if (result.success) {
           setSuccess(true);
+          setDraftId(result.data._id); // Set draftId in case user needs to continue
           setToast({
             message: 'Inspection completed successfully!',
             type: 'success'
@@ -550,29 +800,31 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       return;
     }
 
-    // For existing inspections, save everything
+    // For existing inspections/drafts, update and mark as completed
     setSubmitting(true);
     setSuccess(false);
 
     try {
       const inspectionData = {
         ...data,
-        inspectionNumber: inspectionId || `INSP-${Date.now()}`,
+        inspectionNumber: idToUse || `INSP-${Date.now()}`,
         inspectionDate: new Date(data.inspectionDate),
-        location: location.latitude ? {
-          current: {
-            latitude: location.latitude,
-            longitude: location.longitude,
-            address: location.address,
-          },
-        } : location,
-        barcode,
-        photos: photos,
+        location: location.start || location.current 
+          ? location 
+          : (location.latitude ? {
+              current: {
+                latitude: location.latitude,
+                longitude: location.longitude,
+                address: location.address,
+              },
+            } : {}),
+        barcode: barcode || undefined,
+        photos: photos || [],
         signatures: (signatures.technician || signatures.manager) ? signatures : undefined,
-        status: 'draft',
+        status: 'completed' as const, // Mark as completed when user submits
       };
 
-      const response = await fetch(`/api/inspections/${inspectionId}`, {
+      const response = await fetch(`/api/inspections/${idToUse}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(inspectionData),
@@ -583,10 +835,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       if (result.success) {
         setSuccess(true);
         setToast({
-          message: 'Inspection saved successfully!',
+          message: 'Inspection completed successfully!',
           type: 'success'
         });
-        setTimeout(() => setSuccess(false), 3000);
+        // Redirect to the inspection detail page
+        setTimeout(() => {
+          window.location.href = `/inspections/${idToUse}`;
+        }, 1500);
       } else {
         setToast({
           message: result.error || 'Failed to save inspection',
