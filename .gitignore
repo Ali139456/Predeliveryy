@@ -35,7 +35,20 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# local uploads (when not using S3)
+# local uploads (when not using S3/Cloudinary)
 /public/uploads
+/public/uploads/**
+
+# database backups (should not be in repo)
+mongodb-backup/
+**/*.bson
+**/*.metadata.json
+**/prelude.json
+
+# shell scripts (if any - using npm scripts instead)
+*.sh
+
+# reference/temporary PDFs (keep if needed for documentation)
+# *.pdf
 
 
