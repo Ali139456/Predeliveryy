@@ -125,29 +125,21 @@ function ItemPhotoUpload({
       {photos.length > 0 && (
         <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
           {photos.map((photo, index) => {
-            // Handle both old format (string or fileName) and new format (with url)
+            // Handle both new format (with url) and old format (with fileName)
+            // fileName is required in PhotoData, so we always have it
             let imageUrl: string;
-            if (typeof photo === 'string') {
-              // Old format: might be a Cloudinary public_id or old file path
-              if (photo.startsWith('http')) {
-                imageUrl = photo;
-              } else {
-                // Try to construct Cloudinary URL, fallback to API route
-                imageUrl = getCloudinaryImageUrl(photo);
-              }
-            } else if (photo.url) {
+            if (photo.url) {
               // New format: direct Cloudinary URL
               imageUrl = photo.url;
-            } else if (photo.fileName) {
-              // Old format with fileName
-              if (photo.fileName.startsWith('http')) {
-                imageUrl = photo.fileName;
+            } else {
+              // Old format with fileName (fileName is always present)
+              const fileName = photo.fileName;
+              if (fileName.startsWith('http')) {
+                imageUrl = fileName;
               } else {
                 // Try to construct Cloudinary URL, fallback to API route
-                imageUrl = getCloudinaryImageUrl(photo.fileName);
+                imageUrl = getCloudinaryImageUrl(fileName);
               }
-            } else {
-              imageUrl = `/api/files/${photo}`;
             }
             
             return (
