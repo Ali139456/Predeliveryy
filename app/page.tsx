@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Sparkles } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -15,57 +15,96 @@ export default function Home() {
         </div>
         
         <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Column - Content */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white leading-tight">
-                Pre Delivery Inspection Platform
-              </h1>
-              
-              {/* Bullet Points */}
-              <div className="space-y-4 mb-10">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Comprehensive digital inspection management with advanced features
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Streamlined workflow for efficient vehicle pre-delivery inspections
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Real-time documentation with photos, GPS tracking, and digital signatures
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column - Visual Element */}
-            <div className="relative hidden lg:block">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[#3833FF]/20 rounded-2xl blur-2xl transform rotate-6"></div>
-                <div className="relative bg-gradient-to-br from-[#3833FF]/10 to-black/50 rounded-2xl p-8 border border-[#3833FF]/30 backdrop-blur-sm">
-                  <div className="flex items-center justify-center h-64">
-                    <div className="text-center">
-                      <div className="w-24 h-24 rounded-2xl bg-[#3833FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#3833FF]/50">
-                        <FileCheck className="w-12 h-12 text-white" />
+          <div className="max-w-7xl mx-auto">
+            {/* Main Visual Section - Central UI Window with Pill Buttons */}
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 mb-12">
+              {/* Central UI Window Graphic */}
+              <div className="relative w-full max-w-2xl">
+                {/* Large semi-transparent rounded UI window */}
+                <div className="relative bg-gradient-to-br from-[#3833FF]/30 via-[#3833FF]/20 to-[#3833FF]/10 rounded-3xl p-6 lg:p-8 backdrop-blur-sm border border-[#3833FF]/40 shadow-2xl">
+                  {/* Smaller window 1 - Top Left */}
+                  <div className="relative bg-slate-800/80 rounded-2xl p-6 mb-4 border border-[#3833FF]/30 backdrop-blur-sm">
+                    <div className="flex items-center gap-4">
+                      {/* Abstract colorful pattern area */}
+                      <div className="flex-1 relative h-24 rounded-xl bg-gradient-to-br from-[#3833FF]/40 via-blue-500/30 to-purple-500/30 overflow-hidden">
+                        <div className="absolute inset-0 opacity-50">
+                          <Sparkles className="w-full h-full text-[#3833FF]/50" />
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Camera className="w-8 h-8 text-white/60" />
+                        </div>
                       </div>
-                      <p className="text-white/80 text-lg">Digital Inspection Management</p>
+                      {/* Text lines representation */}
+                      <div className="flex-1 space-y-2">
+                        <div className="h-2 bg-[#3833FF]/40 rounded w-full"></div>
+                        <div className="h-2 bg-[#3833FF]/30 rounded w-3/4"></div>
+                        <div className="h-2 bg-[#3833FF]/20 rounded w-5/6"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Smaller window 2 - Bottom, slightly overlapping */}
+                  <div className="relative -mt-3 ml-4 bg-slate-800/80 rounded-2xl p-6 border border-[#3833FF]/30 backdrop-blur-sm">
+                    <div className="flex items-center gap-3">
+                      <Star className="w-5 h-5 text-[#3833FF]" fill="currentColor" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-2 bg-[#3833FF]/40 rounded w-full"></div>
+                        <div className="h-2 bg-[#3833FF]/30 rounded w-2/3"></div>
+                      </div>
+                      {/* Input field representation */}
+                      <div className="flex items-center gap-2 bg-black/50 rounded-lg px-3 py-2 border border-[#3833FF]/30">
+                        <MessageSquare className="w-4 h-4 text-white/60" />
+                        <ArrowRight className="w-4 h-4 text-[#3833FF]" />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+              {/* Vertical Stack of Pill Buttons - Right Side */}
+              <div className="flex flex-col gap-3 w-full max-w-xs">
+                <Link href="/inspection/new" className="bg-gradient-to-r from-[#3833FF] to-blue-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/50 shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-transform cursor-pointer">
+                  <FileCheck className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">New Inspection</span>
+                </Link>
+                <Link href="/inspections" className="bg-gradient-to-r from-[#3833FF] to-blue-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/50 shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-transform cursor-pointer">
+                  <Search className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">View Inspections</span>
+                </Link>
+                <div className="bg-gradient-to-r from-[#3833FF] to-blue-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/50 shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-transform cursor-pointer">
+                  <Camera className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">Photo Gallery</span>
+                </div>
+                <div className="bg-gradient-to-r from-[#3833FF] to-blue-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/50 shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-transform cursor-pointer">
+                  <MapPin className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">GPS Tracking</span>
+                </div>
+                <div className="bg-gradient-to-r from-[#3833FF] to-blue-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/50 shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-transform cursor-pointer">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">Analytics</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Badge */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-green-500 rounded-full px-6 py-2 border border-green-400/50 shadow-lg">
+                <span className="text-white font-bold text-sm uppercase tracking-wider">GET STARTED FREE</span>
+              </div>
+            </div>
+
+            {/* Main Title - Centered */}
+            <div className="text-center mb-6">
+              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
+                Introducing Pre Delivery Inspection
+              </h1>
+            </div>
+
+            {/* Subtitle */}
+            <div className="text-center max-w-3xl mx-auto mb-12">
+              <p className="text-lg sm:text-xl text-white/90">
+                Manage comprehensive vehicle inspections with advanced digital tools. Streamline your workflow with real-time documentation, GPS tracking, and professional reporting.
+              </p>
             </div>
           </div>
         </div>
