@@ -183,21 +183,6 @@ const defaultChecklist = [
     ],
   },
   {
-    category: 'Road Test (Minimum 5 km)',
-    items: [
-      { item: 'Brake + park brake performance', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Steering alignment + control', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Instruments + warning lights', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'NVH (noise/vibration/harshness)', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Engine performance across ranges', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Manual gearbox + clutch', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Automatic transmission + activematic', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Cruise control', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Idle speed + idle-up operation', status: 'OK' as const, notes: '', photos: [] },
-      { item: 'Navigation operation (GPS lock)', status: 'OK' as const, notes: '', photos: [] },
-    ],
-  },
-  {
     category: 'Final QC',
     items: [
       { item: 'Owner information materials verified', status: 'OK' as const, notes: '', photos: [] },
@@ -235,8 +220,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const [location, setLocation] = useState(initialData?.location || {
     current: undefined,
     start: undefined,
-    end: undefined,
-    roadTest: undefined,
   });
   const [photos, setPhotos] = useState<Array<{ fileName: string; metadata?: any }>>(
     initialData?.photos?.map((p: any) => typeof p === 'string' ? { fileName: p } : p) || []
@@ -504,7 +487,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       try {
         // Prepare location data - use the location state directly
-        const locationData = location.start || location.end || location.current 
+        const locationData = location.start || location.current 
           ? location 
           : (location.latitude ? {
               current: {
@@ -676,7 +659,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         return { valid: true };
       case 3:
         // GPS and photos validation
-        if (!location || (!location.current && !location.start && !location.end)) {
+        if (!location || (!location.current && !location.start)) {
           return { valid: false, error: 'Please capture GPS location before proceeding' };
         }
         if (!photos || photos.length === 0) {
@@ -1035,7 +1018,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     <>
       <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-black">GPS Location & Road Test</h3>
+          <h3 className="text-base font-bold text-black">GPS Location</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
