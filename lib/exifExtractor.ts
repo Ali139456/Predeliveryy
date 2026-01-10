@@ -29,7 +29,11 @@ export async function extractEXIFMetadata(file: File | Buffer | ArrayBuffer, fil
     metadataFileSize = file.size;
     metadataMimeType = file.type;
   } else if (Buffer.isBuffer(file)) {
-    arrayBuffer = file.buffer.slice(file.byteOffset, file.byteOffset + file.byteLength);
+    // Convert Buffer to ArrayBuffer properly
+    // Copy the buffer to ensure we get a proper ArrayBuffer (not SharedArrayBuffer)
+    const uint8Array = new Uint8Array(file.length);
+    uint8Array.set(file);
+    arrayBuffer = uint8Array.buffer;
     metadataFileName = fileName || 'unknown';
     metadataFileSize = fileSize || file.length;
     metadataMimeType = mimeType || 'application/octet-stream';
