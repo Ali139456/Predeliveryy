@@ -346,7 +346,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               
               // Update URL to show draft ID without reloading
               if (typeof window !== 'undefined') {
-                window.history.replaceState({}, '', `/inspection/${mostRecentDraft._id}`);
+                window.history.replaceState({}, '', `/inspections/${mostRecentDraft._id}`);
               }
               
               // Show notification that draft was loaded
@@ -483,7 +483,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           
           // Update URL without reloading page
           if (typeof window !== 'undefined' && !inspectionId) {
-            window.history.replaceState({}, '', `/inspection/${savedDraftId}`);
+            window.history.replaceState({}, '', `/inspections/${savedDraftId}`);
           }
           
           if (!silent) {
