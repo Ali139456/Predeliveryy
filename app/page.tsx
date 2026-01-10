@@ -33,7 +33,7 @@ export default function Home() {
         <div className="container mx-auto px-[clamp(1rem,2vw,1.5rem)] py-[clamp(1rem,3vh,2rem)] relative z-20 flex-1 flex items-center justify-center">
           <div className="max-w-[95vw] xl:max-w-7xl mx-auto w-full">
             {/* Main Visual Section - Central UI Window with Pill Buttons */}
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-[clamp(1rem,2vw,2rem)] mb-[clamp(0.75rem,2vh,1.5rem)]">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-[clamp(1rem,2vw,2rem)] mb-[clamp(0.5rem,1.5vh,1rem)]">
               {/* Central UI Window Graphic */}
               <div className="relative w-full max-w-[min(100%,28rem)] lg:max-w-[min(35vw,32rem)]">
                 {/* Large semi-transparent rounded UI window */}
@@ -110,25 +110,25 @@ export default function Home() {
             </div>
 
             {/* Badge */}
-            <div className="flex justify-center mb-[clamp(0.75rem,2vh,1.5rem)]">
+            <div className="flex justify-center mb-[clamp(0.5rem,1.5vh,1rem)]">
               <div className="bg-green-500 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.25rem,0.5vw,0.375rem)] border border-green-400/50 shadow-lg">
                 <span className="text-white font-bold text-[clamp(0.625rem,1vw,0.75rem)] uppercase tracking-wider">GET STARTED FREE</span>
               </div>
             </div>
 
             {/* Main Title - Centered */}
-            <div className="text-center mb-[clamp(0.5rem,1.5vh,1rem)]">
-              <h1 className="text-[clamp(1.75rem,4vw,3.5rem)] font-bold text-white leading-tight mb-[clamp(0.5rem,1.5vh,1rem)]">
+            <div className="text-center mb-[clamp(0.25rem,1vh,0.75rem)]">
+              <h1 className="text-[clamp(1.75rem,4vw,3.5rem)] font-bold text-white leading-tight mb-[clamp(0.375rem,1vh,0.75rem)]">
                 Pre-Delivery Inspections, Digitised
               </h1>
               
               {/* Subtitle */}
-              <p className="text-[clamp(0.875rem,1.5vw,1.25rem)] text-white/90 max-w-[min(90vw,64rem)] mx-auto mb-[clamp(0.75rem,2vh,1.5rem)]">
+              <p className="text-[clamp(0.875rem,1.5vw,1.25rem)] text-white/90 max-w-[min(90vw,64rem)] mx-auto mb-[clamp(0.5rem,1.5vh,1rem)]">
                 Verify vehicle condition, compliance, and documentation before handover and registration — with a single, defensible digital record.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-[clamp(0.5rem,1vw,0.75rem)] mb-[clamp(0.5rem,1.5vh,1rem)]">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-[clamp(0.5rem,1vw,0.75rem)] mb-[clamp(0.375rem,1vh,0.75rem)]">
                 <button className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-[clamp(1rem,2vw,1.5rem)] py-[clamp(0.5rem,1vw,0.75rem)] rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-[clamp(0.375rem,0.75vw,0.5rem)] border border-[#3833FF]/50 text-[clamp(0.75rem,1.2vw,0.875rem)]">
                   <Calendar className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)]" />
                   Book a demo
@@ -141,8 +141,8 @@ export default function Home() {
             </div>
 
             {/* Sub-Hero Line */}
-            <div className="text-center max-w-[min(90vw,64rem)] mx-auto mt-[clamp(0.5rem,1.5vh,1rem)]">
-              <p className="text-[clamp(0.75rem,1.2vw,1rem)] text-white/80">
+            <div className="text-center max-w-[min(90vw,64rem)] mx-auto mt-0">
+              <p className="text-[clamp(0.7rem,1.1vw,0.9rem)] text-white/80 leading-tight">
                 Built for dealerships, fleets, OEM delivery partners, and insurers who need inspection certainty before delivery
               </p>
             </div>
