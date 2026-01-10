@@ -241,15 +241,10 @@ function InspectionDetailContent() {
 
         <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-[#3833FF]/30">
           <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center">
-              <div className="w-16 h-16 rounded-2xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
-                <FileText className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-black">
-                  Inspection: {inspection.inspectionNumber}
-                </h1>
-              </div>
+            <div>
+              <h1 className="text-3xl font-bold text-black">
+                Inspection: {inspection.inspectionNumber}
+              </h1>
             </div>
             {isReadOnlyView && (
               <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">

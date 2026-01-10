@@ -165,15 +165,6 @@ export default function NewInspectionPage() {
         </Link>
 
         <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#3833FF]/30">
-          <div className="flex items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
-              <FileCheck className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-black mb-2">New Pre Delivery Inspection</h1>
-              <p className="text-black/70">Complete the form below to create a new inspection report</p>
-            </div>
-          </div>
           <InspectionForm />
         </div>
       </div>
