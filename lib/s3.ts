@@ -36,46 +36,70 @@ if (!hasAWSCredentials) {
 }
 
 export async function uploadToS3(file: Buffer, fileName: string, contentType: string): Promise<string> {
-  // Use local storage if AWS is not configured
+  // Check if we're on Vercel (serverless environment)
+  const isVercel = process.env.VERCEL === '1';
+  
+  // Use local storage if AWS is not configured, but not on Vercel
   if (!hasAWSCredentials || !s3Client) {
-    const localPath = path.join(UPLOAD_DIR, fileName);
-    const dir = path.dirname(localPath);
-    
-    // Ensure directory exists
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (isVercel) {
+      throw new Error('File storage not configured. AWS S3 or Cloudinary must be configured for Vercel deployments.');
     }
     
-    // Write file to local storage
-    fs.writeFileSync(localPath, file);
-    return fileName;
+    // Only use local storage in non-serverless environments
+    try {
+      const localPath = path.join(UPLOAD_DIR, fileName);
+      const dir = path.dirname(localPath);
+      
+      // Ensure directory exists
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Write file to local storage
+      fs.writeFileSync(localPath, file);
+      return fileName;
+    } catch (error: any) {
+      throw new Error(`Local file storage failed: ${error.message}. Please configure AWS S3 or Cloudinary.`);
+    }
   }
 
   // Use S3 if configured - with error handling
   try {
-  const command = new PutObjectCommand({
-    Bucket: BUCKET_NAME,
-    Key: fileName,
-    Body: file,
-    ContentType: contentType,
-  });
+    const command = new PutObjectCommand({
+      Bucket: BUCKET_NAME,
+      Key: fileName,
+      Body: file,
+      ContentType: contentType,
+    });
 
-  await s3Client.send(command);
-  return fileName;
+    await s3Client.send(command);
+    return fileName;
   } catch (error: any) {
-    // If S3 upload fails (e.g., invalid credentials), fall back to local storage
-    console.warn('S3 upload failed, falling back to local storage:', error.message);
-    const localPath = path.join(UPLOAD_DIR, fileName);
-    const dir = path.dirname(localPath);
+    // Check if we're on Vercel
+    const isVercel = process.env.VERCEL === '1';
     
-    // Ensure directory exists
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    // If S3 upload fails and we're on Vercel, don't try local storage
+    if (isVercel) {
+      throw new Error(`S3 upload failed: ${error.message}. Please check your AWS credentials.`);
     }
     
-    // Write file to local storage
-    fs.writeFileSync(localPath, file);
-    return fileName;
+    // Only fall back to local storage in non-serverless environments
+    try {
+      console.warn('S3 upload failed, falling back to local storage:', error.message);
+      const localPath = path.join(UPLOAD_DIR, fileName);
+      const dir = path.dirname(localPath);
+      
+      // Ensure directory exists
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Write file to local storage
+      fs.writeFileSync(localPath, file);
+      return fileName;
+    } catch (localError: any) {
+      throw new Error(`S3 upload failed and local storage unavailable: ${error.message}`);
+    }
   }
 }
 

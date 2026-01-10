@@ -61,6 +61,26 @@ function PhotoUpload({
           body: formData,
         });
 
+        // Check if response is OK before parsing JSON
+        if (!response.ok) {
+          const errorText = await response.text();
+          let errorMessage = 'Upload failed';
+          try {
+            const errorData = JSON.parse(errorText);
+            errorMessage = errorData.error || errorMessage;
+          } catch {
+            errorMessage = errorText || `Upload failed: ${response.status} ${response.statusText}`;
+          }
+          throw new Error(errorMessage);
+        }
+
+        // Check if response has content before parsing
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          const text = await response.text();
+          throw new Error(text || 'Invalid response from server');
+        }
+
         const data = await response.json();
         if (data.success) {
           return {
