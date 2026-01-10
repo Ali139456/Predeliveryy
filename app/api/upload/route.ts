@@ -2,10 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import { uploadToCloudinary, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { uploadToS3 } from '@/lib/s3';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
+import fs from 'fs';
+import path from 'path';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
 export const maxDuration = 30; // 30 seconds max for uploads
+
+// Handle OPTIONS for CORS preflight
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    },
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -66,10 +80,13 @@ export async function POST(request: NextRequest) {
       metadata = null;
     }
     
-    let uploadedFileName: string;
-    let fileUrl: string;
+    let uploadedFileName: string | undefined;
+    let fileUrl: string | undefined;
     
-    // Upload to Cloudinary if configured, otherwise try S3, then local storage
+    // Check if we're on Vercel
+    const isVercel = process.env.VERCEL === '1';
+    
+    // Upload to Cloudinary if configured (recommended for Vercel)
     if (hasCloudinaryConfig) {
       try {
         console.log('Uploading to Cloudinary:', { fileName, contentType, size: buffer.length });
@@ -84,50 +101,101 @@ export async function POST(request: NextRequest) {
           stack: cloudinaryError.stack
         });
         
-        // Return a proper error response
-        const errorMessage = cloudinaryError.message || 
-          cloudinaryError.error?.message || 
-          'Failed to upload to Cloudinary. Please check your configuration and try again.';
-        
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: errorMessage
-          },
-          { status: 500 }
-        );
-      }
-    } else {
-      // Fallback to S3 or local storage
-      try {
-        await uploadToS3(buffer, fileName, contentType);
-        uploadedFileName = fileName;
-        fileUrl = `/api/files/${fileName}`;
-      } catch (uploadError: any) {
-        console.error('Upload error:', uploadError);
-        
-        // On Vercel, local file storage is not available
-        const isVercel = process.env.VERCEL === '1';
-        
-        if (isVercel || uploadError.message?.includes('AWS') || uploadError.message?.includes('Access Key') || uploadError.message?.includes('ENOENT') || uploadError.message?.includes('read-only') || uploadError.message?.includes('not configured')) {
+        // On Vercel, Cloudinary is required - don't fallback
+        if (isVercel) {
           return NextResponse.json(
             { 
               success: false, 
-              error: 'File storage is not properly configured. Please configure Cloudinary (recommended) or AWS S3 for file uploads on Vercel.' 
+              error: cloudinaryError.message || 'Failed to upload to Cloudinary. Please check your Cloudinary configuration on Vercel.' 
             },
             { status: 500 }
           );
         }
         
-        // Return proper JSON error for any other upload errors
-        return NextResponse.json(
-          { 
-            success: false, 
-            error: uploadError.message || 'File upload failed. Please try again or contact support.' 
-          },
-          { status: 500 }
-        );
+        // For local dev, fallback to local storage
+        console.warn('Cloudinary upload failed, falling back to local storage');
       }
+    }
+    
+    // If not using Cloudinary or Cloudinary failed (local dev only), use local storage or S3
+    if (!uploadedFileName) {
+      // Try S3 first if configured
+      const hasAWS = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
+      
+      if (hasAWS) {
+        try {
+          await uploadToS3(buffer, fileName, contentType);
+          uploadedFileName = fileName;
+          fileUrl = `/uploads/${fileName}`;
+        } catch (uploadError: any) {
+          console.error('S3 upload error:', uploadError);
+          
+          // On Vercel, don't fallback to local storage
+          if (isVercel) {
+            return NextResponse.json(
+              { 
+                success: false, 
+                error: 'S3 upload failed. Please check your AWS credentials.' 
+              },
+              { status: 500 }
+            );
+          }
+          
+          // For local dev, fallback to local storage
+          console.warn('S3 upload failed, falling back to local storage');
+        }
+      }
+      
+      // If S3 not configured or failed (local dev only), use local storage
+      if (!uploadedFileName) {
+        if (isVercel) {
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: 'File storage is not properly configured. Please configure Cloudinary or AWS S3 for file uploads on Vercel.' 
+            },
+            { status: 500 }
+          );
+        }
+        
+        // Save to public/uploads for local development
+        try {
+          const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+          const fullPath = path.join(uploadDir, fileName);
+          const dir = path.dirname(fullPath);
+          
+          // Ensure directory exists
+          if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+          }
+          
+          // Write file to public/uploads
+          fs.writeFileSync(fullPath, buffer);
+          uploadedFileName = fileName;
+          fileUrl = `/uploads/${fileName}`;
+          console.log('File saved to local storage:', { fileName, path: fullPath, url: fileUrl });
+        } catch (localError: any) {
+          console.error('Local file storage error:', localError);
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: `Failed to save file to local storage: ${localError.message}` 
+            },
+            { status: 500 }
+          );
+        }
+      }
+    }
+    
+    // Ensure we have both fileName and URL
+    if (!uploadedFileName || !fileUrl) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: 'Failed to upload file. Please try again.' 
+        },
+        { status: 500 }
+      );
     }
     
     // Always return a proper JSON response
@@ -148,7 +216,14 @@ export async function POST(request: NextRequest) {
     
     console.log('Upload successful, returning response:', { fileName: uploadedFileName, hasMetadata: !!metadata });
     
-    return NextResponse.json(responseData, { status: 200 });
+    return NextResponse.json(responseData, { 
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
   } catch (error: any) {
     console.error('Unexpected upload error:', error);
     return NextResponse.json(
