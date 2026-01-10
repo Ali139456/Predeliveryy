@@ -133,9 +133,10 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 relative">
+            {/* Steps Container with Arrows */}
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-4">
               {/* Step 1: Inspect */}
-              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative">
+              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative w-full lg:w-auto lg:flex-1">
                 <div className="absolute -top-4 left-8 bg-[#3833FF] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg z-10">
                   1
                 </div>
@@ -146,13 +147,15 @@ export default function Home() {
                 <p className="text-black/70 text-center">
                   Conduct a structured pre-delivery inspection using a standardised digital checklist.
                 </p>
-                <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 hidden lg:block">
-                  <ArrowRight className="w-8 h-8 text-[#3833FF]" />
-                </div>
+              </div>
+
+              {/* Arrow 1 */}
+              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-2">
+                <ArrowRight className="w-10 h-10 text-[#3833FF] drop-shadow-lg" strokeWidth={2.5} />
               </div>
 
               {/* Step 2: Verify */}
-              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative">
+              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative w-full lg:w-auto lg:flex-1">
                 <div className="absolute -top-4 left-8 bg-[#3833FF] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg z-10">
                   2
                 </div>
@@ -163,13 +166,15 @@ export default function Home() {
                 <p className="text-black/70 text-center">
                   Capture photos, VIN and compliance data, documentation, and condition evidence in real time.
                 </p>
-                <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 hidden lg:block">
-                  <ArrowRight className="w-8 h-8 text-[#3833FF]" />
-                </div>
+              </div>
+
+              {/* Arrow 2 */}
+              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-2">
+                <ArrowRight className="w-10 h-10 text-[#3833FF] drop-shadow-lg" strokeWidth={2.5} />
               </div>
 
               {/* Step 3: Sign Off */}
-              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative">
+              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative w-full lg:w-auto lg:flex-1">
                 <div className="absolute -top-4 left-8 bg-[#3833FF] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg z-10">
                   3
                 </div>
@@ -180,13 +185,15 @@ export default function Home() {
                 <p className="text-black/70 text-center">
                   Confirm readiness for delivery with a complete, auditable inspection record.
                 </p>
-                <div className="absolute top-1/2 -right-4 transform -translate-y-1/2 hidden lg:block">
-                  <ArrowRight className="w-8 h-8 text-[#3833FF]" />
-                </div>
+              </div>
+
+              {/* Arrow 3 */}
+              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-2">
+                <ArrowRight className="w-10 h-10 text-[#3833FF] drop-shadow-lg" strokeWidth={2.5} />
               </div>
 
               {/* Step 4: Deliver */}
-              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative">
+              <div className="bg-white rounded-2xl p-8 border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 transition-all hover:scale-105 shadow-lg relative w-full lg:w-auto lg:flex-1">
                 <div className="absolute -top-4 left-8 bg-[#3833FF] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg shadow-lg z-10">
                   4
                 </div>
