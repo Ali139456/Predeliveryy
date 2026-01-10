@@ -234,9 +234,9 @@ export default function Home() {
             </div>
 
             {/* Steps Container with Arrows */}
-            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 lg:gap-6">
+            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-5">
               {/* Step 1: Inspect */}
-              <div className="group relative bg-gradient-to-br from-blue-50/80 via-cyan-50/60 to-white rounded-3xl p-10 border-2 border-blue-200/60 hover:border-blue-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-300/40 overflow-visible w-full lg:w-auto lg:flex-1">
+              <div className="group relative bg-gradient-to-br from-blue-50/80 via-cyan-50/60 to-white rounded-3xl p-6 border-2 border-blue-200/60 hover:border-blue-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-300/40 overflow-visible w-full lg:w-[280px]">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-cyan-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
@@ -246,12 +246,12 @@ export default function Home() {
                   1
                 </div>
                 
-                <div className="relative z-10 pt-4">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 flex items-center justify-center mx-auto mb-8 mt-4 shadow-xl shadow-blue-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <ClipboardCheck className="w-12 h-12 text-white" strokeWidth={2.5} />
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 flex items-center justify-center mb-4 shadow-xl shadow-blue-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <ClipboardCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-5 text-gray-900 text-center group-hover:text-blue-600 transition-colors">Inspect</h3>
-                  <p className="text-gray-600 text-center leading-relaxed text-base">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-blue-600 transition-colors">Inspect</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
                     Conduct a structured pre-delivery inspection using a standardised digital checklist.
                   </p>
                 </div>
@@ -259,11 +259,11 @@ export default function Home() {
 
               {/* Arrow 1 */}
               <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
-                <ArrowRight className="w-12 h-12 text-blue-400 drop-shadow-xl" strokeWidth={3} />
+                <ArrowRight className="w-10 h-10 text-blue-400 drop-shadow-xl" strokeWidth={3} />
               </div>
 
               {/* Step 2: Verify */}
-              <div className="group relative bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-white rounded-3xl p-10 border-2 border-green-200/60 hover:border-green-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-300/40 overflow-visible w-full lg:w-auto lg:flex-1">
+              <div className="group relative bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-white rounded-3xl p-6 border-2 border-green-200/60 hover:border-green-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-300/40 overflow-visible w-full lg:w-[280px]">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-emerald-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
@@ -273,12 +273,12 @@ export default function Home() {
                   2
                 </div>
                 
-                <div className="relative z-10 pt-4">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 flex items-center justify-center mx-auto mb-8 mt-4 shadow-xl shadow-green-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <Check className="w-12 h-12 text-white" strokeWidth={3} />
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 flex items-center justify-center mb-4 shadow-xl shadow-green-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <Check className="w-10 h-10 text-white" strokeWidth={3} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-5 text-gray-900 text-center group-hover:text-green-600 transition-colors">Verify</h3>
-                  <p className="text-gray-600 text-center leading-relaxed text-base">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-green-600 transition-colors">Verify</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
                     Capture photos, VIN and compliance data, documentation, and condition evidence in real time.
                   </p>
                 </div>
@@ -286,11 +286,11 @@ export default function Home() {
 
               {/* Arrow 2 */}
               <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
-                <ArrowRight className="w-12 h-12 text-green-400 drop-shadow-xl" strokeWidth={3} />
+                <ArrowRight className="w-10 h-10 text-green-400 drop-shadow-xl" strokeWidth={3} />
               </div>
 
               {/* Step 3: Sign Off */}
-              <div className="group relative bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-white rounded-3xl p-10 border-2 border-purple-200/60 hover:border-purple-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-300/40 overflow-visible w-full lg:w-auto lg:flex-1">
+              <div className="group relative bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-white rounded-3xl p-6 border-2 border-purple-200/60 hover:border-purple-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-300/40 overflow-visible w-full lg:w-[280px]">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-pink-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
@@ -300,12 +300,12 @@ export default function Home() {
                   3
                 </div>
                 
-                <div className="relative z-10 pt-4">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 flex items-center justify-center mx-auto mb-8 mt-4 shadow-xl shadow-purple-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <FileCheck className="w-12 h-12 text-white" strokeWidth={2.5} />
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 flex items-center justify-center mb-4 shadow-xl shadow-purple-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <FileCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-5 text-gray-900 text-center group-hover:text-purple-600 transition-colors">Sign Off</h3>
-                  <p className="text-gray-600 text-center leading-relaxed text-base">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-purple-600 transition-colors">Sign Off</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
                     Confirm readiness for delivery with a complete, auditable inspection record.
                   </p>
                 </div>
@@ -313,11 +313,11 @@ export default function Home() {
 
               {/* Arrow 3 */}
               <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
-                <ArrowRight className="w-12 h-12 text-purple-400 drop-shadow-xl" strokeWidth={3} />
+                <ArrowRight className="w-10 h-10 text-purple-400 drop-shadow-xl" strokeWidth={3} />
               </div>
 
               {/* Step 4: Deliver */}
-              <div className="group relative bg-gradient-to-br from-orange-50/80 via-amber-50/60 to-white rounded-3xl p-10 border-2 border-orange-200/60 hover:border-orange-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-300/40 overflow-visible w-full lg:w-auto lg:flex-1">
+              <div className="group relative bg-gradient-to-br from-orange-50/80 via-amber-50/60 to-white rounded-3xl p-6 border-2 border-orange-200/60 hover:border-orange-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-300/40 overflow-visible w-full lg:w-[280px]">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-amber-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
@@ -327,12 +327,12 @@ export default function Home() {
                   4
                 </div>
                 
-                <div className="relative z-10 pt-4">
-                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-600 to-yellow-600 flex items-center justify-center mx-auto mb-8 mt-4 shadow-xl shadow-orange-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <Zap className="w-12 h-12 text-white" strokeWidth={2.5} />
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-600 to-yellow-600 flex items-center justify-center mb-4 shadow-xl shadow-orange-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-5 text-gray-900 text-center group-hover:text-orange-600 transition-colors">Deliver</h3>
-                  <p className="text-gray-600 text-center leading-relaxed text-base">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-orange-600 transition-colors">Deliver</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
                     Hand over the vehicle with confidence — knowing issues were identified and resolved before registration.
                   </p>
                 </div>
