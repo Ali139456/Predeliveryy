@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-black h-screen max-h-screen">
+      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-black min-h-screen max-h-screen flex flex-col">
         {/* Hero Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <Image
@@ -30,54 +30,54 @@ export default function Home() {
           <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
         </div>
         
-        <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-10 lg:py-12 relative z-20 h-full flex items-center">
-          <div className="max-w-7xl mx-auto w-full">
+        <div className="container mx-auto px-[clamp(1rem,2vw,1.5rem)] py-[clamp(1rem,3vh,2rem)] relative z-20 flex-1 flex items-center justify-center">
+          <div className="max-w-[95vw] xl:max-w-7xl mx-auto w-full">
             {/* Main Visual Section - Central UI Window with Pill Buttons */}
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-6 lg:gap-8 mb-8">
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-[clamp(1rem,2vw,2rem)] mb-[clamp(0.75rem,2vh,1.5rem)]">
               {/* Central UI Window Graphic */}
-              <div className="relative w-full max-w-xl">
+              <div className="relative w-full max-w-[min(100%,28rem)] lg:max-w-[min(35vw,32rem)]">
                 {/* Large semi-transparent rounded UI window */}
-                <div className="relative bg-gradient-to-br from-[#3833FF]/50 via-purple-600/40 to-blue-600/30 rounded-3xl p-4 lg:p-5 backdrop-blur-lg border-2 border-[#3833FF]/60 shadow-2xl shadow-[#3833FF]/40 overflow-hidden">
+                <div className="relative bg-gradient-to-br from-[#3833FF]/50 via-purple-600/40 to-blue-600/30 rounded-3xl p-[clamp(0.75rem,1.5vw,1.25rem)] backdrop-blur-lg border-2 border-[#3833FF]/60 shadow-2xl shadow-[#3833FF]/40 overflow-hidden">
                   {/* Glowing background effect */}
                   <div className="absolute inset-0 bg-gradient-to-br from-[#3833FF]/20 via-purple-500/20 to-transparent rounded-3xl"></div>
                   
                   {/* Smaller window 1 - Top Left */}
-                  <div className="relative bg-slate-900/95 rounded-xl p-4 mb-3 border border-[#3833FF]/50 backdrop-blur-md shadow-xl">
-                    <div className="flex items-center gap-3">
+                  <div className="relative bg-slate-900/95 rounded-xl p-[clamp(0.75rem,1.2vw,1rem)] mb-[clamp(0.5rem,1vw,0.75rem)] border border-[#3833FF]/50 backdrop-blur-md shadow-xl">
+                    <div className="flex items-center gap-[clamp(0.5rem,1vw,0.75rem)]">
                       {/* Abstract colorful pattern area */}
-                      <div className="flex-1 relative h-20 rounded-lg bg-gradient-to-br from-[#3833FF]/70 via-blue-500/60 to-purple-500/60 overflow-hidden border border-[#3833FF]/40">
+                      <div className="flex-1 relative h-[clamp(3.5rem,8vw,5rem)] rounded-lg bg-gradient-to-br from-[#3833FF]/70 via-blue-500/60 to-purple-500/60 overflow-hidden border border-[#3833FF]/40">
                         {/* Animated gradient overlay */}
                         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent animate-pulse"></div>
                         <div className="absolute inset-0 opacity-70">
                           <Sparkles className="w-full h-full text-white/80" />
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Camera className="w-8 h-8 text-white drop-shadow-lg" />
+                          <Camera className="w-[clamp(1.5rem,3vw,2rem)] h-[clamp(1.5rem,3vw,2rem)] text-white drop-shadow-lg" />
                         </div>
                       </div>
                       {/* Text lines representation */}
-                      <div className="flex-1 space-y-2">
-                        <div className="h-2 bg-gradient-to-r from-[#3833FF]/60 to-[#3833FF]/40 rounded w-full"></div>
-                        <div className="h-2 bg-gradient-to-r from-[#3833FF]/50 to-[#3833FF]/30 rounded w-3/4"></div>
-                        <div className="h-2 bg-gradient-to-r from-[#3833FF]/40 to-[#3833FF]/20 rounded w-5/6"></div>
+                      <div className="flex-1 space-y-[clamp(0.25rem,0.5vw,0.5rem)]">
+                        <div className="h-[clamp(0.25rem,0.5vw,0.5rem)] bg-gradient-to-r from-[#3833FF]/60 to-[#3833FF]/40 rounded w-full"></div>
+                        <div className="h-[clamp(0.25rem,0.5vw,0.5rem)] bg-gradient-to-r from-[#3833FF]/50 to-[#3833FF]/30 rounded w-3/4"></div>
+                        <div className="h-[clamp(0.25rem,0.5vw,0.5rem)] bg-gradient-to-r from-[#3833FF]/40 to-[#3833FF]/20 rounded w-5/6"></div>
                       </div>
                     </div>
                   </div>
 
                   {/* Smaller window 2 - Bottom, slightly overlapping */}
-                  <div className="relative -mt-3 ml-3 bg-slate-900/95 rounded-xl p-4 border border-[#3833FF]/50 backdrop-blur-md shadow-xl">
-                    <div className="flex items-center gap-2">
+                  <div className="relative -mt-[clamp(0.5rem,1vw,0.75rem)] ml-[clamp(0.5rem,1vw,0.75rem)] bg-slate-900/95 rounded-xl p-[clamp(0.75rem,1.2vw,1rem)] border border-[#3833FF]/50 backdrop-blur-md shadow-xl">
+                    <div className="flex items-center gap-[clamp(0.375rem,0.75vw,0.5rem)]">
                       <div className="flex-shrink-0">
-                        <Star className="w-5 h-5 text-[#3833FF] drop-shadow-lg" fill="currentColor" />
+                        <Star className="w-[clamp(1rem,2vw,1.25rem)] h-[clamp(1rem,2vw,1.25rem)] text-[#3833FF] drop-shadow-lg" fill="currentColor" />
                       </div>
-                      <div className="flex-1 space-y-2">
-                        <div className="h-2 bg-gradient-to-r from-[#3833FF]/60 to-[#3833FF]/40 rounded w-full"></div>
-                        <div className="h-2 bg-gradient-to-r from-[#3833FF]/50 to-[#3833FF]/30 rounded w-2/3"></div>
+                      <div className="flex-1 space-y-[clamp(0.25rem,0.5vw,0.5rem)]">
+                        <div className="h-[clamp(0.25rem,0.5vw,0.5rem)] bg-gradient-to-r from-[#3833FF]/60 to-[#3833FF]/40 rounded w-full"></div>
+                        <div className="h-[clamp(0.25rem,0.5vw,0.5rem)] bg-gradient-to-r from-[#3833FF]/50 to-[#3833FF]/30 rounded w-2/3"></div>
                       </div>
                       {/* Input field representation */}
-                      <div className="flex items-center gap-1.5 bg-black/70 rounded-lg px-2.5 py-1.5 border border-[#3833FF]/50 shadow-inner">
-                        <MessageSquare className="w-3.5 h-3.5 text-white/80" />
-                        <ArrowRight className="w-3.5 h-3.5 text-[#3833FF]" />
+                      <div className="flex items-center gap-[clamp(0.25rem,0.5vw,0.375rem)] bg-black/70 rounded-lg px-[clamp(0.5rem,1vw,0.625rem)] py-[clamp(0.25rem,0.5vw,0.375rem)] border border-[#3833FF]/50 shadow-inner">
+                        <MessageSquare className="w-[clamp(0.75rem,1.5vw,0.875rem)] h-[clamp(0.75rem,1.5vw,0.875rem)] text-white/80" />
+                        <ArrowRight className="w-[clamp(0.75rem,1.5vw,0.875rem)] h-[clamp(0.75rem,1.5vw,0.875rem)] text-[#3833FF]" />
                       </div>
                     </div>
                   </div>
@@ -85,64 +85,64 @@ export default function Home() {
               </div>
 
               {/* Vertical Stack of Pill Buttons - Right Side */}
-              <div className="flex flex-col gap-2 w-full max-w-xs">
-                <Link href="/inspection/new" className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-5 py-3 flex items-center gap-2.5 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-sm">
-                  <FileCheck className="w-4 h-4 text-white" />
+              <div className="flex flex-col gap-[clamp(0.375rem,0.75vw,0.5rem)] w-full max-w-[min(100%,18rem)] lg:max-w-[min(20vw,20rem)]">
+                <Link href="/inspection/new" className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.5rem,1vw,0.75rem)] flex items-center gap-[clamp(0.5rem,1vw,0.625rem)] border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <FileCheck className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)] text-white" />
                   <span className="text-white font-semibold">New Inspection</span>
                 </Link>
-                <Link href="/inspections" className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-5 py-3 flex items-center gap-2.5 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-sm">
-                  <Search className="w-4 h-4 text-white" />
+                <Link href="/inspections" className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.5rem,1vw,0.75rem)] flex items-center gap-[clamp(0.5rem,1vw,0.625rem)] border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <Search className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)] text-white" />
                   <span className="text-white font-semibold">View Inspections</span>
                 </Link>
-                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-5 py-3 flex items-center gap-2.5 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-sm">
-                  <Camera className="w-4 h-4 text-white" />
+                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.5rem,1vw,0.75rem)] flex items-center gap-[clamp(0.5rem,1vw,0.625rem)] border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <Camera className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)] text-white" />
                   <span className="text-white font-semibold">Photo Gallery</span>
                 </div>
-                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-5 py-3 flex items-center gap-2.5 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-sm">
-                  <MapPin className="w-4 h-4 text-white" />
+                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.5rem,1vw,0.75rem)] flex items-center gap-[clamp(0.5rem,1vw,0.625rem)] border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <MapPin className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)] text-white" />
                   <span className="text-white font-semibold">GPS Tracking</span>
                 </div>
-                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-5 py-3 flex items-center gap-2.5 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-sm">
-                  <BarChart3 className="w-4 h-4 text-white" />
+                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.5rem,1vw,0.75rem)] flex items-center gap-[clamp(0.5rem,1vw,0.625rem)] border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <BarChart3 className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)] text-white" />
                   <span className="text-white font-semibold">Analytics</span>
                 </div>
               </div>
             </div>
 
             {/* Badge */}
-            <div className="flex justify-center mb-6">
-              <div className="bg-green-500 rounded-full px-5 py-1.5 border border-green-400/50 shadow-lg">
-                <span className="text-white font-bold text-xs uppercase tracking-wider">GET STARTED FREE</span>
+            <div className="flex justify-center mb-[clamp(0.75rem,2vh,1.5rem)]">
+              <div className="bg-green-500 rounded-full px-[clamp(0.75rem,1.5vw,1.25rem)] py-[clamp(0.25rem,0.5vw,0.375rem)] border border-green-400/50 shadow-lg">
+                <span className="text-white font-bold text-[clamp(0.625rem,1vw,0.75rem)] uppercase tracking-wider">GET STARTED FREE</span>
               </div>
             </div>
 
             {/* Main Title - Centered */}
-            <div className="text-center mb-4">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4">
+            <div className="text-center mb-[clamp(0.5rem,1.5vh,1rem)]">
+              <h1 className="text-[clamp(1.75rem,4vw,3.5rem)] font-bold text-white leading-tight mb-[clamp(0.5rem,1.5vh,1rem)]">
                 Pre-Delivery Inspections, Digitised
               </h1>
               
               {/* Subtitle */}
-              <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-4xl mx-auto mb-6">
+              <p className="text-[clamp(0.875rem,1.5vw,1.25rem)] text-white/90 max-w-[min(90vw,64rem)] mx-auto mb-[clamp(0.75rem,2vh,1.5rem)]">
                 Verify vehicle condition, compliance, and documentation before handover and registration — with a single, defensible digital record.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
-                <button className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-6 py-3 rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-2 border border-[#3833FF]/50 text-sm">
-                  <Calendar className="w-4 h-4" />
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-[clamp(0.5rem,1vw,0.75rem)] mb-[clamp(0.5rem,1.5vh,1rem)]">
+                <button className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-[clamp(1rem,2vw,1.5rem)] py-[clamp(0.5rem,1vw,0.75rem)] rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-[clamp(0.375rem,0.75vw,0.5rem)] border border-[#3833FF]/50 text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <Calendar className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)]" />
                   Book a demo
                 </button>
-                <button className="bg-white/10 hover:bg-white/20 text-white font-semibold px-6 py-3 rounded-full shadow-lg border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2 backdrop-blur-sm text-sm">
-                  <Phone className="w-4 h-4" />
+                <button className="bg-white/10 hover:bg-white/20 text-white font-semibold px-[clamp(1rem,2vw,1.5rem)] py-[clamp(0.5rem,1vw,0.75rem)] rounded-full shadow-lg border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-[clamp(0.375rem,0.75vw,0.5rem)] backdrop-blur-sm text-[clamp(0.75rem,1.2vw,0.875rem)]">
+                  <Phone className="w-[clamp(0.875rem,1.5vw,1rem)] h-[clamp(0.875rem,1.5vw,1rem)]" />
                   Talk to sales
                 </button>
               </div>
             </div>
 
             {/* Sub-Hero Line */}
-            <div className="text-center max-w-4xl mx-auto mt-4">
-              <p className="text-sm sm:text-base text-white/80">
+            <div className="text-center max-w-[min(90vw,64rem)] mx-auto mt-[clamp(0.5rem,1.5vh,1rem)]">
+              <p className="text-[clamp(0.75rem,1.2vw,1rem)] text-white/80">
                 Built for dealerships, fleets, OEM delivery partners, and insurers who need inspection certainty before delivery
               </p>
             </div>
