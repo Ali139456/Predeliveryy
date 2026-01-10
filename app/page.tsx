@@ -32,6 +32,90 @@ export default function Home() {
         
         <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 relative z-20">
           <div className="max-w-7xl mx-auto">
+            {/* Main Visual Section - Central UI Window with Pill Buttons */}
+            <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-12 mb-16">
+              {/* Central UI Window Graphic */}
+              <div className="relative w-full max-w-2xl">
+                {/* Large semi-transparent rounded UI window */}
+                <div className="relative bg-gradient-to-br from-[#3833FF]/50 via-purple-600/40 to-blue-600/30 rounded-3xl p-6 lg:p-8 backdrop-blur-lg border-2 border-[#3833FF]/60 shadow-2xl shadow-[#3833FF]/40 overflow-hidden">
+                  {/* Glowing background effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#3833FF]/20 via-purple-500/20 to-transparent rounded-3xl"></div>
+                  
+                  {/* Smaller window 1 - Top Left */}
+                  <div className="relative bg-slate-900/95 rounded-2xl p-6 mb-4 border border-[#3833FF]/50 backdrop-blur-md shadow-xl">
+                    <div className="flex items-center gap-4">
+                      {/* Abstract colorful pattern area */}
+                      <div className="flex-1 relative h-28 rounded-xl bg-gradient-to-br from-[#3833FF]/70 via-blue-500/60 to-purple-500/60 overflow-hidden border border-[#3833FF]/40">
+                        {/* Animated gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent animate-pulse"></div>
+                        <div className="absolute inset-0 opacity-70">
+                          <Sparkles className="w-full h-full text-white/80" />
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Camera className="w-10 h-10 text-white drop-shadow-lg" />
+                        </div>
+                      </div>
+                      {/* Text lines representation */}
+                      <div className="flex-1 space-y-2.5">
+                        <div className="h-2.5 bg-gradient-to-r from-[#3833FF]/60 to-[#3833FF]/40 rounded w-full"></div>
+                        <div className="h-2.5 bg-gradient-to-r from-[#3833FF]/50 to-[#3833FF]/30 rounded w-3/4"></div>
+                        <div className="h-2.5 bg-gradient-to-r from-[#3833FF]/40 to-[#3833FF]/20 rounded w-5/6"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Smaller window 2 - Bottom, slightly overlapping */}
+                  <div className="relative -mt-4 ml-4 bg-slate-900/95 rounded-2xl p-6 border border-[#3833FF]/50 backdrop-blur-md shadow-xl">
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <Star className="w-6 h-6 text-[#3833FF] drop-shadow-lg" fill="currentColor" />
+                      </div>
+                      <div className="flex-1 space-y-2.5">
+                        <div className="h-2.5 bg-gradient-to-r from-[#3833FF]/60 to-[#3833FF]/40 rounded w-full"></div>
+                        <div className="h-2.5 bg-gradient-to-r from-[#3833FF]/50 to-[#3833FF]/30 rounded w-2/3"></div>
+                      </div>
+                      {/* Input field representation */}
+                      <div className="flex items-center gap-2 bg-black/70 rounded-lg px-3 py-2 border border-[#3833FF]/50 shadow-inner">
+                        <MessageSquare className="w-4 h-4 text-white/80" />
+                        <ArrowRight className="w-4 h-4 text-[#3833FF]" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Vertical Stack of Pill Buttons - Right Side */}
+              <div className="flex flex-col gap-3 w-full max-w-xs">
+                <Link href="/inspection/new" className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer">
+                  <FileCheck className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">New Inspection</span>
+                </Link>
+                <Link href="/inspections" className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer">
+                  <Search className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">View Inspections</span>
+                </Link>
+                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer">
+                  <Camera className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">Photo Gallery</span>
+                </div>
+                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer">
+                  <MapPin className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">GPS Tracking</span>
+                </div>
+                <div className="bg-gradient-to-r from-[#3833FF] via-blue-600 to-purple-600 rounded-full px-6 py-4 flex items-center gap-3 border border-[#3833FF]/60 shadow-lg shadow-[#3833FF]/40 hover:scale-105 transition-transform cursor-pointer">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                  <span className="text-white font-semibold">Analytics</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Badge */}
+            <div className="flex justify-center mb-12">
+              <div className="bg-green-500 rounded-full px-6 py-2 border border-green-400/50 shadow-lg">
+                <span className="text-white font-bold text-sm uppercase tracking-wider">GET STARTED FREE</span>
+              </div>
+            </div>
+
             {/* Main Title - Centered */}
             <div className="text-center mb-6">
               <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
