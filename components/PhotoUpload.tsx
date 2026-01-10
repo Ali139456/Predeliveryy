@@ -67,7 +67,7 @@ function PhotoUpload({
             height: result.height || null,
             format: result.format || null,
             bytes: result.bytes || null,
-          } || null,
+          },
         };
       });
 
