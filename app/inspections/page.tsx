@@ -135,14 +135,14 @@ export default function InspectionsPage() {
                   placeholder="Search inspections..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
+                  className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
               >
                 <option value="">All Status</option>
                 <option value="draft">Draft</option>
@@ -154,7 +154,7 @@ export default function InspectionsPage() {
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 placeholder="Start Date"
-                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -163,7 +163,7 @@ export default function InspectionsPage() {
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 placeholder="End Date"
-                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
               />
             </div>
           </div>

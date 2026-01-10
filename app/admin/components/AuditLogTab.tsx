@@ -159,7 +159,7 @@ export default function AuditLogTab() {
             <select
               value={filters.action}
               onChange={(e) => setFilters({ ...filters, action: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             >
               <option value="">All Actions</option>
               {availableFilters.actionTypes.map((action) => (
@@ -174,7 +174,7 @@ export default function AuditLogTab() {
             <select
               value={filters.resourceType}
               onChange={(e) => setFilters({ ...filters, resourceType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             >
               <option value="">All Types</option>
               {availableFilters.resourceTypes.map((type) => (
@@ -200,7 +200,7 @@ export default function AuditLogTab() {
               type="date"
               value={filters.startDate}
               onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             />
           </div>
           <div>
@@ -209,7 +209,7 @@ export default function AuditLogTab() {
               type="date"
               value={filters.endDate}
               onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black hover:bg-gray-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             />
           </div>
         </div>

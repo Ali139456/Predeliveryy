@@ -70,6 +70,69 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Mobile input fixes - ensure high contrast and white background */
+  input, textarea, select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    outline: none;
+  }
+
+  /* Fix autofill styling for mobile browsers */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  textarea:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #000000 !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  /* Prevent mobile browser from changing input appearance */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  input[type="date"],
+  input[type="time"],
+  textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="number"]:focus,
+  input[type="tel"]:focus,
+  input[type="search"]:focus,
+  input[type="date"]:focus,
+  input[type="time"]:focus,
+  textarea:focus {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
 }
 
 

@@ -540,7 +540,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white"
             />
           </div>
 
@@ -555,7 +555,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               }}
               onBlur={() => checkEmail(formData.email)}
               required
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50 ${
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white ${
                 emailError ? 'border-red-500' : 'border-slate-500/50'
               }`}
             />
@@ -575,7 +575,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               }}
               onBlur={() => checkPhone(formData.phoneNumber)}
               required
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50 ${
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white ${
                 phoneError ? 'border-red-500' : 'border-slate-500/50'
               }`}
               placeholder="+1234567890"
@@ -597,7 +597,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
                 validatePasswordStrength(e.target.value);
               }}
               minLength={formData.password ? 8 : undefined}
-              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-gray-50 ${
+              className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white ${
                 passwordError ? 'border-red-500' : formData.password && passwordStrength === 'strong' ? 'border-green-500' : formData.password && passwordStrength === 'medium' ? 'border-yellow-500' : 'border-slate-500/50'
               }`}
               placeholder="Enter new password (optional)"

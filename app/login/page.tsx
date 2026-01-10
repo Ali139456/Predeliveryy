@@ -180,7 +180,7 @@ export default function LoginPage() {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           required
-                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300"
+                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                           placeholder="+1234567890"
                         />
                       </>
@@ -192,7 +192,7 @@ export default function LoginPage() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300"
+                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                           placeholder="your@email.com"
                         />
                       </>
@@ -220,7 +220,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300"
+                      className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                       placeholder="••••••••"
                     />
                   </div>
@@ -319,7 +319,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetPhone(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 disabled:opacity-50"
+                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white disabled:opacity-50 disabled:bg-gray-100"
                             placeholder="+1234567890"
                           />
                         </>
@@ -332,7 +332,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetEmail(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 disabled:opacity-50"
+                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white disabled:opacity-50 disabled:bg-gray-100"
                             placeholder="your@email.com"
                           />
                         </>
@@ -464,7 +464,7 @@ export default function LoginPage() {
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       required
                       maxLength={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50 text-center text-2xl tracking-widest font-bold"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white text-center text-2xl tracking-widest font-bold"
                       placeholder="000000"
                     />
                     <p className="mt-2 text-xs text-gray-500 text-center">
@@ -482,7 +482,7 @@ export default function LoginPage() {
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
                       placeholder="Enter new password (min 8 chars)"
                     />
                     <p className="mt-1 text-xs text-gray-500">
@@ -500,7 +500,7 @@ export default function LoginPage() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
                       placeholder="Confirm new password"
                     />
                   </div>

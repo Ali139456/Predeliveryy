@@ -1067,7 +1067,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           <input
             {...register('inspectorName')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           {errors.inspectorName && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorName.message}</p>
@@ -1082,7 +1082,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="email"
             {...register('inspectorEmail')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           {errors.inspectorEmail && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorEmail.message}</p>
@@ -1097,7 +1097,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="date"
             {...register('inspectionDate')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           {errors.inspectionDate && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectionDate.message}</p>
@@ -1190,43 +1190,43 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {...register('vehicleInfo.dealer')}
             placeholder="Dealer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.make')}
             placeholder="Make"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.model')}
             placeholder="Model"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.dealerStockNo')}
             placeholder="Dealer Stock No"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.vin')}
             placeholder="VIN"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.engine')}
             placeholder="Engine"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.odometer')}
             placeholder="Odometer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <div>
             <label className="block text-xs text-black mb-1">Compliance Date</label>
@@ -1234,7 +1234,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {...register('vehicleInfo.complianceDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
             />
           </div>
           <div>
@@ -1243,14 +1243,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {...register('vehicleInfo.buildDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
             />
           </div>
           <input
             {...register('vehicleInfo.licensePlate')}
             placeholder="License Plate"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
         </div>
         <div>
@@ -1258,7 +1258,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {...register('vehicleInfo.bookingNumber')}
             placeholder="Booking Number"
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
         </div>
       </div>
@@ -1441,13 +1441,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <input
                 {...register(`checklist.${categoryIndex}.category`)}
                 disabled={readOnly}
-                className={`w-full px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 transition-all bg-white text-black placeholder-gray-400 ${
+                className={`w-full px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${
                   isExt 
                     ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                     : isInt 
                     ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
                     : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
-                } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+                } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                 placeholder="Category name"
               />
 
@@ -1468,25 +1468,25 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       <input
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)}
                         disabled={readOnly}
-                        className={`flex-1 w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-white text-black placeholder-gray-400 ${
+                        className={`flex-1 w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${
                           isExt 
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
                             ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
                             : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
-                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                         placeholder="Item name"
                       />
                       <select
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.status`)}
                         disabled={readOnly}
-                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-white text-black font-medium w-full sm:w-auto ${
+                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black font-medium w-full sm:w-auto ${
                           isExt 
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
                             ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
                             : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
-                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                       >
                         <option value="OK">✅ OK - Satisfactory</option>
                         <option value="C">🧹 C - Clean</option>
@@ -1503,13 +1503,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       {...register(`checklist.${categoryIndex}.items.${itemIndex}.notes`)}
                       placeholder="Notes (optional)"
                       disabled={readOnly}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 transition-all bg-white text-black placeholder-gray-400 resize-none mb-2 ${
-                        isExt 
-                          ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
-                          : isInt 
-                          ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                          : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
-                      } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-gray-50'}`}
+                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-none mb-2 ${
+                          isExt 
+                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
+                            : isInt 
+                            ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
+                            : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                      } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                       rows={2}
                     />
                     <ItemPhotoUpload
