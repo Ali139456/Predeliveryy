@@ -64,10 +64,10 @@ function ItemPhotoUpload({
           fileName: result.public_id, // Store public_id for flexibility
           url: result.secure_url, // Store full URL for immediate use
           metadata: {
-            width: result.width || null,
-            height: result.height || null,
-            format: result.format || null,
-            bytes: result.bytes || null,
+            width: result.width,
+            height: result.height,
+            format: result.format,
+            bytes: result.bytes,
           },
         };
       });
