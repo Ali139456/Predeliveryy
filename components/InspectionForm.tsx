@@ -1185,10 +1185,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             </button>
           )}
         </div>
-        <div className="mb-4 p-3 bg-[#3833FF]/10 border border-[#3833FF]/30 rounded-lg">
-          <p className="text-xs text-black font-semibold mb-1">Header Details</p>
-          <p className="text-xs text-black/70">Complete all vehicle information fields below</p>
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input
             {...register('vehicleInfo.dealer')}
