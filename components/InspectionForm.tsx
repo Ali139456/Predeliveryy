@@ -238,7 +238,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const totalSteps = 6;
   const steps = [
     { number: 1, title: 'Inspector Info', icon: User },
-    { number: 2, title: 'Vehicle & Barcode', icon: Car },
+    { number: 2, title: 'Vehicle & Identification', icon: Car },
     { number: 3, title: 'GPS & Photos', icon: MapPin },
     { number: 4, title: 'Checklist', icon: ClipboardCheck },
     { number: 5, title: 'Disclaimer', icon: FileText },
@@ -1111,7 +1111,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     <>
       <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-black">Barcode / QR Code</h3>
+          <h3 className="text-base font-bold text-black">Vehicle Identification Scan</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
