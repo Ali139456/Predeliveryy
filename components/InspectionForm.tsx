@@ -1671,68 +1671,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
       )}
 
-      {/* Progress Indicator - Only show for new/editing inspections */}
-      {!readOnly && (
-        <div className="bg-white rounded-2xl shadow-xl p-3 sm:p-4 md:p-6 border-2 border-[#3833FF]/30 mb-4">
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 md:gap-4 mb-3 sm:mb-4">
-            {steps.map((step, index) => {
-              const IconComponent = step.icon;
-              const isCompleted = currentStep > step.number;
-              const isActive = currentStep === step.number;
-              const isLast = index === steps.length - 1;
-              
-              return (
-                <div key={step.number} className="flex items-center">
-                  <div className="flex flex-col items-center group cursor-pointer" onClick={() => currentStep > step.number && setCurrentStep(step.number)}>
-                    <div className="relative w-full flex justify-center">
-                      <div
-                        className={`relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-lg sm:rounded-xl flex items-center justify-center transition-all duration-300 transform ${
-                          isCompleted
-                            ? 'bg-gradient-to-br from-green-500 via-emerald-500 to-green-600 text-white hover:scale-110'
-                            : isActive
-                            ? 'bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white scale-105 sm:scale-110 ring-2 sm:ring-4 ring-blue-400/30'
-                            : 'bg-gradient-to-br from-sky-400 via-sky-500 to-cyan-500 text-white hover:from-sky-500 hover:to-cyan-600'
-                        }`}
-                      >
-                        {isCompleted ? (
-                          <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" strokeWidth={2.5} />
-                        ) : (
-                          <IconComponent className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 ${isActive ? 'animate-pulse' : ''}`} strokeWidth={2} />
-                        )}
-                      </div>
-                    </div>
-                    <span className={`text-[9px] sm:text-[10px] md:text-xs mt-1.5 sm:mt-2 font-semibold text-center leading-tight transition-colors px-0.5 ${
-                      isActive 
-                        ? 'text-blue-600 font-bold' 
-                        : isCompleted 
-                        ? 'text-green-600' 
-                        : 'text-sky-600'
-                    }`}>
-                      <span className="hidden sm:inline">{step.title}</span>
-                      <span className="sm:hidden">{step.number}</span>
-                    </span>
-                  </div>
-                  {!isLast && (
-                    <ChevronRight className={`w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mx-1 sm:mx-2 md:mx-3 flex-shrink-0 ${
-                      isCompleted 
-                        ? 'text-green-500' 
-                        : isActive 
-                        ? 'text-blue-500' 
-                        : 'text-sky-400'
-                    } transition-colors`} strokeWidth={2.5} />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <div className="text-center pt-2 border-t border-gray-200">
-            <p className="text-xs sm:text-sm font-semibold text-black">
-              Step <span className="text-[#3833FF]">{currentStep}</span> of <span className="text-gray-600">{totalSteps}</span>
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Content - Step-by-step for new/editing, all at once for viewing */}
       <div className="flex flex-col">
         <div className={`w-full ${readOnly ? 'space-y-6' : ''}`}>
