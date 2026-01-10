@@ -4,9 +4,11 @@ import { useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import { Camera, X, Upload } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
+import { uploadToCloudinaryDirect, getCloudinaryImageUrl } from '@/lib/cloudinaryClient';
 
 interface PhotoData {
   fileName: string;
+  url?: string; // Cloudinary secure_url for direct access
   metadata?: {
     width?: number;
     height?: number;
@@ -15,6 +17,8 @@ interface PhotoData {
     dateTime?: string;
     latitude?: number;
     longitude?: number;
+    format?: string;
+    bytes?: number;
     [key: string]: any;
   } | null;
 }
@@ -42,7 +46,6 @@ function PhotoUpload({
 
     const currentCount = Array.isArray(photos) ? photos.length : 0;
     if (currentCount + files.length > maxPhotos) {
-      // Show error via callback or state - for now use alert as fallback
       if (typeof window !== 'undefined') {
         alert(`Maximum ${maxPhotos} photos allowed`);
       }
@@ -53,42 +56,19 @@ function PhotoUpload({
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const response = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        // Check if response is OK before parsing JSON
-        if (!response.ok) {
-          const errorText = await response.text();
-          let errorMessage = 'Upload failed';
-          try {
-            const errorData = JSON.parse(errorText);
-            errorMessage = errorData.error || errorMessage;
-          } catch {
-            errorMessage = errorText || `Upload failed: ${response.status} ${response.statusText}`;
-          }
-          throw new Error(errorMessage);
-        }
-
-        // Check if response has content before parsing
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-          const text = await response.text();
-          throw new Error(text || 'Invalid response from server');
-        }
-
-        const data = await response.json();
-        if (data.success) {
-          return {
-            fileName: data.fileName,
-            metadata: data.metadata || null,
-          };
-        }
-        throw new Error(data.error || 'Upload failed');
+        // Upload directly to Cloudinary using unsigned upload preset
+        const result = await uploadToCloudinaryDirect(file, 'inspections');
+        
+        return {
+          fileName: result.public_id, // Store public_id for flexibility
+          url: result.secure_url, // Store full URL for immediate use
+          metadata: {
+            width: result.width || null,
+            height: result.height || null,
+            format: result.format || null,
+            bytes: result.bytes || null,
+          } || null,
+        };
       });
 
       const uploadedFiles = await Promise.all(uploadPromises);
@@ -96,7 +76,8 @@ function PhotoUpload({
       onPhotosChange([...currentPhotos, ...uploadedFiles]);
     } catch (error: any) {
       if (typeof window !== 'undefined') {
-        alert(`Upload failed: ${error.message}`);
+        const errorMessage = error.message || 'Upload failed. Please check your Cloudinary configuration.';
+        alert(`Upload failed: ${errorMessage}`);
       }
       console.error('Photo upload error:', error);
     } finally {
@@ -145,16 +126,39 @@ function PhotoUpload({
       {Array.isArray(photos) && photos.length > 0 && (
         <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
           {photos.map((photo, index) => {
-            const photoUrl = typeof photo === 'string' ? photo : photo.fileName;
-            const fullImageUrl = `/api/files/${photoUrl}`;
+            // Handle both old format (string or fileName) and new format (with url)
+            let imageUrl: string;
+            if (typeof photo === 'string') {
+              // Old format: might be a Cloudinary public_id or old file path
+              if (photo.startsWith('http')) {
+                imageUrl = photo;
+              } else {
+                // Try to construct Cloudinary URL, fallback to API route
+                imageUrl = getCloudinaryImageUrl(photo);
+              }
+            } else if (photo.url) {
+              // New format: direct Cloudinary URL
+              imageUrl = photo.url;
+            } else if (photo.fileName) {
+              // Old format with fileName
+              if (photo.fileName.startsWith('http')) {
+                imageUrl = photo.fileName;
+              } else {
+                // Try to construct Cloudinary URL, fallback to API route
+                imageUrl = getCloudinaryImageUrl(photo.fileName);
+              }
+            } else {
+              imageUrl = `/api/files/${photo}`;
+            }
+            
             return (
-              <div key={`${photoUrl}-${index}`} className="relative group">
+              <div key={`${imageUrl}-${index}`} className="relative group">
                 <div
                   className="relative aspect-square cursor-pointer hover:opacity-80 transition-opacity"
-                  onClick={() => setLightboxImage(fullImageUrl)}
+                  onClick={() => setLightboxImage(imageUrl)}
                 >
                 <Image
-                    src={fullImageUrl}
+                    src={imageUrl}
                   alt={`Photo ${index + 1}`}
                     width={100}
                     height={100}
