@@ -11,6 +11,7 @@ function UserHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -41,6 +42,22 @@ function UserHeader() {
     checkAuth();
   }, [checkAuth]);
 
+  // Handle scroll for navbar text color change
+  useEffect(() => {
+    if (pathname !== '/') return;
+    
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      // Change text color after scrolling past hero section (approximately 100vh)
+      setScrolled(scrollPosition > window.innerHeight * 0.8);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial scroll position
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [pathname]);
+
   const handleLogout = useCallback(async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
@@ -67,26 +84,90 @@ function UserHeader() {
 
   // Render navbar immediately - show logged out state while loading
   if (!user) {
+    const isHomePage = pathname === '/';
+    const textColor = isHomePage && !scrolled ? 'text-white' : 'text-black';
+    const linkHoverColor = 'hover:text-[#3833FF]';
+    const navBg = isHomePage && !scrolled ? 'bg-transparent' : 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200';
+    
     return (
-      <div className="bg-black shadow-lg border-b border-[#3833FF]/30">
-        <div className="container mx-auto px-4 py-3">
+      <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="text-lg sm:text-xl font-bold text-white hover:text-[#3833FF] transition-colors flex items-center">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#3833FF] flex items-center justify-center mr-2 border border-[#3833FF]/30">
+            <Link href="/" className={`text-lg sm:text-xl font-bold ${textColor} ${linkHoverColor} transition-colors flex items-center group`}>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#3833FF] flex items-center justify-center mr-2 border border-[#3833FF]/30 group-hover:scale-110 transition-transform">
                 <span className="text-white font-bold text-xs sm:text-sm">HI</span>
               </div>
               <span className="hidden sm:inline">Pre delivery inspection</span>
               <span className="sm:hidden">Pre delivery</span>
             </Link>
-            <Link
-              href="/login"
-              className="flex items-center px-4 sm:px-6 py-2 text-xs sm:text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-lg hover:shadow-xl font-semibold border border-[#3833FF]/30"
+            
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center gap-6">
+              <a href="#features" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Features</a>
+              <a href="#how-it-works" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>How it Works</a>
+              <a href="#benefits" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</a>
+              <a href="#contact" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</a>
+              <Link
+                href="/login"
+                className="flex items-center px-5 py-2 text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-lg hover:shadow-xl font-semibold border border-[#3833FF]/30 hover:scale-105"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Login
+              </Link>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className={`md:hidden flex items-center justify-center w-10 h-10 ${textColor} hover:bg-black/10 rounded-lg transition-colors`}
+              aria-label="Toggle menu"
             >
-              <User className="w-4 h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Login</span>
-            </Link>
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className="fixed top-0 left-0 right-0 bg-black/95 backdrop-blur-md z-50 md:hidden border-b border-[#3833FF]/30">
+              <div className="container mx-auto px-4 py-4">
+                <div className="flex items-center justify-between mb-4">
+                  <Link href="/" className="text-lg font-bold text-white flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                    <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center mr-2">
+                      <span className="text-white font-bold text-sm">HI</span>
+                    </div>
+                    Pre delivery
+                  </Link>
+                  <button
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-10 h-10 text-white hover:bg-white/10 rounded-lg transition-colors flex items-center justify-center"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className="flex flex-col gap-3 pb-4">
+                  <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Features</a>
+                  <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">How it Works</a>
+                  <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Benefits</a>
+                  <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Contact</a>
+                  <Link
+                    href="/login"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center px-5 py-2 text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all font-semibold border border-[#3833FF]/30 mt-2"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Login
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     );
   }

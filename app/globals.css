@@ -71,6 +71,20 @@
     display: none;
   }
 
+  /* Shimmer animation for cards */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%) skewX(-15deg);
+    }
+    100% {
+      transform: translateX(200%) skewX(-15deg);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 4s infinite;
+  }
+
   /* Mobile input fixes - ensure high contrast and white background */
   input, textarea, select {
     -webkit-appearance: none;
