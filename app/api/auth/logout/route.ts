@@ -1,8 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   const response = NextResponse.json({ success: true });
-  response.cookies.delete('auth-token');
+  
+  // Delete the auth-token cookie with the same settings as when it was set
+  response.cookies.set('auth-token', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 0, // Expire immediately
+    path: '/',
+  });
+  
   return response;
 }
 

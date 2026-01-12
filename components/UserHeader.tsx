@@ -60,13 +60,21 @@ function UserHeader() {
 
   const handleLogout = useCallback(async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
       setUser(null); // Clear user state immediately
       // Clear any cached data
       if (typeof window !== 'undefined') {
         // Clear any localStorage/sessionStorage if used
         sessionStorage.clear();
+        localStorage.clear();
       }
+      
+      // Call logout API
+      await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include' // Important: include cookies
+      });
+      
+      // Redirect to login
       router.push('/login');
       router.refresh();
     } catch (error) {
@@ -74,6 +82,7 @@ function UserHeader() {
       setUser(null); // Clear user state even on error
       // Force redirect even if API call fails
       router.push('/login');
+      router.refresh();
     }
   }, [router]);
 
@@ -270,27 +279,31 @@ function UserHeader() {
                 {profileDropdownOpen && (
                   <>
                     <div
-                      className="fixed inset-0 z-10"
+                      className="fixed inset-0 z-[100]"
                       onClick={() => setProfileDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-black rounded-lg shadow-xl border-2 border-[#3833FF]/30 z-20 overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-56 bg-black rounded-lg shadow-xl border-2 border-[#3833FF]/30 z-[200] overflow-hidden pointer-events-auto">
                       <div className="py-2">
                         <button
-                          onClick={() => {
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setProfileDropdownOpen(false);
                             setShowProfileModal(true);
                           }}
-                          className="w-full flex items-center px-4 py-3 text-left text-sm text-white hover:bg-black/80 transition-colors"
+                          className="w-full flex items-center px-4 py-3 text-left text-sm text-white hover:bg-black/80 transition-colors cursor-pointer relative z-[201]"
                         >
                           <Settings className="w-4 h-4 mr-3 text-[#3833FF]" />
                           <span>Edit Profile</span>
                         </button>
                         <button
-                          onClick={() => {
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setProfileDropdownOpen(false);
                             handleLogout();
                           }}
-                          className="w-full flex items-center px-4 py-3 text-left text-sm text-red-400 hover:bg-red-900/30 transition-colors"
+                          className="w-full flex items-center px-4 py-3 text-left text-sm text-red-400 hover:bg-red-900/30 transition-colors cursor-pointer relative z-[201]"
                         >
                           <LogOut className="w-4 h-4 mr-3" />
                           <span>Logout</span>
