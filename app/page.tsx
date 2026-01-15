@@ -33,154 +33,166 @@ export default function Home() {
   
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-slate-900 via-blue-900 to-black min-h-screen w-full">
-        {/* Hero Background Image */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <Image
-            src="/predelivery-hero-shot.jpg"
-            alt="Pre Delivery Inspection Facility"
-            fill
-            priority
-            className="object-cover opacity-60"
-            quality={90}
-          />
+      {/* Hero Section - SiteGround AI Studio Style */}
+      <div className="relative bg-gradient-to-b from-blue-950 via-purple-950 to-blue-950 min-h-screen w-full overflow-hidden">
+        {/* Animated background gradient */}
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900/50 via-purple-900/50 to-blue-900/50"></div>
         </div>
         
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-black/80"></div>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
         
-        {/* Subtle light streaks effect */}
-        <div className="absolute inset-0 opacity-20 z-10 pointer-events-none">
-          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-          <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 lg:pt-0 pb-4 sm:pb-6 lg:pb-8 relative z-20 min-h-screen flex items-center">
-          <div className="max-w-7xl mx-auto w-full py-2 sm:py-3">
-            {/* Main Title - Centered */}
-            <div className="text-center mb-2 sm:mb-3 lg:mb-4">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-1.5 sm:mb-2">
-                Pre-Delivery Inspections, Digitised
-              </h1>
-              
-              {/* Subtitle */}
-              <p className="text-sm sm:text-base lg:text-lg text-white/90 max-w-3xl mx-auto mb-2 sm:mb-3 lg:mb-4 px-4">
-                Verify vehicle condition, compliance, and documentation before handover and registration — with a single, defensible digital record.
-              </p>
-
-              {/* Action Cards Section */}
-              <div className="max-w-5xl mx-auto mb-2 sm:mb-3 lg:mb-4 px-4">
-                {/* Large Cards Row - New Inspection & View Inspections */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6 mb-2 sm:mb-3">
-                  <Link href="/inspection/new" className="group relative bg-gradient-to-br from-[#3833FF] via-blue-600 to-purple-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border-2 border-[#3833FF]/80 shadow-2xl shadow-[#3833FF]/40 hover:shadow-[#3833FF]/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden">
-                    {/* Decorative background pattern - More visible */}
-                    <div className="absolute inset-0">
-                      {/* Large decorative circles - responsive sizes */}
-                      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-white/30 rounded-full blur-3xl"></div>
-                      <div className="absolute bottom-0 left-0 w-28 h-28 sm:w-40 sm:h-40 lg:w-56 lg:h-56 bg-purple-300/40 rounded-full blur-3xl"></div>
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48 bg-blue-300/35 rounded-full blur-2xl"></div>
-                      {/* Grid pattern overlay - more visible */}
-                      <div className="absolute inset-0 opacity-40" style={{backgroundImage: 'radial-gradient(circle at 3px 3px, rgba(255,255,255,0.4) 2px, transparent 0)', backgroundSize: '32px 32px'}}></div>
-                      {/* Decorative geometric shapes - hidden on mobile */}
-                      <div className="hidden sm:block absolute top-4 right-4 lg:top-8 lg:right-8 w-12 h-12 lg:w-24 lg:h-24 border-2 border-white/30 rounded-lg rotate-45"></div>
-                      <div className="hidden sm:block absolute bottom-4 left-4 lg:bottom-8 lg:left-8 w-8 h-8 lg:w-16 lg:h-16 border-2 border-white/25 rounded-full"></div>
-                    </div>
-                    {/* Animated background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    {/* Floating particles effect - hidden on mobile */}
-                    <div className="hidden sm:block absolute top-4 right-4 w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
-                    <div className="hidden sm:block absolute bottom-6 left-6 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.3s'}}></div>
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                      <div className="w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-cyan-300 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
-                        <FileCheck className="w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-[#3833FF]" strokeWidth={2.5} />
-                      </div>
-                      <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-0.5 sm:mb-1 group-hover:text-white/95 transition-colors">New Inspection</h3>
-                      <p className="text-white/90 text-xs sm:text-sm font-medium">Start a new pre-delivery inspection</p>
-                    </div>
-                  </Link>
-
-                  <Link href="/inspections" className="group relative bg-gradient-to-br from-[#3833FF] via-blue-600 to-purple-600 rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border-2 border-[#3833FF]/80 shadow-2xl shadow-[#3833FF]/40 hover:shadow-[#3833FF]/60 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden">
-                    {/* Decorative background pattern - More visible */}
-                    <div className="absolute inset-0">
-                      {/* Large decorative circles - responsive sizes */}
-                      <div className="absolute top-0 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-white/30 rounded-full blur-3xl"></div>
-                      <div className="absolute bottom-0 left-0 w-28 h-28 sm:w-40 sm:h-40 lg:w-56 lg:h-56 bg-purple-300/40 rounded-full blur-3xl"></div>
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 sm:w-32 sm:h-32 lg:w-48 lg:h-48 bg-blue-300/35 rounded-full blur-2xl"></div>
-                      {/* Grid pattern overlay - more visible */}
-                      <div className="absolute inset-0 opacity-40" style={{backgroundImage: 'radial-gradient(circle at 3px 3px, rgba(255,255,255,0.4) 2px, transparent 0)', backgroundSize: '32px 32px'}}></div>
-                      {/* Decorative geometric shapes - hidden on mobile */}
-                      <div className="hidden sm:block absolute top-4 right-4 lg:top-8 lg:right-8 w-12 h-12 lg:w-24 lg:h-24 border-2 border-white/30 rounded-lg rotate-45"></div>
-                      <div className="hidden sm:block absolute bottom-4 left-4 lg:bottom-8 lg:left-8 w-8 h-8 lg:w-16 lg:h-16 border-2 border-white/25 rounded-full"></div>
-                    </div>
-                    {/* Animated background glow */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    {/* Floating particles effect - hidden on mobile */}
-                    <div className="hidden sm:block absolute top-4 right-4 w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
-                    <div className="hidden sm:block absolute bottom-6 left-6 w-1.5 h-1.5 bg-white/50 rounded-full animate-pulse" style={{animationDelay: '0.3s'}}></div>
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                      <div className="w-11 h-11 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-xl sm:rounded-2xl bg-cyan-300 flex items-center justify-center mb-1.5 sm:mb-2 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
-                        <Search className="w-5 h-5 sm:w-7 sm:h-7 lg:w-8 lg:h-8 text-[#3833FF]" strokeWidth={2.5} />
-                      </div>
-                      <h3 className="text-base sm:text-lg lg:text-xl font-bold text-white mb-0.5 sm:mb-1 group-hover:text-white/95 transition-colors">View Inspections</h3>
-                      <p className="text-white/90 text-xs sm:text-sm font-medium">Browse and manage inspections</p>
-                    </div>
-                  </Link>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 lg:pt-32 pb-8 sm:pb-12 relative z-20 min-h-screen flex items-center">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              {/* Left Side - Main Content with Overlapping Windows */}
+              <div className="lg:col-span-7 space-y-6">
+                {/* FREE ACCESS Banner */}
+                <div className="inline-block">
+                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg px-4 py-2 shadow-lg">
+                    <span className="text-white font-bold text-sm sm:text-base uppercase tracking-wide">FREE ACCESS</span>
+                  </div>
                 </div>
 
-                {/* Small Cards Row - Photo Gallery, GPS Tracking, Analytics */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-2xl mx-auto mb-2 sm:mb-3">
-                  <div className="relative bg-[#3833FF] rounded-lg p-3 sm:p-4 border-2 border-[#3833FF]/80 shadow-lg shadow-[#3833FF]/30 overflow-hidden">
-                    {/* Subtle shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center mb-2 shadow-md">
-                        <Camera className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
+                {/* Main Heading */}
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
+                  Introducing Pre-Delivery AI Studio
+                </h1>
+                
+                {/* Description */}
+                <p className="text-base sm:text-lg lg:text-xl text-white/90 max-w-2xl leading-relaxed">
+                  Verify vehicle condition, compliance, and documentation before handover and registration — with a single, defensible digital record powered by AI.
+                </p>
+
+                {/* Overlapping Windows/Cards Design */}
+                <div className="relative mt-8 space-y-4">
+                  {/* Large Window - Main Inspection Interface */}
+                  <div className="relative bg-gradient-to-br from-purple-500/20 via-blue-500/20 to-purple-600/20 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl overflow-hidden">
+                    {/* Decorative content inside window */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/5 to-transparent"></div>
+                    
+                    {/* Left side - Abstract visual */}
+                    <div className="relative z-10 flex items-center gap-4">
+                      <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl bg-gradient-to-br from-blue-400/30 via-purple-400/30 to-pink-400/30 flex items-center justify-center">
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500/40 to-purple-500/40 rounded-lg flex items-center justify-center">
+                          <FileCheck className="w-12 h-12 sm:w-16 sm:h-16 text-white/80" strokeWidth={2} />
+                        </div>
                       </div>
-                      <h4 className="text-xs sm:text-sm font-semibold text-white">Photo Gallery</h4>
+                      
+                      {/* Right side - Content lines */}
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3 bg-white/40 rounded w-full"></div>
+                        <div className="h-3 bg-white/30 rounded w-3/4"></div>
+                        <div className="h-3 bg-white/25 rounded w-5/6"></div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="relative bg-blue-600 rounded-lg p-3 sm:p-4 border-2 border-blue-500/80 shadow-lg shadow-blue-600/30 overflow-hidden">
-                    {/* Subtle shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center mb-2 shadow-md">
-                        <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
+                  {/* Smaller Window - Chat/Input Interface (overlapping) */}
+                  <div className="relative -mt-6 ml-4 sm:ml-8 bg-slate-900/95 backdrop-blur-xl rounded-xl p-4 border border-purple-500/30 shadow-2xl z-20">
+                    <div className="flex items-start gap-3">
+                      {/* Sparkle icon */}
+                      <div className="flex-shrink-0">
+                        <Sparkles className="w-5 h-5 text-purple-400" strokeWidth={2} />
                       </div>
-                      <h4 className="text-xs sm:text-sm font-semibold text-white">GPS Tracking</h4>
+                      
+                      {/* Chat lines */}
+                      <div className="flex-1 space-y-2">
+                        <div className="h-2 bg-white/30 rounded w-full"></div>
+                        <div className="h-2 bg-white/20 rounded w-2/3"></div>
+                      </div>
+                      
+                      {/* Input field with arrow */}
+                      <div className="flex items-center gap-2 bg-black/50 rounded-lg px-3 py-2 border border-purple-500/50">
+                        <div className="h-2 bg-white/40 rounded w-16"></div>
+                        <ArrowRight className="w-4 h-4 text-purple-400" strokeWidth={2.5} />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="relative bg-purple-600 rounded-lg p-3 sm:p-4 border-2 border-purple-500/80 shadow-lg shadow-purple-600/30 overflow-hidden">
-                    {/* Subtle shimmer effect */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
-                    <div className="relative z-10 flex flex-col items-center text-center">
-                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-white/25 backdrop-blur-sm flex items-center justify-center mb-2 shadow-md">
-                        <BarChart3 className="w-4 h-4 sm:w-5 sm:h-5 text-white" strokeWidth={2.5} />
-                      </div>
-                      <h4 className="text-xs sm:text-sm font-semibold text-white">Analytics</h4>
-                    </div>
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 pt-4">
+                    <Link 
+                      href="/inspection/new"
+                      className="group relative bg-gradient-to-r from-[#3833FF] to-blue-600 hover:from-[#3833FF]/90 hover:to-blue-600/90 text-white font-semibold px-6 py-3 rounded-lg shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2 border border-[#3833FF]/50"
+                    >
+                      <FileCheck className="w-5 h-5" />
+                      <span>New Inspection</span>
+                    </Link>
+                    <Link 
+                      href="/inspections"
+                      className="group relative bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-lg border-2 border-white/30 hover:scale-105 transition-all flex items-center justify-center gap-2"
+                    >
+                      <Search className="w-5 h-5" />
+                      <span>View Inspections</span>
+                    </Link>
                   </div>
                 </div>
               </div>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3 px-4 flex-wrap">
-                <button className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-1.5 border border-[#3833FF]/50 text-xs sm:text-sm whitespace-nowrap">
-                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  Book a demo
-                </button>
-                <button className="bg-white/10 hover:bg-white/20 text-white font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-1.5 backdrop-blur-sm text-xs sm:text-sm whitespace-nowrap">
-                  <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
-                  Talk to sales
-                </button>
+              {/* Right Side - Feature List (AI Models Style) */}
+              <div className="lg:col-span-5 space-y-3">
+                <div className="bg-purple-600/30 backdrop-blur-md rounded-xl p-4 border border-purple-500/40 shadow-lg hover:bg-purple-600/40 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+                      <Camera className="w-5 h-5 text-white" strokeWidth={2} />
+                    </div>
+                    <span className="text-white font-semibold text-sm sm:text-base">Photo Gallery</span>
+                  </div>
+                </div>
+
+                <div className="bg-purple-600/30 backdrop-blur-md rounded-xl p-4 border border-purple-500/40 shadow-lg hover:bg-purple-600/40 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center">
+                      <QrCode className="w-5 h-5 text-white" strokeWidth={2} />
+                    </div>
+                    <span className="text-white font-semibold text-sm sm:text-base">Barcode Scanner</span>
+                  </div>
+                </div>
+
+                <div className="bg-purple-600/30 backdrop-blur-md rounded-xl p-4 border border-purple-500/40 shadow-lg hover:bg-purple-600/40 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-white" strokeWidth={2} />
+                    </div>
+                    <span className="text-white font-semibold text-sm sm:text-base">GPS Tracking</span>
+                  </div>
+                </div>
+
+                <div className="bg-purple-600/30 backdrop-blur-md rounded-xl p-4 border border-purple-500/40 shadow-lg hover:bg-purple-600/40 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center">
+                      <BarChart3 className="w-5 h-5 text-white" strokeWidth={2} />
+                    </div>
+                    <span className="text-white font-semibold text-sm sm:text-base">Analytics Dashboard</span>
+                  </div>
+                </div>
+
+                <div className="bg-purple-600/30 backdrop-blur-md rounded-xl p-4 border border-purple-500/40 shadow-lg hover:bg-purple-600/40 transition-all cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center">
+                      <Shield className="w-5 h-5 text-white" strokeWidth={2} />
+                    </div>
+                    <span className="text-white font-semibold text-sm sm:text-base">Secure & Compliant</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Sub-Hero Line */}
-            <div className="text-center max-w-3xl mx-auto px-4 pb-2 sm:pb-3">
-              <p className="text-xs sm:text-sm text-white/80 leading-snug">
+            {/* Bottom CTA Section */}
+            <div className="mt-12 text-center">
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
+                <button className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-6 py-2.5 rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-2 border border-[#3833FF]/50">
+                  <Calendar className="w-4 h-4" />
+                  <span>Book a demo</span>
+                </button>
+                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold px-6 py-2.5 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2">
+                  <Phone className="w-4 h-4" />
+                  <span>Talk to sales</span>
+                </button>
+              </div>
+              <p className="text-white/70 text-sm mt-4 max-w-2xl mx-auto">
                 Built for dealerships, fleets, OEM delivery partners, and insurers who need inspection certainty before delivery
               </p>
             </div>
