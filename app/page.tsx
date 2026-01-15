@@ -191,14 +191,14 @@ export default function Home() {
             {/* Bottom CTA Section */}
             <div className="mt-12 text-center">
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
-                <button className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-6 py-2.5 rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-2 border border-[#3833FF]/50">
+                <Link href="/contact" className="bg-[#3833FF] hover:bg-[#3833FF]/90 text-white font-semibold px-6 py-2.5 rounded-full shadow-lg shadow-[#3833FF]/30 hover:scale-105 transition-all flex items-center gap-2 border border-[#3833FF]/50">
                   <Calendar className="w-4 h-4" />
                   <span>Book a demo</span>
-                </button>
-                <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold px-6 py-2.5 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2">
+                </Link>
+                <Link href="/contact" className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold px-6 py-2.5 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2">
                   <Phone className="w-4 h-4" />
                   <span>Talk to sales</span>
-                </button>
+                </Link>
               </div>
               <p className="text-white/70 text-sm mt-4 max-w-2xl mx-auto">
                 Built for dealerships, fleets, OEM delivery partners, and insurers who need inspection certainty before delivery
@@ -335,8 +335,85 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Why Predelivery.ai? Section */}
+      <div id="benefits" className="relative bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-25">
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-purple-300/30 to-pink-300/20 rounded-full blur-3xl"></div>
+        </div>
+        {/* Diagonal lines pattern */}
+        <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(56,51,255,0.5) 10px, rgba(56,51,255,0.5) 20px)'}}></div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+                Why Predelivery.ai?
+              </h2>
+              
+              {/* Problem Statement */}
+              <p className="text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed">
+                Vehicle issues discovered after delivery and registration lead to disputes, rework, warranty friction, and reputational risk.
+              </p>
+              
+              {/* Solution Statement */}
+              <p className="text-xl sm:text-2xl font-semibold text-[#3833FF] mb-12">
+                Pre-delivery replaces uncertainty with proof.
+              </p>
+            </div>
+
+            {/* Benefits Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="group relative bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-3xl p-8 border-2 border-orange-200/50 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-orange-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <AlertTriangle className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-orange-600 transition-colors">Reduce post-delivery disputes</h3>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-8 border-2 border-blue-200/50 hover:border-blue-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 flex items-center justify-center mb-6 shadow-lg shadow-blue-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors">Protect warranty claims</h3>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 border-2 border-green-200/50 hover:border-green-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-green-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-green-600 transition-colors">Create a defensible delivery record</h3>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 border-2 border-purple-200/50 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-purple-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <Lock className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">Prevent post registration risks</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Who It's For? Section */}
-      <div id="benefits" className="relative bg-gradient-to-br from-gray-50 via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-gray-50 via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
         {/* Decorative background elements */}
         <div className="absolute inset-0 opacity-25">
           <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-orange-300/30 to-amber-300/20 rounded-full blur-3xl"></div>
@@ -479,6 +556,9 @@ export default function Home() {
                 </p>
                 <p className="text-base sm:text-lg text-gray-600">
                   Per-vehicle and enterprise options available.
+                </p>
+                <p className="text-base sm:text-lg font-semibold text-[#3833FF] mt-4">
+                  Contact sales for pricing.
                 </p>
               </div>
             </div>
@@ -638,10 +718,10 @@ export default function Home() {
                 Get Started Free
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              <button className="bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-3 rounded-full border-2 border-white/30 hover:bg-white/20 transition-all flex items-center gap-2 hover:scale-105">
+              <Link href="/contact" className="bg-white/10 backdrop-blur-sm text-white font-semibold px-8 py-3 rounded-full border-2 border-white/30 hover:bg-white/20 transition-all flex items-center gap-2 hover:scale-105">
                 <Phone className="w-5 h-5" />
                 Schedule Demo
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -710,22 +790,21 @@ export default function Home() {
             <div>
               <h3 className="text-white font-bold mb-4 text-lg">Contact Us</h3>
               <ul className="space-y-3">
+                <li>
+                  <Link href="/contact" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">
+                    Contact Form
+                  </Link>
+                </li>
                 <li className="text-white/70 text-sm">
                   <div className="flex items-start gap-2">
                     <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <span>support@predelivery.com</span>
+                    <a href="mailto:info@predelivery.ai" className="hover:text-[#3833FF] transition-colors">info@predelivery.ai</a>
                   </div>
                 </li>
                 <li className="text-white/70 text-sm">
                   <div className="flex items-start gap-2">
                     <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     <span>Sales: +1 (555) 123-4567</span>
-                  </div>
-                </li>
-                <li className="text-white/70 text-sm">
-                  <div className="flex items-start gap-2">
-                    <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                    <span>123 Business St, Suite 100<br />City, State 12345</span>
                   </div>
                 </li>
               </ul>
