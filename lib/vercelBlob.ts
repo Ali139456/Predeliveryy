@@ -48,9 +48,14 @@ export async function uploadToVercelBlob(
     };
   } catch (error: any) {
     console.error('Vercel Blob upload error:', error);
-    throw new Error(
+    // Preserve error status and details
+    const enhancedError: any = new Error(
       `Failed to upload to Vercel Blob: ${error.message || 'Unknown error'}`
     );
+    enhancedError.status = error.status || error.statusCode;
+    enhancedError.statusCode = error.statusCode || error.status;
+    enhancedError.originalError = error;
+    throw enhancedError;
   }
 }
 

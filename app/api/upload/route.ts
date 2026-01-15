@@ -32,13 +32,26 @@ export async function POST(request: NextRequest) {
   const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
     'Pragma': 'no-cache',
     'Expires': '0',
   };
   
   try {
+    // Log storage configuration for debugging
+    const isVercel = process.env.VERCEL === '1';
+    const hasBlob = hasVercelBlobConfig();
+    const hasCloudinary = hasCloudinaryConfig;
+    const hasAWS = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY);
+    
+    console.log('Upload request received:', {
+      isVercel,
+      hasBlob,
+      hasCloudinary,
+      hasAWS,
+      blobTokenSet: !!process.env.BLOB_READ_WRITE_TOKEN,
+    });
     // Check request method explicitly (shouldn't be needed but helps with debugging)
     if (request.method !== 'POST') {
       return NextResponse.json(
@@ -107,9 +120,6 @@ export async function POST(request: NextRequest) {
     let uploadedFileName: string | undefined;
     let fileUrl: string | undefined;
     
-    // Check if we're on Vercel
-    const isVercel = process.env.VERCEL === '1';
-    
     // Upload to Vercel Blob Storage if configured (recommended for Vercel)
     if (hasVercelBlobConfig()) {
       try {
@@ -122,22 +132,36 @@ export async function POST(request: NextRequest) {
         console.error('Vercel Blob upload error:', {
           message: blobError.message,
           error: blobError,
+          status: blobError.status || blobError.statusCode,
           stack: blobError.stack
         });
         
-        // On Vercel, Vercel Blob is required - don't fallback
-        if (isVercel) {
+        // Check if it's a 403 or permission error
+        const isPermissionError = 
+          blobError.status === 403 || 
+          blobError.statusCode === 403 ||
+          blobError.message?.includes('403') ||
+          blobError.message?.includes('Forbidden') ||
+          blobError.message?.includes('permission') ||
+          blobError.message?.includes('unauthorized');
+        
+        // If it's a permission error or invalid token, fall back to Cloudinary if available
+        if (isPermissionError && hasCloudinaryConfig) {
+          console.warn('Vercel Blob returned 403/Forbidden, falling back to Cloudinary');
+          // Continue to Cloudinary fallback below
+        } else if (isVercel && !hasCloudinaryConfig) {
+          // On Vercel without Cloudinary fallback, return error
           return NextResponse.json(
             { 
               success: false, 
-              error: blobError.message || 'Failed to upload to Vercel Blob. Please check your BLOB_READ_WRITE_TOKEN environment variable on Vercel.' 
+              error: `Vercel Blob upload failed: ${blobError.message || 'Permission denied (403). Please check your BLOB_READ_WRITE_TOKEN is valid and has write permissions, or configure Cloudinary as a fallback.'}`
             },
             { status: 500, headers: corsHeaders }
           );
+        } else {
+          // For local dev or if Cloudinary is available, fallback to other storage options
+          console.warn('Vercel Blob upload failed, falling back to other storage options');
         }
-        
-        // For local dev, fallback to other storage options
-        console.warn('Vercel Blob upload failed, falling back to other storage options');
       }
     }
     
