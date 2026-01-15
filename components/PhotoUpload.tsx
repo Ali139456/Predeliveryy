@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { Camera, X, Upload } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
-import { getCloudinaryImageUrl } from '@/lib/cloudinaryClient';
 
 interface PhotoData {
   fileName: string;
@@ -125,23 +124,23 @@ function PhotoUpload({
             // Handle both old format (string or fileName) and new format (with url)
             let imageUrl: string;
             if (typeof photo === 'string') {
-              // Old format: might be a URL, Cloudinary public_id, or old file path
+              // Old format: might be a URL or old file path
               if (photo.startsWith('http')) {
                 imageUrl = photo;
               } else {
-                // Try to construct Cloudinary URL, fallback to API route
-                imageUrl = getCloudinaryImageUrl(photo);
+                // Fallback to API route for old paths
+                imageUrl = `/api/files/${photo}`;
               }
             } else if (photo.url) {
-              // New format: direct URL (Vercel Blob, Cloudinary, or S3)
+              // New format: direct URL (Vercel Blob)
               imageUrl = photo.url;
             } else if (photo.fileName) {
               // Old format with fileName
               if (photo.fileName.startsWith('http')) {
                 imageUrl = photo.fileName;
               } else {
-                // Try to construct Cloudinary URL, fallback to API route
-                imageUrl = getCloudinaryImageUrl(photo.fileName);
+                // Fallback to API route for old paths
+                imageUrl = `/api/files/${photo.fileName}`;
               }
             } else {
               imageUrl = `/api/files/${photo}`;
