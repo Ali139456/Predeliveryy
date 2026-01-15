@@ -210,7 +210,225 @@ export default function Home() {
 
       {!isLoggedIn && (
         <>
-      {/* Features Section */}
+      {/* Why Predelivery.ai? Section */}
+      <div id="benefits" className="relative bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
+        {/* Dynamic gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-1/4 w-[900px] h-[900px] bg-gradient-to-br from-indigo-500/50 via-blue-500/40 to-cyan-500/50 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-gradient-to-tr from-purple-500/50 via-pink-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/40 via-cyan-500/30 to-indigo-500/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '3s'}}></div>
+        </div>
+        {/* Mesh overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-indigo-100/30 to-blue-100/30"></div>
+        {/* Animated diagonal pattern */}
+        <div className="absolute inset-0 opacity-[0.12]" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(56,51,255,0.3) 20px, rgba(56,51,255,0.3) 40px)'}}></div>
+        {/* Radial gradient overlay */}
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-white/5 to-white/20"></div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+                Why Predelivery.ai?
+              </h2>
+              
+              {/* Problem Statement */}
+              <p className="text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed">
+                Vehicle issues discovered after delivery and registration lead to disputes, rework, warranty friction, and reputational risk.
+              </p>
+              
+              {/* Solution Statement */}
+              <p className="text-xl sm:text-2xl font-semibold text-[#3833FF] mb-12">
+                Pre-delivery replaces uncertainty with proof.
+              </p>
+            </div>
+
+            {/* Benefits Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="group relative bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-3xl p-8 border-2 border-orange-200/50 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-orange-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <AlertTriangle className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-orange-600 transition-colors">Reduce post-delivery disputes</h3>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-8 border-2 border-blue-200/50 hover:border-blue-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 flex items-center justify-center mb-6 shadow-lg shadow-blue-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors">Protect warranty claims</h3>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 border-2 border-green-200/50 hover:border-green-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-green-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <FileText className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-green-600 transition-colors">Create a defensible delivery record</h3>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 border-2 border-purple-200/50 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-200/50 overflow-hidden">
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-2xl"></div>
+                <div className="relative z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-purple-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-300/50 group-hover:scale-110 transition-transform duration-300">
+                    <Lock className="w-8 h-8 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">Prevent post registration risks</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How it works Section */}
+      <div id="how-it-works" className="relative bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 py-24 scroll-mt-20 overflow-hidden">
+        {/* Dynamic multi-layer orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-0 w-[900px] h-[900px] bg-gradient-to-br from-green-500/50 via-emerald-500/40 to-teal-500/50 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-purple-500/50 via-pink-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/45 via-cyan-500/35 to-indigo-500/45 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2.5s'}}></div>
+          <div className="absolute top-0 right-1/3 w-[600px] h-[600px] bg-gradient-to-br from-cyan-400/40 via-blue-400/30 to-purple-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
+        </div>
+        {/* Rich mesh gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-100/30 to-blue-100/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-indigo-100/25 to-purple-100/25"></div>
+        {/* Animated dot matrix */}
+        <div className="absolute inset-0 opacity-[0.15]" style={{backgroundImage: 'radial-gradient(circle at 4px 4px, rgba(56,51,255,0.5) 2px, transparent 0)', backgroundSize: '55px 55px'}}></div>
+        {/* Subtle shimmer */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-shimmer" style={{animationDelay: '1s'}}></div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-gray-900">
+                How it works
+              </h2>
+              <p className="text-xl sm:text-2xl text-[#3833FF] font-semibold mb-2 tracking-wide">
+                Inspect → Verify → Sign Off → Deliver
+              </p>
+            </div>
+
+            {/* Steps Container with Arrows */}
+            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-5">
+              {/* Step 1: Inspect */}
+              <div className="group relative bg-gradient-to-br from-blue-50/80 via-cyan-50/60 to-white rounded-3xl p-6 border-2 border-blue-200/60 hover:border-blue-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-300/40 overflow-visible w-full lg:w-[280px]">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-cyan-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
+                
+                {/* Number badge - Fixed positioning */}
+                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-blue-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+                  1
+                </div>
+                
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 flex items-center justify-center mb-4 shadow-xl shadow-blue-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <ClipboardCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-blue-600 transition-colors">Inspect</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
+                    Conduct a structured pre-delivery inspection using a standardised digital checklist.
+                  </p>
+                </div>
+              </div>
+
+              {/* Arrow 1 */}
+              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
+                <ArrowRight className="w-10 h-10 text-blue-400 drop-shadow-xl" strokeWidth={3} />
+              </div>
+
+              {/* Step 2: Verify */}
+              <div className="group relative bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-white rounded-3xl p-6 border-2 border-green-200/60 hover:border-green-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-300/40 overflow-visible w-full lg:w-[280px]">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-emerald-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
+                
+                {/* Number badge - Fixed positioning */}
+                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-green-500 via-green-600 to-emerald-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-green-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+                  2
+                </div>
+                
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 flex items-center justify-center mb-4 shadow-xl shadow-green-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <Check className="w-10 h-10 text-white" strokeWidth={3} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-green-600 transition-colors">Verify</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
+                    Capture photos, VIN and compliance data, documentation, and condition evidence in real time.
+                  </p>
+                </div>
+              </div>
+
+              {/* Arrow 2 */}
+              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
+                <ArrowRight className="w-10 h-10 text-green-400 drop-shadow-xl" strokeWidth={3} />
+              </div>
+
+              {/* Step 3: Sign Off */}
+              <div className="group relative bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-white rounded-3xl p-6 border-2 border-purple-200/60 hover:border-purple-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-300/40 overflow-visible w-full lg:w-[280px]">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-pink-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
+                
+                {/* Number badge - Fixed positioning */}
+                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-purple-500 via-purple-600 to-pink-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-purple-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+                  3
+                </div>
+                
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 flex items-center justify-center mb-4 shadow-xl shadow-purple-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <FileCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-purple-600 transition-colors">Sign Off</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
+                    Confirm readiness for delivery with a complete, auditable inspection record.
+                  </p>
+                </div>
+              </div>
+
+              {/* Arrow 3 */}
+              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
+                <ArrowRight className="w-10 h-10 text-purple-400 drop-shadow-xl" strokeWidth={3} />
+              </div>
+
+              {/* Step 4: Deliver */}
+              <div className="group relative bg-gradient-to-br from-orange-50/80 via-amber-50/60 to-white rounded-3xl p-6 border-2 border-orange-200/60 hover:border-orange-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-300/40 overflow-visible w-full lg:w-[280px]">
+                {/* Decorative background elements */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
+                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-amber-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
+                
+                {/* Number badge - Fixed positioning */}
+                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-orange-500 via-orange-600 to-amber-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-orange-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+                  4
+                </div>
+                
+                <div className="relative z-10 pt-2 flex flex-col items-center">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-600 to-yellow-600 flex items-center justify-center mb-4 shadow-xl shadow-orange-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-orange-600 transition-colors">Deliver</h3>
+                  <p className="text-gray-600 text-center leading-snug text-sm">
+                    Hand over the vehicle with confidence — knowing issues were identified and resolved before registration.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Powerful Features Section */}
       <div id="features" className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
         {/* Animated gradient orbs */}
         <div className="absolute inset-0">
@@ -332,88 +550,6 @@ export default function Home() {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">Fast & Efficient</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Streamlined workflow reduces inspection time by up to 60%</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Why Predelivery.ai? Section */}
-      <div id="benefits" className="relative bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
-        {/* Dynamic gradient orbs */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-1/4 w-[900px] h-[900px] bg-gradient-to-br from-indigo-500/50 via-blue-500/40 to-cyan-500/50 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-gradient-to-tr from-purple-500/50 via-pink-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/40 via-cyan-500/30 to-indigo-500/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '3s'}}></div>
-        </div>
-        {/* Mesh overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-indigo-100/30 to-blue-100/30"></div>
-        {/* Animated diagonal pattern */}
-        <div className="absolute inset-0 opacity-[0.12]" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(56,51,255,0.3) 20px, rgba(56,51,255,0.3) 40px)'}}></div>
-        {/* Radial gradient overlay */}
-        <div className="absolute inset-0 bg-radial-gradient from-transparent via-white/5 to-white/20"></div>
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-gray-900">
-                Why Predelivery.ai?
-              </h2>
-              
-              {/* Problem Statement */}
-              <p className="text-lg sm:text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed">
-                Vehicle issues discovered after delivery and registration lead to disputes, rework, warranty friction, and reputational risk.
-              </p>
-              
-              {/* Solution Statement */}
-              <p className="text-xl sm:text-2xl font-semibold text-[#3833FF] mb-12">
-                Pre-delivery replaces uncertainty with proof.
-              </p>
-            </div>
-
-            {/* Benefits Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="group relative bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-3xl p-8 border-2 border-orange-200/50 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-orange-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <AlertTriangle className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-orange-600 transition-colors">Reduce post-delivery disputes</h3>
-                </div>
-              </div>
-
-              <div className="group relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-8 border-2 border-blue-200/50 hover:border-blue-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 flex items-center justify-center mb-6 shadow-lg shadow-blue-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors">Protect warranty claims</h3>
-                </div>
-              </div>
-
-              <div className="group relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 border-2 border-green-200/50 hover:border-green-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-green-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <FileText className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-green-600 transition-colors">Create a defensible delivery record</h3>
-                </div>
-              </div>
-
-              <div className="group relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 border-2 border-purple-200/50 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-purple-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <Lock className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">Prevent post registration risks</h3>
                 </div>
               </div>
             </div>
@@ -584,142 +720,6 @@ export default function Home() {
                 <p className="text-base sm:text-lg font-semibold text-[#3833FF] mt-4">
                   Contact sales for pricing.
                 </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* How it works Section */}
-      <div id="how-it-works" className="relative bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 py-24 scroll-mt-20 overflow-hidden">
-        {/* Dynamic multi-layer orbs */}
-        <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-0 w-[900px] h-[900px] bg-gradient-to-br from-green-500/50 via-emerald-500/40 to-teal-500/50 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-1/4 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-purple-500/50 via-pink-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/45 via-cyan-500/35 to-indigo-500/45 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2.5s'}}></div>
-          <div className="absolute top-0 right-1/3 w-[600px] h-[600px] bg-gradient-to-br from-cyan-400/40 via-blue-400/30 to-purple-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
-        </div>
-        {/* Rich mesh gradients */}
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-100/30 to-blue-100/30"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-indigo-100/25 to-purple-100/25"></div>
-        {/* Animated dot matrix */}
-        <div className="absolute inset-0 opacity-[0.15]" style={{backgroundImage: 'radial-gradient(circle at 4px 4px, rgba(56,51,255,0.5) 2px, transparent 0)', backgroundSize: '55px 55px'}}></div>
-        {/* Subtle shimmer */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-shimmer" style={{animationDelay: '1s'}}></div>
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6 text-gray-900">
-                How it works
-              </h2>
-              <p className="text-xl sm:text-2xl text-[#3833FF] font-semibold mb-2 tracking-wide">
-                Inspect → Verify → Sign Off → Deliver
-              </p>
-            </div>
-
-            {/* Steps Container with Arrows */}
-            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 lg:gap-5">
-              {/* Step 1: Inspect */}
-              <div className="group relative bg-gradient-to-br from-blue-50/80 via-cyan-50/60 to-white rounded-3xl p-6 border-2 border-blue-200/60 hover:border-blue-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-blue-300/40 overflow-visible w-full lg:w-[280px]">
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-cyan-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
-                
-                {/* Number badge - Fixed positioning */}
-                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-blue-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
-                  1
-                </div>
-                
-                <div className="relative z-10 pt-2 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-cyan-600 flex items-center justify-center mb-4 shadow-xl shadow-blue-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <ClipboardCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-blue-600 transition-colors">Inspect</h3>
-                  <p className="text-gray-600 text-center leading-snug text-sm">
-                    Conduct a structured pre-delivery inspection using a standardised digital checklist.
-                  </p>
-                </div>
-              </div>
-
-              {/* Arrow 1 */}
-              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
-                <ArrowRight className="w-10 h-10 text-blue-400 drop-shadow-xl" strokeWidth={3} />
-              </div>
-
-              {/* Step 2: Verify */}
-              <div className="group relative bg-gradient-to-br from-green-50/80 via-emerald-50/60 to-white rounded-3xl p-6 border-2 border-green-200/60 hover:border-green-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-green-300/40 overflow-visible w-full lg:w-[280px]">
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-emerald-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
-                
-                {/* Number badge - Fixed positioning */}
-                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-green-500 via-green-600 to-emerald-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-green-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
-                  2
-                </div>
-                
-                <div className="relative z-10 pt-2 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 flex items-center justify-center mb-4 shadow-xl shadow-green-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <Check className="w-10 h-10 text-white" strokeWidth={3} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-green-600 transition-colors">Verify</h3>
-                  <p className="text-gray-600 text-center leading-snug text-sm">
-                    Capture photos, VIN and compliance data, documentation, and condition evidence in real time.
-                  </p>
-                </div>
-              </div>
-
-              {/* Arrow 2 */}
-              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
-                <ArrowRight className="w-10 h-10 text-green-400 drop-shadow-xl" strokeWidth={3} />
-              </div>
-
-              {/* Step 3: Sign Off */}
-              <div className="group relative bg-gradient-to-br from-purple-50/80 via-pink-50/60 to-white rounded-3xl p-6 border-2 border-purple-200/60 hover:border-purple-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-purple-300/40 overflow-visible w-full lg:w-[280px]">
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-pink-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
-                
-                {/* Number badge - Fixed positioning */}
-                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-purple-500 via-purple-600 to-pink-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-purple-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
-                  3
-                </div>
-                
-                <div className="relative z-10 pt-2 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 via-purple-600 to-pink-600 flex items-center justify-center mb-4 shadow-xl shadow-purple-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <FileCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-purple-600 transition-colors">Sign Off</h3>
-                  <p className="text-gray-600 text-center leading-snug text-sm">
-                    Confirm readiness for delivery with a complete, auditable inspection record.
-                  </p>
-                </div>
-              </div>
-
-              {/* Arrow 3 */}
-              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-1">
-                <ArrowRight className="w-10 h-10 text-purple-400 drop-shadow-xl" strokeWidth={3} />
-              </div>
-
-              {/* Step 4: Deliver */}
-              <div className="group relative bg-gradient-to-br from-orange-50/80 via-amber-50/60 to-white rounded-3xl p-6 border-2 border-orange-200/60 hover:border-orange-400 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-orange-300/40 overflow-visible w-full lg:w-[280px]">
-                {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-3xl -z-0"></div>
-                <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-amber-200/20 to-transparent rounded-full blur-2xl -z-0"></div>
-                
-                {/* Number badge - Fixed positioning */}
-                <div className="absolute -top-4 -left-4 w-14 h-14 bg-gradient-to-br from-orange-500 via-orange-600 to-amber-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-orange-500/60 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
-                  4
-                </div>
-                
-                <div className="relative z-10 pt-2 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-500 via-amber-600 to-yellow-600 flex items-center justify-center mb-4 shadow-xl shadow-orange-400/50 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 text-center group-hover:text-orange-600 transition-colors">Deliver</h3>
-                  <p className="text-gray-600 text-center leading-snug text-sm">
-                    Hand over the vehicle with confidence — knowing issues were identified and resolved before registration.
-                  </p>
-                </div>
               </div>
             </div>
           </div>
