@@ -115,7 +115,7 @@ function UserHeader() {
               <a href="#features" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Features</a>
               <a href="#how-it-works" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>How it Works</a>
               <a href="#benefits" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</a>
-              <a href="#contact" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</a>
+              <Link href="/contact" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</Link>
               <Link
                 href="/login"
                 className="flex items-center px-5 py-2 text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-lg hover:shadow-xl font-semibold border border-[#3833FF]/30 hover:scale-105"
@@ -163,7 +163,7 @@ function UserHeader() {
                   <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Features</a>
                   <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">How it Works</a>
                   <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Benefits</a>
-                  <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Contact</a>
+                  <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Contact</Link>
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}

@@ -211,15 +211,19 @@ export default function Home() {
       {!isLoggedIn && (
         <>
       {/* Features Section */}
-      <div id="features" className="relative bg-gradient-to-br from-white via-blue-50/30 to-purple-50/20 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-cyan-400/20 rounded-full blur-3xl"></div>
+      <div id="features" className="relative bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
+        {/* Animated gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-[800px] h-[800px] bg-gradient-to-br from-blue-400/40 via-cyan-400/30 to-indigo-400/40 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-1/2 right-0 w-[700px] h-[700px] bg-gradient-to-bl from-purple-400/40 via-pink-400/30 to-blue-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-0 left-1/3 w-[600px] h-[600px] bg-gradient-to-tr from-cyan-400/40 via-blue-400/30 to-indigo-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
         </div>
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(56,51,255,0.3) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
+        {/* Mesh gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-100/20 to-purple-100/20"></div>
+        {/* Animated grid pattern */}
+        <div className="absolute inset-0 opacity-[0.15]" style={{backgroundImage: 'linear-gradient(rgba(56,51,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(56,51,255,0.1) 1px, transparent 1px)', backgroundSize: '50px 50px'}}></div>
+        {/* Shimmer effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full animate-shimmer"></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
@@ -336,14 +340,19 @@ export default function Home() {
       </div>
 
       {/* Why Predelivery.ai? Section */}
-      <div id="benefits" className="relative bg-gradient-to-br from-white via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-25">
-          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-purple-300/30 to-pink-300/20 rounded-full blur-3xl"></div>
+      <div id="benefits" className="relative bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
+        {/* Dynamic gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-1/4 w-[900px] h-[900px] bg-gradient-to-br from-indigo-500/50 via-blue-500/40 to-cyan-500/50 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-gradient-to-tr from-purple-500/50 via-pink-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/40 via-cyan-500/30 to-indigo-500/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '3s'}}></div>
         </div>
-        {/* Diagonal lines pattern */}
-        <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(56,51,255,0.5) 10px, rgba(56,51,255,0.5) 20px)'}}></div>
+        {/* Mesh overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-indigo-100/30 to-blue-100/30"></div>
+        {/* Animated diagonal pattern */}
+        <div className="absolute inset-0 opacity-[0.12]" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(56,51,255,0.3) 20px, rgba(56,51,255,0.3) 40px)'}}></div>
+        {/* Radial gradient overlay */}
+        <div className="absolute inset-0 bg-radial-gradient from-transparent via-white/5 to-white/20"></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -413,14 +422,18 @@ export default function Home() {
       </div>
 
       {/* Who It's For? Section */}
-      <div className="relative bg-gradient-to-br from-gray-50 via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-25">
-          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-orange-300/30 to-amber-300/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
+      <div className="relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
+        {/* Vibrant gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-1/4 w-[850px] h-[850px] bg-gradient-to-br from-orange-400/50 via-amber-400/40 to-yellow-400/50 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-[750px] h-[750px] bg-gradient-to-tr from-blue-500/50 via-indigo-500/40 to-purple-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/3 right-1/3 w-[650px] h-[650px] bg-gradient-to-bl from-cyan-400/40 via-blue-400/30 to-indigo-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
         </div>
-        {/* Diagonal lines pattern */}
-        <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(56,51,255,0.5) 10px, rgba(56,51,255,0.5) 20px)'}}></div>
+        {/* Layered mesh gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-100/25 to-purple-100/25"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-indigo-100/20 to-cyan-100/20"></div>
+        {/* Animated dot pattern */}
+        <div className="absolute inset-0 opacity-[0.18]" style={{backgroundImage: 'radial-gradient(circle at 3px 3px, rgba(56,51,255,0.4) 2px, transparent 0)', backgroundSize: '60px 60px'}}></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -484,12 +497,17 @@ export default function Home() {
       </div>
 
       {/* Compliance and Trust Section */}
-      <div className="relative bg-gradient-to-br from-white via-gray-50/40 to-blue-50/30 py-20 sm:py-24 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tr from-purple-300/30 to-pink-300/20 rounded-full blur-3xl"></div>
+      <div className="relative bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50 py-20 sm:py-24 overflow-hidden">
+        {/* Professional gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-gradient-to-br from-blue-500/45 via-indigo-500/35 to-purple-500/45 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-[700px] h-[700px] bg-gradient-to-tr from-purple-500/45 via-pink-500/35 to-blue-500/45 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-cyan-400/35 via-blue-400/25 to-indigo-400/35 rounded-full blur-3xl animate-pulse" style={{animationDelay: '3s'}}></div>
         </div>
+        {/* Professional mesh overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-slate-100/20 to-blue-100/20"></div>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.1]" style={{backgroundImage: 'linear-gradient(rgba(56,51,255,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(56,51,255,0.15) 1px, transparent 1px)', backgroundSize: '40px 40px'}}></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
@@ -532,12 +550,18 @@ export default function Home() {
       </div>
 
       {/* Pricing Section */}
-      <div className="relative bg-gradient-to-br from-gray-50 via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-25">
-          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-green-300/30 to-emerald-300/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
+      <div className="relative bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 py-20 sm:py-24 overflow-hidden">
+        {/* Energetic gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-1/4 w-[900px] h-[900px] bg-gradient-to-br from-green-500/50 via-emerald-500/40 to-teal-500/50 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-gradient-to-tr from-blue-500/50 via-cyan-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-1/3 left-1/3 w-[700px] h-[700px] bg-gradient-to-bl from-teal-400/40 via-cyan-400/30 to-blue-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
         </div>
+        {/* Fresh mesh overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-emerald-100/25 to-teal-100/25"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-cyan-100/20 to-blue-100/20"></div>
+        {/* Animated wave pattern */}
+        <div className="absolute inset-0 opacity-[0.12]" style={{backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(56,51,255,0.2) 30px, rgba(56,51,255,0.2) 60px)'}}></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -567,15 +591,21 @@ export default function Home() {
       </div>
 
       {/* How it works Section */}
-      <div id="how-it-works" className="relative bg-gradient-to-br from-white via-cyan-50/40 to-blue-50/30 py-24 scroll-mt-20 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-1/4 left-0 w-[700px] h-[700px] bg-gradient-to-br from-green-300/30 to-emerald-300/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-1/4 right-0 w-[600px] h-[600px] bg-gradient-to-bl from-purple-300/30 to-pink-300/20 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-blue-300/30 to-cyan-300/20 rounded-full blur-3xl"></div>
+      <div id="how-it-works" className="relative bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 py-24 scroll-mt-20 overflow-hidden">
+        {/* Dynamic multi-layer orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-1/4 left-0 w-[900px] h-[900px] bg-gradient-to-br from-green-500/50 via-emerald-500/40 to-teal-500/50 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-purple-500/50 via-pink-500/40 to-indigo-500/50 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-500/45 via-cyan-500/35 to-indigo-500/45 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2.5s'}}></div>
+          <div className="absolute top-0 right-1/3 w-[600px] h-[600px] bg-gradient-to-br from-cyan-400/40 via-blue-400/30 to-purple-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
         </div>
-        {/* Dots pattern overlay */}
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 3px 3px, rgba(56,51,255,0.4) 2px, transparent 0)', backgroundSize: '50px 50px'}}></div>
+        {/* Rich mesh gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-100/30 to-blue-100/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-indigo-100/25 to-purple-100/25"></div>
+        {/* Animated dot matrix */}
+        <div className="absolute inset-0 opacity-[0.15]" style={{backgroundImage: 'radial-gradient(circle at 4px 4px, rgba(56,51,255,0.5) 2px, transparent 0)', backgroundSize: '55px 55px'}}></div>
+        {/* Subtle shimmer */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-shimmer" style={{animationDelay: '1s'}}></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">

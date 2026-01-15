@@ -48,14 +48,19 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-[#3833FF] via-blue-600 to-purple-600 py-20 sm:py-24 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-300 rounded-full blur-3xl"></div>
+        {/* Animated gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-[900px] h-[900px] bg-gradient-to-br from-white/30 via-blue-300/20 to-cyan-300/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-[800px] h-[800px] bg-gradient-to-bl from-purple-300/30 via-pink-300/20 to-indigo-300/30 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-blue-400/25 via-cyan-400/15 to-indigo-400/25 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
         </div>
+        {/* Mesh overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-500/10 to-purple-500/10"></div>
+        {/* Grid pattern */}
+        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)', backgroundSize: '50px 50px'}}></div>
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
@@ -70,11 +75,17 @@ export default function ContactPage() {
 
       {/* Contact Form Section */}
       <div className="relative py-20 sm:py-24 overflow-hidden">
-        {/* Decorative background elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-400/20 rounded-full blur-3xl"></div>
+        {/* Dynamic gradient orbs */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-[850px] h-[850px] bg-gradient-to-br from-blue-400/40 via-cyan-400/30 to-indigo-400/40 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 right-0 w-[750px] h-[750px] bg-gradient-to-bl from-purple-400/40 via-pink-400/30 to-blue-400/40 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1.5s'}}></div>
+          <div className="absolute top-1/3 right-1/3 w-[650px] h-[650px] bg-gradient-to-tr from-cyan-400/35 via-blue-400/25 to-indigo-400/35 rounded-full blur-3xl animate-pulse" style={{animationDelay: '3s'}}></div>
         </div>
+        {/* Mesh gradients */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-100/25 to-indigo-100/25"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-cyan-100/20 to-purple-100/20"></div>
+        {/* Animated dot pattern */}
+        <div className="absolute inset-0 opacity-[0.12]" style={{backgroundImage: 'radial-gradient(circle at 3px 3px, rgba(56,51,255,0.3) 2px, transparent 0)', backgroundSize: '55px 55px'}}></div>
         
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-3xl mx-auto">
