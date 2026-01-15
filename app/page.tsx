@@ -289,114 +289,102 @@ export default function Home() {
       </div>
 
       {/* How it works Section */}
-      <div id="how-it-works" className="relative bg-gradient-to-b from-gray-50 to-white py-24 sm:py-32 scroll-mt-20 overflow-hidden">
-        {/* Road pattern background */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gray-400 to-transparent"></div>
-          <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gray-400 to-transparent" style={{transform: 'translateY(-20px)'}}></div>
-          <div className="absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gray-400 to-transparent" style={{transform: 'translateY(20px)'}}></div>
-        </div>
+      <div id="how-it-works" className="relative bg-gradient-to-b from-white via-gray-50 to-white py-24 sm:py-32 scroll-mt-20 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20">
+            <div className="text-center mb-16">
               <div className="inline-block mb-6">
                 <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Simple Process</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-8 text-gray-900">
                 How it works
               </h2>
-              <div className="flex items-center justify-center gap-3 text-xl sm:text-2xl font-bold text-gray-800">
-                <span className="px-4 py-2 bg-red-600 text-white rounded-lg">Inspect</span>
-                <ArrowRight className="w-6 h-6 text-red-600" />
-                <span className="px-4 py-2 bg-orange-600 text-white rounded-lg">Verify</span>
-                <ArrowRight className="w-6 h-6 text-orange-600" />
-                <span className="px-4 py-2 bg-amber-600 text-white rounded-lg">Sign Off</span>
-                <ArrowRight className="w-6 h-6 text-amber-600" />
-                <span className="px-4 py-2 bg-red-600 text-white rounded-lg">Deliver</span>
+              {/* Visual Flow Line */}
+              <div className="hidden lg:flex items-center justify-center mb-12 max-w-4xl mx-auto">
+                <div className="flex items-center w-full">
+                  <div className="flex-1 h-1 bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-full"></div>
+                  <div className="mx-4 w-3 h-3 bg-red-600 rounded-full border-4 border-white shadow-lg"></div>
+                  <div className="flex-1 h-1 bg-gradient-to-r from-orange-600 via-amber-600 to-red-600 rounded-full"></div>
+                  <div className="mx-4 w-3 h-3 bg-orange-600 rounded-full border-4 border-white shadow-lg"></div>
+                  <div className="flex-1 h-1 bg-gradient-to-r from-amber-600 via-red-600 to-orange-600 rounded-full"></div>
+                  <div className="mx-4 w-3 h-3 bg-amber-600 rounded-full border-4 border-white shadow-lg"></div>
+                  <div className="flex-1 h-1 bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-full"></div>
+                  <div className="mx-4 w-3 h-3 bg-red-600 rounded-full border-4 border-white shadow-lg"></div>
+                  <div className="flex-1 h-1 bg-gradient-to-r from-orange-600 to-transparent rounded-full"></div>
+                </div>
+              </div>
+              {/* Mobile Flow Line */}
+              <div className="lg:hidden flex flex-col items-center mb-12">
+                <div className="w-1 h-32 bg-gradient-to-b from-red-600 via-orange-600 via-amber-600 to-red-600 rounded-full"></div>
               </div>
             </div>
 
-            {/* Steps Container with Arrows */}
-            <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 lg:gap-6">
+            {/* Steps Container */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6">
               {/* Step 1: Inspect */}
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20 overflow-visible w-full lg:w-[260px]">
-                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-2xl shadow-red-600/50 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-red-600/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
                   1
                 </div>
                 
-                <div className="relative z-10 pt-4 flex flex-col items-center">
+                <div className="relative z-10 pt-6 flex flex-col items-center">
                   <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mb-6 shadow-xl shadow-red-600/30 group-hover:scale-110 transition-transform duration-300">
                     <ClipboardCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
                   <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-red-600 transition-colors">Inspect</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
-                    Conduct a structured pre-delivery inspection using a standardised digital checklist.
+                    Complete a comprehensive digital inspection checklist covering all vehicle components and systems.
                   </p>
                 </div>
               </div>
 
-              {/* Arrow 1 */}
-              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-2">
-                <ArrowRight className="w-12 h-12 text-red-600" strokeWidth={3} />
-              </div>
-
               {/* Step 2: Verify */}
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-orange-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-600/20 overflow-visible w-full lg:w-[260px]">
-                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-2xl shadow-orange-600/50 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-orange-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-600/20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-orange-600 to-orange-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-orange-600/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
                   2
                 </div>
                 
-                <div className="relative z-10 pt-4 flex flex-col items-center">
+                <div className="relative z-10 pt-6 flex flex-col items-center">
                   <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-orange-600 to-orange-700 flex items-center justify-center mb-6 shadow-xl shadow-orange-600/30 group-hover:scale-110 transition-transform duration-300">
                     <Check className="w-10 h-10 text-white" strokeWidth={3} />
                   </div>
                   <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-orange-600 transition-colors">Verify</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
-                    Capture photos, VIN and compliance data, documentation, and condition evidence in real time.
+                    Document vehicle condition with photos, capture VIN data, and record compliance information automatically.
                   </p>
                 </div>
               </div>
 
-              {/* Arrow 2 */}
-              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-2">
-                <ArrowRight className="w-12 h-12 text-orange-600" strokeWidth={3} />
-              </div>
-
               {/* Step 3: Sign Off */}
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-amber-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-amber-600/20 overflow-visible w-full lg:w-[260px]">
-                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-2xl shadow-amber-600/50 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-amber-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-amber-600/20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-amber-600 to-amber-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-amber-600/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
                   3
                 </div>
                 
-                <div className="relative z-10 pt-4 flex flex-col items-center">
+                <div className="relative z-10 pt-6 flex flex-col items-center">
                   <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center mb-6 shadow-xl shadow-amber-600/30 group-hover:scale-110 transition-transform duration-300">
                     <FileCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
                   <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-amber-600 transition-colors">Sign Off</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
-                    Confirm readiness for delivery with a complete, auditable inspection record.
+                    Approve the inspection with digital signatures, creating a complete and legally defensible record.
                   </p>
                 </div>
               </div>
 
-              {/* Arrow 3 */}
-              <div className="hidden lg:flex items-center justify-center flex-shrink-0 mx-2">
-                <ArrowRight className="w-12 h-12 text-amber-600" strokeWidth={3} />
-              </div>
-
               {/* Step 4: Deliver */}
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20 overflow-visible w-full lg:w-[260px]">
-                <div className="absolute -top-6 -left-6 w-16 h-16 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-full flex items-center justify-center font-extrabold text-2xl shadow-2xl shadow-red-600/50 z-30 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 border-4 border-white">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-red-600/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
                   4
                 </div>
                 
-                <div className="relative z-10 pt-4 flex flex-col items-center">
+                <div className="relative z-10 pt-6 flex flex-col items-center">
                   <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mb-6 shadow-xl shadow-red-600/30 group-hover:scale-110 transition-transform duration-300">
                     <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
                   <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-red-600 transition-colors">Deliver</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
-                    Hand over the vehicle with confidence — knowing issues were identified and resolved before registration.
+                    Hand over the vehicle with complete confidence, backed by a verified digital inspection record.
                   </p>
                 </div>
               </div>
