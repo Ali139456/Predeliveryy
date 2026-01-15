@@ -218,7 +218,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block mb-6">
-                <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Why Choose Us</span>
+                <span className="text-[#3833FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#3833FF]/10 rounded-full border border-[#3833FF]/20">Why Choose Us</span>
               </div>
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-white">
                 Why Predelivery.ai?
@@ -230,8 +230,8 @@ export default function Home() {
               </p>
               
               {/* Solution Statement */}
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-600/20 to-orange-600/20 rounded-full border border-red-500/30">
-                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-[#3833FF]/20 to-orange-600/20 rounded-full border border-[#3833FF]/30">
+                <div className="w-2 h-2 bg-[#3833FF] rounded-full animate-pulse"></div>
                 <p className="text-xl sm:text-2xl font-bold text-white">
                   Pre-delivery replaces uncertainty with proof.
                 </p>
@@ -240,13 +240,13 @@ export default function Home() {
 
             {/* Benefits Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 hover:border-red-600/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20 overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/10 rounded-full blur-3xl"></div>
+              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 hover:border-[#3833FF]/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#3833FF]/20 overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#3833FF]/10 rounded-full blur-3xl"></div>
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mb-6 shadow-lg shadow-red-600/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mb-6 shadow-lg shadow-[#3833FF]/30 group-hover:scale-110 transition-transform duration-300">
                     <AlertTriangle className="w-7 h-7 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-red-400 transition-colors">Reduce post-delivery disputes</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#3833FF] transition-colors">Reduce post-delivery disputes</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">Document everything before handover to prevent costly disputes.</p>
                 </div>
               </div>
@@ -273,13 +273,13 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 hover:border-red-500/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/20 overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/10 rounded-full blur-3xl"></div>
+              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 border border-slate-700 hover:border-[#3833FF]/50 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#3833FF]/20 overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#3833FF]/10 rounded-full blur-3xl"></div>
                 <div className="relative z-10">
-                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center mb-6 shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mb-6 shadow-lg shadow-[#3833FF]/30 group-hover:scale-110 transition-transform duration-300">
                     <Lock className="w-7 h-7 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-red-400 transition-colors">Prevent post registration risks</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#3833FF] transition-colors">Prevent post registration risks</h3>
                   <p className="text-gray-400 text-sm leading-relaxed">Identify and resolve issues before vehicle registration and delivery.</p>
                 </div>
               </div>
@@ -294,7 +294,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block mb-6">
-                <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Simple Process</span>
+                <span className="text-[#3833FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#3833FF]/10 rounded-full border border-[#3833FF]/20">Simple Process</span>
               </div>
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
                 How it works
@@ -302,7 +302,7 @@ export default function Home() {
               {/* Process Flow Description */}
               <div className="max-w-4xl mx-auto mb-12">
                 <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
-                  Start with a <span className="font-semibold text-red-600">comprehensive inspection</span>, then <span className="font-semibold text-orange-600">verify all vehicle details</span> with digital documentation, <span className="font-semibold text-amber-600">obtain approval</span> through digital signatures, and finally <span className="font-semibold text-red-600">deliver with confidence</span> knowing every detail is recorded and verified.
+                  Start with a <span className="font-semibold text-[#3833FF]">comprehensive inspection</span>, then <span className="font-semibold text-orange-600">verify all vehicle details</span> with digital documentation, <span className="font-semibold text-amber-600">obtain approval</span> through digital signatures, and finally <span className="font-semibold text-[#3833FF]">deliver with confidence</span> knowing every detail is recorded and verified.
                 </p>
               </div>
             </div>
@@ -310,16 +310,16 @@ export default function Home() {
             {/* Steps Container */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6">
               {/* Step 1: Inspect */}
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-red-600/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#3833FF]/20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-[#3833FF] to-[#2d28cc] text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-[#3833FF]/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
                   1
                 </div>
                 
                 <div className="relative z-10 pt-6 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mb-6 shadow-xl shadow-red-600/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mb-6 shadow-xl shadow-[#3833FF]/30 group-hover:scale-110 transition-transform duration-300">
                     <ClipboardCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-red-600 transition-colors">Inspect</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-[#3833FF] transition-colors">Inspect</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
                     Complete a comprehensive digital inspection checklist covering all vehicle components and systems.
                   </p>
@@ -361,16 +361,16 @@ export default function Home() {
               </div>
 
               {/* Step 4: Deliver */}
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/20">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-red-600 to-red-700 text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-red-600/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#3833FF]/20">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-gradient-to-br from-[#3833FF] to-[#2d28cc] text-white rounded-full flex items-center justify-center font-extrabold text-xl shadow-2xl shadow-[#3833FF]/50 z-30 group-hover:scale-110 transition-all duration-300 border-4 border-white">
                   4
                 </div>
                 
                 <div className="relative z-10 pt-6 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mb-6 shadow-xl shadow-red-600/30 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mb-6 shadow-xl shadow-[#3833FF]/30 group-hover:scale-110 transition-transform duration-300">
                     <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-red-600 transition-colors">Deliver</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-[#3833FF] transition-colors">Deliver</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
                     Hand over the vehicle with complete confidence, backed by a verified digital inspection record.
                   </p>
@@ -387,7 +387,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block mb-6">
-                <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Core Features</span>
+                <span className="text-[#3833FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#3833FF]/10 rounded-full border border-[#3833FF]/20">Core Features</span>
               </div>
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
                 Powerful Features
@@ -402,7 +402,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
               {/* Feature 1 */}
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:shadow-2xl hover:shadow-red-600/20">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/20">
                 <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                   <Image
                     src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=600&fit=crop&q=80"
@@ -411,10 +411,10 @@ export default function Home() {
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">Photo Gallery</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#3833FF] text-white text-xs font-bold rounded-full">Photo Gallery</div>
                 </div>
                 <div className="p-6 bg-white">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-red-600 transition-colors">Photo Gallery</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#3833FF] transition-colors">Photo Gallery</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Capture and organize inspection photos with GPS metadata and timestamps</p>
                 </div>
               </div>
@@ -456,7 +456,7 @@ export default function Home() {
               </div>
 
               {/* Feature 4 */}
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-red-600 transition-all duration-300 hover:shadow-2xl hover:shadow-red-600/20">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/20">
                 <div className="relative h-56 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
                   <Image
                     src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
@@ -465,10 +465,10 @@ export default function Home() {
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">Analytics</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#3833FF] text-white text-xs font-bold rounded-full">Analytics</div>
                 </div>
                 <div className="p-6 bg-white">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-red-600 transition-colors">Analytics Dashboard</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#3833FF] transition-colors">Analytics Dashboard</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Track inspection metrics and generate comprehensive reports</p>
                 </div>
               </div>
@@ -519,7 +519,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block mb-6">
-                <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Target Audience</span>
+                <span className="text-[#3833FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#3833FF]/10 rounded-full border border-[#3833FF]/20">Target Audience</span>
               </div>
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-white">
                 Who It's For?
@@ -528,7 +528,7 @@ export default function Home() {
 
             {/* Who It's For Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 hover:border-red-600 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-600/30">
+              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 hover:border-[#3833FF] transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#3833FF]/30">
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop&q=80"
@@ -537,10 +537,10 @@ export default function Home() {
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent"></div>
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full">Dealerships</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#3833FF] text-white text-xs font-bold rounded-full">Dealerships</div>
                 </div>
                 <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900">
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-red-400 transition-colors">Dealerships</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#3833FF] transition-colors">Dealerships</h3>
                   <p className="text-gray-400 leading-relaxed text-sm">Reduce post-delivery disputes and protect handover quality.</p>
                 </div>
               </div>
@@ -579,7 +579,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 hover:border-red-500 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/30">
+              <div className="group relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl overflow-hidden border-2 border-slate-700 hover:border-[#3833FF] transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#3833FF]/30">
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop&q=80"
@@ -588,10 +588,10 @@ export default function Home() {
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent"></div>
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">Insurance</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#3833FF] text-white text-xs font-bold rounded-full">Insurance</div>
                 </div>
                 <div className="p-6 bg-gradient-to-br from-slate-800 to-slate-900">
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-red-400 transition-colors">Insurers & Financiers</h3>
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-[#3833FF] transition-colors">Insurers & Financiers</h3>
                   <p className="text-gray-400 leading-relaxed text-sm">Access verified condition records that stand up in claims and disputes.</p>
                 </div>
               </div>
@@ -606,7 +606,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block mb-6">
-                <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Trust & Security</span>
+                <span className="text-[#3833FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#3833FF]/10 rounded-full border border-[#3833FF]/20">Trust & Security</span>
               </div>
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
                 Compliance and Trust
@@ -614,8 +614,8 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-red-600 shadow-lg hover:shadow-2xl hover:shadow-red-600/20 transition-all duration-300 hover:scale-105">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mb-6 shadow-lg shadow-red-600/30">
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-[#3833FF] shadow-lg hover:shadow-2xl hover:shadow-[#3833FF]/20 transition-all duration-300 hover:scale-105">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mb-6 shadow-lg shadow-[#3833FF]/30">
                   <Shield className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-lg font-bold mb-3 text-gray-900">Enterprise-grade data security</h3>
@@ -638,8 +638,8 @@ export default function Home() {
                 <p className="text-gray-600 text-sm">Complete transparency and traceability</p>
               </div>
 
-              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-red-500 shadow-lg hover:shadow-2xl hover:shadow-red-500/20 transition-all duration-300 hover:scale-105">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center mb-6 shadow-lg shadow-red-500/30">
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl p-8 border-2 border-gray-200 hover:border-[#3833FF] shadow-lg hover:shadow-2xl hover:shadow-[#3833FF]/20 transition-all duration-300 hover:scale-105">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mb-6 shadow-lg shadow-[#3833FF]/30">
                   <CheckCircle className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-lg font-bold mb-3 text-gray-900">Built by automotive experts</h3>
@@ -656,7 +656,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
               <div className="inline-block mb-6">
-                <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Flexible Pricing</span>
+                <span className="text-[#3833FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#3833FF]/10 rounded-full border border-[#3833FF]/20">Flexible Pricing</span>
               </div>
               <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-white">
                 Pricing
@@ -665,7 +665,7 @@ export default function Home() {
 
             <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-10 md:p-14 border-2 border-slate-700 shadow-2xl hover:border-red-600/50 transition-all duration-300">
               <div className="text-center space-y-6">
-                <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-red-600/30">
+                <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-[#3833FF]/30">
                   <CreditCard className="w-10 h-10 text-white" strokeWidth={2.5} />
                 </div>
                 <p className="text-xl sm:text-2xl text-white font-semibold leading-relaxed">
@@ -675,7 +675,7 @@ export default function Home() {
                   Per-vehicle and enterprise options available.
                 </p>
                 <div className="pt-6">
-                  <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-red-600 to-red-700 text-white font-bold rounded-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
+                  <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#3833FF] to-[#2d28cc] text-white font-bold rounded-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300">
                     <Phone className="w-5 h-5" />
                     Contact sales for pricing
                   </Link>
@@ -687,7 +687,7 @@ export default function Home() {
       </div>
 
       {/* CTA Section */}
-      <div className="relative bg-gradient-to-br from-red-600 via-red-700 to-orange-600 py-24 sm:py-32 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#3833FF] via-[#2d28cc] to-orange-600 py-24 sm:py-32 overflow-hidden">
         {/* Speed lines effect */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,255,255,0.1) 100px, rgba(255,255,255,0.1) 200px)'}}></div>
@@ -703,7 +703,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/login"
-                className="bg-white text-red-600 font-bold px-10 py-4 rounded-lg shadow-2xl hover:scale-105 transition-all flex items-center gap-2 hover:shadow-red-900/50 text-lg"
+                className="bg-white text-[#3833FF] font-bold px-10 py-4 rounded-lg shadow-2xl hover:scale-105 transition-all flex items-center gap-2 hover:shadow-[#3833FF]/50 text-lg"
               >
                 Get Started Free
                 <ArrowRight className="w-5 h-5" />
@@ -718,13 +718,13 @@ export default function Home() {
       </div>
 
       {/* Footer */}
-      <footer id="contact" className="bg-gradient-to-b from-slate-950 via-black to-black border-t border-red-600/20 scroll-mt-20">
+      <footer id="contact" className="bg-gradient-to-b from-slate-950 via-black to-black border-t border-[#3833FF]/20 scroll-mt-20">
         <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
             {/* Company Info */}
             <div className="lg:col-span-1">
               <Link href="/" className="flex items-center mb-4 group">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-600 to-red-700 flex items-center justify-center mr-3 border border-red-600/30 group-hover:scale-110 transition-transform shadow-lg shadow-red-600/30">
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#3833FF] to-[#2d28cc] flex items-center justify-center mr-3 border border-[#3833FF]/30 group-hover:scale-110 transition-transform shadow-lg shadow-[#3833FF]/30">
                   <span className="text-white font-bold text-sm">PD</span>
                 </div>
                 <span className="text-xl font-bold text-white">Pre Delivery</span>
@@ -733,7 +733,7 @@ export default function Home() {
                 Comprehensive pre-delivery inspection management system for dealerships, fleets, and OEM partners.
               </p>
               <div className="flex items-center gap-2 text-white/70 text-sm">
-                <Phone className="w-4 h-4 text-red-500" />
+                <Phone className="w-4 h-4 text-[#3833FF]" />
                 <span>+1 (555) 123-4567</span>
               </div>
             </div>
@@ -743,16 +743,16 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#features" className="text-white/70 hover:text-red-500 transition-colors text-sm">Features</a>
+                  <a href="#features" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Features</a>
                 </li>
                 <li>
-                  <a href="#how-it-works" className="text-white/70 hover:text-red-500 transition-colors text-sm">How it Works</a>
+                  <a href="#how-it-works" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">How it Works</a>
                 </li>
                 <li>
-                  <a href="#benefits" className="text-white/70 hover:text-red-500 transition-colors text-sm">Benefits</a>
+                  <a href="#benefits" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Benefits</a>
                 </li>
                 <li>
-                  <Link href="/login" className="text-white/70 hover:text-red-500 transition-colors text-sm">Login</Link>
+                  <Link href="/login" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Login</Link>
                 </li>
               </ul>
             </div>
@@ -762,16 +762,16 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Resources</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-white/70 hover:text-red-500 transition-colors text-sm">Documentation</a>
+                  <a href="#" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Documentation</a>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-red-500 transition-colors text-sm">API Reference</a>
+                  <a href="#" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">API Reference</a>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-red-500 transition-colors text-sm">Support</a>
+                  <a href="#" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Support</a>
                 </li>
                 <li>
-                  <Link href="/privacy" className="text-white/70 hover:text-red-500 transition-colors text-sm">Privacy Policy</Link>
+                  <Link href="/privacy" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Privacy Policy</Link>
                 </li>
               </ul>
             </div>
@@ -781,19 +781,19 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Contact Us</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/contact" className="text-white/70 hover:text-red-500 transition-colors text-sm">
+                  <Link href="/contact" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">
                     Contact Form
                   </Link>
                 </li>
                 <li className="text-white/70 text-sm">
                   <div className="flex items-start gap-2">
-                    <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" />
-                    <a href="mailto:info@predelivery.ai" className="hover:text-red-500 transition-colors">info@predelivery.ai</a>
+                    <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#3833FF]" />
+                    <a href="mailto:info@predelivery.ai" className="hover:text-[#3833FF] transition-colors">info@predelivery.ai</a>
                   </div>
                 </li>
                 <li className="text-white/70 text-sm">
                   <div className="flex items-start gap-2">
-                    <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-500" />
+                    <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#3833FF]" />
                     <span>Sales: +1 (555) 123-4567</span>
                   </div>
                 </li>
@@ -802,14 +802,14 @@ export default function Home() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-red-600/20 pt-8">
+          <div className="border-t border-[#3833FF]/20 pt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-white/70 text-sm text-center md:text-left">
                 © 2025 Pre Delivery Inspection. All rights reserved.
               </p>
               <div className="flex items-center gap-6">
-                <a href="#" className="text-white/70 hover:text-red-500 transition-colors text-sm">Terms of Service</a>
-                <Link href="/privacy" className="text-white/70 hover:text-red-500 transition-colors text-sm">Privacy Policy</Link>
+                <a href="#" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Terms of Service</a>
+                <Link href="/privacy" className="text-white/70 hover:text-[#3833FF] transition-colors text-sm">Privacy Policy</Link>
               </div>
             </div>
           </div>
