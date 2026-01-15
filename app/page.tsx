@@ -50,12 +50,12 @@ export default function Home() {
               <div className="lg:col-span-7 space-y-6">
                 {/* Main Heading */}
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
-                  Introducing Pre-Delivery AI Studio
+                  Pre-Delivery Inspections, Digitised
                 </h1>
                 
                 {/* Description */}
                 <p className="text-base sm:text-lg lg:text-xl text-white/90 max-w-2xl leading-relaxed">
-                  Verify vehicle condition, compliance, and documentation before handover and registration — with a single, defensible digital record powered by AI.
+                  Verify vehicle condition, compliance, and documentation before handover and registration — with a single, defensible digital record.
                 </p>
 
                 {/* Overlapping Windows/Cards Design */}
