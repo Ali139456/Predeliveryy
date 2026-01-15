@@ -15,6 +15,7 @@
     "@aws-sdk/s3-request-presigner": "^3.943.0",
     "@hookform/resolvers": "^3.3.2",
     "@types/react-signature-canvas": "^1.0.7",
+    "@vercel/blob": "^1.1.1",
     "autoprefixer": "^10.4.16",
     "aws-sdk": "^2.1509.0",
     "bcryptjs": "^3.0.3",

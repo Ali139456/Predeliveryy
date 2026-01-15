@@ -4,7 +4,8 @@ import { useState, useRef, memo } from 'react';
 import Image from 'next/image';
 import { Camera, X, Upload, Image as ImageIcon } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
-import { uploadToCloudinaryDirect, getCloudinaryImageUrl } from '@/lib/cloudinaryClient';
+import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
+import { getCloudinaryImageUrl } from '@/lib/cloudinaryClient';
 
 interface PhotoData {
   fileName: string;
@@ -57,18 +58,13 @@ function ItemPhotoUpload({
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        // Upload directly to Cloudinary using unsigned upload preset
-        const result = await uploadToCloudinaryDirect(file, 'inspections');
+        // Upload via server API route (supports Vercel Blob, Cloudinary, or S3)
+        const result = await uploadToVercelBlobViaAPI(file);
         
         return {
-          fileName: result.public_id, // Store public_id for flexibility
-          url: result.secure_url, // Store full URL for immediate use
-          metadata: {
-            width: result.width,
-            height: result.height,
-            format: result.format,
-            bytes: result.bytes,
-          },
+          fileName: result.fileName, // Store pathname or identifier
+          url: result.url, // Store full URL for immediate use
+          metadata: result.metadata || null,
         };
       });
 
@@ -76,7 +72,7 @@ function ItemPhotoUpload({
       onPhotosChange([...photos, ...uploadedFiles]);
     } catch (error: any) {
       if (typeof window !== 'undefined') {
-        const errorMessage = error.message || 'Upload failed. Please check your Cloudinary configuration.';
+        const errorMessage = error.message || 'Upload failed. Please check your storage configuration.';
         alert(`Upload failed: ${errorMessage}`);
       }
       console.error('Photo upload error:', error);
@@ -129,7 +125,7 @@ function ItemPhotoUpload({
             // fileName is required in PhotoData, so we always have it
             let imageUrl: string;
             if (photo.url) {
-              // New format: direct Cloudinary URL
+              // New format: direct URL (Vercel Blob, Cloudinary, or S3)
               imageUrl = photo.url;
             } else {
               // Old format with fileName (fileName is always present)

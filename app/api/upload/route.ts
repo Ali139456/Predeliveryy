@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { uploadToVercelBlob, hasVercelBlobConfig } from '@/lib/vercelBlob';
 import { uploadToCloudinary, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { uploadToS3 } from '@/lib/s3';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
@@ -109,8 +110,39 @@ export async function POST(request: NextRequest) {
     // Check if we're on Vercel
     const isVercel = process.env.VERCEL === '1';
     
-    // Upload to Cloudinary if configured (recommended for Vercel)
-    if (hasCloudinaryConfig) {
+    // Upload to Vercel Blob Storage if configured (recommended for Vercel)
+    if (hasVercelBlobConfig()) {
+      try {
+        console.log('Uploading to Vercel Blob:', { fileName, contentType, size: buffer.length });
+        const blobResult = await uploadToVercelBlob(buffer, fileName, 'inspections');
+        uploadedFileName = blobResult.pathname;
+        fileUrl = blobResult.url; // Use the direct Vercel Blob URL
+        console.log('Vercel Blob upload successful:', { pathname: uploadedFileName, url: fileUrl });
+      } catch (blobError: any) {
+        console.error('Vercel Blob upload error:', {
+          message: blobError.message,
+          error: blobError,
+          stack: blobError.stack
+        });
+        
+        // On Vercel, Vercel Blob is required - don't fallback
+        if (isVercel) {
+          return NextResponse.json(
+            { 
+              success: false, 
+              error: blobError.message || 'Failed to upload to Vercel Blob. Please check your BLOB_READ_WRITE_TOKEN environment variable on Vercel.' 
+            },
+            { status: 500, headers: corsHeaders }
+          );
+        }
+        
+        // For local dev, fallback to other storage options
+        console.warn('Vercel Blob upload failed, falling back to other storage options');
+      }
+    }
+    
+    // If not using Vercel Blob or it failed (local dev only), try Cloudinary
+    if (!uploadedFileName && hasCloudinaryConfig) {
       try {
         console.log('Uploading to Cloudinary:', { fileName, contentType, size: buffer.length });
         const publicId = await uploadToCloudinary(buffer, fileName, 'inspections');
@@ -124,7 +156,7 @@ export async function POST(request: NextRequest) {
           stack: cloudinaryError.stack
         });
         
-        // On Vercel, Cloudinary is required - don't fallback
+        // On Vercel, don't fallback to local storage
         if (isVercel) {
           return NextResponse.json(
             { 
@@ -140,9 +172,8 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // If not using Cloudinary or Cloudinary failed (local dev only), use local storage or S3
+    // If not using Vercel Blob or Cloudinary, try S3 (local dev only)
     if (!uploadedFileName) {
-      // Try S3 first if configured
       const hasAWS = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY;
       
       if (hasAWS) {
@@ -175,7 +206,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json(
             { 
               success: false, 
-              error: 'File storage is not properly configured. Please configure Cloudinary or AWS S3 for file uploads on Vercel.' 
+              error: 'File storage is not properly configured. Please configure Vercel Blob Storage (BLOB_READ_WRITE_TOKEN) for file uploads on Vercel.' 
             },
             { status: 500, headers: corsHeaders }
           );

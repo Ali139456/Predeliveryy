@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCloudinaryUrl, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { getS3Url } from '@/lib/s3';
+import { hasVercelBlobConfig } from '@/lib/vercelBlob';
 import fs from 'fs';
 import path from 'path';
 
@@ -16,6 +17,15 @@ export async function GET(
 ) {
   try {
     const fileName = params.path.join('/');
+    
+    // If the fileName is already a full URL (Vercel Blob URL), redirect to it
+    if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
+      return NextResponse.redirect(fileName);
+    }
+    
+    // If Vercel Blob is configured and this looks like a blob pathname, 
+    // we can't reconstruct the URL here, so we'll try other options
+    // (Vercel Blob URLs are returned directly from upload, so this shouldn't be needed)
     
     // If Cloudinary is configured, redirect to Cloudinary URL
     if (hasCloudinaryConfig) {
