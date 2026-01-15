@@ -38,6 +38,12 @@ export async function POST(request: NextRequest) {
     'Expires': '0',
   };
   
+  // Log that the route was hit
+  console.log('=== UPLOAD ROUTE HIT ===');
+  console.log('Request method:', request.method);
+  console.log('Request URL:', request.url);
+  console.log('Request headers:', Object.fromEntries(request.headers.entries()));
+  
   try {
     // Log storage configuration for debugging
     const isVercel = process.env.VERCEL === '1';
@@ -51,16 +57,37 @@ export async function POST(request: NextRequest) {
       hasCloudinary,
       hasAWS,
       blobTokenSet: !!process.env.BLOB_READ_WRITE_TOKEN,
+      cloudinaryConfigured: !!(
+        process.env.CLOUDINARY_CLOUD_NAME && 
+        process.env.CLOUDINARY_API_KEY && 
+        process.env.CLOUDINARY_API_SECRET
+      ),
     });
     // Check request method explicitly (shouldn't be needed but helps with debugging)
     if (request.method !== 'POST') {
+      console.error('Invalid method:', request.method);
       return NextResponse.json(
         { success: false, error: `Method ${request.method} not allowed. Only POST is supported.` },
         { status: 405, headers: corsHeaders }
       );
     }
     
-    const formData = await request.formData();
+    console.log('Reading form data...');
+    let formData: FormData;
+    try {
+      formData = await request.formData();
+      console.log('Form data read successfully');
+    } catch (formDataError: any) {
+      console.error('Error reading form data:', formDataError);
+      return NextResponse.json(
+        { 
+          success: false, 
+          error: `Failed to read form data: ${formDataError.message || 'Unknown error'}` 
+        },
+        { status: 400, headers: corsHeaders }
+      );
+    }
+    
     const file = formData.get('file') as File;
     
     if (!file) {
@@ -306,9 +333,20 @@ export async function POST(request: NextRequest) {
       headers: corsHeaders,
     });
   } catch (error: any) {
-    console.error('Unexpected upload error:', error);
+    console.error('=== UNEXPECTED UPLOAD ERROR ===');
+    console.error('Error type:', error?.constructor?.name);
+    console.error('Error message:', error?.message);
+    console.error('Error stack:', error?.stack);
+    console.error('Full error:', error);
+    
+    const errorMessage = error?.message || 'An unexpected error occurred during upload';
+    
     return NextResponse.json(
-      { success: false, error: error.message || 'An unexpected error occurred during upload' },
+      { 
+        success: false, 
+        error: errorMessage,
+        details: process.env.NODE_ENV === 'development' ? error?.stack : undefined
+      },
       { status: 500, headers: corsHeaders }
     );
   }

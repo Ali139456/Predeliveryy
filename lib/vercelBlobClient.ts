@@ -34,8 +34,33 @@ export async function uploadToVercelBlobViaAPI(file: File): Promise<UploadResult
   });
 
   if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'Upload failed' }));
-    throw new Error(errorData.error || `Upload failed: ${response.status} ${response.statusText}`);
+    let errorMessage = `Upload failed: ${response.status} ${response.statusText}`;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+      console.error('Upload API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData,
+      });
+    } catch (e) {
+      // If response is not JSON, try to get text
+      try {
+        const text = await response.text();
+        errorMessage = text || errorMessage;
+        console.error('Upload API error (non-JSON):', {
+          status: response.status,
+          statusText: response.statusText,
+          body: text,
+        });
+      } catch (textError) {
+        console.error('Upload API error (could not read response):', {
+          status: response.status,
+          statusText: response.statusText,
+        });
+      }
+    }
+    throw new Error(errorMessage);
   }
 
   const data = await response.json();
