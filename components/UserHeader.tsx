@@ -112,9 +112,9 @@ function UserHeader() {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-6">
-              <a href="#features" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Features</a>
-              <a href="#how-it-works" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>How it Works</a>
-              <a href="#benefits" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</a>
+              <Link href="/#features" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Features</Link>
+              <Link href="/#how-it-works" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>How it Works</Link>
+              <Link href="/#benefits" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</Link>
               <Link href="/contact" className={`${textColor}/90 ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</Link>
               <Link
                 href="/login"
@@ -160,9 +160,9 @@ function UserHeader() {
                   </button>
                 </div>
                 <div className="flex flex-col gap-3 pb-4">
-                  <a href="#features" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Features</a>
-                  <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">How it Works</a>
-                  <a href="#benefits" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Benefits</a>
+                  <Link href="/#features" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Features</Link>
+                  <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">How it Works</Link>
+                  <Link href="/#benefits" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Benefits</Link>
                   <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-white/90 hover:text-[#3833FF] transition-colors font-medium py-2">Contact</Link>
                   <Link
                     href="/login"
