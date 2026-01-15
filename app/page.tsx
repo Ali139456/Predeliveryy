@@ -421,13 +421,14 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
               {/* Feature 1 */}
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
-                <div className="relative h-48 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-blue-600/5"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-2xl shadow-blue-500/30 group-hover:scale-110 transition-transform">
-                      <Camera className="w-16 h-16 text-white" strokeWidth={2} />
-                    </div>
-                  </div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=800&h=600&fit=crop"
+                    alt="Photo Gallery"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">Photo Gallery</h3>
@@ -437,13 +438,14 @@ export default function Home() {
 
               {/* Feature 2 */}
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
-                <div className="relative h-48 bg-gradient-to-br from-green-50 to-green-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-green-600/5"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-2xl shadow-green-500/30 group-hover:scale-110 transition-transform">
-                      <Fingerprint className="w-16 h-16 text-white" strokeWidth={2} />
-                    </div>
-                  </div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
+                    alt="Vehicle Identity Capture"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">Vehicle Identity Capture</h3>
@@ -453,13 +455,14 @@ export default function Home() {
 
               {/* Feature 3 */}
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
-                <div className="relative h-48 bg-gradient-to-br from-purple-50 to-purple-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-purple-600/5"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center shadow-2xl shadow-purple-500/30 group-hover:scale-110 transition-transform">
-                      <MapPin className="w-16 h-16 text-white" strokeWidth={2} />
-                    </div>
-                  </div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=600&fit=crop"
+                    alt="GPS Tracking"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">GPS Tracking</h3>
@@ -469,13 +472,14 @@ export default function Home() {
 
               {/* Feature 4 */}
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
-                <div className="relative h-48 bg-gradient-to-br from-orange-50 to-orange-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-orange-600/5"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-2xl shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                      <BarChart3 className="w-16 h-16 text-white" strokeWidth={2} />
-                    </div>
-                  </div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop"
+                    alt="Analytics Dashboard"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">Analytics Dashboard</h3>
@@ -485,13 +489,14 @@ export default function Home() {
 
               {/* Feature 5 */}
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
-                <div className="relative h-48 bg-gradient-to-br from-cyan-50 to-cyan-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-cyan-600/5"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center shadow-2xl shadow-cyan-500/30 group-hover:scale-110 transition-transform">
-                      <Shield className="w-16 h-16 text-white" strokeWidth={2} />
-                    </div>
-                  </div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop"
+                    alt="Secure & Compliant"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">Secure & Compliant</h3>
@@ -501,13 +506,14 @@ export default function Home() {
 
               {/* Feature 6 */}
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
-                <div className="relative h-48 bg-gradient-to-br from-pink-50 to-pink-100 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-pink-600/5"></div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-pink-500 to-pink-600 flex items-center justify-center shadow-2xl shadow-pink-500/30 group-hover:scale-110 transition-transform">
-                      <Zap className="w-16 h-16 text-white" strokeWidth={2} />
-                    </div>
-                  </div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop"
+                    alt="Fast & Efficient"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2 text-gray-900">Fast & Efficient</h3>
@@ -531,49 +537,65 @@ export default function Home() {
 
             {/* Who It's For Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="group relative bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-3xl p-8 border-2 border-orange-200/50 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-orange-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <Building2 className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
+              <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50">
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop"
+                    alt="Dealerships"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+                <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-orange-600 transition-colors">Dealerships</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Reduce post-delivery disputes and protect handover quality.</p>
                 </div>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-3xl p-8 border-2 border-blue-200/50 hover:border-blue-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 flex items-center justify-center mb-6 shadow-lg shadow-blue-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <Truck className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
+              <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50">
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop"
+                    alt="Fleet & Leasing Companies"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+                <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-blue-600 transition-colors">Fleet & Leasing Companies</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Standardise vehicle delivery across locations and suppliers.</p>
                 </div>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 rounded-3xl p-8 border-2 border-green-200/50 hover:border-green-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-green-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <Users className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
+              <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-green-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-200/50">
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop"
+                    alt="OEM & Delivery Partners"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+                <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-green-600 transition-colors">OEM & Delivery Partners</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Enforce consistent pre-delivery inspection standards at scale.</p>
                 </div>
               </div>
 
-              <div className="group relative bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 rounded-3xl p-8 border-2 border-purple-200/50 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-200/50 overflow-hidden">
-                {/* Decorative background element */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-2xl"></div>
-                <div className="relative z-10">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-purple-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
-                  </div>
+              <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-200/50">
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop"
+                    alt="Insurers & Financiers"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                </div>
+                <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-purple-600 transition-colors">Insurers & Financiers</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Access verified condition records that stand up in claims and disputes.</p>
                 </div>
