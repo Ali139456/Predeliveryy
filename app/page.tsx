@@ -48,13 +48,6 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               {/* Left Side - Main Content with Overlapping Windows */}
               <div className="lg:col-span-7 space-y-6">
-                {/* FREE ACCESS Banner */}
-                <div className="inline-block">
-                  <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg px-4 py-2 shadow-lg">
-                    <span className="text-white font-bold text-sm sm:text-base uppercase tracking-wide">FREE ACCESS</span>
-                  </div>
-                </div>
-
                 {/* Main Heading */}
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight">
                   Introducing Pre-Delivery AI Studio
