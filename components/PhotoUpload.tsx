@@ -125,21 +125,28 @@ function PhotoUpload({
             let imageUrl: string;
             if (typeof photo === 'string') {
               // Old format: might be a URL or old file path
-              if (photo.startsWith('http')) {
+              if (photo.startsWith('http://') || photo.startsWith('https://')) {
                 imageUrl = photo;
               } else {
-                // Fallback to API route for old paths
-                imageUrl = `/api/files/${photo}`;
+                // If it's not a URL, it might be a Vercel Blob pathname or old Cloudinary ID
+                // We can't reconstruct Vercel Blob URLs from pathnames, so try as-is
+                // If it fails, the image won't load (old photos need migration)
+                imageUrl = photo.startsWith('inspections/') ? photo : `/api/files/${photo}`;
               }
             } else if (photo.url) {
-              // New format: direct URL (Vercel Blob)
+              // New format: direct URL (Vercel Blob) - preferred
               imageUrl = photo.url;
             } else if (photo.fileName) {
-              // Old format with fileName
-              if (photo.fileName.startsWith('http')) {
+              // Check if fileName is already a full URL
+              if (photo.fileName.startsWith('http://') || photo.fileName.startsWith('https://')) {
+                imageUrl = photo.fileName;
+              } else if (photo.fileName.startsWith('inspections/')) {
+                // Vercel Blob pathname - we can't reconstruct the URL, so use fileName as-is
+                // This will only work if fileName was stored as a full URL
                 imageUrl = photo.fileName;
               } else {
-                // Fallback to API route for old paths
+                // Old format - might be Cloudinary ID or local path
+                // Try to use it directly, or fallback to API route
                 imageUrl = `/api/files/${photo.fileName}`;
               }
             } else {

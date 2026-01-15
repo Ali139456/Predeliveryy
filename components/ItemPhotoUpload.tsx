@@ -124,15 +124,20 @@ function ItemPhotoUpload({
             // fileName is required in PhotoData, so we always have it
             let imageUrl: string;
             if (photo.url) {
-              // New format: direct URL (Vercel Blob)
+              // New format: direct URL (Vercel Blob) - preferred
               imageUrl = photo.url;
             } else {
               // Old format with fileName (fileName is always present)
               const fileName = photo.fileName;
-              if (fileName.startsWith('http')) {
+              if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
+                imageUrl = fileName;
+              } else if (fileName.startsWith('inspections/')) {
+                // Vercel Blob pathname - we can't reconstruct the URL, so use fileName as-is
+                // This will only work if fileName was stored as a full URL
                 imageUrl = fileName;
               } else {
-                // Fallback to API route for old paths
+                // Old format - might be Cloudinary ID or local path
+                // Try to use it directly, or fallback to API route
                 imageUrl = `/api/files/${fileName}`;
               }
             }
