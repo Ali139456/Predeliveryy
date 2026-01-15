@@ -71,6 +71,7 @@ export interface IInspection extends Document {
   }[];
   photos: {
     fileName: string;
+    url?: string; // Full URL for Vercel Blob or other storage
     metadata?: {
       width?: number;
       height?: number;
@@ -179,6 +180,7 @@ const InspectionSchema: Schema = new Schema(
             notes: String,
             photos: [{
               fileName: { type: String, required: true },
+              url: { type: String }, // Full URL for Vercel Blob or other storage
               metadata: {
                 width: { type: Number },
                 height: { type: Number },
@@ -195,6 +197,7 @@ const InspectionSchema: Schema = new Schema(
     ],
     photos: [{
       fileName: { type: String, required: true },
+      url: { type: String }, // Full URL for Vercel Blob or other storage
       metadata: {
         width: { type: Number },
         height: { type: Number },
