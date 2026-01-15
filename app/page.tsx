@@ -423,8 +423,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1606983340126-99ab4feaa64a?w=800&h=600&fit=crop"
-                    alt="Photo Gallery"
+                    src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=600&fit=crop&q=80"
+                    alt="Photo Gallery - Vehicle inspection photography"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -440,8 +440,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800&h=600&fit=crop"
-                    alt="Vehicle Identity Capture"
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&q=80"
+                    alt="Vehicle Identity Capture - VIN scanning"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -457,8 +457,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=800&h=600&fit=crop"
-                    alt="GPS Tracking"
+                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
+                    alt="GPS Tracking - Location services"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -474,8 +474,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop"
-                    alt="Analytics Dashboard"
+                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
+                    alt="Analytics Dashboard - Data visualization"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -491,8 +491,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop"
-                    alt="Secure & Compliant"
+                    src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop&q=80"
+                    alt="Secure & Compliant - Data security"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -508,8 +508,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-200 hover:border-[#3833FF] transition-all duration-300 hover:shadow-2xl hover:shadow-[#3833FF]/10">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop"
-                    alt="Fast & Efficient"
+                    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop&q=80"
+                    alt="Fast & Efficient - Streamlined workflow"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -540,8 +540,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop"
-                    alt="Dealerships"
+                    src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop&q=80"
+                    alt="Dealerships - Car showroom"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -556,8 +556,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-blue-200/50">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop"
-                    alt="Fleet & Leasing Companies"
+                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&q=80"
+                    alt="Fleet & Leasing Companies - Commercial vehicles"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -572,8 +572,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-green-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-200/50">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop"
-                    alt="OEM & Delivery Partners"
+                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&q=80"
+                    alt="OEM & Delivery Partners - Manufacturing and delivery"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
@@ -588,8 +588,8 @@ export default function Home() {
               <div className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-purple-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-200/50">
                 <div className="relative h-48 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop"
-                    alt="Insurers & Financiers"
+                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop&q=80"
+                    alt="Insurers & Financiers - Insurance and finance"
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-300"
                   />
