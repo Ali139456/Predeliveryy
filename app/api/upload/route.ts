@@ -151,34 +151,46 @@ export async function POST(request: NextRequest) {
     // Then try Vercel Blob as fallback
     if (hasCloudinaryConfig) {
       try {
+        console.log('=== ATTEMPTING CLOUDINARY UPLOAD ===');
+        console.log('Cloudinary config check:', {
+          cloudName: !!process.env.CLOUDINARY_CLOUD_NAME,
+          apiKey: !!process.env.CLOUDINARY_API_KEY,
+          apiSecret: !!process.env.CLOUDINARY_API_SECRET,
+        });
         console.log('Uploading to Cloudinary:', { fileName, contentType, size: buffer.length });
         const publicId = await uploadToCloudinary(buffer, fileName, 'inspections');
         uploadedFileName = publicId;
         fileUrl = `/api/files/${publicId}`;
-        console.log('Cloudinary upload successful:', { publicId, fileUrl });
+        console.log('=== CLOUDINARY UPLOAD SUCCESSFUL ===', { publicId, fileUrl });
       } catch (cloudinaryError: any) {
+        console.error('=== CLOUDINARY UPLOAD FAILED ===');
         console.error('Cloudinary upload error:', {
           message: cloudinaryError.message,
           error: cloudinaryError,
-          stack: cloudinaryError.stack
+          stack: cloudinaryError.stack,
+          name: cloudinaryError.name,
         });
         
         // On Vercel, if Cloudinary fails, try Vercel Blob as fallback
         if (isVercel && hasVercelBlobConfig()) {
           console.warn('Cloudinary upload failed, trying Vercel Blob as fallback');
         } else if (isVercel) {
+          // On Vercel without Vercel Blob, return error immediately
+          console.error('Cloudinary failed on Vercel and no Vercel Blob fallback available');
           return NextResponse.json(
             { 
               success: false, 
-              error: cloudinaryError.message || 'Failed to upload to Cloudinary. Please check your Cloudinary configuration on Vercel.' 
+              error: `Cloudinary upload failed: ${cloudinaryError.message || 'Please check your Cloudinary configuration on Vercel.'}` 
             },
             { status: 500, headers: corsHeaders }
           );
         } else {
           // For local dev, fallback to local storage
-          console.warn('Cloudinary upload failed, falling back to local storage');
+          console.warn('Cloudinary upload failed, will try local storage (dev only)');
         }
       }
+    } else {
+      console.warn('Cloudinary is not configured. hasCloudinaryConfig =', hasCloudinaryConfig);
     }
     
     // If Cloudinary not configured or failed, try Vercel Blob Storage
@@ -258,19 +270,22 @@ export async function POST(request: NextRequest) {
         }
       }
       
-      // If S3 not configured or failed (local dev only), use local storage
+      // If S3 not configured or failed, check if we should use local storage
       if (!uploadedFileName) {
+        // NEVER use local storage on Vercel - it's read-only
         if (isVercel) {
+          console.error('All storage options failed on Vercel. Cloudinary, Vercel Blob, and S3 all failed or are not configured.');
           return NextResponse.json(
             { 
               success: false, 
-              error: 'File storage is not properly configured. Please configure either Cloudinary or Vercel Blob Storage for file uploads on Vercel.' 
+              error: 'File storage failed. Please check: 1) Cloudinary configuration is correct, 2) Vercel Blob token is valid (if using), 3) AWS credentials are correct (if using S3). Local file storage is not available on Vercel.' 
             },
             { status: 500, headers: corsHeaders }
           );
         }
         
-        // Save to public/uploads for local development
+        // Only use local storage for local development
+        console.log('Attempting local file storage (development only)');
         try {
           const uploadDir = path.join(process.cwd(), 'public', 'uploads');
           const fullPath = path.join(uploadDir, fileName);
