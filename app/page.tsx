@@ -296,26 +296,14 @@ export default function Home() {
               <div className="inline-block mb-6">
                 <span className="text-red-600 font-bold text-sm uppercase tracking-wider px-4 py-2 bg-red-600/10 rounded-full border border-red-600/20">Simple Process</span>
               </div>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-8 text-gray-900">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
                 How it works
               </h2>
-              {/* Visual Flow Line */}
-              <div className="hidden lg:flex items-center justify-center mb-12 max-w-4xl mx-auto">
-                <div className="flex items-center w-full">
-                  <div className="flex-1 h-1 bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-full"></div>
-                  <div className="mx-4 w-3 h-3 bg-red-600 rounded-full border-4 border-white shadow-lg"></div>
-                  <div className="flex-1 h-1 bg-gradient-to-r from-orange-600 via-amber-600 to-red-600 rounded-full"></div>
-                  <div className="mx-4 w-3 h-3 bg-orange-600 rounded-full border-4 border-white shadow-lg"></div>
-                  <div className="flex-1 h-1 bg-gradient-to-r from-amber-600 via-red-600 to-orange-600 rounded-full"></div>
-                  <div className="mx-4 w-3 h-3 bg-amber-600 rounded-full border-4 border-white shadow-lg"></div>
-                  <div className="flex-1 h-1 bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-full"></div>
-                  <div className="mx-4 w-3 h-3 bg-red-600 rounded-full border-4 border-white shadow-lg"></div>
-                  <div className="flex-1 h-1 bg-gradient-to-r from-orange-600 to-transparent rounded-full"></div>
-                </div>
-              </div>
-              {/* Mobile Flow Line */}
-              <div className="lg:hidden flex flex-col items-center mb-12">
-                <div className="w-1 h-32 bg-gradient-to-b from-red-600 via-orange-600 via-amber-600 to-red-600 rounded-full"></div>
+              {/* Process Flow Description */}
+              <div className="max-w-4xl mx-auto mb-12">
+                <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
+                  Start with a <span className="font-semibold text-red-600">comprehensive inspection</span>, then <span className="font-semibold text-orange-600">verify all vehicle details</span> with digital documentation, <span className="font-semibold text-amber-600">obtain approval</span> through digital signatures, and finally <span className="font-semibold text-red-600">deliver with confidence</span> knowing every detail is recorded and verified.
+                </p>
               </div>
             </div>
 
