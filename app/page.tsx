@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Sparkles, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Sparkles, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint } from 'lucide-react';
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);
@@ -35,6 +35,21 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* Hero Section - SiteGround AI Studio Style */}
       <div className="relative bg-gradient-to-b from-blue-950 via-purple-950 to-blue-950 min-h-screen w-full overflow-hidden">
+        {/* Hero Background Image */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
+          <Image
+            src="/predelivery-hero-shot.jpg"
+            alt="Pre Delivery Inspection Facility"
+            fill
+            priority
+            className="object-cover"
+            quality={90}
+          />
+        </div>
+        
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-purple-950/70 to-blue-950/80"></div>
+        
         {/* Animated background gradient */}
         <div className="absolute inset-0 opacity-30">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-900/50 via-purple-900/50 to-blue-900/50"></div>
@@ -212,7 +227,10 @@ export default function Home() {
                 Powerful Features
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
-                Everything you need for comprehensive pre-delivery inspections
+                Everything you need for comprehensive vehicle inspections
+              </p>
+              <p className="text-base sm:text-lg text-gray-700 max-w-4xl mx-auto mt-6 leading-relaxed">
+                Our tech verifies your new vehicle before handover and registration — capturing condition, compliance, and proof so issues are identified and resolved before the keys are released.
               </p>
             </div>
 
@@ -239,13 +257,13 @@ export default function Home() {
                   <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-green-600/5"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-2xl shadow-green-500/30 group-hover:scale-110 transition-transform">
-                      <QrCode className="w-16 h-16 text-white" strokeWidth={2} />
+                      <Fingerprint className="w-16 h-16 text-white" strokeWidth={2} />
                     </div>
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-2 text-gray-900">Barcode Scanner</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Quickly scan VINs and product codes for accurate data capture</p>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900">Vehicle Identity Capture</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Digitally extract VIN and compliance information from vehicle labels to create a verified pre-delivery record</p>
                 </div>
               </div>
 
@@ -317,7 +335,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Why Predelivery.ai? Section */}
+      {/* Who It's For? Section */}
       <div id="benefits" className="relative bg-gradient-to-br from-gray-50 via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 scroll-mt-20 overflow-hidden">
         {/* Decorative background elements */}
         <div className="absolute inset-0 opacity-25">
@@ -329,31 +347,22 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-black">
-                Why Predelivery.ai?
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-12 text-black">
+                Who It's For?
               </h2>
-              
-              {/* Problem Statement */}
-              <p className="text-lg sm:text-xl text-black/80 max-w-3xl mx-auto mb-6">
-                Vehicle issues discovered after delivery and registration lead to disputes, rework, warranty friction, and reputational risk.
-              </p>
-              
-              {/* Solution Statement */}
-              <p className="text-xl sm:text-2xl font-semibold text-[#3833FF] mb-12">
-                Pre-delivery replaces uncertainty with proof.
-              </p>
             </div>
 
-            {/* Benefits Grid */}
+            {/* Who It's For Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <div className="group relative bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-3xl p-8 border-2 border-orange-200/50 hover:border-orange-400/80 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-orange-200/50 overflow-hidden">
                 {/* Decorative background element */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200/30 to-transparent rounded-full blur-2xl"></div>
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 flex items-center justify-center mb-6 shadow-lg shadow-orange-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <AlertTriangle className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    <Building2 className="w-8 h-8 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-orange-600 transition-colors">Reduce post-delivery disputes</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-orange-600 transition-colors">Dealerships</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Reduce post-delivery disputes and protect handover quality.</p>
                 </div>
               </div>
 
@@ -362,9 +371,10 @@ export default function Home() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-200/30 to-transparent rounded-full blur-2xl"></div>
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 via-blue-500 to-indigo-500 flex items-center justify-center mb-6 shadow-lg shadow-blue-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    <Truck className="w-8 h-8 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-blue-600 transition-colors">Protect warranty claims</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-blue-600 transition-colors">Fleet & Leasing Companies</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Standardise vehicle delivery across locations and suppliers.</p>
                 </div>
               </div>
 
@@ -373,9 +383,10 @@ export default function Home() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-200/30 to-transparent rounded-full blur-2xl"></div>
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-400 via-emerald-500 to-teal-500 flex items-center justify-center mb-6 shadow-lg shadow-green-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <FileText className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    <Users className="w-8 h-8 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-green-600 transition-colors">Create a defensible delivery record</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-green-600 transition-colors">OEM & Delivery Partners</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Enforce consistent pre-delivery inspection standards at scale.</p>
                 </div>
               </div>
 
@@ -384,10 +395,91 @@ export default function Home() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-200/30 to-transparent rounded-full blur-2xl"></div>
                 <div className="relative z-10">
                   <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-400 via-purple-500 to-pink-500 flex items-center justify-center mb-6 shadow-lg shadow-purple-300/50 group-hover:scale-110 transition-transform duration-300">
-                    <Lock className="w-8 h-8 text-white" strokeWidth={2.5} />
+                    <ShieldCheck className="w-8 h-8 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors">Prevent post registration risks</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-800 group-hover:text-purple-600 transition-colors">Insurers & Financiers</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Access verified condition records that stand up in claims and disputes.</p>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Compliance and Trust Section */}
+      <div className="relative bg-gradient-to-br from-white via-gray-50/40 to-blue-50/30 py-20 sm:py-24 overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-gradient-to-br from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gradient-to-tr from-purple-300/30 to-pink-300/20 rounded-full blur-3xl"></div>
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+                Compliance and Trust
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Enterprise-grade data security</h3>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mb-4">
+                  <Lock className="w-6 h-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Role-based access controls</h3>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mb-4">
+                  <FileText className="w-6 h-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Audit trails, analytics and inspection history</h3>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center mb-4">
+                  <CheckCircle className="w-6 h-6 text-white" strokeWidth={2.5} />
+                </div>
+                <h3 className="text-lg font-bold mb-2 text-gray-900">Built by a team with deep inspection and automotive data experience</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Section */}
+      <div className="relative bg-gradient-to-br from-gray-50 via-blue-50/40 to-indigo-50/30 py-20 sm:py-24 overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-25">
+          <div className="absolute top-0 right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-green-300/30 to-emerald-300/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/30 to-indigo-300/20 rounded-full blur-3xl"></div>
+        </div>
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 text-gray-900">
+                Pricing
+              </h2>
+            </div>
+
+            <div className="bg-white rounded-3xl p-8 md:p-12 border-2 border-gray-200 shadow-2xl">
+              <div className="text-center space-y-6">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#3833FF] to-blue-600 flex items-center justify-center mx-auto mb-4">
+                  <CreditCard className="w-8 h-8 text-white" strokeWidth={2.5} />
+                </div>
+                <p className="text-lg sm:text-xl text-gray-700 leading-relaxed">
+                  Flexible plans based on vehicle volume and business needs.
+                </p>
+                <p className="text-base sm:text-lg text-gray-600">
+                  Per-vehicle and enterprise options available.
+                </p>
               </div>
             </div>
           </div>
