@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit } from 'lucide-react';
 
-const LOGO_SRC = '/Pre Delivery Logo/Original logo.png';
+const LOGO_SRC = '/Pre Delivery Logo/Original Logo Transparent Background.png';
 
 function UserHeader() {
   const [user, setUser] = useState<any>(null);
@@ -99,7 +99,7 @@ function UserHeader() {
     const isHomePage = pathname === '/';
     const textColor = 'text-white';
     const linkHoverColor = 'hover:text-[#FFB366]';
-    const navBg = isHomePage && !scrolled ? 'bg-transparent' : 'bg-[#0040FF] shadow-lg border-b border-white/20';
+    const navBg = isHomePage && !scrolled ? 'bg-transparent' : 'bg-[#0040FF] shadow-lg';
     
     return (
       <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
@@ -107,7 +107,7 @@ function UserHeader() {
           <div className="flex items-center justify-between">
             <Link href="/" className="transition-colors flex items-center group hover:opacity-90">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 w-auto sm:h-12 object-contain" priority />
+                <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" priority />
               </div>
             </Link>
             
@@ -144,12 +144,12 @@ function UserHeader() {
               className="fixed inset-0 bg-[#0040FF]/80 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="fixed top-0 left-0 right-0 bg-[#0040FF] z-50 md:hidden border-b border-white/20">
+            <div className="fixed top-0 left-0 right-0 bg-[#0040FF] z-50 md:hidden">
               <div className="container mx-auto px-4 py-4">
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
                     <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                      <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 w-auto object-contain" />
+                      <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
                     </div>
                   </Link>
                   <button
@@ -210,7 +210,7 @@ function UserHeader() {
           {/* Logo - blue pill so white logo visible on white nav */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90">
             <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0040FF]/90 p-1.5">
-              <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 w-auto sm:h-12 object-contain" />
+              <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
             </div>
           </Link>
 
@@ -338,7 +338,7 @@ function UserHeader() {
               <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
                 <Link href="/" className="flex items-center transition-colors" onClick={() => setMobileMenuOpen(false)}>
                   <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0040FF]/90 p-1.5">
-                    <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 w-auto object-contain" />
+                    <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
                   </div>
                 </Link>
                 <button

@@ -112,7 +112,7 @@ export default function LoginPage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center transition-colors hover:opacity-90">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0040FF]/90 p-1.5 mr-2">
-                <Image src="/Pre Delivery Logo/Original logo.png" alt="Pre delivery" width={180} height={52} className="h-8 w-auto sm:h-9 object-contain" />
+                <Image src="/Pre Delivery Logo/Original Logo Transparent Background.png" alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
               </div>
               <span className="hidden sm:inline text-gray-800 font-bold">Pre Delivery Inspection</span>
             </Link>
