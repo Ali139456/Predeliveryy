@@ -98,7 +98,7 @@ export default function AdminDashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#3833FF] mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#0040FF] mb-4"></div>
           <p className="text-black">Loading...</p>
         </div>
       </div>
@@ -108,15 +108,15 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen bg-white">
       {/* Tabs */}
-      <div className="bg-white border-b border-[#3833FF]/30 shadow-lg">
+      <div className="bg-white border-b border-[#0040FF]/30 shadow-lg">
         <div className="container mx-auto px-2 sm:px-4">
           <div className="flex gap-1 overflow-x-auto scrollbar-hide">
             <button
               onClick={() => setActiveTab('overview')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'overview'
-                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
-                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
+                  ? 'text-[#0040FF] border-b-2 border-[#0040FF] bg-[#0040FF]/10'
+                  : 'text-black/70 hover:text-[#0040FF] hover:bg-gray-50'
               }`}
             >
               📊 Overview
@@ -125,8 +125,8 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('users')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'users'
-                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
-                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
+                  ? 'text-[#0040FF] border-b-2 border-[#0040FF] bg-[#0040FF]/10'
+                  : 'text-black/70 hover:text-[#0040FF] hover:bg-gray-50'
               }`}
             >
               👥 Users
@@ -135,8 +135,8 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('audit')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'audit'
-                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
-                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
+                  ? 'text-[#0040FF] border-b-2 border-[#0040FF] bg-[#0040FF]/10'
+                  : 'text-black/70 hover:text-[#0040FF] hover:bg-gray-50'
               }`}
             >
               🔒 Audit Logs
@@ -145,8 +145,8 @@ export default function AdminDashboard() {
               onClick={() => setActiveTab('settings')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
                 activeTab === 'settings'
-                  ? 'text-[#3833FF] border-b-2 border-[#3833FF] bg-[#3833FF]/10'
-                  : 'text-black/70 hover:text-[#3833FF] hover:bg-gray-50'
+                  ? 'text-[#0040FF] border-b-2 border-[#0040FF] bg-[#0040FF]/10'
+                  : 'text-black/70 hover:text-[#0040FF] hover:bg-gray-50'
               }`}
             >
               ⚙️ Settings
@@ -197,40 +197,40 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#3833FF]/30">
+        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0040FF]/30">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white/80">Total Inspections</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#0040FF] flex items-center justify-center">
               <FileText className="w-6 h-6 text-white" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.total || 0}</p>
         </div>
 
-        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#3833FF]/30">
+        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0040FF]/30">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white/80">Completed</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#0040FF] flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-white" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.completed || 0}</p>
         </div>
 
-        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#3833FF]/30">
+        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0040FF]/30">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white/80">Drafts</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#0040FF] flex items-center justify-center">
               <Clock className="w-6 h-6 text-white" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.draft || 0}</p>
         </div>
 
-        <div className="bg-[#3833FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
+        <div className="bg-[#0040FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-medium text-white">Total Users</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#3833FF]/10 flex items-center justify-center bg-white">
+            <div className="w-12 h-12 rounded-xl bg-[#0040FF]/10 flex items-center justify-center bg-white">
               <Users className="w-6 h-6 text-white" />
             </div>
           </div>
@@ -239,10 +239,10 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
       </div>
 
       {/* Recent Inspections */}
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0040FF]/30">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-xl bg-[#3833FF] flex items-center justify-center mr-3 shadow-lg shadow-[#3833FF]/50">
+            <div className="w-10 h-10 rounded-xl bg-[#0040FF] flex items-center justify-center mr-3 shadow-lg shadow-[#0040FF]/50">
               <FileText className="w-5 h-5 text-white" />
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-black">Recent Inspections</h2>
@@ -256,7 +256,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
               placeholder="Search inspections..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
+              className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
             />
           </div>
         </div>
@@ -264,7 +264,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#3833FF] border-b-2 border-[#3833FF]/50">
+              <tr className="bg-[#0040FF] border-b-2 border-[#0040FF]/50">
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspection #</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspector</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Status</th>
@@ -297,7 +297,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
                   <td className="py-3 px-2 sm:px-4">
                     <Link
                       href={`/inspections/${inspection._id}?view=readonly`}
-                      className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                      className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0040FF] text-white rounded-lg hover:bg-[#0040FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                     >
                       <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
                       <span className="hidden sm:inline">View</span>
@@ -348,7 +348,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
   if (loading) {
     return (
       <div className="text-center py-8">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#3833FF]"></div>
+        <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#0040FF]"></div>
         <p className="mt-4 text-black">Loading users...</p>
       </div>
     );
@@ -358,7 +358,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
+          <div className="w-12 h-12 rounded-xl bg-[#0040FF] flex items-center justify-center mr-4 shadow-lg shadow-[#0040FF]/50">
             <Users className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-black">Users</h2>
@@ -366,7 +366,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
         {userRole === 'admin' && (
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center px-6 py-3 bg-[#3833FF] text-white rounded-xl hover:bg-[#3833FF]/90 transition-all shadow-lg shadow-[#3833FF]/50 hover:shadow-xl transform hover:scale-105"
+            className="flex items-center px-6 py-3 bg-[#0040FF] text-white rounded-xl hover:bg-[#0040FF]/90 transition-all shadow-lg shadow-[#0040FF]/50 hover:shadow-xl transform hover:scale-105"
           >
             <UserPlus className="w-5 h-5 mr-2" />
             Add User
@@ -374,11 +374,11 @@ function UsersTab({ userRole }: { userRole?: string }) {
         )}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0040FF]/30">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#3833FF] border-b-2 border-[#3833FF]/50">
+              <tr className="bg-[#0040FF] border-b-2 border-[#0040FF]/50">
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Name</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Email</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Phone</th>
@@ -425,7 +425,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
                           setEditingUser(user);
                           setShowEditModal(true);
                         }}
-                        className="text-xs sm:text-sm font-medium text-[#3833FF] hover:text-[#3833FF]/80 hover:underline cursor-pointer transition-colors"
+                        className="text-xs sm:text-sm font-medium text-[#0040FF] hover:text-[#0040FF]/80 hover:underline cursor-pointer transition-colors"
                       >
                         Edit
                       </button>
@@ -595,7 +595,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50">
-      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#3833FF]/30">
+      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#0040FF]/30">
         <h2 className="text-2xl font-bold mb-6 text-white">Add User</h2>
         {error && (
           <div className="p-3 mb-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg bg-slate-800/95">
@@ -710,7 +710,7 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#3833FF]/50"
+              className="flex-1 px-4 py-2 bg-[#0040FF] text-white rounded-lg hover:bg-[#0040FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#0040FF]/50"
             >
               {loading ? 'Creating...' : 'Create User'}
             </button>
@@ -873,7 +873,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50 p-4">
-      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#3833FF]/30 max-h-[90vh] overflow-y-auto">
+      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#0040FF]/30 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white flex items-center">
             <Edit className="w-6 h-6 mr-2" />
@@ -994,7 +994,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
                 type="checkbox"
                 checked={formData.isActive}
                 onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="mr-3 w-5 h-5 rounded border-white/20 text-[#3833FF] focus:ring-2 focus:ring-[#3833FF] bg-black/50 cursor-pointer"
+                className="mr-3 w-5 h-5 rounded border-white/20 text-[#0040FF] focus:ring-2 focus:ring-[#0040FF] bg-black/50 cursor-pointer"
               />
               <span className="text-sm font-medium text-slate-200">Active User</span>
             </label>
@@ -1010,7 +1010,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#3833FF]/50"
+              className="flex-1 px-4 py-2 bg-[#0040FF] text-white rounded-lg hover:bg-[#0040FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#0040FF]/50"
             >
               {loading ? 'Updating...' : 'Update User'}
             </button>

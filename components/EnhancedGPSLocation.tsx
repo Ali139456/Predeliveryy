@@ -102,7 +102,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
           type="button"
           onClick={captureStartLocation}
           disabled={loading}
-          className="w-full flex items-center justify-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 transition-colors"
+          className="w-full flex items-center justify-center px-4 py-2 bg-[#0040FF] text-white rounded-lg hover:bg-[#0040FF]/90 disabled:opacity-50 transition-colors"
         >
           <Play className="w-4 h-4 mr-2" />
           Capture Start

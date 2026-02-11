@@ -122,7 +122,7 @@ export default function AuditLogTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="w-12 h-12 rounded-xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg">
+          <div className="w-12 h-12 rounded-xl bg-[#0040FF] flex items-center justify-center mr-4 shadow-lg">
             <Shield className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-black">Audit Logs</h2>
@@ -130,14 +130,14 @@ export default function AuditLogTab() {
         <div className="flex gap-2">
           <button
             onClick={() => handleExport('csv')}
-            className="flex items-center px-6 py-3 bg-[#3833FF] text-white rounded-xl hover:bg-[#3833FF]/90 transition-all shadow-lg shadow-[#3833FF]/50 hover:shadow-xl transform hover:scale-105 font-semibold"
+            className="flex items-center px-6 py-3 bg-[#0040FF] text-white rounded-xl hover:bg-[#0040FF]/90 transition-all shadow-lg shadow-[#0040FF]/50 hover:shadow-xl transform hover:scale-105 font-semibold"
           >
             <Download className="w-4 h-4 mr-2" />
             Export CSV
           </button>
           <button
             onClick={() => handleExport('json')}
-            className="flex items-center px-6 py-3 bg-[#3833FF] text-white rounded-xl hover:bg-[#3833FF]/90 transition-all shadow-lg shadow-[#3833FF]/50 hover:shadow-xl transform hover:scale-105 font-semibold"
+            className="flex items-center px-6 py-3 bg-[#0040FF] text-white rounded-xl hover:bg-[#0040FF]/90 transition-all shadow-lg shadow-[#0040FF]/50 hover:shadow-xl transform hover:scale-105 font-semibold"
           >
             <Download className="w-4 h-4 mr-2" />
             Export JSON
@@ -146,9 +146,9 @@ export default function AuditLogTab() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0040FF]/30">
         <div className="flex items-center mb-4">
-          <div className="w-10 h-10 rounded-xl bg-[#3833FF] flex items-center justify-center mr-3 shadow-lg shadow-[#3833FF]/50">
+          <div className="w-10 h-10 rounded-xl bg-[#0040FF] flex items-center justify-center mr-3 shadow-lg shadow-[#0040FF]/50">
             <Filter className="w-5 h-5 text-white" />
           </div>
           <h3 className="font-semibold text-black text-lg">Filters</h3>
@@ -159,7 +159,7 @@ export default function AuditLogTab() {
             <select
               value={filters.action}
               onChange={(e) => setFilters({ ...filters, action: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             >
               <option value="">All Actions</option>
               {availableFilters.actionTypes.map((action) => (
@@ -174,7 +174,7 @@ export default function AuditLogTab() {
             <select
               value={filters.resourceType}
               onChange={(e) => setFilters({ ...filters, resourceType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             >
               <option value="">All Types</option>
               {availableFilters.resourceTypes.map((type) => (
@@ -191,7 +191,7 @@ export default function AuditLogTab() {
               value={filters.userId}
               onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
               placeholder="Filter by user ID"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
             />
           </div>
           <div>
@@ -200,7 +200,7 @@ export default function AuditLogTab() {
               type="date"
               value={filters.startDate}
               onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             />
           </div>
           <div>
@@ -209,14 +209,14 @@ export default function AuditLogTab() {
               type="date"
               value={filters.endDate}
               onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
             />
           </div>
         </div>
       </div>
 
       {/* Logs Table */}
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0040FF]/30">
         {loading ? (
           <div className="text-center py-8 text-black">Loading audit logs...</div>
         ) : (
@@ -224,7 +224,7 @@ export default function AuditLogTab() {
             <div className="overflow-x-auto">
               <table className="w-full">
             <thead>
-              <tr className="bg-[#3833FF] border-b-2 border-[#3833FF]/50">
+              <tr className="bg-[#0040FF] border-b-2 border-[#0040FF]/50">
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Timestamp</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">User</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Action</th>
@@ -265,7 +265,7 @@ export default function AuditLogTab() {
                       </td>
                       <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
                         <details className="cursor-pointer">
-                          <summary className="text-[#3833FF] hover:text-[#3833FF]/80">
+                          <summary className="text-[#0040FF] hover:text-[#0040FF]/80">
                             View Details
                           </summary>
                           <pre className="mt-2 p-2 bg-gray-50 rounded text-xs overflow-auto max-w-xs">

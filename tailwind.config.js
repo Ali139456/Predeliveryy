@@ -8,8 +8,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          blue: '#0040FF',
+          blueDark: '#0033CC',
+          orange: '#FF7F00',
+          orangeDark: '#E66A00',
+        },
         autograb: {
-          blue: '#3833FF',
+          blue: '#0040FF',
+          dark: '#0033CC',
         },
         primary: {
           50: '#eff6ff',
