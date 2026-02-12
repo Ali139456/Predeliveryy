@@ -50,7 +50,7 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-[#0040FF] via-[#0033CC] to-[#FF7F00] py-20 sm:py-24 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#0033FF] via-[#0029CC] to-[#FF6600] py-20 sm:py-24 overflow-hidden">
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
@@ -89,7 +89,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
                       <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-[#0040FF]" />
+                        <User className="w-4 h-4 text-[#0033FF]" />
                         <span>Name</span>
                       </div>
                     </label>
@@ -100,7 +100,7 @@ export default function ContactPage() {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0040FF] focus:border-transparent transition-all outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-transparent transition-all outline-none"
                       placeholder="Your name"
                     />
                   </div>
@@ -109,7 +109,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
                       <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-[#0040FF]" />
+                        <Mail className="w-4 h-4 text-[#0033FF]" />
                         <span>Email</span>
                       </div>
                     </label>
@@ -120,7 +120,7 @@ export default function ContactPage() {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0040FF] focus:border-transparent transition-all outline-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-transparent transition-all outline-none"
                       placeholder="your.email@example.com"
                     />
                   </div>
@@ -129,7 +129,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="subject" className="block text-sm font-semibold text-gray-700 mb-2">
                       <div className="flex items-center gap-2">
-                        <FileText className="w-4 h-4 text-[#0040FF]" />
+                        <FileText className="w-4 h-4 text-[#0033FF]" />
                         <span>Subject</span>
                       </div>
                     </label>
@@ -139,7 +139,7 @@ export default function ContactPage() {
                       value={formData.subject}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0040FF] focus:border-transparent transition-all outline-none bg-white"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-transparent transition-all outline-none bg-white"
                     >
                       <option value="General enquiry">General enquiry</option>
                       <option value="Sales">Sales</option>
@@ -151,7 +151,7 @@ export default function ContactPage() {
                   <div>
                     <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
                       <div className="flex items-center gap-2">
-                        <MessageSquare className="w-4 h-4 text-[#0040FF]" />
+                        <MessageSquare className="w-4 h-4 text-[#0033FF]" />
                         <span>How can we help?</span>
                       </div>
                     </label>
@@ -162,7 +162,7 @@ export default function ContactPage() {
                       onChange={handleChange}
                       required
                       rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0040FF] focus:border-transparent transition-all outline-none resize-none"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-transparent transition-all outline-none resize-none"
                       placeholder="Tell us how we can help you..."
                     />
                   </div>
@@ -172,7 +172,7 @@ export default function ContactPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-gradient-to-r from-[#0040FF] to-[#0033CC] hover:from-[#0040FF]/95 hover:to-[#0033CC]/95 text-white font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-gradient-to-r from-[#0033FF] to-[#0029CC] hover:from-[#0033FF]/95 hover:to-[#0029CC]/95 text-white font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
                         <>
@@ -195,7 +195,7 @@ export default function ContactPage() {
                     <p className="text-gray-600 mb-4">Or reach us directly at:</p>
                     <a 
                       href="mailto:info@predelivery.ai" 
-                      className="inline-flex items-center gap-2 text-[#0040FF] font-semibold hover:text-blue-700 transition-colors"
+                      className="inline-flex items-center gap-2 text-[#0033FF] font-semibold hover:text-blue-700 transition-colors"
                     >
                       <Mail className="w-5 h-5" />
                       <span>info@predelivery.ai</span>

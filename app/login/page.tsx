@@ -107,18 +107,18 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       {/* Navbar */}
-      <nav className="bg-white shadow-lg border-b border-[#0040FF]/20">
+      <nav className="bg-white shadow-lg border-b border-[#0033FF]/20">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center transition-colors hover:opacity-90">
-              <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0040FF]/90 p-1.5 mr-2">
+              <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5 mr-2">
                 <Image src="/Pre Delivery Logo/Original Logo Transparent Background.png" alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
               </div>
               <span className="hidden sm:inline text-gray-800 font-bold">Pre Delivery Inspection</span>
             </Link>
             <Link
               href="/"
-              className="flex items-center px-4 sm:px-6 py-2 text-sm bg-[#0040FF]/10 hover:bg-[#0040FF]/20 text-[#0040FF] rounded-lg hover:scale-105 transition-all border border-[#0040FF]/30 font-semibold"
+              className="flex items-center px-4 sm:px-6 py-2 text-sm bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-[#0033FF] rounded-lg hover:scale-105 transition-all border border-[#0033FF]/30 font-semibold"
             >
               <Home className="w-4 h-4 mr-2" />
               <span className="hidden sm:inline">Home</span>
@@ -132,14 +132,14 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Decorative Background Elements */}
           <div className="relative">
-            <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#0040FF]/5 rounded-full blur-3xl"></div>
+            <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#0033FF]/5 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
             
             {/* Login Card */}
-            <div className="relative bg-white rounded-3xl shadow-2xl w-full p-8 sm:p-10 border-2 border-[#0040FF]/20 backdrop-blur-sm">
+            <div className="relative bg-white rounded-3xl shadow-2xl w-full p-8 sm:p-10 border-2 border-[#0033FF]/20 backdrop-blur-sm">
               {/* Icon Header */}
               <div className="text-center mb-8">
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0040FF] to-[#0033CC] mb-6 shadow-lg shadow-[#0040FF]/50">
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] mb-6 shadow-lg shadow-[#0033FF]/50">
                   <LogIn className="w-10 h-10 text-white" />
                 </div>
                 <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2">Welcome Back</h1>
@@ -166,7 +166,7 @@ export default function LoginPage() {
                         setEmail('');
                         setPhoneNumber('');
                       }}
-                      className="text-xs text-[#0040FF] hover:text-[#0040FF]/80 hover:underline transition-colors font-medium"
+                      className="text-xs text-[#0033FF] hover:text-[#0033FF]/80 hover:underline transition-colors font-medium"
                     >
                       {usePhone ? 'Use Email' : 'Use Phone'}
                     </button>
@@ -180,7 +180,7 @@ export default function LoginPage() {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           required
-                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
+                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                           placeholder="+1234567890"
                         />
                       </>
@@ -192,7 +192,7 @@ export default function LoginPage() {
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
-                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
+                          className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                           placeholder="your@email.com"
                         />
                       </>
@@ -208,7 +208,7 @@ export default function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setShowResetPassword(true)}
-                      className="text-sm text-[#0040FF] hover:text-[#0040FF]/80 hover:underline transition-colors font-medium"
+                      className="text-sm text-[#0033FF] hover:text-[#0033FF]/80 hover:underline transition-colors font-medium"
                     >
                       Forgot password?
                     </button>
@@ -220,7 +220,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
+                      className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                       placeholder="••••••••"
                     />
                   </div>
@@ -229,7 +229,7 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#0040FF] to-[#0033CC] text-white rounded-xl font-bold hover:from-[#0040FF]/90 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0040FF]/50 hover:shadow-xl hover:shadow-[#0040FF]/70 hover:scale-[1.02] transform"
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white rounded-xl font-bold hover:from-[#0033FF]/90 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0033FF]/50 hover:shadow-xl hover:shadow-[#0033FF]/70 hover:scale-[1.02] transform"
                 >
                   {loading ? (
                     <>
@@ -254,7 +254,7 @@ export default function LoginPage() {
       {/* Reset Password Modal */}
       {showResetPassword && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 sm:p-10 border-2 border-[#0040FF]/20">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 sm:p-10 border-2 border-[#0033FF]/20">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-black">
                   Reset Password
@@ -304,7 +304,7 @@ export default function LoginPage() {
                         setNewPassword('');
                         setConfirmPassword('');
                       }}
-                        className="text-xs text-[#0040FF] hover:text-[#0040FF]/80 hover:underline transition-colors"
+                        className="text-xs text-[#0033FF] hover:text-[#0033FF]/80 hover:underline transition-colors"
                       >
                         {resetUsePhone ? 'Use Email' : 'Use Phone'}
                       </button>
@@ -319,7 +319,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetPhone(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white disabled:opacity-50 disabled:bg-gray-100"
+                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white disabled:opacity-50 disabled:bg-gray-100"
                             placeholder="+1234567890"
                           />
                         </>
@@ -332,7 +332,7 @@ export default function LoginPage() {
                             onChange={(e) => setResetEmail(e.target.value)}
                             required
                             disabled={resetLoading}
-                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white disabled:opacity-50 disabled:bg-gray-100"
+                            className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white disabled:opacity-50 disabled:bg-gray-100"
                             placeholder="your@email.com"
                           />
                         </>
@@ -364,7 +364,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={resetLoading}
-                      className="flex-1 flex items-center justify-center px-6 py-3 bg-[#0040FF] text-white rounded-xl font-semibold hover:bg-[#0040FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0040FF]/50"
+                      className="flex-1 flex items-center justify-center px-6 py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0033FF]/50"
                     >
                       {resetLoading ? (
                         <>
@@ -464,7 +464,7 @@ export default function LoginPage() {
                       onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                       required
                       maxLength={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white text-center text-2xl tracking-widest font-bold"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white text-center text-2xl tracking-widest font-bold"
                       placeholder="000000"
                     />
                     <p className="mt-2 text-xs text-gray-500 text-center">
@@ -482,7 +482,7 @@ export default function LoginPage() {
                       onChange={(e) => setNewPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
                       placeholder="Enter new password (min 8 chars)"
                     />
                     <p className="mt-1 text-xs text-gray-500">
@@ -500,7 +500,7 @@ export default function LoginPage() {
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       required
                       minLength={8}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
                       placeholder="Confirm new password"
                     />
                   </div>
@@ -523,7 +523,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={resetLoading || otp.length !== 6 || !newPassword || !confirmPassword}
-                      className="flex-1 flex items-center justify-center px-6 py-3 bg-[#0040FF] text-white rounded-xl font-semibold hover:bg-[#0040FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0040FF]/50"
+                      className="flex-1 flex items-center justify-center px-6 py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#0033FF]/50"
                     >
                       {resetLoading ? (
                         <>

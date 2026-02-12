@@ -119,7 +119,7 @@ export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }
                 setError(null);
               }}
               placeholder="Enter email addresses separated by commas&#10;Example: john@example.com, jane@example.com"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0040FF] focus:border-[#0040FF] focus:bg-white transition-all bg-white text-black resize-none"
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black resize-none"
               rows={4}
               disabled={sending || success}
             />

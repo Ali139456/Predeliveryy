@@ -99,7 +99,7 @@ function UserHeader() {
     const isHomePage = pathname === '/';
     const textColor = 'text-white';
     const linkHoverColor = 'hover:text-[#FFB366]';
-    const navBg = isHomePage && !scrolled ? 'bg-transparent' : 'bg-[#0040FF] shadow-lg';
+    const navBg = isHomePage && !scrolled ? 'bg-transparent' : 'bg-[#0033FF] shadow-lg';
     
     return (
       <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
@@ -119,7 +119,7 @@ function UserHeader() {
               <Link href="/contact" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</Link>
               <Link
                 href="/login"
-                className="flex items-center px-5 py-2 text-sm bg-[#FF7F00] text-white rounded-lg hover:bg-[#E66A00] transition-all shadow-lg hover:shadow-xl font-semibold border border-white/30 hover:scale-105"
+                className="flex items-center px-5 py-2 text-sm bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-lg hover:shadow-xl font-semibold border border-white/30 hover:scale-105"
               >
                 <User className="w-4 h-4 mr-2" />
                 Login
@@ -141,10 +141,10 @@ function UserHeader() {
         {mobileMenuOpen && (
           <>
             <div
-              className="fixed inset-0 bg-[#0040FF]/80 backdrop-blur-sm z-40 md:hidden"
+              className="fixed inset-0 bg-[#0033FF]/80 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="fixed top-0 left-0 right-0 bg-[#0040FF] z-50 md:hidden">
+            <div className="fixed top-0 left-0 right-0 bg-[#0033FF] z-50 md:hidden">
               <div className="container mx-auto px-4 py-4">
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
@@ -167,7 +167,7 @@ function UserHeader() {
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center justify-center px-5 py-2 text-sm bg-[#FF7F00] text-white rounded-lg hover:bg-[#E66A00] transition-all font-semibold border border-white/30 mt-2"
+                    className="flex items-center justify-center px-5 py-2 text-sm bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all font-semibold border border-white/30 mt-2"
                   >
                     <User className="w-4 h-4 mr-2" />
                     Login
@@ -204,12 +204,12 @@ function UserHeader() {
   };
 
   return (
-    <div className="bg-white shadow-lg border-b border-[#0040FF]/20">
+    <div className="bg-white shadow-lg border-b border-[#0033FF]/20">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo - blue pill so white logo visible on white nav */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90">
-            <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0040FF]/90 p-1.5">
+            <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
               <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
             </div>
           </Link>
@@ -222,8 +222,8 @@ function UserHeader() {
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
                 pathname === '/'
-                  ? 'bg-[#0040FF] text-white border-[#0040FF]/50 shadow-[#0040FF]/30'
-                  : 'bg-white text-gray-800 hover:bg-gray-50 border-gray-200 hover:border-[#0040FF]/40'
+                  ? 'bg-[#0033FF] text-white border-[#0033FF]/50 shadow-[#0033FF]/30'
+                  : 'bg-white text-gray-800 hover:bg-gray-50 border-gray-200 hover:border-[#0033FF]/40'
               }`}
             >
               <Home className="w-4 h-4 mr-2" />
@@ -237,8 +237,8 @@ function UserHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
                   pathname === '/admin'
-                    ? 'bg-[#0040FF] text-white border-[#0040FF]/50 shadow-[#0040FF]/30'
-                    : 'bg-white text-gray-800 hover:bg-gray-50 border-gray-200 hover:border-[#0040FF]/40'
+                    ? 'bg-[#0033FF] text-white border-[#0033FF]/50 shadow-[#0033FF]/30'
+                    : 'bg-white text-gray-800 hover:bg-gray-50 border-gray-200 hover:border-[#0033FF]/40'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -250,7 +250,7 @@ function UserHeader() {
             <div className="flex items-center gap-3 ml-2 pl-3 border-l border-gray-200">
               {/* User Avatar & Name */}
               <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
-                <User className={`w-4 h-4 ${getRoleColor(user.role).includes('red') ? 'text-red-500' : getRoleColor(user.role).includes('blue') ? 'text-[#0040FF]' : 'text-green-600'}`} />
+                <User className={`w-4 h-4 ${getRoleColor(user.role).includes('red') ? 'text-red-500' : getRoleColor(user.role).includes('blue') ? 'text-[#0033FF]' : 'text-green-600'}`} />
                 <div className="text-gray-800">
                   <div className="text-sm font-bold text-gray-900 leading-tight">
                     {user.name || user.email}
@@ -267,7 +267,7 @@ function UserHeader() {
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center px-3 py-2 text-sm bg-gray-50 text-gray-800 rounded-lg hover:bg-gray-100 transition-all shadow-md hover:shadow-lg border border-gray-200 hover:border-[#0040FF]/40"
+                  className="flex items-center px-3 py-2 text-sm bg-gray-50 text-gray-800 rounded-lg hover:bg-gray-100 transition-all shadow-md hover:shadow-lg border border-gray-200 hover:border-[#0033FF]/40"
                   title="Profile Menu"
                 >
                   <MoreVertical className="w-4 h-4" />
@@ -291,7 +291,7 @@ function UserHeader() {
                           }}
                           className="w-full flex items-center px-4 py-3 text-left text-sm text-gray-800 hover:bg-gray-50 transition-colors cursor-pointer relative z-[201]"
                         >
-                          <Settings className="w-4 h-4 mr-3 text-[#0040FF]" />
+                          <Settings className="w-4 h-4 mr-3 text-[#0033FF]" />
                           <span>Edit Profile</span>
                         </button>
                         <button
@@ -317,7 +317,7 @@ function UserHeader() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-10 h-10 text-gray-800 hover:bg-[#0040FF]/10 rounded-lg transition-colors"
+            className="lg:hidden flex items-center justify-center w-10 h-10 text-gray-800 hover:bg-[#0033FF]/10 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -337,13 +337,13 @@ function UserHeader() {
               {/* Header with Close Button */}
               <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
                 <Link href="/" className="flex items-center transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0040FF]/90 p-1.5">
+                  <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
                     <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
                   </div>
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-10 h-10 text-gray-800 hover:bg-[#0040FF]/10 rounded-lg transition-colors"
+                  className="flex items-center justify-center w-10 h-10 text-gray-800 hover:bg-[#0033FF]/10 rounded-lg transition-colors"
                   aria-label="Close menu"
                 >
                   <X className="w-6 h-6" />
@@ -358,7 +358,7 @@ function UserHeader() {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
                     pathname === '/'
-                      ? 'bg-[#0040FF] text-white border-[#0040FF]'
+                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
                       : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
                   }`}
                 >
@@ -373,7 +373,7 @@ function UserHeader() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
                       pathname === '/admin'
-                        ? 'bg-[#0040FF] text-white border-[#0040FF]'
+                        ? 'bg-[#0033FF] text-white border-[#0033FF]'
                         : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
                     }`}
                   >
@@ -386,7 +386,7 @@ function UserHeader() {
                 <div className="px-4 py-4 bg-gray-50 rounded-lg border-2 border-gray-200 space-y-4 mt-4">
                   {/* User Avatar & Name */}
                   <div className="flex items-center gap-3">
-                    <User className={`w-5 h-5 ${getRoleColor(user.role).includes('red') ? 'text-red-500' : getRoleColor(user.role).includes('blue') ? 'text-[#0040FF]' : 'text-green-600'}`} />
+                    <User className={`w-5 h-5 ${getRoleColor(user.role).includes('red') ? 'text-red-500' : getRoleColor(user.role).includes('blue') ? 'text-[#0033FF]' : 'text-green-600'}`} />
                     <div className="flex-1">
                       <div className="text-sm font-bold text-gray-900">
                         {user.name || user.email}
@@ -403,7 +403,7 @@ function UserHeader() {
                       setMobileMenuOpen(false);
                       setShowProfileModal(true);
                     }}
-                    className="flex items-center justify-center w-full px-4 py-3 text-sm bg-[#0040FF] text-white rounded-lg hover:bg-[#0033CC] transition-all shadow-md border border-[#0040FF]"
+                    className="flex items-center justify-center w-full px-4 py-3 text-sm bg-[#0033FF] text-white rounded-lg hover:bg-[#0029CC] transition-all shadow-md border border-[#0033FF]"
                   >
                     <Settings className="w-4 h-4 mr-2" />
                     <span>Edit Profile</span>
@@ -595,7 +595,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
 
   return (
     <div className="fixed inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#0040FF]/30 relative max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 border-2 border-[#0033FF]/30 relative max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-black/60 hover:text-black transition-colors"
@@ -605,7 +605,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
         </button>
         
         <div className="flex items-center mb-6">
-          <div className="w-12 h-12 rounded-xl bg-[#0040FF] flex items-center justify-center mr-4 shadow-lg shadow-[#0040FF]/50">
+          <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50">
             <Settings className="w-6 h-6 text-white" />
           </div>
           <h2 className="text-2xl font-bold text-black">Edit Profile</h2>
@@ -721,7 +721,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
             <button
               type="submit"
               disabled={loading || !!emailError || !!phoneError || (!!formData.password && !!passwordError)}
-              className="flex-1 px-4 py-2 bg-[#0040FF] text-white rounded-lg hover:bg-[#0040FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#0040FF]/50"
+              className="flex-1 px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#0033FF]/50"
             >
               {loading ? 'Updating...' : 'Update Profile'}
             </button>

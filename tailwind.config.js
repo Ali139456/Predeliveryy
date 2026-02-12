@@ -9,14 +9,14 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          blue: '#0040FF',
-          blueDark: '#0033CC',
-          orange: '#FF7F00',
-          orangeDark: '#E66A00',
+          blue: '#0033FF',
+          blueDark: '#0029CC',
+          orange: '#FF6600',
+          orangeDark: '#E65C00',
         },
         autograb: {
-          blue: '#0040FF',
-          dark: '#0033CC',
+          blue: '#0033FF',
+          dark: '#0029CC',
         },
         primary: {
           50: '#eff6ff',
