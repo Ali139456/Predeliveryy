@@ -7,6 +7,8 @@ import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 
+export const maxDuration = 60;
+
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }

@@ -131,7 +131,13 @@ function InspectionDetailContent() {
 
   const handleExport = async () => {
     try {
-      const response = await fetch(`/api/export?id=${params.id}`, { credentials: 'include' });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 55000);
+      const response = await fetch(`/api/export?id=${params.id}`, {
+        credentials: 'include',
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
       
       // Check if response is ok
       if (!response.ok) {
@@ -173,7 +179,11 @@ function InspectionDetailContent() {
     } catch (error: any) {
       console.error('Export error:', error);
       if (typeof window !== 'undefined') {
-        alert(`Error exporting PDF: ${error.message || 'Unknown error'}`);
+        const msg = error?.message || 'Unknown error';
+        const friendly = msg === 'Failed to fetch' || error?.name === 'AbortError'
+          ? 'Export timed out or the connection was lost. Try again; if the inspection has many photos, export may take longer.'
+          : msg;
+        alert(`Error exporting PDF: ${friendly}`);
       }
     }
   };

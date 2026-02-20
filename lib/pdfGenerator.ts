@@ -112,15 +112,30 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
   }
 }
 
+const IMAGE_FETCH_TIMEOUT_MS = 8000;
+
 function fetchImageFromUrl(url: string): Promise<Buffer | null> {
   return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      resolve(null); // Don't hang PDF generation on slow images
+    }, IMAGE_FETCH_TIMEOUT_MS);
     const protocol = url.startsWith('https') ? https : http;
-    protocol.get(url, (res) => {
+    const req = protocol.get(url, (res) => {
       const chunks: Buffer[] = [];
       res.on('data', (chunk) => chunks.push(chunk));
-      res.on('end', () => resolve(Buffer.concat(chunks)));
-      res.on('error', () => resolve(null));
-    }).on('error', () => resolve(null));
+      res.on('end', () => {
+        clearTimeout(timeout);
+        resolve(Buffer.concat(chunks));
+      });
+      res.on('error', () => {
+        clearTimeout(timeout);
+        resolve(null);
+      });
+    });
+    req.on('error', () => {
+      clearTimeout(timeout);
+      resolve(null);
+    });
   });
 }
 

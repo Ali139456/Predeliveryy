@@ -6,6 +6,9 @@ import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 
+// Allow up to 60s for PDF generation (Vercel Pro). Hobby plan caps at 10s.
+export const maxDuration = 60;
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser(request);
