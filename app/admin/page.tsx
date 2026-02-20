@@ -17,7 +17,8 @@ import {
   Search,
   Eye,
   Edit,
-  Check
+  Check,
+  Trash2
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 
@@ -158,7 +159,7 @@ export default function AdminDashboard() {
 
       {/* Content */}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
-        {activeTab === 'overview' && <OverviewTab stats={stats} />}
+        {activeTab === 'overview' && <OverviewTab stats={stats} onRefetch={fetchStats} />}
         {activeTab === 'users' && <UsersTab userRole={user?.role} />}
         {activeTab === 'audit' && <AuditLogTab />}
         {activeTab === 'settings' && <SettingsTab />}
@@ -167,9 +168,10 @@ export default function AdminDashboard() {
   );
 }
 
-function OverviewTab({ stats }: { stats: Stats | null }) {
+function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: () => Promise<void> }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInspections, setFilteredInspections] = useState(stats?.recent || []);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!stats?.recent) {
@@ -196,43 +198,43 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
+      {/* Stats Cards - all blue, black icons */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/30">
+        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/80">Total Inspections</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
+            <h3 className="text-sm font-medium text-white/90">Total Inspections</h3>
+            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
+              <FileText className="w-6 h-6 text-black" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.total || 0}</p>
         </div>
 
-        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/30">
+        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/80">Completed</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-white" />
+            <h3 className="text-sm font-medium text-white/90">Completed</h3>
+            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-black" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.completed || 0}</p>
         </div>
 
-        <div className="bg-black rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/30">
+        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/80">Drafts</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center">
-              <Clock className="w-6 h-6 text-white" />
+            <h3 className="text-sm font-medium text-white/90">Drafts</h3>
+            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
+              <Clock className="w-6 h-6 text-black" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.inspections.draft || 0}</p>
         </div>
 
-        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform">
+        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white">Total Users</h3>
-            <div className="w-12 h-12 rounded-xl bg-[#0033FF]/10 flex items-center justify-center bg-white">
-              <Users className="w-6 h-6 text-white" />
+            <h3 className="text-sm font-medium text-white/90">Total Users</h3>
+            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
+              <Users className="w-6 h-6 text-black" />
             </div>
           </div>
           <p className="text-4xl font-bold">{stats?.users.total || 0}</p>
@@ -296,13 +298,46 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
                     {new Date(inspection.createdAt).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-2 sm:px-4">
-                    <Link
-                      href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
-                      className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
-                    >
-                      <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                      <span className="hidden sm:inline">View</span>
-                    </Link>
+                    <div className="flex items-center gap-1 sm:gap-2">
+                      <Link
+                        href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
+                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                      >
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
+                        <span className="hidden sm:inline">View</span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const id = inspection.id ?? inspection._id;
+                          if (!id) return;
+                          if (!window.confirm(`Delete inspection ${inspection.inspectionNumber ?? id}? This cannot be undone.`)) return;
+                          setDeletingId(id);
+                          try {
+                            const res = await fetch(`/api/inspections/${id}`, { method: 'DELETE' });
+                            const data = await res.json();
+                            if (data.success && onRefetch) await onRefetch();
+                            else if (!data.success) alert(data.error ?? 'Failed to delete');
+                          } catch (e) {
+                            alert('Failed to delete inspection');
+                          } finally {
+                            setDeletingId(null);
+                          }
+                        }}
+                        disabled={deletingId !== null}
+                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-all shadow-md hover:shadow-lg"
+                        title="Delete inspection"
+                      >
+                        {deletingId === (inspection.id ?? inspection._id) ? (
+                          <span className="inline-block w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
+                            <span className="hidden sm:inline">Delete</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

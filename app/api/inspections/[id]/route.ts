@@ -89,6 +89,14 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    const user = await getCurrentUser(request);
+    if (!user) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    const userDoc = await getUserById(user.userId);
+    if (!userDoc) return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    if (userDoc.role !== 'admin') {
+      return NextResponse.json({ success: false, error: 'Forbidden: Only admins can delete inspections' }, { status: 403 });
+    }
+
     const supabase = getSupabase();
     const { data: row } = await supabase.from('inspections').select('id,inspection_number,inspector_name').eq('id', params.id).single();
     if (!row) {

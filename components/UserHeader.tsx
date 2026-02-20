@@ -103,7 +103,7 @@ function UserHeader() {
     
     return (
       <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2">
             <Link href="/" className="transition-colors flex items-center group hover:opacity-90 min-w-0 shrink">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
@@ -145,7 +145,7 @@ function UserHeader() {
               onClick={() => setMobileMenuOpen(false)}
             />
             <div className="fixed top-0 left-0 right-0 bg-[#0033FF] z-50 md:hidden max-h-[100dvh] overflow-y-auto">
-              <div className="container mx-auto px-3 sm:px-4 py-4">
+              <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4">
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center min-w-0" onClick={() => setMobileMenuOpen(false)}>
                     <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
@@ -205,7 +205,7 @@ function UserHeader() {
 
   return (
     <div className="bg-[#0033FF] shadow-lg border-b border-white/10">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3">
         <div className="flex items-center justify-between gap-2 min-w-0">
           {/* Logo on blue nav (no white container) */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">

@@ -1645,12 +1645,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 border-2 border-yellow-500/30 ${readOnly ? 'mt-6' : ''}`}>
         <label className="flex items-start cursor-pointer group">
-          <input
-            type="checkbox"
-            {...register('privacyConsent')}
-            disabled={readOnly}
-            className={`mt-1 mr-4 w-5 h-5 rounded border-slate-500 text-yellow-500 focus:ring-2 focus:ring-yellow-500 bg-slate-600/50 ${readOnly ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
-          />
+          <span className="relative inline-flex items-center justify-center w-5 h-5 mt-1 mr-4 rounded border-2 border-slate-500 bg-slate-600/50 flex-shrink-0 transition-colors group-hover:border-yellow-500/70">
+            <input
+              type="checkbox"
+              {...register('privacyConsent')}
+              disabled={readOnly}
+              className={`absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 rounded ${readOnly ? 'cursor-not-allowed' : ''}`}
+            />
+            {watch('privacyConsent') && (
+              <Check className="w-3.5 h-3.5 text-yellow-500 pointer-events-none stroke-[3]" />
+            )}
+          </span>
           <span className="text-sm text-slate-200 group-hover:text-slate-100 transition-colors">
             I consent to the collection and storage of this inspection data in accordance with
             privacy regulations <span className="text-red-400 font-semibold">*</span>
