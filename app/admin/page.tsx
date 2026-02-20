@@ -34,6 +34,7 @@ interface Stats {
     inactive: number;
   };
   recent: Array<{
+    id?: string;
     _id: string;
     inspectionNumber: string;
     inspectorName: string;
