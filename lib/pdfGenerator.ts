@@ -112,7 +112,10 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
   }
 }
 
-const IMAGE_FETCH_TIMEOUT_MS = 8000;
+const IMAGE_FETCH_TIMEOUT_MS = 2500;
+const MAX_GENERAL_PHOTOS = 12;
+const MAX_PHOTOS_PER_CHECKLIST_ITEM = 3;
+const IMAGE_LOAD_CONCURRENCY = 6;
 
 function fetchImageFromUrl(url: string): Promise<Buffer | null> {
   return new Promise((resolve) => {
@@ -148,6 +151,27 @@ function getMimeType(ext: string): string {
     '.webp': 'image/webp',
   };
   return mimeMap[ext] || 'image/jpeg';
+}
+
+/** Run promises in parallel with a concurrency limit */
+async function runWithConcurrency<T>(items: T[], fn: (item: T) => Promise<string | null>, concurrency: number): Promise<Map<T, string | null>> {
+  const results = new Map<T, string | null>();
+  let index = 0;
+  async function worker(): Promise<void> {
+    while (index < items.length) {
+      const current = index++;
+      const item = items[current];
+      try {
+        const value = await fn(item);
+        results.set(item, value);
+      } catch {
+        results.set(item, null);
+      }
+    }
+  }
+  const workers = Array.from({ length: Math.min(concurrency, items.length) }, () => worker());
+  await Promise.all(workers);
+  return results;
 }
 
 async function addImageToPDF(
@@ -234,6 +258,30 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   doc.setTextColor(0, 0, 0);
   
   let yPos = 60;
+
+  // Pre-load all images in parallel (capped) for fast PDF generation
+  const imageSources: string[] = [];
+  if (inspection.photos && inspection.photos.length > 0) {
+    const general = inspection.photos.slice(0, MAX_GENERAL_PHOTOS);
+    for (const photo of general) {
+      const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : (typeof photo === 'string' ? photo : (photo as any)?.fileName);
+      if (imageSrc) imageSources.push(imageSrc);
+    }
+  }
+  const checklist = Array.isArray(inspection.checklist) ? inspection.checklist : [];
+  for (const category of checklist) {
+    if (!category?.items) continue;
+    for (const item of category.items) {
+      if (!item.photos?.length) continue;
+      const itemPhotos = item.photos.slice(0, MAX_PHOTOS_PER_CHECKLIST_ITEM);
+      for (const photo of itemPhotos) {
+        const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : (typeof photo === 'string' ? photo : (photo as any)?.fileName);
+        if (imageSrc) imageSources.push(imageSrc);
+      }
+    }
+  }
+  const uniqueSources = Array.from(new Set(imageSources));
+  const imageCache = await runWithConcurrency(uniqueSources, (src) => loadImageAsBase64(src), IMAGE_LOAD_CONCURRENCY);
   
   // ============================================
   // SECTION 1: INSPECTOR INFORMATION (Table)
@@ -480,11 +528,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     const photoSpacing = 8;
     const photoWidth = (contentWidth - photoSpacing) / photosPerRow;
     const photoHeight = photoWidth * 0.75;
+    const generalPhotos = inspection.photos.slice(0, MAX_GENERAL_PHOTOS);
     
-    for (let i = 0; i < inspection.photos.length; i++) {
-      const photo = inspection.photos[i];
-      const fileName = typeof photo === 'string' ? photo : photo.fileName;
-      const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : fileName;
+    for (let i = 0; i < generalPhotos.length; i++) {
+      const photo = generalPhotos[i];
+      const fileName = typeof photo === 'string' ? photo : (photo as any).fileName;
+      const imageSrc = typeof photo === 'object' && (photo as any)?.url ? (photo as any).url : fileName;
       
       const col = i % photosPerRow;
       const row = Math.floor(i / photosPerRow);
@@ -501,10 +550,10 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       const x = margin + (col * (photoWidth + photoSpacing));
       const y = yPos;
       
-      const imageData = await loadImageAsBase64(imageSrc);
+      const imageData = imageCache.get(imageSrc) ?? null;
       await addImageToPDF(doc, imageData, x, y, photoWidth, photoHeight, fileName);
       
-      if ((i + 1) % photosPerRow === 0 || i === inspection.photos.length - 1) {
+      if ((i + 1) % photosPerRow === 0 || i === generalPhotos.length - 1) {
         yPos = y + photoHeight + photoSpacing;
       }
     }
@@ -521,8 +570,6 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   // SECTION 6: INSPECTION CHECKLIST (Table Format)
   // ============================================
-  const checklist = Array.isArray(inspection.checklist) ? inspection.checklist : [];
-  
   for (const category of checklist) {
     if (!category || !category.category) continue;
     
@@ -626,15 +673,16 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       doc.text(`${item.item} - Photos:`, margin + 6, yPos);
       yPos += 8;
       
-      // Photos grid (3 per row)
+      // Photos grid (3 per row) - capped for speed
       const itemPhotoWidth = (contentWidth - 12) / 3;
       const itemPhotoHeight = itemPhotoWidth * 0.75;
       const photoSpacing = 6;
+      const itemPhotosSlice = item.photos.slice(0, MAX_PHOTOS_PER_CHECKLIST_ITEM);
       
-      for (let i = 0; i < item.photos.length; i++) {
-        const photo = item.photos[i];
-        const fileName = typeof photo === 'string' ? photo : photo.fileName;
-        const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : fileName;
+      for (let i = 0; i < itemPhotosSlice.length; i++) {
+        const photo = itemPhotosSlice[i];
+        const fileName = typeof photo === 'string' ? photo : (photo as any).fileName;
+        const imageSrc = typeof photo === 'object' && (photo as any)?.url ? (photo as any).url : fileName;
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();
@@ -647,10 +695,10 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
         const x = margin + 6 + (col * (itemPhotoWidth + photoSpacing));
         const y = yPos + (row * (itemPhotoHeight + photoSpacing));
         
-        const imageData = await loadImageAsBase64(imageSrc);
+        const imageData = imageCache.get(imageSrc) ?? null;
         await addImageToPDF(doc, imageData, x, y, itemPhotoWidth, itemPhotoHeight, fileName);
         
-        if ((i + 1) % 3 === 0 || i === item.photos.length - 1) {
+        if ((i + 1) % 3 === 0 || i === itemPhotosSlice.length - 1) {
           yPos = y + itemPhotoHeight + photoSpacing;
         }
       }

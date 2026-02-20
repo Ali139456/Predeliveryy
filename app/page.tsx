@@ -172,7 +172,7 @@ export default function Home() {
         <>
       {/* Why Predelivery.ai? - White section, blue/orange accents (Spectral-style) */}
       <div id="benefits" className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Why Choose Us</span>
@@ -229,7 +229,7 @@ export default function Home() {
 
       {/* How it works - White section, blue/orange accents (Spectral-style) */}
       <div id="how-it-works" className="relative bg-gray-50 pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Simple Process</span>
@@ -310,7 +310,7 @@ export default function Home() {
 
       {/* Powerful Features - White section, cards with blue/orange accents (Spectral-style) */}
       <div id="features" className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Core Features</span>
@@ -428,7 +428,7 @@ export default function Home() {
 
       {/* Who It's For? - White section, cards with blue/orange accents (Spectral-style) */}
       <div className="relative bg-gray-50 pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Target Audience</span>
@@ -508,7 +508,7 @@ export default function Home() {
 
       {/* Compliance and Trust - White section, blue/orange accents (Spectral-style) */}
       <div className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Trust & Security</span>
@@ -556,7 +556,7 @@ export default function Home() {
 
       {/* Pricing - Light section, blue/orange CTA (Spectral-style) */}
       <div className="relative bg-gray-50 pt-6 sm:pt-8 pb-6 sm:pb-8">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8 sm:mb-12">
               <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Flexible Pricing</span>
@@ -594,7 +594,7 @@ export default function Home() {
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,255,255,0.1) 100px, rgba(255,255,255,0.1) 200px)'}}></div>
         </div>
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 sm:mb-6 px-2">
               Ready to Transform Your Inspections?
@@ -621,15 +621,19 @@ export default function Home() {
 
       {/* Footer - Logo blue background, white text */}
       <footer id="contact" className="bg-gradient-to-b from-[#0029CC] via-[#0033FF] to-[#0029CC] border-t border-white/20 scroll-mt-20">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-8 sm:py-12 md:py-16">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-8 sm:py-12 md:py-16">
+          <div className="max-w-7xl mx-auto w-full">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12">
             {/* Company Info */}
             <div className="lg:col-span-1">
-              <Link href="/" className="flex items-center mb-4 group">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 border border-[#0033FF]/30 group-hover:scale-110 transition-transform shadow-lg shadow-[#0033FF]/30">
-                  <span className="text-white font-bold text-sm">PD</span>
-                </div>
-                <span className="text-xl font-bold text-white">Pre Delivery</span>
+              <Link href="/" className="flex items-center mb-4 group hover:opacity-90 transition-opacity">
+                <Image
+                  src="/Pre Delivery Logo/Original Logo Transparent Background.png"
+                  alt="Pre Delivery"
+                  width={200}
+                  height={56}
+                  className="h-10 sm:h-12 w-auto object-contain"
+                />
               </Link>
               <p className="text-white/70 text-sm leading-relaxed mb-4">
                 Comprehensive pre-delivery inspection management system for dealerships, fleets, and OEM partners.
@@ -714,6 +718,7 @@ export default function Home() {
                 <Link href="/privacy" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Privacy Policy</Link>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </footer>
