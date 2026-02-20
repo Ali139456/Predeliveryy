@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { getUserByEmail, getUserByPhone, comparePassword } from '@/lib/db-users';
 import { generateToken } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
     const { email, phoneNumber, password } = await request.json();
 
     if ((!email && !phoneNumber) || !password) {
@@ -15,38 +13,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find user by email or phone number
-    let user;
-    if (email) {
-      user = await User.findOne({ email: email.toLowerCase() });
-    } else if (phoneNumber) {
-      user = await User.findOne({ phoneNumber: phoneNumber.trim() });
-    }
+    const user = email
+      ? await getUserByEmail(email)
+      : await getUserByPhone(phoneNumber ?? '');
 
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
     if (!user.isActive) {
-      return NextResponse.json(
-        { success: false, error: 'Account is deactivated' },
-        { status: 403 }
-      );
+      return NextResponse.json({ success: false, error: 'Account is deactivated' }, { status: 403 });
     }
 
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = user.password && (await comparePassword(user.password, password));
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { success: false, error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
     const token = await generateToken({
-      _id: user._id,
+      id: user.id,
       email: user.email,
       role: user.role,
     });
@@ -54,7 +39,7 @@ export async function POST(request: NextRequest) {
     const response = NextResponse.json({
       success: true,
       user: {
-        id: user._id,
+        id: user.id,
         email: user.email,
         phoneNumber: user.phoneNumber,
         name: user.name,
@@ -62,20 +47,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Set HTTP-only cookie
     response.cookies.set('auth-token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return response;
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || 'Login failed' },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Login failed';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-

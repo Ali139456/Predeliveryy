@@ -10,7 +10,7 @@ import { ArrowLeft, Send, Download, FileText, Lock } from 'lucide-react';
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
   loading: () => (
     <div className="flex items-center justify-center py-12">
-      <div className="animate-spin rounded-full h-8 w-8 border-4 border-white/20 border-t-[#3833FF]"></div>
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-white/20 border-t-[#0033FF]"></div>
     </div>
   ),
   ssr: false,
@@ -181,7 +181,7 @@ function InspectionDetailContent() {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#3833FF] mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#0033FF] mb-4"></div>
           <p className="text-white">Loading inspection...</p>
         </div>
       </div>
@@ -191,13 +191,13 @@ function InspectionDetailContent() {
   if (!inspection) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center bg-black/80 rounded-2xl p-8 border-2 border-[#3833FF]/30">
+        <div className="text-center bg-black/80 rounded-2xl p-8 border-2 border-[#0033FF]/30">
           <p className="text-white mb-4 text-lg">Inspection not found</p>
           <Link
             href="/inspections"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-[#3833FF]/20 hover:bg-[#3833FF]/40 text-white hover:text-white rounded-xl border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 shadow-lg hover:shadow-[#3833FF]/50 transition-all duration-300 group backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-5 py-3 bg-[#0033FF]/20 hover:bg-[#0033FF]/40 text-white hover:text-white rounded-xl border-2 border-[#0033FF]/30 hover:border-[#0033FF]/50 shadow-lg hover:shadow-[#0033FF]/50 transition-all duration-300 group backdrop-blur-sm"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-[#0033FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
               <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
             </div>
             <span className="font-semibold">Back to Inspections</span>
@@ -209,66 +209,72 @@ function InspectionDetailContent() {
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      <div className="container mx-auto px-4 py-8 overflow-x-hidden">
-        <div className="flex items-center justify-between mb-6">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-[#3833FF]/10 hover:bg-[#3833FF]/20 text-black rounded-xl border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 shadow-lg transition-all duration-300 group"
+            className="inline-flex items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-black rounded-xl border-2 border-[#0033FF]/30 hover:border-[#0033FF]/50 shadow-lg transition-all duration-300 group w-fit text-sm sm:text-base"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+            <div className="w-8 h-8 rounded-lg bg-[#0033FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md shrink-0">
               <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
             </div>
             <span className="font-semibold">Back to Inspections</span>
           </Link>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={() => setEmailModalOpen(true)}
-              className="flex items-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#3833FF]/50"
+              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#FF6600] text-white rounded-xl font-semibold hover:bg-[#E65C00] transition-all hover:scale-105 shadow-lg shadow-[#FF6600]/30 text-sm sm:text-base"
             >
-              <Send className="w-5 h-5 mr-2" />
+              <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
               Email Report
             </button>
             <button
               onClick={handleExport}
-              className="flex items-center px-6 py-3 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#3833FF]/50"
+              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base"
             >
-              <Download className="w-5 h-5 mr-2" />
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
               Export PDF
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 border-2 border-[#3833FF]/30">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-3xl font-bold text-black">
+        <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border-2 border-[#0033FF]/30">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-black truncate">
                 Inspection: {inspection.inspectionNumber}
               </h1>
             </div>
-            {isReadOnlyView && (
-              <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
-                <Lock className="w-5 h-5 text-yellow-400 mr-2" />
-                <span className="text-yellow-300 font-semibold">View Only Mode</span>
-              </div>
-            )}
-            {!isReadOnlyView && user?.role === 'admin' && (
-              <div className="flex items-center px-4 py-2 bg-green-900/50 border-2 border-green-500/50 rounded-lg bg-slate-800/95">
-                <FileText className="w-5 h-5 text-green-400 mr-2" />
-                <span className="text-green-300 font-semibold">Edit Mode</span>
-              </div>
-            )}
-            {!isReadOnlyView && user?.role !== 'admin' && (
-              <div className="flex items-center px-4 py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95">
-                <Lock className="w-5 h-5 text-yellow-400 mr-2" />
-                <span className="text-yellow-300 font-semibold">View Only Mode</span>
-              </div>
-            )}
+            <div className="flex flex-wrap gap-2 shrink-0">
+              {isReadOnlyView && (
+                <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
+                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1.5 sm:mr-2 shrink-0" />
+                  <span className="text-yellow-300 font-semibold">View Only Mode</span>
+                </div>
+              )}
+              {!isReadOnlyView && user?.role === 'admin' && (
+                <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-green-900/50 border-2 border-green-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
+                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mr-1.5 sm:mr-2 shrink-0" />
+                  <span className="text-green-300 font-semibold">Edit Mode</span>
+                </div>
+              )}
+              {!isReadOnlyView && user?.role !== 'admin' && (
+                <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
+                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1.5 sm:mr-2 shrink-0" />
+                  <span className="text-yellow-300 font-semibold">View Only Mode</span>
+                </div>
+              )}
+            </div>
           </div>
           <InspectionForm 
             inspectionId={params.id as string} 
             initialData={inspection}
-            readOnly={isReadOnlyView || user?.role !== 'admin'}
+            readOnly={(() => {
+              const isOwner = user && inspection && String(user.email || '').toLowerCase() === String(inspection.inspectorEmail || '').toLowerCase();
+              if (isOwner) return false;
+              return isReadOnlyView || user?.role !== 'admin';
+            })()}
           />
         </div>
 
@@ -288,7 +294,7 @@ export default function InspectionDetailPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#3833FF] mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#0033FF] mb-4"></div>
           <p className="text-white">Loading...</p>
         </div>
       </div>

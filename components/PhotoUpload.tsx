@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Camera, X, Upload } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
+import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 
 interface PhotoData {
   fileName: string;
@@ -121,38 +122,8 @@ function PhotoUpload({
       {Array.isArray(photos) && photos.length > 0 && (
         <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
           {photos.map((photo, index) => {
-            // Handle both old format (string or fileName) and new format (with url)
-            let imageUrl: string;
-            if (typeof photo === 'string') {
-              // Old format: might be a URL or old file path
-              if (photo.startsWith('http://') || photo.startsWith('https://')) {
-                imageUrl = photo;
-              } else {
-                // If it's not a URL, it might be a Vercel Blob pathname or old Cloudinary ID
-                // We can't reconstruct Vercel Blob URLs from pathnames, so try as-is
-                // If it fails, the image won't load (old photos need migration)
-                imageUrl = photo.startsWith('inspections/') ? photo : `/api/files/${photo}`;
-              }
-            } else if (photo.url) {
-              // New format: direct URL (Vercel Blob) - preferred
-              imageUrl = photo.url;
-            } else if (photo.fileName) {
-              // Check if fileName is already a full URL
-              if (photo.fileName.startsWith('http://') || photo.fileName.startsWith('https://')) {
-                imageUrl = photo.fileName;
-              } else if (photo.fileName.startsWith('inspections/')) {
-                // Vercel Blob pathname - we can't reconstruct the URL, so use fileName as-is
-                // This will only work if fileName was stored as a full URL
-                imageUrl = photo.fileName;
-              } else {
-                // Old format - might be Cloudinary ID or local path
-                // Try to use it directly, or fallback to API route
-                imageUrl = `/api/files/${photo.fileName}`;
-              }
-            } else {
-              imageUrl = `/api/files/${photo}`;
-            }
-            
+            const imageUrl = getPhotoDisplayUrl(photo);
+            if (!imageUrl) return null;
             return (
               <div key={`${imageUrl}-${index}`} className="relative group">
                 <div

@@ -1,6 +1,6 @@
 # Pre-Delivery Inspection Web App
 
-A comprehensive pre-delivery inspection management system built with Next.js, React, and MongoDB. This application enables inspectors to conduct thorough inspections with photo collection, barcode scanning, GPS location tracking, and automated PDF report generation.
+A comprehensive pre-delivery inspection management system built with Next.js, React, and Supabase (PostgreSQL). This application enables inspectors to conduct thorough inspections with photo collection, barcode scanning, GPS location tracking, and automated PDF report generation.
 
 ## Features
 
@@ -57,10 +57,10 @@ A comprehensive pre-delivery inspection management system built with Next.js, Re
 
 - **Frontend**: Next.js 14, React 18, TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: MongoDB with Mongoose
+- **Database**: Supabase (PostgreSQL)
 - **Cloud Storage**: AWS S3
 - **PDF Generation**: jsPDF with autoTable
-- **Email**: Nodemailer
+- **Email**: Resend
 - **Barcode Scanning**: html5-qrcode
 - **Form Management**: React Hook Form with Zod validation
 
@@ -69,9 +69,9 @@ A comprehensive pre-delivery inspection management system built with Next.js, Re
 ### Prerequisites
 
 - Node.js 18+ and npm
-- MongoDB instance (local or cloud)
-- AWS account with S3 bucket (for cloud storage)
-- Email service credentials (for PDF email delivery)
+- Supabase project (database and API keys)
+- Resend account (for PDF email delivery)
+- Optional: AWS account with S3 bucket (for photo storage)
 
 ### Installation
 
@@ -90,27 +90,24 @@ npm install
 cp .env.local.example .env.local
 ```
 
-Edit `.env.local` with your configuration:
+Edit `.env.local` with your configuration (see `.env.local.example`):
 ```env
-# MongoDB Connection
-MONGODB_URI=mongodb://localhost:27017/pre-delivery-inspection
+# Supabase (from project Settings > API)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
-# AWS S3 Configuration
-AWS_ACCESS_KEY_ID=your_aws_access_key
-AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-AWS_REGION=us-east-1
-AWS_S3_BUCKET_NAME=pre-delivery-inspections
+# Resend (for email reports and password reset)
+RESEND_API_KEY=re_xxxxxxxxxxxx
+RESEND_FROM_EMAIL=your-verified@yourdomain.com
 
-# Email Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_app_password
-SMTP_FROM=your_email@gmail.com
+# JWT secret for auth (change in production)
+JWT_SECRET=your-secret-key
 
 # Application
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
+
+Then run the initial database schema in Supabase (Dashboard > SQL Editor): see `supabase/migrations/001_initial_schema.sql`.
 
 4. Run the development server:
 ```bash
@@ -142,13 +139,16 @@ Pre Delivery App/
 │   ├── BarcodeScanner.tsx        # Barcode scanning component
 │   └── GPSLocation.tsx           # GPS location component
 ├── lib/
-│   ├── mongodb.ts                # MongoDB connection
+│   ├── supabase.ts               # Supabase client
+│   ├── db-users.ts               # User DB helpers
 │   ├── s3.ts                     # AWS S3 utilities
-│   ├── email.ts                  # Email utilities
-│   ├── pdfGenerator.ts           # PDF generation
+│   ├── email.ts                  # Resend email utilities
+│   ├── pdfGenerator.ts          # PDF generation
 │   └── compliance.ts             # Privacy/compliance utilities
-├── models/
-│   └── Inspection.ts             # Inspection data model
+├── types/
+│   └── db.ts                     # DB types and mappers
+├── supabase/
+│   └── migrations/               # SQL schema
 └── package.json
 ```
 
@@ -233,10 +233,10 @@ Customize the Tailwind theme in `tailwind.config.js`.
 
 ## Production Deployment
 
-1. Set up production MongoDB instance
-2. Configure AWS S3 bucket with proper permissions
-3. Set up email service (SMTP)
-4. Update environment variables for production
+1. Create a production Supabase project and run the migration SQL
+2. Configure Resend (verify domain, set RESEND_FROM_EMAIL)
+3. Optional: Configure AWS S3 for photo storage
+4. Set JWT_SECRET and all env vars in your host (e.g. Vercel)
 5. Build the application:
 ```bash
 npm run build

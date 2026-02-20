@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Camera, X, Upload, Image as ImageIcon } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
+import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 
 interface PhotoData {
   fileName: string;
@@ -120,28 +121,8 @@ function ItemPhotoUpload({
       {photos.length > 0 && (
         <div className="grid grid-cols-4 md:grid-cols-6 gap-2">
           {photos.map((photo, index) => {
-            // Handle both new format (with url) and old format (with fileName)
-            // fileName is required in PhotoData, so we always have it
-            let imageUrl: string;
-            if (photo.url) {
-              // New format: direct URL (Vercel Blob) - preferred
-              imageUrl = photo.url;
-            } else {
-              // Old format with fileName (fileName is always present)
-              const fileName = photo.fileName;
-              if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
-                imageUrl = fileName;
-              } else if (fileName.startsWith('inspections/')) {
-                // Vercel Blob pathname - we can't reconstruct the URL, so use fileName as-is
-                // This will only work if fileName was stored as a full URL
-                imageUrl = fileName;
-              } else {
-                // Old format - might be Cloudinary ID or local path
-                // Try to use it directly, or fallback to API route
-                imageUrl = `/api/files/${fileName}`;
-              }
-            }
-            
+            const imageUrl = getPhotoDisplayUrl(photo);
+            if (!imageUrl) return null;
             return (
               <div key={`${imageUrl}-${index}`} className="relative group">
                 <div

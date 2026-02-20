@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
-import User from '@/models/User';
-import connectDB from '@/lib/mongodb';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
@@ -11,10 +9,10 @@ export interface JWTPayload {
   role: string;
 }
 
-export async function generateToken(user: { _id: string; email: string; role: string }): Promise<string> {
+export async function generateToken(user: { id: string; email: string; role: string }): Promise<string> {
   return jwt.sign(
     {
-      userId: user._id.toString(),
+      userId: user.id,
       email: user.email,
       role: user.role,
     },

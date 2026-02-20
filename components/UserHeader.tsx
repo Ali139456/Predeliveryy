@@ -103,16 +103,16 @@ function UserHeader() {
     
     return (
       <div className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${navBg}`}>
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="transition-colors flex items-center group hover:opacity-90">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            <Link href="/" className="transition-colors flex items-center group hover:opacity-90 min-w-0 shrink">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" priority />
+                <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 sm:h-12 md:h-16 w-auto object-contain" priority />
               </div>
             </Link>
             
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-3 lg:gap-6 shrink-0">
               <Link href="/#features" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Features</Link>
               <Link href="/#how-it-works" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>How it Works</Link>
               <Link href="/#benefits" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</Link>
@@ -144,12 +144,12 @@ function UserHeader() {
               className="fixed inset-0 bg-[#0033FF]/80 backdrop-blur-sm z-40 md:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            <div className="fixed top-0 left-0 right-0 bg-[#0033FF] z-50 md:hidden">
-              <div className="container mx-auto px-4 py-4">
+            <div className="fixed top-0 left-0 right-0 bg-[#0033FF] z-50 md:hidden max-h-[100dvh] overflow-y-auto">
+              <div className="container mx-auto px-3 sm:px-4 py-4">
                 <div className="flex items-center justify-between mb-4">
-                  <Link href="/" className="flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/" className="flex items-center min-w-0" onClick={() => setMobileMenuOpen(false)}>
                     <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                      <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
+                      <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-12 sm:h-14 w-auto object-contain" />
                     </div>
                   </Link>
                   <button
@@ -184,46 +184,46 @@ function UserHeader() {
   const getRoleColor = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'from-red-500 to-orange-500';
+        return 'text-[#FF6600]';
       case 'manager':
-        return 'from-blue-500 to-cyan-500';
+        return 'text-[#0033FF]';
       default:
-        return 'from-green-500 to-emerald-500';
+        return 'text-gray-600';
     }
   };
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'admin':
-        return 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-400/50 text-red-200';
+        return 'bg-[#FF6600]/20 border-[#FF6600]/50 text-[#E65C00]';
       case 'manager':
-        return 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border-blue-400/50 text-blue-200';
+        return 'bg-[#0033FF]/20 border-[#0033FF]/50 text-[#0033FF]';
       default:
-        return 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-green-400/50 text-green-200';
+        return 'bg-gray-100 border-gray-300 text-gray-700';
     }
   };
 
   return (
-    <div className="bg-white shadow-lg border-b border-[#0033FF]/20">
-      <div className="container mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          {/* Logo - blue pill so white logo visible on white nav */}
-          <Link href="/" className="flex items-center transition-colors hover:opacity-90">
-            <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
-              <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
+    <div className="bg-[#0033FF] shadow-lg border-b border-white/10">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-2 sm:py-3">
+        <div className="flex items-center justify-between gap-2 min-w-0">
+          {/* Logo on blue nav (no white container) */}
+          <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
+            <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
+              <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 sm:h-12 md:h-16 w-auto object-contain" />
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-2 shrink-0 flex-wrap justify-end">
             {/* Home Button */}
             <Link
               href="/"
               onClick={() => setMobileMenuOpen(false)}
               className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
                 pathname === '/'
-                  ? 'bg-[#0033FF] text-white border-[#0033FF]/50 shadow-[#0033FF]/30'
-                  : 'bg-white text-gray-800 hover:bg-gray-50 border-gray-200 hover:border-[#0033FF]/40'
+                  ? 'bg-white text-[#0033FF] border-white shadow-lg'
+                  : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
               }`}
             >
               <Home className="w-4 h-4 mr-2" />
@@ -237,8 +237,8 @@ function UserHeader() {
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
                   pathname === '/admin'
-                    ? 'bg-[#0033FF] text-white border-[#0033FF]/50 shadow-[#0033FF]/30'
-                    : 'bg-white text-gray-800 hover:bg-gray-50 border-gray-200 hover:border-[#0033FF]/40'
+                    ? 'bg-white text-[#0033FF] border-white shadow-lg'
+                    : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
                 }`}
               >
                 <LayoutDashboard className="w-4 h-4 mr-2" />
@@ -247,19 +247,19 @@ function UserHeader() {
             )}
 
             {/* User Info Section */}
-            <div className="flex items-center gap-3 ml-2 pl-3 border-l border-gray-200">
+            <div className="flex items-center gap-2 lg:gap-3 ml-2 pl-2 lg:pl-3 border-l border-white/20 shrink-0">
               {/* User Avatar & Name */}
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-lg border border-gray-200">
-                <User className={`w-4 h-4 ${getRoleColor(user.role).includes('red') ? 'text-red-500' : getRoleColor(user.role).includes('blue') ? 'text-[#0033FF]' : 'text-green-600'}`} />
-                <div className="text-gray-800">
-                  <div className="text-sm font-bold text-gray-900 leading-tight">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-lg border border-white/20">
+                <User className={`w-4 h-4 ${user.role === 'admin' ? 'text-[#FF6600]' : 'text-white'}`} />
+                <div className="text-white">
+                  <div className="text-sm font-bold leading-tight">
                     {user.name || user.email}
                   </div>
                 </div>
               </div>
 
               {/* Role Badge */}
-              <div className={`px-3 py-1.5 rounded-lg border font-semibold text-xs uppercase tracking-wider ${getRoleBadgeColor(user.role)}`}>
+              <div className={`px-3 py-1.5 rounded-lg border font-semibold text-xs uppercase tracking-wider ${user.role === 'admin' ? 'bg-[#FF6600]/90 text-white border-[#FF6600]' : user.role === 'manager' ? 'bg-white/20 text-white border-white/30' : 'bg-white/20 text-white border-white/30'}`}>
                 {user.role}
               </div>
 
@@ -267,7 +267,7 @@ function UserHeader() {
               <div className="relative">
                 <button
                   onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
-                  className="flex items-center px-3 py-2 text-sm bg-gray-50 text-gray-800 rounded-lg hover:bg-gray-100 transition-all shadow-md hover:shadow-lg border border-gray-200 hover:border-[#0033FF]/40"
+                  className="flex items-center px-3 py-2 text-sm bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all shadow-md border border-white/20"
                   title="Profile Menu"
                 >
                   <MoreVertical className="w-4 h-4" />
@@ -317,7 +317,7 @@ function UserHeader() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-10 h-10 text-gray-800 hover:bg-[#0033FF]/10 rounded-lg transition-colors"
+            className="lg:hidden flex items-center justify-center w-10 h-10 text-white hover:bg-white/10 rounded-lg transition-colors"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -333,12 +333,12 @@ function UserHeader() {
               onClick={() => setMobileMenuOpen(false)}
             />
             {/* Full Screen Menu */}
-            <div className="fixed inset-0 bg-white z-50 lg:hidden flex flex-col">
+            <div className="fixed inset-0 bg-white z-50 lg:hidden flex flex-col max-h-[100dvh] overflow-hidden">
               {/* Header with Close Button */}
-              <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
-                <Link href="/" className="flex items-center transition-colors" onClick={() => setMobileMenuOpen(false)}>
+              <div className="flex items-center justify-between px-3 sm:px-4 py-4 border-b border-gray-200 shrink-0">
+                <Link href="/" className="flex items-center transition-colors min-w-0" onClick={() => setMobileMenuOpen(false)}>
                   <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
-                    <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
+                    <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-12 sm:h-14 w-auto object-contain" />
                   </div>
                 </Link>
                 <button
@@ -386,7 +386,7 @@ function UserHeader() {
                 <div className="px-4 py-4 bg-gray-50 rounded-lg border-2 border-gray-200 space-y-4 mt-4">
                   {/* User Avatar & Name */}
                   <div className="flex items-center gap-3">
-                    <User className={`w-5 h-5 ${getRoleColor(user.role).includes('red') ? 'text-red-500' : getRoleColor(user.role).includes('blue') ? 'text-[#0033FF]' : 'text-green-600'}`} />
+                    <User className={`w-5 h-5 ${getRoleColor(user.role)}`} />
                     <div className="flex-1">
                       <div className="text-sm font-bold text-gray-900">
                         {user.name || user.email}
@@ -625,7 +625,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
             <input
               type="text"
               value={formData.name}
@@ -636,7 +636,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
             <input
               type="email"
               value={formData.email}
@@ -647,7 +647,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               onBlur={() => checkEmail(formData.email)}
               required
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white ${
-                emailError ? 'border-red-500' : 'border-slate-500/50'
+                emailError ? 'border-red-500' : 'border-gray-300'
               }`}
             />
             {emailError && (
@@ -656,7 +656,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">Phone Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
             <input
               type="tel"
               value={formData.phoneNumber}
@@ -667,7 +667,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               onBlur={() => checkPhone(formData.phoneNumber)}
               required
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white ${
-                phoneError ? 'border-red-500' : 'border-slate-500/50'
+                phoneError ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="+1234567890"
             />
@@ -677,8 +677,8 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200 mb-2">
-              New Password <span className="text-xs text-slate-400">(leave blank to keep current)</span>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              New Password <span className="text-xs text-gray-500">(leave blank to keep current)</span>
             </label>
             <input
               type="password"
@@ -689,7 +689,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
               }}
               minLength={formData.password ? 8 : undefined}
               className={`w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-black placeholder-gray-400 hover:bg-white focus:bg-white focus:hover:bg-white ${
-                passwordError ? 'border-red-500' : formData.password && passwordStrength === 'strong' ? 'border-green-500' : formData.password && passwordStrength === 'medium' ? 'border-yellow-500' : 'border-slate-500/50'
+                passwordError ? 'border-red-500' : formData.password && passwordStrength === 'strong' ? 'border-green-500' : formData.password && passwordStrength === 'medium' ? 'border-yellow-500' : 'border-gray-300'
               }`}
               placeholder="Enter new password (optional)"
             />
@@ -701,7 +701,7 @@ function ProfileEditModal({ user, onClose }: { user: any; onClose: () => void })
                   <p className={`text-xs ${
                     passwordStrength === 'strong' ? 'text-green-400' : 
                     passwordStrength === 'medium' ? 'text-yellow-400' : 
-                    'text-slate-400'
+                    'text-gray-500'
                   }`}>
                     Password strength: <span className="font-semibold capitalize">{passwordStrength}</span>
                   </p>

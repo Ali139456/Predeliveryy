@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadToVercelBlob, hasVercelBlobConfig } from '@/lib/vercelBlob';
+import { uploadToSupabaseStorage, hasSupabaseStorageConfig } from '@/lib/supabase-storage';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
 
 // Ensure Node.js runtime for file uploads
@@ -41,22 +41,15 @@ export async function POST(request: NextRequest) {
   console.log('Request headers:', Object.fromEntries(request.headers.entries()));
   
   try {
-    // Log storage configuration for debugging
-    const isVercel = process.env.VERCEL === '1';
-    const hasBlob = hasVercelBlobConfig();
+    // Check storage configuration
+    const hasStorage = hasSupabaseStorageConfig();
+    console.log('Upload request received:', { hasSupabaseStorage: hasStorage });
     
-    console.log('Upload request received:', {
-      isVercel,
-      hasBlob,
-      blobTokenSet: !!process.env.BLOB_READ_WRITE_TOKEN,
-    });
-    
-    // Check if Vercel Blob is configured
-    if (!hasBlob) {
+    if (!hasStorage) {
       return NextResponse.json(
         { 
           success: false, 
-          error: 'Vercel Blob Storage is not configured. Please set BLOB_READ_WRITE_TOKEN environment variable in Vercel.' 
+          error: 'Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY. Create a public Storage bucket named "inspections" in Supabase Dashboard.' 
         },
         { status: 500, headers: corsHeaders }
       );
@@ -142,59 +135,30 @@ export async function POST(request: NextRequest) {
       metadata = null;
     }
     
-    // Upload to Vercel Blob Storage
+    // Upload to Supabase Storage
     let uploadedFileName: string | undefined;
     let fileUrl: string | undefined;
     
     try {
-      console.log('=== ATTEMPTING VERCEL BLOB UPLOAD ===');
-      console.log('Uploading to Vercel Blob:', { fileName, contentType, size: buffer.length });
-      const blobResult = await uploadToVercelBlob(buffer, fileName, 'inspections');
-      uploadedFileName = blobResult.pathname;
-      fileUrl = blobResult.url; // Use the direct Vercel Blob URL
-      console.log('=== VERCEL BLOB UPLOAD SUCCESSFUL ===', { pathname: uploadedFileName, url: fileUrl });
-    } catch (blobError: any) {
-      console.error('=== VERCEL BLOB UPLOAD FAILED ===');
-      console.error('Vercel Blob upload error:', {
-        message: blobError.message,
-        error: blobError,
-        status: blobError.status || blobError.statusCode,
-        stack: blobError.stack
-      });
-      
-      // Check if it's a 403 or permission error
-      const isPermissionError = 
-        blobError.status === 403 || 
-        blobError.statusCode === 403 ||
-        blobError.message?.includes('403') ||
-        blobError.message?.includes('Forbidden') ||
-        blobError.message?.includes('permission') ||
-        blobError.message?.includes('unauthorized');
-      
-      // If it's a permission error, provide helpful message
-      if (isPermissionError) {
-        console.error('Vercel Blob returned 403/Forbidden. This usually means:');
-        console.error('1. The BLOB_READ_WRITE_TOKEN is invalid or expired');
-        console.error('2. The Blob store is paused or deleted');
-        console.error('3. The token does not have write permissions');
-      }
-      
+      console.log('Uploading to Supabase Storage:', { fileName, contentType, size: buffer.length });
+      const result = await uploadToSupabaseStorage(buffer, fileName, contentType);
+      uploadedFileName = result.path;
+      fileUrl = result.url;
+      console.log('Supabase Storage upload successful:', { path: uploadedFileName, url: fileUrl });
+    } catch (storageError: any) {
+      console.error('Supabase Storage upload failed:', storageError?.message || storageError);
       return NextResponse.json(
         { 
           success: false, 
-          error: `Vercel Blob upload failed: ${blobError.message || 'Please check: 1) BLOB_READ_WRITE_TOKEN is valid, 2) Blob store is active, 3) Token has write permissions.'}`
+          error: `Upload failed: ${storageError?.message || 'Storage error'}. Ensure the "inspections" bucket exists in Supabase Dashboard (Storage) and is set to Public.`
         },
         { status: 500, headers: corsHeaders }
       );
     }
     
-    // Ensure we have both fileName and URL
     if (!uploadedFileName || !fileUrl) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Failed to upload file. Please try again.' 
-        },
+        { success: false, error: 'Failed to upload file. Please try again.' },
         { status: 500, headers: corsHeaders }
       );
     }

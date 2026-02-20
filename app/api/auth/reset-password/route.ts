@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import { getUserByEmail, getUserByPhone } from '@/lib/db-users';
 import { sendEmail } from '@/lib/email';
 import { generateOTP, storeOTP } from '@/lib/otp';
 
-// Send OTP via SMS (mock function - replace with actual SMS service like Twilio)
-async function sendOTP(phoneNumber: string, otp: string): Promise<void> {
-  // TODO: Integrate with SMS service (Twilio, AWS SNS, etc.)
+async function sendOTPSms(phoneNumber: string, otp: string): Promise<void> {
   console.log(`OTP for ${phoneNumber}: ${otp}`);
-  // For now, we'll just log it. In production, integrate with SMS service
-  // Example: await twilioClient.messages.create({ to: phoneNumber, body: `Your OTP is: ${otp}` });
 }
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
-    
     const { email, phoneNumber } = await request.json();
 
     if (!email && !phoneNumber) {
@@ -25,14 +18,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let user;
-    if (email) {
-      user = await User.findOne({ email: email.toLowerCase() });
-    } else if (phoneNumber) {
-      user = await User.findOne({ phoneNumber: phoneNumber.trim() });
-    }
-    
-    // Don't reveal if user exists or not for security
+    const user = email
+      ? await getUserByEmail(email)
+      : await getUserByPhone(phoneNumber ?? '');
+
     if (!user) {
       return NextResponse.json({
         success: true,
@@ -42,25 +31,22 @@ export async function POST(request: NextRequest) {
 
     try {
       if (phoneNumber) {
-        // Generate and send OTP via SMS
         const otp = generateOTP();
-        
-        // Store OTP
-        storeOTP(phoneNumber.trim(), otp, user._id.toString(), 10);
-
-        // Send OTP via SMS
-        await sendOTP(phoneNumber.trim(), otp);
-
+        storeOTP(phoneNumber.trim(), otp, user.id, 10);
+        await sendOTPSms(phoneNumber.trim(), otp);
         return NextResponse.json({
           success: true,
           message: 'OTP has been sent to your phone number.',
           requiresOTP: true,
         });
-      } else if (email) {
-        // Send reset email
-        const resetToken = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const resetLink = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
-        
+      }
+
+      if (email) {
+        const resetToken =
+          Math.random().toString(36).substring(2, 15) +
+          Math.random().toString(36).substring(2, 15);
+        const resetLink = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
+
         await sendEmail(
           [user.email],
           'Password Reset Request - Pre delivery inspection',
@@ -90,19 +76,21 @@ export async function POST(request: NextRequest) {
           message: 'Password reset instructions have been sent to your email.',
         });
       }
-    } catch (error: any) {
-      console.error('Send error:', error);
-      return NextResponse.json({
-        success: false,
-        error: 'Failed to send reset instructions. Please contact your administrator.',
-      }, { status: 500 });
+    } catch (err: unknown) {
+      console.error('Send error:', err);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to send reset instructions. Please contact your administrator.',
+        },
+        { status: 500 }
+      );
     }
-  } catch (error: any) {
+
+    return NextResponse.json({ success: false, error: 'Invalid request' }, { status: 400 });
+  } catch (error: unknown) {
     console.error('Reset password error:', error);
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to process reset request' },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : 'Failed to process reset request';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-

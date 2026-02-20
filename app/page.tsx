@@ -58,12 +58,12 @@ export default function Home() {
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
         
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 pt-36 sm:pt-28 lg:pt-32 pb-10 sm:pb-12 relative z-20 min-h-screen flex items-center">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-24 sm:pt-28 md:pt-32 pb-8 sm:pb-10 md:pb-12 relative z-20 min-h-screen flex items-center">
           <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-center">
               {/* Left: Hero content */}
-              <div className="max-w-2xl w-full mx-0 text-left space-y-5 sm:space-y-6 lg:col-span-7">
-                <h1 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+              <div className="max-w-2xl w-full mx-0 text-left space-y-4 sm:space-y-5 lg:space-y-6 lg:col-span-7">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
                   <span className="text-[#FF6600]">Pre-Delivery Inspections</span>
                   <span className="text-white">, Digitised</span>
                 </h1>
@@ -170,12 +170,12 @@ export default function Home() {
       {!isLoggedIn && (
         <>
       {/* Why Predelivery.ai? - White section, blue/orange accents (Spectral-style) */}
-      <div id="benefits" className="relative bg-white pt-8 pb-8 scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6">
+      <div id="benefits" className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="inline-block mb-6 text-[#0033FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Why Choose Us</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+            <div className="text-center mb-10 sm:mb-16">
+              <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Why Choose Us</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
                 Why Predelivery.ai?
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
@@ -227,15 +227,15 @@ export default function Home() {
       </div>
 
       {/* How it works - White section, blue/orange accents (Spectral-style) */}
-      <div id="how-it-works" className="relative bg-gray-50 pt-8 pb-8 scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6">
+      <div id="how-it-works" className="relative bg-gray-50 pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="inline-block mb-6 text-[#FF6600] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Simple Process</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+            <div className="text-center mb-10 sm:mb-16">
+              <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Simple Process</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
                 How it works
               </h2>
-              <div className="max-w-4xl mx-auto mb-12">
+              <div className="max-w-4xl mx-auto mb-8 sm:mb-12 px-2">
                 <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
                   Start with a <span className="font-semibold text-[#0033FF]">comprehensive inspection</span>, then <span className="font-semibold text-[#FF6600]">verify all vehicle details</span> with digital documentation, <span className="font-semibold text-[#FF6600]">obtain approval</span> through digital signatures, and finally <span className="font-semibold text-[#0033FF]">deliver with confidence</span> knowing every detail is recorded and verified.
                 </p>
@@ -308,12 +308,12 @@ export default function Home() {
       </div>
 
       {/* Powerful Features - White section, cards with blue/orange accents (Spectral-style) */}
-      <div id="features" className="relative bg-white pt-8 pb-8 scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6">
+      <div id="features" className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="inline-block mb-6 text-[#0033FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Core Features</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+            <div className="text-center mb-10 sm:mb-16">
+              <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Core Features</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
                 Powerful Features
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-4">
@@ -426,12 +426,12 @@ export default function Home() {
       </div>
 
       {/* Who It's For? - White section, cards with blue/orange accents (Spectral-style) */}
-      <div className="relative bg-gray-50 pt-8 pb-8 scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6">
+      <div className="relative bg-gray-50 pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="inline-block mb-6 text-[#FF6600] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Target Audience</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+            <div className="text-center mb-10 sm:mb-16">
+              <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Target Audience</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
                 Who It's For?
               </h2>
             </div>
@@ -506,12 +506,12 @@ export default function Home() {
       </div>
 
       {/* Compliance and Trust - White section, blue/orange accents (Spectral-style) */}
-      <div className="relative bg-white pt-8 pb-8">
-        <div className="container mx-auto px-4 sm:px-6">
+      <div className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <span className="inline-block mb-6 text-[#0033FF] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Trust & Security</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+            <div className="text-center mb-10 sm:mb-16">
+              <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Trust & Security</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
                 Compliance and Trust
               </h2>
             </div>
@@ -554,17 +554,17 @@ export default function Home() {
       </div>
 
       {/* Pricing - Light section, blue/orange CTA (Spectral-style) */}
-      <div className="relative bg-gray-50 pt-8 pb-8">
-        <div className="container mx-auto px-4 sm:px-6">
+      <div className="relative bg-gray-50 pt-6 sm:pt-8 pb-6 sm:pb-8">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6">
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <span className="inline-block mb-6 text-[#FF6600] font-bold text-sm uppercase tracking-wider px-4 py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Flexible Pricing</span>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 text-gray-900">
+            <div className="text-center mb-8 sm:mb-12">
+              <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Flexible Pricing</span>
+              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
                 Pricing
               </h2>
             </div>
 
-            <div className="bg-white rounded-2xl p-10 md:p-14 border-2 border-gray-200 shadow-xl hover:border-[#0033FF]/40 transition-all duration-300">
+            <div className="bg-white rounded-2xl p-5 sm:p-8 md:p-10 lg:p-14 border-2 border-gray-200 shadow-xl hover:border-[#0033FF]/40 transition-all duration-300">
               <div className="text-center space-y-6">
                 <div className="w-20 h-20 rounded-xl bg-[#FF6600] flex items-center justify-center mx-auto mb-6">
                   <CreditCard className="w-10 h-10 text-white" strokeWidth={2.5} />
@@ -588,17 +588,17 @@ export default function Home() {
       </div>
 
       {/* CTA Section - Logo blue to orange gradient, white text */}
-      <div className="relative bg-gradient-to-br from-[#0033FF] via-[#0029CC] to-[#FF6600] pt-8 pb-8 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#0033FF] via-[#0029CC] to-[#FF6600] pt-6 sm:pt-8 pb-6 sm:pb-8 overflow-hidden">
         {/* Speed lines effect */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-full h-full" style={{backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 100px, rgba(255,255,255,0.1) 100px, rgba(255,255,255,0.1) 200px)'}}></div>
         </div>
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 sm:mb-6 px-2">
               Ready to Transform Your Inspections?
             </h2>
-            <p className="text-lg sm:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
               Join leading dealerships and fleets who trust our platform for accurate, defensible pre-delivery inspections.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -620,8 +620,8 @@ export default function Home() {
 
       {/* Footer - Logo blue background, white text */}
       <footer id="contact" className="bg-gradient-to-b from-[#0029CC] via-[#0033FF] to-[#0029CC] border-t border-white/20 scroll-mt-20">
-        <div className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 py-8 sm:py-12 md:py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12 mb-8 sm:mb-12">
             {/* Company Info */}
             <div className="lg:col-span-1">
               <Link href="/" className="flex items-center mb-4 group">

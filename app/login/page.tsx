@@ -108,19 +108,19 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       {/* Navbar */}
       <nav className="bg-white shadow-lg border-b border-[#0033FF]/20">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center transition-colors hover:opacity-90">
-              <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5 mr-2">
-                <Image src="/Pre Delivery Logo/Original Logo Transparent Background.png" alt="Pre delivery" width={220} height={64} className="h-16 w-auto object-contain" />
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-2 min-w-0">
+            <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
+              <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1 sm:p-1.5 mr-1 sm:mr-2">
+                <Image src="/Pre Delivery Logo/Original Logo Transparent Background.png" alt="Pre delivery" width={220} height={64} className="h-10 sm:h-12 md:h-16 w-auto object-contain" />
               </div>
-              <span className="hidden sm:inline text-gray-800 font-bold">Pre Delivery Inspection</span>
+              <span className="hidden sm:inline text-gray-800 font-bold text-sm md:text-base truncate">Pre Delivery Inspection</span>
             </Link>
             <Link
               href="/"
-              className="flex items-center px-4 sm:px-6 py-2 text-sm bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-[#0033FF] rounded-lg hover:scale-105 transition-all border border-[#0033FF]/30 font-semibold"
+              className="flex items-center px-3 sm:px-4 md:px-6 py-2 text-sm bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-[#0033FF] rounded-lg hover:scale-105 transition-all border border-[#0033FF]/30 font-semibold shrink-0"
             >
-              <Home className="w-4 h-4 mr-2" />
+              <Home className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Home</span>
             </Link>
           </div>
@@ -128,15 +128,15 @@ export default function LoginPage() {
       </nav>
 
       {/* Main Content */}
-      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-4 py-8">
-        <div className="w-full max-w-md">
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] p-3 sm:p-4 py-6 sm:py-8">
+        <div className="w-full max-w-md min-w-0">
           {/* Decorative Background Elements */}
           <div className="relative">
             <div className="absolute -top-20 -left-20 w-64 h-64 bg-[#0033FF]/5 rounded-full blur-3xl"></div>
             <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl"></div>
             
             {/* Login Card */}
-            <div className="relative bg-white rounded-3xl shadow-2xl w-full p-8 sm:p-10 border-2 border-[#0033FF]/20 backdrop-blur-sm">
+            <div className="relative bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full p-5 sm:p-8 md:p-10 border-2 border-[#0033FF]/20 backdrop-blur-sm">
               {/* Icon Header */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] mb-6 shadow-lg shadow-[#0033FF]/50">

@@ -1,32 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import getSupabase from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
-    
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
-
     if (!email) {
-      return NextResponse.json(
-        { success: false, error: 'Email is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ success: false, error: 'Email is required' }, { status: 400 });
     }
-
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    
-    return NextResponse.json({
-      success: true,
-      exists: !!existingUser,
-    });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to check email' },
-      { status: 500 }
-    );
+    const supabase = getSupabase();
+    const { data } = await supabase.from('users').select('id').eq('email', email.toLowerCase()).single();
+    return NextResponse.json({ success: true, exists: !!data });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to check email';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-

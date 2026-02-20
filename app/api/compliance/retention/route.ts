@@ -1,25 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Inspection from '@/models/Inspection';
+import getSupabase from '@/lib/supabase';
 import { shouldDeleteData } from '@/lib/compliance';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
-    
-    // Find all inspections that should be deleted based on retention policy
-    const inspections = await Inspection.find({ status: 'completed' });
+    const supabase = getSupabase();
+    const { data: inspections } = await supabase.from('inspections').select('id, inspection_date, data_retention_days').eq('status', 'completed');
     const toDelete: string[] = [];
 
-    for (const inspection of inspections) {
-      const retentionDays = inspection.dataRetentionDays || 365;
-      if (shouldDeleteData(inspection.inspectionDate, retentionDays)) {
-        toDelete.push(inspection._id.toString());
+    (inspections || []).forEach((row: { id: string; inspection_date: string; data_retention_days: number | null }) => {
+      const retentionDays = row.data_retention_days ?? 365;
+      if (shouldDeleteData(new Date(row.inspection_date), retentionDays)) {
+        toDelete.push(row.id);
       }
-    }
+    });
 
     if (toDelete.length > 0) {
-      await Inspection.deleteMany({ _id: { $in: toDelete } });
+      await supabase.from('inspections').delete().in('id', toDelete);
     }
 
     return NextResponse.json({
@@ -27,12 +24,8 @@ export async function POST(request: NextRequest) {
       deletedCount: toDelete.length,
       message: `Deleted ${toDelete.length} inspections based on retention policy`,
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-
-

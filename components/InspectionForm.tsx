@@ -249,6 +249,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     register,
     handleSubmit,
     control,
+    watch,
     setValue,
     getValues,
     formState: { errors },
@@ -1024,10 +1025,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStep1 = () => (
-    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30">
-      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
+    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30">
+      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
         <div className="flex items-center flex-1">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
             <span className="text-white font-bold text-lg">1</span>
           </div>
           <h2 className="text-xl font-bold text-black">Inspector Information</h2>
@@ -1037,7 +1038,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="button"
             onClick={saveInspectorInfo}
             disabled={sectionSaving.inspectorInfo}
-            className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+            className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
           >
             {sectionSaving.inspectorInfo ? (
               <>
@@ -1067,7 +1068,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           <input
             {...register('inspectorName')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           {errors.inspectorName && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorName.message}</p>
@@ -1082,7 +1083,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="email"
             {...register('inspectorEmail')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           {errors.inspectorEmail && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorEmail.message}</p>
@@ -1097,7 +1098,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="date"
             {...register('inspectionDate')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           {errors.inspectionDate && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectionDate.message}</p>
@@ -1109,7 +1110,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep2 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-bold text-black">Vehicle Identification Scan</h3>
           {!readOnly && inspectionId && (
@@ -1117,7 +1118,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               type="button"
               onClick={saveBarcode}
               disabled={sectionSaving.barcode}
-              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.barcode ? (
                 <>
@@ -1151,10 +1152,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         />
       </div>
 
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30 ${readOnly ? 'mt-6' : ''}`}>
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 ${readOnly ? 'mt-6' : ''}`}>
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
           <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
               <span className="text-white font-bold text-lg">2</span>
             </div>
             <h2 className="text-xl font-bold text-black">Vehicle Information</h2>
@@ -1164,7 +1165,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               type="button"
               onClick={saveVehicleInfo}
               disabled={sectionSaving.vehicleInfo}
-              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.vehicleInfo ? (
                 <>
@@ -1190,43 +1191,43 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {...register('vehicleInfo.dealer')}
             placeholder="Dealer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.make')}
             placeholder="Make"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.model')}
             placeholder="Model"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.dealerStockNo')}
             placeholder="Dealer Stock No"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.vin')}
             placeholder="VIN"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.engine')}
             placeholder="Engine"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <input
             {...register('vehicleInfo.odometer')}
             placeholder="Odometer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
           <div>
             <label className="block text-xs text-black mb-1">Compliance Date</label>
@@ -1234,7 +1235,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {...register('vehicleInfo.complianceDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
             />
           </div>
           <div>
@@ -1243,14 +1244,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {...register('vehicleInfo.buildDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
             />
           </div>
           <input
             {...register('vehicleInfo.licensePlate')}
             placeholder="License Plate"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
         </div>
         <div>
@@ -1258,7 +1259,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {...register('vehicleInfo.bookingNumber')}
             placeholder="Booking Number"
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
           />
         </div>
       </div>
@@ -1267,7 +1268,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep3 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-bold text-black">GPS Location</h3>
           {!readOnly && inspectionId && (
@@ -1275,7 +1276,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               type="button"
               onClick={saveGPSLocation}
               disabled={sectionSaving.location}
-              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.location ? (
                 <>
@@ -1299,7 +1300,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <EnhancedGPSLocation onLocationChange={setLocation} value={location} readOnly={readOnly} />
       </div>
 
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#3833FF]/30 ${readOnly ? 'mt-6' : ''}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? 'mt-6' : ''}`}>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-bold text-black">General Photos</h3>
           {!readOnly && inspectionId && (
@@ -1307,7 +1308,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               type="button"
               onClick={savePhotos}
               disabled={sectionSaving.photos}
-              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.photos ? (
                 <>
@@ -1345,10 +1346,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     };
 
     return (
-      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30">
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
+      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30">
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
           <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
               <span className="text-white font-bold text-lg">4</span>
             </div>
             <h2 className="text-xl font-bold text-black">Inspection Checklist</h2>
@@ -1358,7 +1359,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               type="button"
               onClick={saveChecklist}
               disabled={sectionSaving.checklist}
-              className="flex items-center px-3 py-1.5 text-sm bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-3 py-1.5 text-sm bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.checklist ? (
                 <>
@@ -1381,7 +1382,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         {/* Action Codes Legend */}
-        <div className="mb-6 p-4 bg-[#3833FF]/10 border-2 border-[#3833FF]/30 rounded-xl">
+        <div className="mb-6 p-4 bg-[#0033FF]/10 border-2 border-[#0033FF]/30 rounded-xl">
           <h3 className="text-sm font-bold text-black mb-3">Action Codes</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
             <div className="flex items-center gap-2">
@@ -1446,13 +1447,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                     : isInt 
                     ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                    : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                    : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                 } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                 placeholder="Category name"
               />
 
               {category.items?.map((item: any, itemIndex: number) => {
-                const itemPhotos = item.photos || [];
+                const itemPhotos = watch(`checklist.${categoryIndex}.items.${itemIndex}.photos`) ?? item.photos ?? [];
                 return (
                   <div 
                     key={itemIndex} 
@@ -1473,7 +1474,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
                             ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                            : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                         } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                         placeholder="Item name"
                       />
@@ -1485,7 +1486,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
                             ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                            : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                         } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                       >
                         <option value="OK">✅ OK - Satisfactory</option>
@@ -1508,7 +1509,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
                             ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-gray-300 focus:ring-[#3833FF] focus:border-[#3833FF]'
+                            : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                       } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                       rows={2}
                     />
@@ -1534,17 +1535,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStep5 = () => (
-    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30">
-      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
+    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30">
+      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
         <div className="flex items-center flex-1">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
             <span className="text-white font-bold text-lg">5</span>
           </div>
           <h2 className="text-xl font-bold text-black">Disclaimer & Terms</h2>
         </div>
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-[#3833FF]/30">
+      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-[#0033FF]/30">
         <h3 className="text-base font-bold text-black mb-4">Pre delivery inspection Pty Ltd - Inspection Disclaimer</h3>
         <div className="text-sm text-black space-y-4 leading-relaxed">
           <p>
@@ -1570,7 +1571,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
       </div>
 
-      <div className="bg-[#3833FF]/10 border-2 border-[#3833FF]/50 rounded-lg p-4">
+      <div className="bg-[#0033FF]/10 border-2 border-[#0033FF]/50 rounded-lg p-4">
         <p className="text-sm text-black font-semibold text-center">
           By proceeding with the signature step, you acknowledge that you have read, understood, and agree to the terms and conditions 
           outlined in this disclaimer.
@@ -1581,10 +1582,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep6 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#3833FF]/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#3833FF]/30">
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
           <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#3833FF] to-[#2a25cc] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50 flex-shrink-0 ring-2 ring-[#3833FF]/30">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
               <span className="text-white font-bold text-lg">6</span>
             </div>
             <h2 className="text-xl font-bold text-black">Signatures</h2>
@@ -1594,7 +1595,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               type="button"
               onClick={saveSignatures}
               disabled={sectionSaving.signatures}
-              className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
             >
               {sectionSaving.signatures ? (
                 <>
@@ -1663,7 +1664,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4">
+    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-0 sm:px-2">
       {success && (
         <div className="p-4 bg-green-900/50 border-2 border-green-500/50 rounded-xl flex items-center animate-fade-in shadow-lg bg-slate-800/95">
           <CheckCircle className="w-6 h-6 text-green-400 mr-3 flex-shrink-0" />
@@ -1700,8 +1701,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             disabled={currentStep === 1}
             className={`flex items-center justify-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md w-full sm:w-auto ${
               currentStep === 1
-                ? 'bg-red-500 text-white cursor-not-allowed'
-                : 'bg-black text-white hover:bg-gray-800 hover:scale-105'
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-gray-700 text-white hover:bg-gray-800 hover:scale-105'
             }`}
           >
             <ChevronLeft className="w-4 h-4 mr-1.5" />
@@ -1713,7 +1714,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center justify-center px-4 py-2 text-sm bg-[#3833FF] text-white rounded-lg font-semibold hover:bg-[#3833FF]/90 transition-all shadow-lg shadow-[#3833FF]/50 hover:scale-105 w-full sm:w-auto"
+                className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-semibold hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 hover:scale-105 w-full sm:w-auto"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1.5" />
@@ -1725,7 +1726,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     type="button"
                     onClick={() => handleSubmit(onSubmit)()}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#3833FF] text-white rounded-lg font-bold shadow-lg shadow-[#3833FF]/50 hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
                   >
                     {submitting ? (
                       <>
@@ -1764,7 +1765,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       )();
                     }}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#3833FF] text-white rounded-lg font-bold shadow-lg shadow-[#3833FF]/50 hover:bg-[#3833FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
                   >
                     <Save className="w-4 h-4 mr-1.5" />
                     {submitting ? 'Completing...' : 'Complete Inspection'}

@@ -1,16 +1,42 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { IInspection } from '@/models/Inspection';
+import type { IInspection } from '@/types/db';
 import fs from 'fs';
 import path from 'path';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getCloudinaryUrl, hasCloudinaryConfig } from '@/lib/cloudinary';
+import { hasSupabaseStorageConfig, getSupabaseStoragePublicUrl } from '@/lib/supabase-storage';
 import https from 'https';
 import http from 'http';
 
-// Helper function to load image as base64
+// Helper function to load image as base64 (fileName can be a path or a full URL)
 async function loadImageAsBase64(fileName: string): Promise<string | null> {
   try {
+    // If it's already a full URL (e.g. Supabase public URL stored in photo.url), fetch directly
+    if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
+      const imageBuffer = await fetchImageFromUrl(fileName);
+      if (imageBuffer) {
+        const mimeMatch = fileName.match(/\.(jpe?g|png|gif|webp)/i);
+        const mimeType = mimeMatch ? (mimeMatch[1] === 'jpg' || mimeMatch[1] === 'jpeg' ? 'image/jpeg' : `image/${mimeMatch[1]}`) : 'image/jpeg';
+        return `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
+      }
+      return null;
+    }
+
+    if (hasSupabaseStorageConfig()) {
+      try {
+        const supabaseUrl = getSupabaseStoragePublicUrl(fileName);
+        const imageBuffer = await fetchImageFromUrl(supabaseUrl);
+        if (imageBuffer) {
+          const ext = path.extname(fileName).toLowerCase();
+          const mimeType = getMimeType(ext);
+          return `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
+        }
+      } catch (e) {
+        console.warn(`Failed to load image from Supabase Storage: ${fileName}`, e);
+      }
+    }
+
     if (hasCloudinaryConfig) {
       try {
         const cloudinaryUrl = getCloudinaryUrl(fileName);
@@ -443,6 +469,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     for (let i = 0; i < inspection.photos.length; i++) {
       const photo = inspection.photos[i];
       const fileName = typeof photo === 'string' ? photo : photo.fileName;
+      const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : fileName;
       
       const col = i % photosPerRow;
       const row = Math.floor(i / photosPerRow);
@@ -459,7 +486,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       const x = margin + (col * (photoWidth + photoSpacing));
       const y = yPos;
       
-      const imageData = await loadImageAsBase64(fileName);
+      const imageData = await loadImageAsBase64(imageSrc);
       await addImageToPDF(doc, imageData, x, y, photoWidth, photoHeight, fileName);
       
       if ((i + 1) % photosPerRow === 0 || i === inspection.photos.length - 1) {
@@ -592,6 +619,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       for (let i = 0; i < item.photos.length; i++) {
         const photo = item.photos[i];
         const fileName = typeof photo === 'string' ? photo : photo.fileName;
+        const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : fileName;
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();
@@ -604,7 +632,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
         const x = margin + 6 + (col * (itemPhotoWidth + photoSpacing));
         const y = yPos + (row * (itemPhotoHeight + photoSpacing));
         
-        const imageData = await loadImageAsBase64(fileName);
+        const imageData = await loadImageAsBase64(imageSrc);
         await addImageToPDF(doc, imageData, x, y, itemPhotoWidth, itemPhotoHeight, fileName);
         
         if ((i + 1) % 3 === 0 || i === item.photos.length - 1) {

@@ -1,56 +1,60 @@
 require('dotenv').config({ path: '.env.local' });
-const mongoose = require('mongoose');
+const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcryptjs');
 
-const UserSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  name: { type: String, required: true },
-  role: { type: String, enum: ['technician', 'manager', 'admin'], default: 'technician' },
-  isActive: { type: Boolean, default: true },
-}, { timestamps: true });
-
-const User = mongoose.models.User || mongoose.model('User', UserSchema);
-
 async function createAdmin() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!url || !serviceKey) {
+    console.error('Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local');
+    process.exit(1);
+  }
+
+  const supabase = createClient(url, serviceKey);
+
+  const email = (process.argv[2] || 'admin@hazardinspect.com').toLowerCase();
+  const password = process.argv[3] || 'admin123';
+  const name = process.argv[4] || 'Admin User';
+  const phoneNumber = process.argv[5] || '0000000000';
+
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
+    const { data: existing } = await supabase.from('users').select('id, email').eq('email', email).single();
 
-    const email = process.argv[2] || 'admin@hazardinspect.com';
-    const password = process.argv[3] || 'admin123';
-    const name = process.argv[4] || 'Admin User';
-
-    // Check if admin exists
-    const existing = await User.findOne({ email });
     if (existing) {
       console.log('Admin user already exists. Updating password...');
       const salt = await bcrypt.genSalt(10);
-      existing.password = await bcrypt.hash(password, salt);
-      existing.role = 'admin';
-      existing.isActive = true;
-      await existing.save();
+      const hashedPassword = await bcrypt.hash(password, salt);
+      await supabase
+        .from('users')
+        .update({ password: hashedPassword, role: 'admin', is_active: true, updated_at: new Date().toISOString() })
+        .eq('id', existing.id);
       console.log('✓ Admin user updated successfully');
-      console.log(`Email: ${email}`);
-      console.log(`Password: ${password}`);
     } else {
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
-      
-      const admin = await User.create({
-        email,
-        password: hashedPassword,
-        name,
-        role: 'admin',
-        isActive: true,
-      });
+      const { data: admin, error } = await supabase
+        .from('users')
+        .insert({
+          email,
+          phone_number: phoneNumber,
+          password: hashedPassword,
+          name,
+          role: 'admin',
+          is_active: true,
+        })
+        .select('id')
+        .single();
 
+      if (error) {
+        console.error('Error creating admin:', error.message);
+        process.exit(1);
+      }
       console.log('✓ Admin user created successfully');
-      console.log(`Email: ${email}`);
-      console.log(`Password: ${password}`);
     }
 
-    await mongoose.disconnect();
+    console.log(`Email: ${email}`);
+    console.log(`Password: ${password}`);
     process.exit(0);
   } catch (error) {
     console.error('Error:', error);
@@ -59,4 +63,3 @@ async function createAdmin() {
 }
 
 createAdmin();
-

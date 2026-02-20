@@ -104,29 +104,31 @@ export default function InspectionsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 px-5 py-3 mb-6 bg-[#3833FF]/10 hover:bg-[#3833FF]/20 text-black rounded-xl border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 shadow-lg transition-all duration-300 group"
+          className="inline-flex items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 mb-4 sm:mb-6 bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-black rounded-xl border-2 border-[#0033FF]/30 hover:border-[#0033FF]/50 shadow-lg transition-all duration-300 group text-sm sm:text-base"
         >
-          <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
+          <div className="w-8 h-8 rounded-lg bg-[#0033FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
             <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
           </div>
           <span className="font-semibold">Back to Home</span>
         </Link>
 
-        <div className="mb-8">
-          <div className="flex items-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-[#3833FF] flex items-center justify-center mr-4 shadow-lg shadow-[#3833FF]/50">
-              <Search className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-black mb-2">Inspection History</h1>
-              <p className="text-black/70">Search and manage all your inspection reports</p>
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-0 mb-4 sm:mb-6">
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-[#0033FF] flex items-center justify-center shadow-lg shadow-[#0033FF]/50 shrink-0">
+                <Search className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-black mb-1 sm:mb-2">Inspection History</h1>
+                <p className="text-sm sm:text-base text-black/70">Search and manage all your inspection reports</p>
+              </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 space-y-4 border-2 border-[#3833FF]/30">
+          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 space-y-4 border-2 border-[#0033FF]/30">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <div className="sm:col-span-2 relative">
                 <Search className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
@@ -135,14 +137,14 @@ export default function InspectionsPage() {
                   placeholder="Search inspections..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
+                  className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
                 />
               </div>
 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
               >
                 <option value="">All Status</option>
                 <option value="draft">Draft</option>
@@ -154,7 +156,7 @@ export default function InspectionsPage() {
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
                 placeholder="Start Date"
-                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
               />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -163,7 +165,7 @@ export default function InspectionsPage() {
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 placeholder="End Date"
-                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#3833FF] focus:border-[#3833FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+                className="px-3 sm:px-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
               />
             </div>
           </div>
@@ -171,19 +173,19 @@ export default function InspectionsPage() {
 
         {loading ? (
           <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#3833FF] mb-4"></div>
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#0033FF] mb-4"></div>
             <p className="text-black text-lg">Loading inspections...</p>
           </div>
         ) : inspections.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl shadow-xl border-2 border-[#3833FF]/30">
-            <div className="w-24 h-24 rounded-full bg-[#3833FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#3833FF]/50">
+          <div className="text-center py-20 bg-white rounded-2xl shadow-xl border-2 border-[#0033FF]/30">
+            <div className="w-24 h-24 rounded-full bg-[#0033FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#0033FF]/50">
               <FileText className="w-12 h-12 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-black mb-2">No inspections found</h3>
             <p className="text-black/70 mb-6">Get started by creating your first inspection</p>
             <Link
               href="/inspection/new"
-              className="inline-flex items-center px-8 py-4 bg-[#3833FF] text-white rounded-xl font-semibold hover:bg-[#3833FF]/90 transition-all hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-8 py-4 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg"
             >
               Create New Inspection
             </Link>
@@ -195,7 +197,7 @@ export default function InspectionsPage() {
               {inspections.map((inspection) => (
                 <div
                   key={inspection._id}
-                  className="bg-white rounded-2xl shadow-xl p-4 border-2 border-[#3833FF]/30 space-y-3"
+                  className="bg-white rounded-2xl shadow-xl p-4 border-2 border-[#0033FF]/30 space-y-3"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -219,14 +221,14 @@ export default function InspectionsPage() {
                   <div className="flex gap-2 pt-2">
                     <Link
                       href={`/inspections/${inspection._id}`}
-                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-md"
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md"
                     >
                       <Eye className="w-3 h-3 mr-1.5" />
                       View
                     </Link>
                     <button
                       onClick={() => handleExport(inspection._id)}
-                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-md"
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md"
                     >
                       <Download className="w-3 h-3 mr-1.5" />
                       Export
@@ -237,11 +239,11 @@ export default function InspectionsPage() {
             </div>
 
             {/* Desktop Table View */}
-            <div className="hidden lg:block bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#3833FF]/30">
+            <div className="hidden lg:block bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-[#3833FF] border-b-2 border-[#3833FF]/50">
+                    <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
                       <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspection Number</th>
                       <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspector</th>
                       <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Date</th>
@@ -280,14 +282,14 @@ export default function InspectionsPage() {
                           <div className="flex items-center space-x-2">
                             <Link
                               href={`/inspections/${inspection._id}`}
-                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                             >
                               <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
                               <span className="hidden sm:inline">View</span>
                             </Link>
                             <button
                               onClick={() => handleExport(inspection._id)}
-                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                             >
                               <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
                               <span className="hidden sm:inline">Export</span>

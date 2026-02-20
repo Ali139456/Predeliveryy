@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import AuditLog from '@/models/AuditLog';
+import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
+import type { AuditLogRow } from '@/types/db';
 
 export async function GET(request: NextRequest) {
   try {
     await requireAuth(['admin'])(request);
-    await connectDB();
-
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'csv';
     const action = searchParams.get('action');
@@ -16,65 +14,51 @@ export async function GET(request: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
-    // Build query
-    const query: any = {};
+    const supabase = getSupabase();
+    let query = supabase.from('audit_logs').select('*').order('timestamp', { ascending: false });
 
-    if (action) query.action = action;
-    if (resourceType) query.resourceType = resourceType;
-    if (userId) query.userId = userId;
+    if (action) query = query.eq('action', action);
+    if (resourceType) query = query.eq('resource_type', resourceType);
+    if (userId) query = query.eq('user_id', userId);
+    if (startDate) query = query.gte('timestamp', startDate);
+    if (endDate) query = query.lte('timestamp', endDate);
 
-    if (startDate || endDate) {
-      query.timestamp = {};
-      if (startDate) query.timestamp.$gte = new Date(startDate);
-      if (endDate) query.timestamp.$lte = new Date(endDate);
+    const { data: logs, error } = await query;
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
-
-    const logs = await AuditLog.find(query).sort({ timestamp: -1 }).lean();
+    const rows = (logs || []) as AuditLogRow[];
 
     if (format === 'csv') {
-      // Generate CSV
       const headers = ['Timestamp', 'User', 'Email', 'Action', 'Resource Type', 'Resource ID', 'Details', 'IP Address'];
-      const rows = logs.map((log) => [
+      const csvRows = rows.map((log) => [
         new Date(log.timestamp).toISOString(),
-        log.userName,
-        log.userEmail,
+        log.user_name,
+        log.user_email,
         log.action,
-        log.resourceType,
-        log.resourceId || '',
+        log.resource_type,
+        log.resource_id || '',
         JSON.stringify(log.details || {}),
-        log.ipAddress || '',
+        log.ip_address || '',
       ]);
-
       const csv = [
         headers.join(','),
-        ...rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
+        ...csvRows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')),
       ].join('\n');
-
       return new NextResponse(csv, {
         headers: {
           'Content-Type': 'text/csv',
           'Content-Disposition': `attachment; filename="audit-logs-${Date.now()}.csv"`,
         },
       });
-    } else {
-      // JSON format
-      return NextResponse.json({
-        success: true,
-        data: logs,
-        count: logs.length,
-      });
     }
-  } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message === 'Forbidden') {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: error.message === 'Unauthorized' ? 401 : 403 }
-      );
+
+    return NextResponse.json({ success: true, data: rows, count: rows.length });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Failed to export audit logs';
+    if (msg === 'Unauthorized' || msg === 'Forbidden') {
+      return NextResponse.json({ success: false, error: msg }, { status: msg === 'Unauthorized' ? 401 : 403 });
     }
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to export audit logs' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
-

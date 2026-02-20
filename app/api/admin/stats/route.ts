@@ -1,87 +1,85 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Inspection from '@/models/Inspection';
-import User from '@/models/User';
+import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
+import type { InspectionRow } from '@/types/db';
 
 export async function GET(request: NextRequest) {
   try {
     await requireAuth(['admin', 'manager'])(request);
-    await connectDB();
+    const supabase = getSupabase();
 
     const [
-      totalInspections,
-      completedInspections,
-      draftInspections,
-      totalUsers,
-      activeUsers,
-      recentInspections,
+      { count: totalInspections },
+      { count: completedInspections },
+      { count: draftInspections },
+      { count: totalUsers },
+      { count: activeUsers },
     ] = await Promise.all([
-      Inspection.countDocuments(),
-      Inspection.countDocuments({ status: 'completed' }),
-      Inspection.countDocuments({ status: 'draft' }),
-      User.countDocuments(),
-      User.countDocuments({ isActive: true }),
-      Inspection.find()
-        .sort({ createdAt: -1 })
-        .limit(10)
-        .select('inspectionNumber inspectorName status createdAt')
-        .lean(),
+      supabase.from('inspections').select('*', { count: 'exact', head: true }),
+      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
+      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
+      supabase.from('users').select('*', { count: 'exact', head: true }),
+      supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_active', true),
     ]);
 
-    // Get inspections by status
-    const inspectionsByStatus = {
-      completed: completedInspections,
-      draft: draftInspections,
-    };
-
-    // Get inspections by month (last 6 months)
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    
-    const monthlyInspections = await Inspection.aggregate([
-      { $match: { createdAt: { $gte: sixMonthsAgo } } },
-      {
-        $group: {
-          _id: {
-            year: { $year: '$createdAt' },
-            month: { $month: '$createdAt' },
-          },
-          count: { $sum: 1 },
-        },
-      },
-      { $sort: { '_id.year': 1, '_id.month': 1 } },
-    ]);
+    const { data: recentRows } = await supabase
+      .from('inspections')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const { data: allRecent } = await supabase
+      .from('inspections')
+      .select('created_at')
+      .gte('created_at', sixMonthsAgo.toISOString());
+
+    const monthlyMap: Record<string, number> = {};
+    (allRecent || []).forEach((row: { created_at: string }) => {
+      const d = new Date(row.created_at);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthlyMap[key] = (monthlyMap[key] || 0) + 1;
+    });
+    const monthly = Object.entries(monthlyMap)
+      .map(([_id, count]) => ({ _id: { year: parseInt(_id.slice(0, 4), 10), month: parseInt(_id.slice(5, 7), 10) }, count }))
+      .sort((a, b) => (a._id.year !== b._id.year ? a._id.year - b._id.year : a._id.month - b._id.month));
+
+    const recent = (recentRows || []).map((r) => {
+      const id = (r as InspectionRow).id;
+      return {
+        id,
+        _id: id,
+        inspectionNumber: (r as InspectionRow).inspection_number,
+        inspectorName: (r as InspectionRow).inspector_name,
+        status: (r as InspectionRow).status,
+        createdAt: (r as InspectionRow).created_at,
+      };
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         inspections: {
-          total: totalInspections,
-          completed: completedInspections,
-          draft: draftInspections,
-          byStatus: inspectionsByStatus,
-          monthly: monthlyInspections,
+          total: totalInspections ?? 0,
+          completed: completedInspections ?? 0,
+          draft: draftInspections ?? 0,
+          byStatus: { completed: completedInspections ?? 0, draft: draftInspections ?? 0 },
+          monthly,
         },
         users: {
-          total: totalUsers,
-          active: activeUsers,
-          inactive: totalUsers - activeUsers,
+          total: totalUsers ?? 0,
+          active: activeUsers ?? 0,
+          inactive: (totalUsers ?? 0) - (activeUsers ?? 0),
         },
-        recent: recentInspections,
+        recent,
       },
     });
-  } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message === 'Forbidden') {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: error.message === 'Unauthorized' ? 401 : 403 }
-      );
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Failed to fetch stats';
+    if (msg === 'Unauthorized' || msg === 'Forbidden') {
+      return NextResponse.json({ success: false, error: msg }, { status: msg === 'Unauthorized' ? 401 : 403 });
     }
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to fetch stats' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
-

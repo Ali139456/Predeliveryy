@@ -1,146 +1,126 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import Inspection from '@/models/Inspection';
+import getSupabase from '@/lib/supabase';
 import { logAuditEvent } from '@/lib/audit';
-import { uploadToS3 } from '@/lib/s3';
 import { getCurrentUser } from '@/lib/auth';
-import User from '@/models/User';
+import { getUserById } from '@/lib/db-users';
+import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
+import type { InspectionRow } from '@/types/db';
 
 export async function POST(request: NextRequest) {
   try {
-    await connectDB();
-    
-    // Get current user
     const user = await getCurrentUser(request);
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    
-    // Get user details to check role and email
-    const userDoc = await User.findById(user.userId).select('email role name');
+
+    const userDoc = await getUserById(user.userId);
     if (!userDoc) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
-    
+
     const body = await request.json();
-    
-    // Ensure inspectorEmail matches the logged-in user's email (unless admin)
+
     if (userDoc.role !== 'admin') {
       body.inspectorEmail = userDoc.email.toLowerCase();
     } else if (body.inspectorEmail) {
-      // Admin can set any email, but ensure it's lowercase
       body.inspectorEmail = body.inspectorEmail.toLowerCase();
     }
-    
-    // Auto-generate inspection number if not provided
+
     if (!body.inspectionNumber) {
       body.inspectionNumber = `INSP-${Date.now()}`;
     }
-    
-    const inspection = new Inspection(body);
-    await inspection.save();
-    
-    // Log audit event
+
+    const row = inspectionBodyToRow(body) as Record<string, unknown>;
+    const supabase = getSupabase();
+    const { data: inserted, error } = await supabase
+      .from('inspections')
+      .insert(row)
+      .select('id')
+      .single();
+
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 400 });
+    }
+    if (!inserted?.id) {
+      return NextResponse.json({ success: false, error: 'Failed to create inspection' }, { status: 400 });
+    }
+
+    const { data: inspection } = await supabase
+      .from('inspections')
+      .select('*')
+      .eq('id', inserted.id)
+      .single();
+    const inspectionData = inspection ? inspectionRowToInspection(inspection as InspectionRow) : null;
+
     await logAuditEvent(request, {
       action: 'inspection.created',
       resourceType: 'inspection',
-      resourceId: inspection._id.toString(),
+      resourceId: inserted.id,
       details: {
-        inspectionNumber: inspection.inspectionNumber,
-        inspectorName: inspection.inspectorName,
-        status: inspection.status,
+        inspectionNumber: body.inspectionNumber,
+        inspectorName: body.inspectorName,
+        status: body.status ?? 'draft',
       },
     });
-    
-    return NextResponse.json({ success: true, data: inspection }, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 400 }
-    );
+
+    return NextResponse.json({ success: true, data: inspectionData }, { status: 201 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ success: false, error: message }, { status: 400 });
   }
 }
 
 export async function GET(request: NextRequest) {
   try {
-    await connectDB();
-    
-    // Get current user
     const user = await getCurrentUser(request);
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    
-    // Get user details to check role and email
-    const userDoc = await User.findById(user.userId).select('email role');
+
+    const userDoc = await getUserById(user.userId);
     if (!userDoc) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
+
+    const { searchParams } = new URL(request.url);
+    const supabase = getSupabase();
+    let query = supabase.from('inspections').select('*').order('created_at', { ascending: false }).limit(100);
+
+    if (userDoc.role !== 'admin') {
+      query = query.eq('inspector_email', userDoc.email.toLowerCase());
+    }
+
+    const status = searchParams.get('status');
+    if (status) query = query.eq('status', status);
+
+    if (searchParams.get('inspectorEmail') && userDoc.role === 'admin') {
+      query = query.eq('inspector_email', searchParams.get('inspectorEmail'));
+    }
+
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+    if (startDate) query = query.gte('inspection_date', startDate);
+    if (endDate) query = query.lte('inspection_date', endDate);
+
+    const searchTerm = searchParams.get('search');
+    if (searchTerm) {
+      const term = `%${searchTerm}%`;
+      query = query.or(
+        `inspection_number.ilike.${term},inspector_name.ilike.${term},inspector_email.ilike.${term},barcode.ilike.${term}`
       );
     }
-    
-    const { searchParams } = new URL(request.url);
-    const query: any = {};
-    
-    // If user is not admin, filter by their email
-    if (userDoc.role !== 'admin') {
-      query.inspectorEmail = userDoc.email.toLowerCase();
+
+    const { data: rows, error } = await query;
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
-    
-    if (searchParams.get('search')) {
-      const searchTerm = searchParams.get('search');
-      query.$or = [
-        { inspectionNumber: { $regex: searchTerm, $options: 'i' } },
-        { inspectorName: { $regex: searchTerm, $options: 'i' } },
-        { inspectorEmail: { $regex: searchTerm, $options: 'i' } },
-        { barcode: { $regex: searchTerm, $options: 'i' } },
-        { 'vehicleInfo.vin': { $regex: searchTerm, $options: 'i' } },
-        { 'vehicleInfo.licensePlate': { $regex: searchTerm, $options: 'i' } },
-        { 'vehicleInfo.bookingNumber': { $regex: searchTerm, $options: 'i' } },
-      ];
-    }
-    
-    if (searchParams.get('status')) {
-      query.status = searchParams.get('status');
-    }
-    
-    // Only allow filtering by inspectorEmail if user is admin
-    if (searchParams.get('inspectorEmail') && userDoc.role === 'admin') {
-      query.inspectorEmail = searchParams.get('inspectorEmail');
-    }
-    
-    if (searchParams.get('startDate') && searchParams.get('endDate')) {
-      query.inspectionDate = {
-        $gte: new Date(searchParams.get('startDate')!),
-        $lte: new Date(searchParams.get('endDate')!),
-      };
-    }
-    
-    const inspections = await Inspection.find(query)
-      .sort({ createdAt: -1 })
-      .limit(100)
-      .lean(); // Use lean() for better performance
-    
-    // Add cache headers for GET requests
+
+    const inspections = (rows || []).map((r) => inspectionRowToInspection(r as InspectionRow));
     const response = NextResponse.json({ success: true, data: inspections });
     response.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
     return response;
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-
-

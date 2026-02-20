@@ -109,8 +109,8 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-white">
       {/* Tabs */}
       <div className="bg-white border-b border-[#0033FF]/30 shadow-lg">
-        <div className="container mx-auto px-2 sm:px-4">
-          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-px -mb-px">
             <button
               onClick={() => setActiveTab('overview')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} />}
         {activeTab === 'users' && <UsersTab userRole={user?.role} />}
         {activeTab === 'audit' && <AuditLogTab />}
@@ -275,7 +275,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
             <tbody>
               {filteredInspections.map((inspection, index) => (
                 <tr 
-                  key={inspection._id} 
+                  key={inspection.id ?? inspection._id ?? index} 
                   className={`border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 ${
                     index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                   }`}
@@ -296,7 +296,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
                   </td>
                   <td className="py-3 px-2 sm:px-4">
                     <Link
-                      href={`/inspections/${inspection._id}?view=readonly`}
+                      href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
                       className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                     >
                       <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
@@ -306,7 +306,7 @@ function OverviewTab({ stats }: { stats: Stats | null }) {
                 </tr>
               ))}
               {filteredInspections.length === 0 && (
-                <tr>
+                <tr key="no-inspections">
                   <td colSpan={5} className="py-8 text-center text-slate-400">
                     {searchTerm ? 'No inspections found matching your search' : 'No inspections yet'}
                   </td>

@@ -1,129 +1,108 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import getSupabase from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
-import bcrypt from 'bcryptjs';
+import { getUserById } from '@/lib/db-users';
+import { hashPassword } from '@/lib/db-users';
+
+const PASSWORD_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
+function validatePassword(password: string): string | null {
+  if (password.length < 8) return 'Password must be at least 8 characters long';
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter';
+  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter';
+  if (!/[0-9]/.test(password)) return 'Password must contain at least one number';
+  if (!PASSWORD_REGEX.test(password)) return 'Password must contain at least one special character';
+  return null;
+}
 
 export async function PUT(request: NextRequest) {
   try {
-    await connectDB();
-    
-    // Get current user
     const currentUser = await getCurrentUser(request);
     if (!currentUser) {
-      return NextResponse.json(
-        { success: false, error: 'Not authenticated' },
-        { status: 401 }
-      );
+      return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
     }
 
     const { email, phoneNumber, password, name } = await request.json();
-    const user = await User.findById(currentUser.userId);
-
+    const user = await getUserById(currentUser.userId);
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    // Validate phone number is provided
     if (phoneNumber !== undefined) {
-      const trimmedPhone = phoneNumber?.trim() || '';
-      if (!trimmedPhone) {
-        return NextResponse.json(
-          { success: false, error: 'Phone number is required' },
-          { status: 400 }
-        );
+      const trimmed = phoneNumber?.trim() || '';
+      if (!trimmed) {
+        return NextResponse.json({ success: false, error: 'Phone number is required' }, { status: 400 });
       }
     }
 
-    // Check if email is being changed and if it already exists
+    const supabase = getSupabase();
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
     if (email && email.toLowerCase() !== user.email) {
-      const existingUserByEmail = await User.findOne({ email: email.toLowerCase() });
-      if (existingUserByEmail) {
+      const { data: existing } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .single();
+      if (existing) {
         return NextResponse.json(
           { success: false, error: 'User with this email already exists' },
           { status: 400 }
         );
       }
-      user.email = email.toLowerCase();
+      updates.email = email.toLowerCase();
     }
 
-    // Check if phone number is being changed and if it already exists
     if (phoneNumber !== undefined && phoneNumber.trim() !== user.phoneNumber) {
-      const trimmedPhone = phoneNumber.trim();
-      const existingUserByPhone = await User.findOne({ phoneNumber: trimmedPhone });
-      if (existingUserByPhone) {
+      const trimmed = phoneNumber.trim();
+      const { data: existing } = await supabase
+        .from('users')
+        .select('id')
+        .eq('phone_number', trimmed)
+        .single();
+      if (existing) {
         return NextResponse.json(
           { success: false, error: 'User with this phone number already exists' },
           { status: 400 }
         );
       }
-      user.phoneNumber = trimmedPhone;
+      updates.phone_number = trimmed;
     }
 
-    if (name) user.name = name;
-    
-    // Update password if provided
+    if (name) updates.name = name;
+
     if (password && password.trim() !== '') {
-      // Validate password strength
-      if (password.length < 8) {
-        return NextResponse.json(
-          { success: false, error: 'Password must be at least 8 characters long' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[A-Z]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one uppercase letter' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[a-z]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one lowercase letter' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[0-9]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one number' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one special character' },
-          { status: 400 }
-        );
-      }
-
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+      const err = validatePassword(password);
+      if (err) return NextResponse.json({ success: false, error: err }, { status: 400 });
+      updates.password = await hashPassword(password);
     }
 
-    await user.save();
+    const { data: updated, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', currentUser.userId)
+      .select('id, email, phone_number, name, role')
+      .single();
+
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+    if (!updated) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
 
     return NextResponse.json({
       success: true,
       data: {
-        id: user._id,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        name: user.name,
-        role: user.role,
+        id: updated.id,
+        email: updated.email,
+        phoneNumber: updated.phone_number,
+        name: updated.name,
+        role: updated.role,
       },
     });
-  } catch (error: any) {
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to update profile' },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to update profile';
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
-

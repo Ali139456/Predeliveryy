@@ -1,9 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
-import User from '@/models/User';
+import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
-import bcrypt from 'bcryptjs';
+import { userRowToUser } from '@/types/db';
+import type { UserRow } from '@/types/db';
+import { hashPassword } from '@/lib/db-users';
+
+const PASSWORD_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+
+function validatePassword(password: string): string | null {
+  if (password.length < 8) return 'Password must be at least 8 characters long';
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter';
+  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter';
+  if (!/[0-9]/.test(password)) return 'Password must contain at least one number';
+  if (!PASSWORD_REGEX.test(password)) return 'Password must contain at least one special character';
+  return null;
+}
 
 export async function GET(
   request: NextRequest,
@@ -11,31 +23,25 @@ export async function GET(
 ) {
   try {
     await requireAuth(['admin', 'manager'])(request);
-    await connectDB();
+    const supabase = getSupabase();
+    const { data: row, error } = await supabase
+      .from('users')
+      .select('id, email, phone_number, name, role, is_active, created_at, updated_at')
+      .eq('id', params.id)
+      .single();
 
-    const user = await User.findById(params.id).select('-password');
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+    if (error || !row) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({
-      success: true,
-      data: user,
-    });
-  } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message === 'Forbidden') {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: error.message === 'Unauthorized' ? 401 : 403 }
-      );
+    const user = userRowToUser({ ...row, password: '' } as UserRow);
+    return NextResponse.json({ success: true, data: user });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Failed to fetch user';
+    if (msg === 'Unauthorized' || msg === 'Forbidden') {
+      return NextResponse.json({ success: false, error: msg }, { status: msg === 'Unauthorized' ? 401 : 403 });
     }
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to fetch user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
 
@@ -45,132 +51,85 @@ export async function PUT(
 ) {
   try {
     await requireAuth(['admin'])(request);
-    await connectDB();
+    const supabase = getSupabase();
+    const { data: existing } = await supabase.from('users').select('*').eq('id', params.id).single();
+    if (!existing) {
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
 
     const { email, phoneNumber, password, name, role, isActive } = await request.json();
-    const user = await User.findById(params.id);
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
-    }
-
-    // Check if email is being changed and if it already exists
-    if (email && email.toLowerCase() !== user.email) {
-      const existingUserByEmail = await User.findOne({ email: email.toLowerCase() });
-      if (existingUserByEmail) {
-        return NextResponse.json(
-          { success: false, error: 'User with this email already exists' },
-          { status: 400 }
-        );
+    if (email && email.toLowerCase() !== existing.email) {
+      const { data: conflict } = await supabase.from('users').select('id').eq('email', email.toLowerCase()).single();
+      if (conflict) {
+        return NextResponse.json({ success: false, error: 'User with this email already exists' }, { status: 400 });
       }
-      user.email = email.toLowerCase();
+      updates.email = email.toLowerCase();
     }
 
-    // Check if phone number is being changed and if it already exists
     if (phoneNumber !== undefined) {
-      const trimmedPhone = phoneNumber?.trim() || '';
-      if (!trimmedPhone) {
-        return NextResponse.json(
-          { success: false, error: 'Phone number is required' },
-          { status: 400 }
-        );
+      const trimmed = phoneNumber?.trim() || '';
+      if (!trimmed) {
+        return NextResponse.json({ success: false, error: 'Phone number is required' }, { status: 400 });
       }
-      if (trimmedPhone !== user.phoneNumber) {
-        const existingUserByPhone = await User.findOne({ phoneNumber: trimmedPhone });
-        if (existingUserByPhone) {
-          return NextResponse.json(
-            { success: false, error: 'User with this phone number already exists' },
-            { status: 400 }
-          );
+      if (trimmed !== existing.phone_number) {
+        const { data: conflict } = await supabase.from('users').select('id').eq('phone_number', trimmed).single();
+        if (conflict) {
+          return NextResponse.json({ success: false, error: 'User with this phone number already exists' }, { status: 400 });
         }
+        updates.phone_number = trimmed;
       }
-      user.phoneNumber = trimmedPhone;
     }
 
-    if (name) user.name = name;
-    if (role) user.role = role;
-    if (isActive !== undefined) user.isActive = isActive;
-    
+    if (name) updates.name = name;
+    if (role) updates.role = role;
+    if (isActive !== undefined) updates.is_active = isActive;
+
     if (password) {
-      // Validate password strength
-      if (password.length < 8) {
-        return NextResponse.json(
-          { success: false, error: 'Password must be at least 8 characters long' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[A-Z]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one uppercase letter' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[a-z]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one lowercase letter' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[0-9]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one number' },
-          { status: 400 }
-        );
-      }
-
-      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-        return NextResponse.json(
-          { success: false, error: 'Password must contain at least one special character' },
-          { status: 400 }
-        );
-      }
-
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+      const err = validatePassword(password);
+      if (err) return NextResponse.json({ success: false, error: err }, { status: 400 });
+      updates.password = await hashPassword(password);
     }
 
-    await user.save();
+    const { data: user, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', params.id)
+      .select('id, email, phone_number, name, role, is_active')
+      .single();
 
-    // Log audit event
+    if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    if (!user) return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+
     await logAuditEvent(request, {
       action: 'user.updated',
       resourceType: 'user',
-      resourceId: user._id.toString(),
+      resourceId: user.id,
       details: {
         email: user.email,
-        phoneNumber: user.phoneNumber,
-        changes: Object.keys({ email, phoneNumber, name, role, isActive, password: password ? '***' : undefined }).filter(k => k),
+        phoneNumber: user.phone_number,
+        changes: Object.keys({ email, phoneNumber, name, role, isActive, password: password ? '***' : undefined }).filter(Boolean),
       },
     });
 
     return NextResponse.json({
       success: true,
       data: {
-        id: user._id,
+        id: user.id,
         email: user.email,
-        phoneNumber: user.phoneNumber,
+        phoneNumber: user.phone_number,
         name: user.name,
         role: user.role,
-        isActive: user.isActive,
+        isActive: user.is_active,
       },
     });
-  } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message === 'Forbidden') {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: error.message === 'Unauthorized' ? 401 : 403 }
-      );
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Failed to update user';
+    if (msg === 'Unauthorized' || msg === 'Forbidden') {
+      return NextResponse.json({ success: false, error: msg }, { status: msg === 'Unauthorized' ? 401 : 403 });
     }
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to update user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
 
@@ -180,46 +139,27 @@ export async function DELETE(
 ) {
   try {
     await requireAuth(['admin'])(request);
-    await connectDB();
-
-    const user = await User.findById(params.id);
+    const supabase = getSupabase();
+    const { data: user } = await supabase.from('users').select('id, email, name').eq('id', params.id).single();
     if (!user) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    // Soft delete - deactivate instead of deleting
-    user.isActive = false;
-    await user.save();
+    await supabase.from('users').update({ is_active: false, updated_at: new Date().toISOString() }).eq('id', params.id);
 
-    // Log audit event
     await logAuditEvent(request, {
       action: 'user.deactivated',
       resourceType: 'user',
-      resourceId: user._id.toString(),
-      details: {
-        email: user.email,
-        name: user.name,
-      },
+      resourceId: user.id,
+      details: { email: user.email, name: user.name },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'User deactivated successfully',
-    });
-  } catch (error: any) {
-    if (error.message === 'Unauthorized' || error.message === 'Forbidden') {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: error.message === 'Unauthorized' ? 401 : 403 }
-      );
+    return NextResponse.json({ success: true, message: 'User deactivated successfully' });
+  } catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : 'Failed to delete user';
+    if (msg === 'Unauthorized' || msg === 'Forbidden') {
+      return NextResponse.json({ success: false, error: msg }, { status: msg === 'Unauthorized' ? 401 : 403 });
     }
-    return NextResponse.json(
-      { success: false, error: error.message || 'Failed to delete user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: msg }, { status: 500 });
   }
 }
-
