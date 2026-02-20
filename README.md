@@ -116,6 +116,17 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+### Deploying to Vercel
+
+1. Push your repo to GitHub and import the project in [Vercel](https://vercel.com).
+2. In the Vercel project, go to **Settings → Environment Variables** and add:
+   - `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL (e.g. `https://xxxx.supabase.co`)
+   - `SUPABASE_SERVICE_ROLE_KEY` – from Supabase Dashboard → Settings → API → `service_role` (secret)
+   - `JWT_SECRET` – a long random string for auth (e.g. generate with `openssl rand -base64 32`)
+   - `RESEND_API_KEY` and `RESEND_FROM_EMAIL` – if you use email (reports, password reset)
+   - Optional: `SUPABASE_STORAGE_BUCKET` – default is `inspections` (must be a **public** bucket in Supabase Storage)
+3. Redeploy after saving the variables. Without these, login and data will not work on the deployed site.
+
 ## Project Structure
 
 ```
