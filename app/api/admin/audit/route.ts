@@ -38,9 +38,9 @@ export async function GET(request: NextRequest) {
     const total = count ?? 0;
 
     const { data: actionRows } = await supabase.from('audit_logs').select('action');
-    const actionTypes = [...new Set((actionRows || []).map((r: { action: string }) => r.action))];
+    const actionTypes = Array.from(new Set((actionRows || []).map((r: { action: string }) => r.action)));
     const { data: resourceRows } = await supabase.from('audit_logs').select('resource_type');
-    const resourceTypes = [...new Set((resourceRows || []).map((r: { resource_type: string }) => r.resource_type))];
+    const resourceTypes = Array.from(new Set((resourceRows || []).map((r: { resource_type: string }) => r.resource_type)));
 
     return NextResponse.json({
       success: true,
