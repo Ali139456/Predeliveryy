@@ -14,6 +14,7 @@ export default function Home() {
       try {
         const response = await fetch('/api/auth/me', {
           cache: 'no-store',
+          credentials: 'include',
         });
         const data = await response.json();
         if (data.success) {

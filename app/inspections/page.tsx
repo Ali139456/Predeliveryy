@@ -40,7 +40,7 @@ export default function InspectionsPage() {
       if (startDate) params.append('startDate', startDate);
       if (endDate) params.append('endDate', endDate);
 
-      const response = await fetch(`/api/inspections?${params.toString()}`);
+      const response = await fetch(`/api/inspections?${params.toString()}`, { credentials: 'include' });
       const result = await response.json();
 
       if (result.success) {
@@ -55,7 +55,7 @@ export default function InspectionsPage() {
 
   const handleExport = async (id: string) => {
     try {
-      const response = await fetch(`/api/export?id=${id}`);
+      const response = await fetch(`/api/export?id=${id}`, { credentials: 'include' });
       
       // Check if response is ok
       if (!response.ok) {

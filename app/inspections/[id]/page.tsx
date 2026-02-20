@@ -67,7 +67,7 @@ function InspectionDetailContent() {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch('/api/auth/me');
+      const response = await fetch('/api/auth/me', { credentials: 'include' });
       const data = await response.json();
       if (data.success && data.user) {
         setUser(data.user);
@@ -91,7 +91,7 @@ function InspectionDetailContent() {
 
   const fetchInspection = async () => {
     try {
-      const response = await fetch(`/api/inspections/${params.id}`);
+      const response = await fetch(`/api/inspections/${params.id}`, { credentials: 'include' });
       const result = await response.json();
 
       if (result.success) {
@@ -107,6 +107,7 @@ function InspectionDetailContent() {
   const handleEmailSend = async (emailList: string[]) => {
     const response = await fetch(`/api/inspections/${params.id}/email`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -130,7 +131,7 @@ function InspectionDetailContent() {
 
   const handleExport = async () => {
     try {
-      const response = await fetch(`/api/export?id=${params.id}`);
+      const response = await fetch(`/api/export?id=${params.id}`, { credentials: 'include' });
       
       // Check if response is ok
       if (!response.ok) {

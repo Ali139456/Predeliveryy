@@ -277,7 +277,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     const fetchUserAndDraft = async () => {
       try {
         // Fetch user email first
-        const userResponse = await fetch('/api/auth/me');
+        const userResponse = await fetch('/api/auth/me', { credentials: 'include' });
         const userData = await userResponse.json();
         if (userData.success && userData.user && userData.user.email) {
           // Auto-populate inspector email and name
@@ -287,7 +287,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           }
           
           // Check for existing draft
-          const draftResponse = await fetch('/api/inspections?status=draft');
+          const draftResponse = await fetch('/api/inspections?status=draft', { credentials: 'include' });
           const draftData = await draftResponse.json();
           
           if (draftData.success && draftData.data && draftData.data.length > 0) {
@@ -372,7 +372,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me');
+        const response = await fetch('/api/auth/me', { credentials: 'include' });
         const data = await response.json();
         if (data.success && data.user) {
           setIsAuthenticated(true);
@@ -472,6 +472,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         // Create new draft
         const response = await fetch('/api/inspections', {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(draftData),
         });
@@ -500,6 +501,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         // Update existing draft
         const response = await fetch(`/api/inspections/${savedDraftId}`, {
           method: 'PUT',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(draftData),
         });
@@ -593,7 +595,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
     try {
       // Get current inspection data
-      const currentResponse = await fetch(`/api/inspections/${idToUse}`);
+      const currentResponse = await fetch(`/api/inspections/${idToUse}`, { credentials: 'include' });
       const currentResult = await currentResponse.json();
       
       if (!currentResult.success) {
@@ -610,6 +612,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       const response = await fetch(`/api/inspections/${idToUse}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedData),
       });
@@ -696,7 +699,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const onSubmit = async (data: InspectionFormData) => {
     // Check authentication first
     try {
-      const authResponse = await fetch('/api/auth/me');
+      const authResponse = await fetch('/api/auth/me', { credentials: 'include' });
       const authData = await authResponse.json();
       if (!authData.success || !authData.user) {
         setToast({
@@ -762,6 +765,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
         const response = await fetch('/api/inspections', {
           method: 'POST',
+          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(inspectionData),
         });
@@ -827,6 +831,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       const response = await fetch(`/api/inspections/${idToUse}`, {
         method: 'PUT',
+        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(inspectionData),
       });
@@ -867,6 +872,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
     const response = await fetch(`/api/inspections/${inspectionId}/email`, {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -970,7 +976,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const handleNext = async () => {
     // Check authentication before proceeding
     try {
-      const authResponse = await fetch('/api/auth/me');
+      const authResponse = await fetch('/api/auth/me', { credentials: 'include' });
       const authData = await authResponse.json();
       if (!authData.success || !authData.user) {
         setToast({
