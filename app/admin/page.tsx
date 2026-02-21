@@ -618,6 +618,11 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
 
       const data = await response.json();
       if (data.success) {
+        if (data.data?.emailSent) {
+          window.alert(`User created. A welcome email with login details was sent to ${data.data.email}.`);
+        } else if (data.data?.emailError) {
+          window.alert(`User created, but the welcome email could not be sent: ${data.data.emailError}. You can share the login password with the user manually.`);
+        }
         onClose();
       } else {
         setError(data.error || 'Failed to create user');

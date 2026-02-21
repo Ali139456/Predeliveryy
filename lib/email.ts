@@ -117,6 +117,53 @@ export async function sendEmail(
   }
 }
 
+/**
+ * Send welcome email to a new user/inspector with login URL and temporary password.
+ * Used when admin creates a new user.
+ */
+export async function sendNewUserCredentials(
+  recipientEmail: string,
+  name: string,
+  password: string,
+  loginUrl: string
+): Promise<void> {
+  if (!isResendConfigured()) {
+    throw new Error('Email service is not configured. Set RESEND_API_KEY to send welcome emails.');
+  }
+  const client = getResendClient();
+  if (!client) throw new Error('Resend client is not initialized.');
+  ensureFromEmailForExternalSend();
+  const fromEmail = getFromEmail();
+
+  const subject = 'Your Pre Delivery Inspector Account';
+  const html = `
+    <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
+      <h2 style="color: #0033FF;">Welcome to Pre Delivery</h2>
+      <p>Hi ${name.replace(/</g, '&lt;')},</p>
+      <p>An administrator has created an inspector account for you. You can log in using the details below.</p>
+      <p><strong>Login URL:</strong><br/><a href="${loginUrl.replace(/"/g, '&quot;')}" style="color: #0033FF;">${loginUrl}</a></p>
+      <p><strong>Email:</strong> ${recipientEmail.replace(/</g, '&lt;')}</p>
+      <p><strong>Temporary password:</strong> <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">${password.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></p>
+      <p>We recommend changing your password after your first login.</p>
+      <p style="color: #666; font-size: 14px;">— Pre Delivery</p>
+    </div>
+  `;
+
+  const { data, error } = await client.emails.send({
+    from: fromEmail,
+    to: [recipientEmail],
+    subject,
+    html,
+  });
+
+  if (error) {
+    throw new Error(error.message || 'Failed to send welcome email.');
+  }
+  if (!data) {
+    throw new Error('Welcome email failed: No response from Resend.');
+  }
+}
+
 export async function sendEmailWithPDF(
   recipients: string[],
   subject: string,

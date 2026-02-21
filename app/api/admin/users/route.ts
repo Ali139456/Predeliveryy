@@ -5,6 +5,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { userRowToUser } from '@/types/db';
 import type { UserRow } from '@/types/db';
 import { hashPassword } from '@/lib/db-users';
+import { sendNewUserCredentials } from '@/lib/email';
 
 const PASSWORD_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
 
@@ -104,6 +105,20 @@ export async function POST(request: NextRequest) {
       details: { email: user.email, name: user.name, role: user.role },
     });
 
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
+    const loginUrl = baseUrl ? `${baseUrl.replace(/\/$/, '')}/login` : '';
+
+    let emailSent = false;
+    let emailError: string | null = null;
+    if (loginUrl) {
+      try {
+        await sendNewUserCredentials(user.email, user.name, password, loginUrl);
+        emailSent = true;
+      } catch (err) {
+        emailError = err instanceof Error ? err.message : 'Failed to send welcome email';
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -113,6 +128,8 @@ export async function POST(request: NextRequest) {
         name: user.name,
         role: user.role,
         isActive: user.is_active,
+        emailSent,
+        emailError: emailError ?? undefined,
       },
     });
   } catch (error: unknown) {

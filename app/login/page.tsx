@@ -44,7 +44,10 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Redirect based on role
+        setEmail('');
+        setPhoneNumber('');
+        setPassword('');
+        setError(null);
         if (data.user.role === 'admin' || data.user.role === 'manager') {
           router.push('/admin');
         } else {
@@ -53,9 +56,15 @@ export default function LoginPage() {
         router.refresh();
       } else {
         setError(data.error || 'Login failed');
+        setEmail('');
+        setPhoneNumber('');
+        setPassword('');
       }
     } catch (err: any) {
       setError(err.message || 'Login failed');
+      setEmail('');
+      setPhoneNumber('');
+      setPassword('');
     } finally {
       setLoading(false);
     }
@@ -169,6 +178,8 @@ export default function LoginPage() {
                         setUsePhone(!usePhone);
                         setEmail('');
                         setPhoneNumber('');
+                        setPassword('');
+                        setError(null);
                       }}
                       className="text-xs text-[#0033FF] hover:text-[#0033FF]/80 hover:underline transition-colors font-medium"
                     >
@@ -211,7 +222,10 @@ export default function LoginPage() {
                     </label>
                     <button
                       type="button"
-                      onClick={() => setShowResetPassword(true)}
+                      onClick={() => {
+                        setShowResetPassword(true);
+                        setError(null);
+                      }}
                       className="text-sm text-[#0033FF] hover:text-[#0033FF]/80 hover:underline transition-colors font-medium"
                     >
                       Forgot password?
@@ -267,8 +281,17 @@ export default function LoginPage() {
                   onClick={() => {
                     setShowResetPassword(false);
                     setResetEmail('');
+                    setResetPhone('');
+                    setResetUsePhone(false);
                     setResetMessage(null);
                     setError(null);
+                    setOtpSent(false);
+                    setOtp('');
+                    setNewPassword('');
+                    setConfirmPassword('');
+                    setEmail('');
+                    setPhoneNumber('');
+                    setPassword('');
                   }}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
@@ -360,6 +383,12 @@ export default function LoginPage() {
                         setResetMessage(null);
                         setError(null);
                         setOtpSent(false);
+                        setOtp('');
+                        setNewPassword('');
+                        setConfirmPassword('');
+                        setEmail('');
+                        setPhoneNumber('');
+                        setPassword('');
                       }}
                       className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
                     >
