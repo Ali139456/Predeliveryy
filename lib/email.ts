@@ -23,10 +23,22 @@ function getResendClient(): Resend | null {
   return resend;
 }
 
-// Get the from email address
+// Get the from email address (must be set in production for verified domain)
 function getFromEmail(): string {
-  // Use RESEND_FROM_EMAIL if set, otherwise use default Resend domain
-  return process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  const from = process.env.RESEND_FROM_EMAIL?.trim();
+  if (from && from !== '') return from;
+  return 'onboarding@resend.dev';
+}
+
+function ensureFromEmailForExternalSend(): void {
+  const from = getFromEmail();
+  if (from === 'onboarding@resend.dev') {
+    throw new Error(
+      'Cannot send to external emails with onboarding@resend.dev. ' +
+      'Set RESEND_FROM_EMAIL in Vercel (Environment Variables) to an address on your verified domain, e.g. "Pre Delivery <noreply@predelivery.ai>" or "reports@predelivery.ai". ' +
+      'Then redeploy. Resend → Domains shows predelivery.ai as Verified; the app must use that domain as the sender.'
+    );
+  }
 }
 
 export async function sendEmail(
@@ -47,6 +59,7 @@ export async function sendEmail(
     throw new Error('Resend client is not initialized. Please check your RESEND_API_KEY configuration.');
   }
 
+  ensureFromEmailForExternalSend();
   const fromEmail = getFromEmail();
 
   try {
@@ -134,6 +147,7 @@ export async function sendEmailWithPDF(
     throw new Error('Resend client is not initialized. Please check your RESEND_API_KEY configuration.');
   }
 
+  ensureFromEmailForExternalSend();
   const fromEmail = getFromEmail();
 
   try {

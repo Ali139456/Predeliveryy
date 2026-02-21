@@ -639,7 +639,7 @@ export default function Home() {
                 Comprehensive pre-delivery inspection management system for dealerships, fleets, and OEM partners.
               </p>
               <div className="flex items-center gap-2 text-white/70 text-sm">
-                <Phone className="w-4 h-4 text-[#0033FF]" />
+                <Phone className="w-4 h-4 text-white" />
                 <span>+1 (555) 123-4567</span>
               </div>
             </div>
@@ -649,16 +649,16 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#features" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Features</a>
+                  <a href="#features" className="text-white/70 hover:text-white transition-colors text-sm">Features</a>
                 </li>
                 <li>
-                  <a href="#how-it-works" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">How it Works</a>
+                  <a href="#how-it-works" className="text-white/70 hover:text-white transition-colors text-sm">How it Works</a>
                 </li>
                 <li>
-                  <a href="#benefits" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Benefits</a>
+                  <a href="#benefits" className="text-white/70 hover:text-white transition-colors text-sm">Benefits</a>
                 </li>
                 <li>
-                  <Link href="/login" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Login</Link>
+                  <Link href="/login" className="text-white/70 hover:text-white transition-colors text-sm">Login</Link>
                 </li>
               </ul>
             </div>
@@ -668,16 +668,16 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Resources</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Documentation</a>
+                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Documentation</a>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">API Reference</a>
+                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">API Reference</a>
                 </li>
                 <li>
-                  <a href="#" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Support</a>
+                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Support</a>
                 </li>
                 <li>
-                  <Link href="/privacy" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Privacy Policy</Link>
+                  <Link href="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">Privacy Policy</Link>
                 </li>
               </ul>
             </div>
@@ -687,19 +687,19 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Contact Us</h3>
               <ul className="space-y-3">
                 <li>
-                  <Link href="/contact" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">
+                  <Link href="/contact" className="text-white/70 hover:text-white transition-colors text-sm">
                     Contact Form
                   </Link>
                 </li>
                 <li className="text-white/70 text-sm">
                   <div className="flex items-start gap-2">
-                    <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#0033FF]" />
-                    <a href="mailto:info@predelivery.ai" className="hover:text-[#0033FF] transition-colors">info@predelivery.ai</a>
+                    <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 text-white" />
+                    <a href="mailto:info@predelivery.ai" className="hover:text-white transition-colors">info@predelivery.ai</a>
                   </div>
                 </li>
                 <li className="text-white/70 text-sm">
                   <div className="flex items-start gap-2">
-                    <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-[#0033FF]" />
+                    <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-white" />
                     <span>Sales: +1 (555) 123-4567</span>
                   </div>
                 </li>
@@ -714,8 +714,8 @@ export default function Home() {
                 © 2025 Pre Delivery Inspection. All rights reserved.
               </p>
               <div className="flex items-center gap-6">
-                <a href="#" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Terms of Service</a>
-                <Link href="/privacy" className="text-white/70 hover:text-[#0033FF] transition-colors text-sm">Privacy Policy</Link>
+                <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Terms of Service</a>
+                <Link href="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">Privacy Policy</Link>
               </div>
             </div>
           </div>
