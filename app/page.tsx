@@ -40,21 +40,19 @@ export default function Home() {
         
         <div className="relative z-20 flex items-start lg:items-center min-h-screen pt-14 sm:pt-16 md:pt-20 pb-4">
           <div className="container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-6 pb-12 sm:pb-16 md:pb-8 w-full max-w-full min-w-0 flex-1">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-start w-full min-w-0">
-              {/* Block A: H1, tagline, feature pills - on mobile first; on lg top-left */}
-              <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-start-1 max-w-2xl overflow-visible">
-                <h1 className="hero-h1 hyphens-none mt-[50px] lg:mt-[10rem]">
-                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span>
-                  <span className="text-white">, Digitised</span>
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-center w-full min-w-0">
+              {/* Hero content: H1, tagline, features, Built for, CTAs - all in one div */}
+              <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-center lg:text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 max-w-2xl overflow-visible mx-auto lg:mx-0">
+                <h1 className="hero-h1 hyphens-none mt-8 sm:mt-10 md:mt-12 lg:mt-[4.5rem]">
+                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span><span className="text-white">, Digitised</span>
                 </h1>
                 <p className="hero-tagline text-white/90 leading-relaxed break-words min-w-0">
                   Verify vehicle condition before handover with a defensible digital record.
                 </p>
 
-                {/* Feature points - wrap to next line (no scrollbar); mobile larger font, desktop smaller */}
-                <div className="text-left min-w-0 overflow-visible">
-                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full">
-                    <ul className="flex flex-wrap items-center justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
+                <div className="text-center lg:text-left min-w-0 overflow-visible">
+                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full mx-auto lg:mx-0">
+                    <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
                       <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
                         <span>Photo images</span>
@@ -78,15 +76,11 @@ export default function Home() {
                     </ul>
                   </div>
                 </div>
-              </div>
 
-              {/* Block B: Built for + CTAs - no top margin/padding above this block */}
-              <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-left flex flex-col gap-[7px] sm:gap-2 lg:col-span-6 lg:col-start-1 lg:row-start-2 max-w-2xl overflow-visible -mt-[7px] sm:-mt-2 md:-mt-6 lg:mt-0 pt-0">
-                <p className="text-white/70 hero-built-for max-w-2xl break-words min-w-0 mt-[15px]">
+                <p className="text-white/70 hero-built-for max-w-2xl break-words min-w-0">
                   Built for OEM's, logistics delivery partners, dealerships, fleets and insurers who need inspection certainty before delivery.
                 </p>
 
-                {/* Book a demo, Talk to sales - 12px top margin, centered on mobile only */}
                 <div className="mt-3 lg:mt-0 text-center lg:text-left flex flex-col items-center lg:items-start">
                   <div className="flex flex-row flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
                     <Link href="/contact" className="bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full shadow-lg hover:scale-105 transition-all flex items-center gap-2 border border-white/30 text-sm sm:text-base">
@@ -101,7 +95,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* iPhone mockup - on mobile third (after Built for + CTAs); on lg right column spanning 2 rows */}
+              {/* iPhone mockup - on mobile below hero content; on lg right column spanning 2 rows */}
               <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
                 <div className="hero-phone w-full max-w-[75vw] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] 2xl:max-w-[440px] max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px]">
                   <Image
@@ -581,13 +575,13 @@ export default function Home() {
                 <Image
                   src="/Pre Delivery Logo/Original Logo Transparent Background.png"
                   alt="Pre Delivery"
-                  width={200}
-                  height={56}
-                  className="h-10 sm:h-12 w-auto object-contain"
+                  width={240}
+                  height={72}
+                  className="h-[5.5rem] sm:h-16 md:h-20 w-auto object-contain"
                 />
               </Link>
-              <p className="text-white/70 text-sm leading-relaxed mb-4">
-                Comprehensive pre-delivery inspection management system for dealerships, fleets, and OEM partners.
+              <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-4">
+                Comprehensive pre-delivery inspection management system for OEM's, vehicle transport partners, dealerships, fleets and insurers.
               </p>
             </div>
 
