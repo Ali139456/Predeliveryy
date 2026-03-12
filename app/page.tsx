@@ -126,7 +126,7 @@ export default function Home() {
               <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
                 <div className="hero-phone w-full max-w-[75vw] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] 2xl:max-w-[440px] max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px]">
                   <Image
-                    src="/iphone mockup.png"
+                    src="/iphone-mockup.png"
                     alt="Pre Delivery app on iPhone - inspection checklist with logo and vehicle identification"
                     width={440}
                     height={880}

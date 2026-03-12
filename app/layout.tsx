@@ -6,6 +6,9 @@ import MainContent from '@/components/MainContent';
 export const metadata: Metadata = {
   title: 'Pre delivery inspection App',
   description: 'Comprehensive pre-delivery inspection management system',
+  icons: {
+    icon: '/Pre-Delivery-Favicon.png',
+  },
 };
 
 export default function RootLayout({
