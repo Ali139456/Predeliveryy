@@ -222,22 +222,23 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
   }, []);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-black">
+    <div className="space-y-4 min-w-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <label className="text-sm font-medium text-black shrink-0">
           {scanType === 'VIN' ? 'VIN Scanner' : scanType === 'COMPLIANCE' ? 'Compliance Plate Scanner' : 'Vehicle Identification Scanner'}
         </label>
         {!readOnly && (
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 min-w-0">
             {!isScanning ? (
               <>
                 <button
                   type="button"
                   onClick={startScanning}
-                  className="flex items-center px-4 py-2 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 shadow-md"
+                  className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 shadow-md text-sm whitespace-nowrap shrink-0"
                 >
-                  <QrCode className="w-4 h-4 mr-2" />
-                  {scanType === 'VIN' ? 'Scan VIN' : scanType === 'COMPLIANCE' ? 'Scan Compliance Plate' : 'Scan Vehicle ID'}
+                  <QrCode className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                  <span className="hidden sm:inline">{scanType === 'VIN' ? 'Scan VIN' : scanType === 'COMPLIANCE' ? 'Scan Compliance Plate' : 'Scan Vehicle ID'}</span>
+                  <span className="sm:hidden">Scan</span>
                 </button>
                 {(scanType === 'COMPLIANCE' || scanType === 'ANY') && (
                   <>
@@ -253,17 +254,19 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                       type="button"
                       onClick={() => cameraInputRef.current?.click()}
                       disabled={isProcessingOCR}
-                      className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-500 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center px-3 py-2 sm:px-4 bg-green-600 text-white rounded-lg hover:bg-green-500 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
                     >
                       {isProcessingOCR ? (
                         <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Processing...
+                          <Loader2 className="w-4 h-4 mr-1.5 sm:mr-2 animate-spin flex-shrink-0" />
+                          <span className="hidden sm:inline">Processing...</span>
+                          <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <Camera className="w-4 h-4 mr-2" />
-                          OCR Scan
+                          <Camera className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                          <span className="hidden sm:inline">OCR Scan</span>
+                          <span className="sm:hidden">OCR</span>
                         </>
                       )}
                     </button>
@@ -278,17 +281,19 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       disabled={isProcessingOCR}
-                      className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-center px-3 py-2 sm:px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-500 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
                     >
                       {isProcessingOCR ? (
                         <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Processing...
+                          <Loader2 className="w-4 h-4 mr-1.5 sm:mr-2 animate-spin flex-shrink-0" />
+                          <span className="hidden sm:inline">Processing...</span>
+                          <span className="sm:hidden">...</span>
                         </>
                       ) : (
                         <>
-                          <Upload className="w-4 h-4 mr-2" />
-                          Upload Image
+                          <Upload className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                          <span className="hidden sm:inline">Upload Image</span>
+                          <span className="sm:hidden">Upload</span>
                         </>
                       )}
                     </button>
@@ -299,10 +304,11 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
               <button
                 type="button"
                 onClick={stopScanning}
-                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 shadow-md"
+                className="flex items-center justify-center px-3 py-2 sm:px-4 bg-red-600 text-white rounded-lg hover:bg-red-500 shadow-md text-sm whitespace-nowrap shrink-0"
               >
-                <X className="w-4 h-4 mr-2" />
-                Stop Scanning
+                <X className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                <span className="hidden sm:inline">Stop Scanning</span>
+                <span className="sm:hidden">Stop</span>
               </button>
             )}
           </div>

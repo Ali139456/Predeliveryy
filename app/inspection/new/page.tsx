@@ -164,7 +164,7 @@ export default function NewInspectionPage() {
           <span className="font-semibold">Back to Home</span>
         </Link>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#0033FF]/30">
+        <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
           <InspectionForm />
         </div>
       </div>

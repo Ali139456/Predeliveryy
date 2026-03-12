@@ -113,8 +113,8 @@ export default function InspectionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8">
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 min-w-0">
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 mb-4 sm:mb-6 bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-black rounded-xl border-2 border-[#0033FF]/30 hover:border-[#0033FF]/50 shadow-lg transition-all duration-300 group text-sm sm:text-base"

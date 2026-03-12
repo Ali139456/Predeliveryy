@@ -1116,9 +1116,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep2 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-black">Vehicle Identification Scan</h3>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 min-w-0 ${readOnly ? '' : 'mb-4'}`}>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 min-w-0">
+          <h3 className="text-base font-bold text-black shrink-0">Vehicle Identification Scan</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
@@ -1675,7 +1675,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-0 sm:px-2">
+    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-0 sm:px-2 min-w-0 overflow-x-hidden">
       {success && (
         <div className="p-4 bg-green-900/50 border-2 border-green-500/50 rounded-xl flex items-center animate-fade-in shadow-lg bg-slate-800/95">
           <CheckCircle className="w-6 h-6 text-green-400 mr-3 flex-shrink-0" />
@@ -1684,8 +1684,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       )}
 
       {/* Content - Step-by-step for new/editing, all at once for viewing */}
-      <div className="flex flex-col">
-        <div className={`w-full ${readOnly ? 'space-y-6' : ''}`}>
+      <div className="flex flex-col min-w-0">
+        <div className={`w-full min-w-0 ${readOnly ? 'space-y-6' : ''}`}>
           {readOnly ? (
             // View mode: Show all sections at once
             <>
