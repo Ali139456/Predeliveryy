@@ -33,17 +33,17 @@ export default function Home() {
   const isLoggedIn = !!user;
   
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section - SiteGround AI Studio Style */}
-      <div className="relative bg-gradient-to-b from-[#0033FF] via-[#0029CC] to-[#0033FF] min-h-screen w-full overflow-hidden">
+    <div className="bg-white">
+      {/* Hero Section - same before and after login (mobile + screen); sections below only when not logged in */}
+      <div className="relative bg-gradient-to-b from-[#0033FF] via-[#0029CC] to-[#0033FF] min-h-screen w-full overflow-x-hidden">
         {/* Hero Background Image */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
           <Image
             src="/predelivery-hero-shot.jpg"
             alt="Pre Delivery Inspection Facility"
             fill
             priority
-            className="object-cover"
+            className="object-cover object-center min-h-full"
             quality={90}
           />
         </div>
@@ -59,91 +59,81 @@ export default function Home() {
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
         
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-24 sm:pt-28 md:pt-32 pb-8 sm:pb-10 md:pb-12 relative z-20 min-h-screen flex items-center">
-          <div className="max-w-7xl mx-auto w-full">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-10 items-center">
-              {/* Left: Hero content */}
-              <div className="max-w-2xl w-full mx-0 text-left space-y-4 sm:space-y-5 lg:space-y-6 lg:col-span-7">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+        <div className="relative z-20 flex items-start lg:items-center min-h-screen pt-14 sm:pt-16 md:pt-20 pb-4">
+          <div className="container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-6 pb-12 sm:pb-16 md:pb-8 w-full max-w-full min-w-0 flex-1">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-start w-full min-w-0">
+              {/* Block A: H1, tagline, feature pills - on mobile first; on lg top-left */}
+              <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-start-1 max-w-2xl overflow-visible">
+                <h1 className="hero-h1 hyphens-none mt-[50px] lg:mt-[10rem]">
                   <span className="text-[#FF6600]">Pre-Delivery Inspections</span>
                   <span className="text-white">, Digitised</span>
                 </h1>
-                <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed break-words">
+                <p className="hero-tagline text-white/90 leading-relaxed break-words min-w-0">
                   Verify vehicle condition before handover with a defensible digital record.
                 </p>
 
-                {/* Feature points - wrap when needed so text never overflows */}
+                {/* Feature points - wrap to next line (no scrollbar); mobile larger font, desktop smaller */}
                 <div className="text-left min-w-0 overflow-visible">
-                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-4 py-3 sm:px-5 sm:py-2.5 w-fit max-w-full overflow-visible">
-                    <ul className="flex flex-wrap items-center justify-start gap-x-3 gap-y-2 sm:gap-x-4 sm:gap-y-2 text-white/95 text-xs sm:text-sm">
-                      <li className="flex items-center gap-1.5 shrink-0">
+                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full">
+                    <ul className="flex flex-wrap items-center justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
+                      <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
                         <span>Photo images</span>
                       </li>
-                      <li className="flex items-center gap-1.5 shrink-0">
+                      <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
                         <span>OCR Scanner</span>
                       </li>
-                      <li className="flex items-center gap-1.5 shrink-0">
+                      <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
                         <span>GPS Pinning</span>
                       </li>
-                      <li className="flex items-center gap-1.5 shrink-0">
+                      <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
                         <span>Analytics Dashboard</span>
                       </li>
-                      <li className="flex items-center gap-1.5 shrink-0">
+                      <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
                         <span>Secure and Compliant</span>
                       </li>
                     </ul>
                   </div>
                 </div>
+              </div>
 
-                {/* Book a demo, Talk to sales, Built for... - tighter spacing */}
-                <div className="text-left">
-                  <div className="flex flex-row flex-wrap items-center justify-start gap-2 sm:gap-3">
-                    <Link href="/contact" className="bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold px-6 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all flex items-center gap-2 border border-white/30">
-                      <Calendar className="w-4 h-4" />
+              {/* Block B: Built for + CTAs - no top margin/padding above this block */}
+              <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-left flex flex-col gap-[7px] sm:gap-2 lg:col-span-6 lg:col-start-1 lg:row-start-2 max-w-2xl overflow-visible -mt-[7px] sm:-mt-2 md:-mt-6 lg:mt-0 pt-0">
+                <p className="text-white/70 hero-built-for max-w-2xl break-words min-w-0 mt-[15px]">
+                  Built for OEM's, logistics delivery partners, dealerships, fleets and insurers who need inspection certainty before delivery.
+                </p>
+
+                {/* Book a demo, Talk to sales - 12px top margin, centered on mobile only */}
+                <div className="mt-3 lg:mt-0 text-center lg:text-left flex flex-col items-center lg:items-start">
+                  <div className="flex flex-row flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
+                    <Link href="/contact" className="bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full shadow-lg hover:scale-105 transition-all flex items-center gap-2 border border-white/30 text-sm sm:text-base">
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span>Book a demo</span>
                     </Link>
-                    <Link href="/contact" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold px-6 py-2.5 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2 shadow-lg">
-                      <Phone className="w-4 h-4" />
+                    <Link href="/contact" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2 shadow-lg text-sm sm:text-base">
+                      <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span>Talk to sales</span>
                     </Link>
                   </div>
-                  <p className="text-white/70 text-base mt-2 sm:mt-3 max-w-2xl break-words">
-                    Built for OEM's, logistics delivery partners, dealerships, fleets and insurers who need inspection certainty before delivery.
-                  </p>
                 </div>
-
               </div>
 
-              {/* Right: AutoGrab-style composite - vehicle anchor with valuation card overlapping left */}
-              <div className="hidden lg:block relative w-full min-h-[380px] lg:col-span-5">
-                {/* Vehicle / Care AG - main anchor, right side (front) */}
-                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[70%] max-w-md z-20">
-                  <div className="overflow-hidden">
-                    <Image
-                      src="/Care_AG.png"
-                      alt="Care AG - Automotive platform"
-                      width={420}
-                      height={300}
-                      className="w-full h-auto object-contain"
-                    />
-                  </div>
-                </div>
-                {/* Valuation card - back, left of vehicle */}
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[55%] max-w-[280px] z-10">
-                  <div className="rounded-2xl overflow-hidden">
-                    <Image
-                      src="/Valuation.jpg"
-                      alt="Vehicle valuation"
-                      width={280}
-                      height={340}
-                      className="w-full h-auto object-cover"
-                    />
-                  </div>
+              {/* iPhone mockup - on mobile third (after Built for + CTAs); on lg right column spanning 2 rows */}
+              <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
+                <div className="hero-phone w-full max-w-[75vw] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] 2xl:max-w-[440px] max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px]">
+                  <Image
+                    src="/iphone mockup.png"
+                    alt="Pre Delivery app on iPhone - inspection checklist with logo and vehicle identification"
+                    width={440}
+                    height={880}
+                    className="w-full h-full max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px] object-contain object-center drop-shadow-2xl"
+                    priority
+                    sizes="(max-width: 640px) 75vw, (max-width: 768px) 280px, (max-width: 1024px) 320px, (max-width: 1280px) 360px, (max-width: 1536px) 400px, 440px"
+                  />
                 </div>
               </div>
             </div>

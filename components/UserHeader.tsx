@@ -245,8 +245,8 @@ function UserHeader() {
   };
 
   return (
-    <div className="sticky top-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
         <div className="max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between gap-2 min-w-0">
           {/* Logo on blue nav (no white container) */}

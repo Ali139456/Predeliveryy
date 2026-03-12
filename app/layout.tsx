@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import UserHeader from '@/components/UserHeader';
+import MainContent from '@/components/MainContent';
 
 export const metadata: Metadata = {
   title: 'Pre delivery inspection App',
@@ -16,7 +17,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <UserHeader />
-        {children}
+        <MainContent>{children}</MainContent>
       </body>
     </html>
   );

@@ -108,7 +108,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen bg-white overflow-x-hidden pt-4 sm:pt-6 md:pt-8">
       {/* Tabs */}
       <div className="bg-white border-b border-[#0033FF]/30 shadow-lg">
         <div className="container mx-auto px-3 sm:px-4">
