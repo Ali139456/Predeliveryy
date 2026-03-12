@@ -95,15 +95,16 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* iPhone mockup - on mobile below hero content; on lg right column spanning 2 rows */}
+              {/* PD Logo mockup - on mobile below hero content; on lg right column spanning 2 rows */}
               <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
                 <div className="hero-phone w-full max-w-[75vw] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] 2xl:max-w-[440px] max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px]">
                   <Image
-                    src="/iphone-mockup.png"
-                    alt="Pre Delivery app on iPhone - inspection checklist with logo and vehicle identification"
+                    src="/PD-Logo-Mockup.png"
+                    alt="Pre Delivery - verified before your drive"
                     width={440}
                     height={880}
-                    className="w-full h-full max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px] object-contain object-center drop-shadow-2xl"
+                    className="w-full max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px] object-contain object-center drop-shadow-2xl"
+                    style={{ width: 'auto', height: 'auto' }}
                     priority
                     sizes="(max-width: 640px) 75vw, (max-width: 768px) 280px, (max-width: 1024px) 320px, (max-width: 1280px) 360px, (max-width: 1536px) 400px, 440px"
                   />
