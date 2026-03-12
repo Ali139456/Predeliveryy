@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Pre delivery inspection App',
   description: 'Comprehensive pre-delivery inspection management system',
   icons: {
-    icon: '/Pre-Delivery-Favicon.png',
+    icon: '/Pre-Delivery-Favicon-Transparent.png',
   },
 };
 
