@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -210,7 +211,11 @@ interface InspectionFormProps {
 }
 
 export default function InspectionForm({ inspectionId, initialData, readOnly = false }: InspectionFormProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
+  const [stepInitialized, setStepInitialized] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sectionSaving, setSectionSaving] = useState<{ [key: string]: boolean }>({});
@@ -244,6 +249,25 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     { number: 5, title: 'Disclaimer', icon: FileText },
     { number: 6, title: 'Signatures', icon: PenTool },
   ];
+
+  // Restore step from URL on mount (so refresh keeps you on the same step)
+  useEffect(() => {
+    if (stepInitialized) return;
+    const stepParam = searchParams.get('step');
+    const step = parseInt(stepParam || '1', 10);
+    if (step >= 1 && step <= totalSteps) {
+      setCurrentStep(step);
+    }
+    setStepInitialized(true);
+  }, [searchParams, totalSteps, stepInitialized]);
+
+  const goToStep = useCallback((step: number) => {
+    const safeStep = Math.max(1, Math.min(step, totalSteps));
+    setCurrentStep(safeStep);
+    const url = new URL(pathname, window.location.origin);
+    url.searchParams.set('step', String(safeStep));
+    router.replace(url.pathname + url.search, { scroll: false });
+  }, [pathname, router, totalSteps]);
 
   const {
     register,
@@ -483,9 +507,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           savedDraftId = result.data._id;
           setDraftId(savedDraftId);
           
-          // Update URL without reloading page
+          // Update URL without reloading page (preserve step for refresh)
           if (typeof window !== 'undefined' && !inspectionId) {
-            window.history.replaceState({}, '', `/inspections/${savedDraftId}`);
+            window.history.replaceState({}, '', `/inspections/${savedDraftId}?step=${currentStep}`);
           }
           
           if (!silent) {
@@ -533,7 +557,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     } finally {
       setIsSavingDraft(false);
     }
-  }, [readOnly, isSavingDraft, getValues, location, barcode, photos, signatures, draftId, inspectionId, setDraftId, setToast]);
+  }, [readOnly, isSavingDraft, getValues, location, barcode, photos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep]);
 
   // Auto-save draft periodically and when data changes
   useEffect(() => {
@@ -725,7 +749,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       });
       // Navigate to the step with error
       if (allStepsValidation.step) {
-        setCurrentStep(allStepsValidation.step);
+        goToStep(allStepsValidation.step);
       }
       return;
     }
@@ -995,7 +1019,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
     const validation = validateStep(currentStep);
     if (validation.valid) {
-      setCurrentStep(prev => Math.min(prev + 1, totalSteps));
+      goToStep(Math.min(currentStep + 1, totalSteps));
     } else {
       // Show fancy error alert
       setToast({
@@ -1008,7 +1032,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const handlePrevious = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
+    goToStep(Math.max(currentStep - 1, 1));
   };
 
   const renderStepContent = () => {
@@ -1352,10 +1376,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     };
 
     return (
-      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30">
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
+      <div className="bg-white rounded-xl p-4 md:p-6 space-y-4 border border-gray-200">
+        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b border-gray-200">
           <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+            <div className="w-12 h-12 rounded-lg bg-[#0033FF] flex items-center justify-center mr-4 flex-shrink-0">
               <span className="text-white font-bold text-lg">4</span>
             </div>
             <h2 className="text-xl font-bold text-black">Inspection Checklist</h2>
@@ -1388,32 +1412,32 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         {/* Action Codes Legend */}
-        <div className="mb-6 p-4 bg-[#0033FF]/10 border-2 border-[#0033FF]/30 rounded-xl">
-          <h3 className="text-sm font-bold text-black mb-3">Action Codes</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+        <div className="mb-6 pb-3 border-b border-gray-200">
+          <h3 className="text-sm font-bold text-black mb-2">Action Codes</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-black">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-green-300">OK</span>
-              <span className="text-black">= Satisfactory</span>
+              <span className="font-bold">OK</span>
+              <span>= Satisfactory</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-black">C</span>
-              <span className="text-slate-300">= Clean</span>
+              <span className="font-bold">C</span>
+              <span>= Clean</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-yellow-300">A</span>
-              <span className="text-slate-300">= Adjust</span>
+              <span className="font-bold">A</span>
+              <span>= Adjust</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-black">R</span>
-              <span className="text-slate-300">= Repair</span>
+              <span className="font-bold">R</span>
+              <span>= Repair</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-red-300">RP</span>
-              <span className="text-slate-300">= Replace</span>
+              <span className="font-bold">RP</span>
+              <span>= Replace</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-black">N</span>
-              <span className="text-slate-300">= Not applicable</span>
+              <span className="font-bold">N</span>
+              <span>= Not applicable</span>
             </div>
           </div>
         </div>
@@ -1426,16 +1450,16 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           return (
             <div 
               key={category.id} 
-              className={`border-2 rounded-xl p-4 ${
+              className={`rounded-lg p-4 border ${
                 isExt 
-                  ? 'border-blue-200 bg-blue-50' 
+                  ? 'border-blue-200' 
                   : isInt 
-                  ? 'border-amber-200 bg-amber-50' 
-                  : 'border-gray-200 bg-gray-50'
+                  ? 'border-amber-200' 
+                  : 'border-gray-200'
               }`}
             >
               <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
-                isExt ? 'border-blue-300' : isInt ? 'border-amber-300' : 'border-gray-300'
+                isExt ? 'border-blue-200' : isInt ? 'border-amber-200' : 'border-gray-200'
               }`}>
                 {isExt && <span className="text-2xl">🚗</span>}
                 {isInt && <span className="text-2xl">🚙</span>}
@@ -1463,13 +1487,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                 return (
                   <div 
                     key={itemIndex} 
-                    className={`mb-3 p-3 rounded-lg border ${
-                      isExt 
-                        ? 'bg-blue-50 border-blue-200' 
-                        : isInt 
-                        ? 'bg-amber-50 border-amber-200' 
-                        : 'bg-gray-50 border-gray-200'
-                    }`}
+                    className="mb-3 p-3 rounded-lg border border-gray-200 bg-transparent"
                   >
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
                       <input
@@ -1703,9 +1721,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
       </div>
 
-      {/* Navigation Buttons - Only show for new/editing inspections */}
+      {/* Navigation Buttons - Only show for new/editing inspections (overflow-hidden prevents scrollbar on button hover) */}
       {!readOnly && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t-2 border-slate-700/50">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t-2 border-slate-700/50 overflow-hidden">
           <button
             type="button"
             onClick={handlePrevious}
@@ -1713,19 +1731,19 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             className={`flex items-center justify-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md w-full sm:w-auto ${
               currentStep === 1
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-gray-700 text-white hover:bg-gray-800 hover:scale-105'
+                : 'bg-gray-700 text-white hover:bg-gray-800'
             }`}
           >
             <ChevronLeft className="w-4 h-4 mr-1.5" />
             Previous
           </button>
 
-          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:justify-end">
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto sm:justify-end overflow-hidden">
             {currentStep < totalSteps ? (
               <button
                 type="button"
                 onClick={handleNext}
-                className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-semibold hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 hover:scale-105 w-full sm:w-auto"
+                className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-semibold hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 w-full sm:w-auto"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1.5" />
@@ -1737,7 +1755,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     type="button"
                     onClick={() => handleSubmit(onSubmit)()}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full sm:w-auto"
                   >
                     {submitting ? (
                       <>
@@ -1776,7 +1794,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       )();
                     }}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full sm:w-auto"
                   >
                     <Save className="w-4 h-4 mr-1.5" />
                     {submitting ? 'Completing...' : 'Complete Inspection'}
@@ -1786,7 +1804,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   <button
                     type="button"
                     onClick={() => setEmailModalOpen(true)}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-lg font-bold shadow-lg shadow-pink-500/50 hover:from-pink-500 hover:to-rose-500 transition-all hover:scale-105 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm bg-gradient-to-r from-pink-600 to-rose-600 text-white rounded-lg font-bold shadow-lg shadow-pink-500/50 hover:from-pink-500 hover:to-rose-500 transition-all w-full sm:w-auto"
                   >
                     <Send className="w-4 h-4 mr-1.5" />
                     Email Report

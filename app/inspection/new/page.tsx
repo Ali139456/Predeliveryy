@@ -102,7 +102,7 @@ export default function NewInspectionPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
           {toast && (
             <Toast
@@ -152,7 +152,7 @@ export default function NewInspectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
         <Link
           href="/"

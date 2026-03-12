@@ -219,7 +219,7 @@ function InspectionDetailContent() {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
