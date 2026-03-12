@@ -184,7 +184,7 @@ function UserHeader() {
     );
   }
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role: string | undefined) => {
     switch (role) {
       case 'admin':
         return 'text-[#FF6600]';
@@ -195,7 +195,7 @@ function UserHeader() {
     }
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const getRoleBadgeColor = (role: string | undefined) => {
     switch (role) {
       case 'admin':
         return 'bg-[#FF6600]/20 border-[#FF6600]/50 text-[#E65C00]';
