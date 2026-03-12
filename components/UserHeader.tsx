@@ -95,7 +95,25 @@ function UserHeader() {
     return null;
   }
 
-  // Render navbar immediately - show logged out state while loading
+  // While auth is loading, show minimal header (no Features/Benefits/Contact) to avoid flash after login
+  if (loading) {
+    return (
+      <div className="sticky top-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3">
+          <div className="max-w-7xl mx-auto w-full">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex items-center shrink-0 overflow-hidden rounded-lg">
+                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-12 sm:h-14 md:h-20 lg:h-24 w-auto object-contain" priority />
+              </Link>
+              <div className="h-10 w-20 bg-white/10 rounded-lg animate-pulse" aria-hidden />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Logged out: show full public nav with Features, How it Works, Benefits, Contact, Login
   if (!user) {
     const textColor = 'text-white';
     const linkHoverColor = 'hover:text-[#FFB366]';
