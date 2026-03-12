@@ -5,46 +5,18 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit, FileCheck, Search } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const LOGO_SRC = '/Pre Delivery Logo/Original Logo Transparent Background.png';
 
 function UserHeader() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  const { user, loading, setUser } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-
-  const checkAuth = useCallback(async () => {
-    // Skip auth check on login page
-    if (pathname === '/login') {
-      return;
-    }
-    
-    setLoading(true);
-    try {
-      const response = await fetch('/api/auth/me', {
-        cache: 'no-store',
-        credentials: 'include',
-      });
-      const data = await response.json();
-      if (data.success) {
-        setUser(data.user);
-      }
-    } catch (error) {
-      // Not logged in - that's okay
-    } finally {
-      setLoading(false);
-    }
-  }, [pathname]);
-
-  // All hooks must be called before any conditional returns
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
 
   // Handle scroll for navbar text color change
   useEffect(() => {
@@ -64,42 +36,32 @@ function UserHeader() {
 
   const handleLogout = useCallback(async () => {
     try {
-      setUser(null); // Clear user state immediately
-      // Clear any cached data
+      setUser(null);
       if (typeof window !== 'undefined') {
-        // Clear any localStorage/sessionStorage if used
         sessionStorage.clear();
         localStorage.clear();
       }
-      
-      // Call logout API
-      await fetch('/api/auth/logout', { 
-        method: 'POST',
-        credentials: 'include' // Important: include cookies
-      });
-      
-      // Redirect to login
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
       router.push('/login');
       router.refresh();
     } catch (error) {
       console.error('Logout error:', error);
-      setUser(null); // Clear user state even on error
-      // Force redirect even if API call fails
+      setUser(null);
       router.push('/login');
       router.refresh();
     }
-  }, [router]);
+  }, [router, setUser]);
 
   // Don't show header on login page - AFTER all hooks
   if (pathname === '/login') {
     return null;
   }
 
-  // While auth is loading, show minimal header (no Features/Benefits/Contact) to avoid flash after login
+  // While auth is loading: same fixed bar + height as loaded state to avoid layout shift
   if (loading) {
     return (
-      <div className="sticky top-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-2 sm:py-3">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
           <div className="max-w-7xl mx-auto w-full">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center shrink-0 overflow-hidden rounded-lg">

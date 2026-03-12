@@ -1,36 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch('/api/auth/me', {
-          cache: 'no-store',
-          credentials: 'include',
-        });
-        const data = await response.json();
-        if (data.success) {
-          setUser(data.user);
-        }
-      } catch (error) {
-        // Not logged in - that's okay
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkAuth();
-  }, []);
-
+  const { user, loading } = useAuth();
   const isLoggedIn = !!user;
+  // While auth is loading, show only hero to avoid flash (marketing sections appearing then disappearing after login)
+  const showMarketingSections = !loading && !isLoggedIn;
   
   return (
     <div className="bg-white">
@@ -141,7 +120,7 @@ export default function Home() {
         </div>
       </div>
 
-      {!isLoggedIn && (
+      {showMarketingSections && (
         <>
       {/* Why Predelivery.ai? - White section, blue/orange accents (Spectral-style) */}
       <div id="benefits" className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">

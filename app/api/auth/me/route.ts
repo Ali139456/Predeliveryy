@@ -6,7 +6,8 @@ export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser(request);
     if (!user) {
-      return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
+      // Return 200 so "not logged in" doesn't show as error in console/network (expected for guests)
+      return NextResponse.json({ success: false, error: 'Not authenticated' });
     }
 
     const userDoc = await getUserById(user.userId);
