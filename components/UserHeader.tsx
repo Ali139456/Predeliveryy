@@ -10,7 +10,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const LOGO_SRC = '/Pre Delivery Logo/Original Logo Transparent Background.png';
 
 function UserHeader() {
-  const { user, loading, setUser } = useAuth();
+  const { user, loading, setUser, refetch } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -491,7 +491,7 @@ function UserHeader() {
             user={user}
             onClose={() => {
               setShowProfileModal(false);
-              checkAuth(); // Refresh user data
+              refetch();
             }}
           />
         )}
