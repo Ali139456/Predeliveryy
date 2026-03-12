@@ -69,24 +69,24 @@ export default function Home() {
                   <span className="text-white">, Digitised</span>
                 </h1>
                 <p className="text-base sm:text-lg lg:text-xl text-white/90 leading-relaxed break-words">
-                  Verify vehicle condition, compliance, and documentation before handover and registration with a single, defensible digital record.
+                  Verify vehicle condition before handover with a defensible digital record.
                 </p>
 
-                {/* Feature points - 2 rows on mobile, 1 row on sm+, left-aligned, glass effect */}
-                <div className="text-left">
-                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-4 py-3 sm:px-5 sm:py-2.5 w-fit max-w-full">
-                    <ul className="flex flex-wrap sm:flex-nowrap items-center justify-start gap-x-3 gap-y-2 sm:gap-x-4 sm:gap-y-0 text-white/95 text-xs sm:text-xs">
+                {/* Feature points - wrap when needed so text never overflows */}
+                <div className="text-left min-w-0 overflow-visible">
+                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-4 py-3 sm:px-5 sm:py-2.5 w-fit max-w-full overflow-visible">
+                    <ul className="flex flex-wrap items-center justify-start gap-x-3 gap-y-2 sm:gap-x-4 sm:gap-y-2 text-white/95 text-xs sm:text-sm">
                       <li className="flex items-center gap-1.5 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>Photo Gallery</span>
+                        <span>Photo images</span>
                       </li>
                       <li className="flex items-center gap-1.5 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>Barcode Scanner</span>
+                        <span>OCR Scanner</span>
                       </li>
                       <li className="flex items-center gap-1.5 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>GPS Tracking</span>
+                        <span>GPS Pinning</span>
                       </li>
                       <li className="flex items-center gap-1.5 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
@@ -94,29 +94,29 @@ export default function Home() {
                       </li>
                       <li className="flex items-center gap-1.5 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>Secure & Compliant</span>
+                        <span>Secure and Compliant</span>
                       </li>
                     </ul>
                   </div>
                 </div>
 
-                {/* New Inspection & View Inspections - left, after dotted content, above CTA */}
-                <div className="flex flex-row flex-wrap gap-3 sm:gap-4">
-                  <Link 
-                    href="/inspection/new"
-                    className="flex-1 min-w-[140px] group relative bg-gradient-to-r from-[#0033FF] to-[#0029CC] hover:from-[#0033FF]/95 hover:to-[#0029CC]/95 text-white font-semibold px-6 py-4 sm:px-8 sm:py-5 rounded-xl shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-3 border border-white/30 text-base sm:text-lg"
-                  >
-                    <FileCheck className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" />
-                    <span>New Inspection</span>
-                  </Link>
-                  <Link 
-                    href="/inspections"
-                    className="flex-1 min-w-[140px] group relative bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold px-6 py-4 sm:px-8 sm:py-5 rounded-xl border-2 border-white/30 hover:scale-105 transition-all flex items-center justify-center gap-3 shadow-xl text-base sm:text-lg"
-                  >
-                    <Search className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" />
-                    <span>View Inspections</span>
-                  </Link>
+                {/* Book a demo, Talk to sales, Built for... - tighter spacing */}
+                <div className="text-left">
+                  <div className="flex flex-row flex-wrap items-center justify-start gap-2 sm:gap-3">
+                    <Link href="/contact" className="bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold px-6 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all flex items-center gap-2 border border-white/30">
+                      <Calendar className="w-4 h-4" />
+                      <span>Book a demo</span>
+                    </Link>
+                    <Link href="/contact" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold px-6 py-2.5 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2 shadow-lg">
+                      <Phone className="w-4 h-4" />
+                      <span>Talk to sales</span>
+                    </Link>
+                  </div>
+                  <p className="text-white/70 text-base mt-2 sm:mt-3 max-w-2xl break-words">
+                    Built for OEM's, logistics delivery partners, dealerships, fleets and insurers who need inspection certainty before delivery.
+                  </p>
                 </div>
+
               </div>
 
               {/* Right: AutoGrab-style composite - vehicle anchor with valuation card overlapping left */}
@@ -147,23 +147,6 @@ export default function Home() {
                 </div>
               </div>
             </div>
-
-            {/* Bottom CTA Section - left-aligned with heading */}
-            <div className="mt-12 text-left">
-              <div className="flex flex-row flex-wrap items-start sm:items-center justify-start gap-3">
-                <Link href="/contact" className="bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold px-6 py-2.5 rounded-full shadow-lg hover:scale-105 transition-all flex items-center gap-2 border border-white/30">
-                  <Calendar className="w-4 h-4" />
-                  <span>Book a demo</span>
-                </Link>
-                <Link href="/contact" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold px-6 py-2.5 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2 shadow-lg">
-                  <Phone className="w-4 h-4" />
-                  <span>Talk to sales</span>
-                </Link>
-              </div>
-              <p className="text-white/70 text-base mt-4 max-w-2xl break-words">
-                Built for dealerships, fleets, OEM delivery partners, and insurers who need inspection certainty before delivery
-              </p>
-            </div>
           </div>
         </div>
       </div>
@@ -180,10 +163,9 @@ export default function Home() {
                 Why Predelivery.ai?
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
-                Vehicle issues discovered after delivery and registration lead to disputes, rework, warranty friction, and reputational risk.
+                Vehicle issues discovered after delivery and registration lead to disputes, warranty friction, and reputational risk.
               </p>
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">
-                <div className="w-2 h-2 bg-[#FF6600] rounded-full animate-pulse"></div>
+              <div className="inline-flex items-center px-6 py-3 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">
                 <p className="text-xl sm:text-2xl font-bold text-gray-900">
                   Pre-delivery replaces uncertainty with proof.
                 </p>
@@ -238,7 +220,7 @@ export default function Home() {
               </h2>
               <div className="max-w-4xl mx-auto mb-8 sm:mb-12 px-2">
                 <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
-                  Start with a <span className="font-semibold text-[#0033FF]">comprehensive inspection</span>, then <span className="font-semibold text-[#FF6600]">verify all vehicle details</span> with digital documentation, <span className="font-semibold text-[#FF6600]">obtain approval</span> through digital signatures, and finally <span className="font-semibold text-[#0033FF]">deliver with confidence</span> knowing every detail is recorded and verified.
+                  Start with a <span className="font-semibold text-[#0033FF]">comprehensive inspection</span>, <span className="font-semibold text-[#FF6600]">verify all vehicle details</span> with digital documentation, and <span className="font-semibold text-[#0033FF]">deliver with confidence</span> knowing every detail is recorded and verified.
                 </p>
               </div>
             </div>
@@ -330,14 +312,14 @@ export default function Home() {
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=600&fit=crop&q=80"
-                    alt="Photo Gallery - Vehicle inspection photography"
+                    alt="Photo images - Vehicle inspection photography"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Photo Gallery</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Photo images</div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Photo Gallery</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Photo images</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Capture and organize inspection photos with GPS metadata and timestamps</p>
                 </div>
               </div>
@@ -362,14 +344,14 @@ export default function Home() {
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
-                    alt="GPS Tracking - Location services"
+                    alt="GPS Pinning - Location services"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">GPS Tracking</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">GPS Pinning</div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">GPS Tracking</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">GPS Pinning</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Automatic location tracking for all inspection photos and activities</p>
                 </div>
               </div>
@@ -600,7 +582,7 @@ export default function Home() {
               Ready to Transform Your Inspections?
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
-              Join leading dealerships and fleets who trust our platform for accurate, defensible pre-delivery inspections.
+              Join leading OEM and delivery partners who trust our platform for accurate, defensible pre-delivery inspections.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
@@ -638,10 +620,6 @@ export default function Home() {
               <p className="text-white/70 text-sm leading-relaxed mb-4">
                 Comprehensive pre-delivery inspection management system for dealerships, fleets, and OEM partners.
               </p>
-              <div className="flex items-center gap-2 text-white/70 text-sm">
-                <Phone className="w-4 h-4 text-white" />
-                <span>+1 (555) 123-4567</span>
-              </div>
             </div>
 
             {/* Quick Links */}
@@ -668,12 +646,6 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Resources</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Documentation</a>
-                </li>
-                <li>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">API Reference</a>
-                </li>
-                <li>
                   <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Support</a>
                 </li>
                 <li>
@@ -695,12 +667,6 @@ export default function Home() {
                   <div className="flex items-start gap-2">
                     <MessageSquare className="w-4 h-4 mt-0.5 flex-shrink-0 text-white" />
                     <a href="mailto:info@predelivery.ai" className="hover:text-white transition-colors">info@predelivery.ai</a>
-                  </div>
-                </li>
-                <li className="text-white/70 text-sm">
-                  <div className="flex items-start gap-2">
-                    <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-white" />
-                    <span>Sales: +1 (555) 123-4567</span>
                   </div>
                 </li>
               </ul>

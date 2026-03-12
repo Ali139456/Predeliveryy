@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, memo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit, FileCheck, Search } from 'lucide-react';
 
 const LOGO_SRC = '/Pre Delivery Logo/Original Logo Transparent Background.png';
 
@@ -107,16 +107,30 @@ function UserHeader() {
           <div className="flex items-center justify-between gap-2">
             <Link href="/" className="transition-colors flex items-center group hover:opacity-90 min-w-0 shrink">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 sm:h-12 md:h-16 w-auto object-contain" priority />
+                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-12 sm:h-14 md:h-20 lg:h-24 w-auto object-contain" priority />
               </div>
             </Link>
             
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-3 lg:gap-6 shrink-0">
+            <div className="hidden md:flex items-center gap-2 lg:gap-4 shrink-0">
               <Link href="/#features" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Features</Link>
               <Link href="/#how-it-works" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>How it Works</Link>
               <Link href="/#benefits" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</Link>
               <Link href="/contact" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</Link>
+              <Link
+                href="/inspection/new"
+                className="flex items-center px-3 py-2 text-sm bg-white/15 hover:bg-white/25 text-white rounded-lg transition-all font-medium border border-white/30"
+              >
+                <FileCheck className="w-4 h-4 mr-1.5" />
+                <span className="hidden lg:inline">New Inspection</span>
+              </Link>
+              <Link
+                href="/inspections"
+                className="flex items-center px-3 py-2 text-sm bg-white/15 hover:bg-white/25 text-white rounded-lg transition-all font-medium border border-white/30"
+              >
+                <Search className="w-4 h-4 mr-1.5" />
+                <span className="hidden lg:inline">View Inspections</span>
+              </Link>
               <Link
                 href="/login"
                 className="flex items-center px-5 py-2 text-sm bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-lg hover:shadow-xl font-semibold border border-white/30 hover:scale-105"
@@ -151,7 +165,7 @@ function UserHeader() {
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center min-w-0" onClick={() => setMobileMenuOpen(false)}>
                     <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                      <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-12 sm:h-14 w-auto object-contain" />
+                      <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-14 sm:h-16 w-auto object-contain" />
                     </div>
                   </Link>
                   <button
@@ -166,6 +180,12 @@ function UserHeader() {
                   <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#FFB366] transition-colors font-medium py-2">How it Works</Link>
                   <Link href="/#benefits" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#FFB366] transition-colors font-medium py-2">Benefits</Link>
                   <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#FFB366] transition-colors font-medium py-2">Contact</Link>
+                  <Link href="/inspection/new" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-white hover:text-[#FFB366] transition-colors font-medium py-2">
+                    <FileCheck className="w-4 h-4" /> New Inspection
+                  </Link>
+                  <Link href="/inspections" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-white hover:text-[#FFB366] transition-colors font-medium py-2">
+                    <Search className="w-4 h-4" /> View Inspections
+                  </Link>
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}
@@ -214,7 +234,7 @@ function UserHeader() {
           {/* Logo on blue nav (no white container) */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
             <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-              <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-10 sm:h-12 md:h-16 w-auto object-contain" />
+              <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-12 sm:h-14 md:h-20 lg:h-24 w-auto object-contain" />
             </div>
           </Link>
 
@@ -343,7 +363,7 @@ function UserHeader() {
               <div className="flex items-center justify-between px-3 sm:px-4 py-4 border-b border-gray-200 shrink-0">
                 <Link href="/" className="flex items-center transition-colors min-w-0" onClick={() => setMobileMenuOpen(false)}>
                   <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
-                    <Image src={LOGO_SRC} alt="Pre delivery" width={220} height={64} className="h-12 sm:h-14 w-auto object-contain" />
+                    <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-14 sm:h-16 w-auto object-contain" />
                   </div>
                 </Link>
                 <button
