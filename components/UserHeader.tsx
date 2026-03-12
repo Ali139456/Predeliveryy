@@ -270,6 +270,32 @@ function UserHeader() {
               </Link>
             )}
 
+            {/* New Inspection & View Inspections - for all logged-in users */}
+            <Link
+              href="/inspection/new"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
+                pathname === '/inspection/new'
+                  ? 'bg-white text-[#0033FF] border-white shadow-lg'
+                  : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+              }`}
+            >
+              <FileCheck className="w-4 h-4 mr-2" />
+              <span>New Inspection</span>
+            </Link>
+            <Link
+              href="/inspections"
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md hover:shadow-lg border ${
+                pathname === '/inspections'
+                  ? 'bg-white text-[#0033FF] border-white shadow-lg'
+                  : 'bg-white/10 text-white border-white/20 hover:bg-white/20'
+              }`}
+            >
+              <Search className="w-4 h-4 mr-2" />
+              <span>View Inspections</span>
+            </Link>
+
             {/* User Info Section */}
             <div className="flex items-center gap-2 lg:gap-3 ml-2 pl-2 lg:pl-3 border-l border-white/20 shrink-0">
               {/* User Avatar & Name */}
@@ -406,6 +432,34 @@ function UserHeader() {
                     <span>Dashboard</span>
                   </Link>
                 )}
+
+                {/* New Inspection */}
+                <Link
+                  href="/inspection/new"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                    pathname === '/inspection/new'
+                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
+                      : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
+                  }`}
+                >
+                  <FileCheck className="w-5 h-5 mr-3" />
+                  <span>New Inspection</span>
+                </Link>
+
+                {/* View Inspections */}
+                <Link
+                  href="/inspections"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                    pathname === '/inspections'
+                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
+                      : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
+                  }`}
+                >
+                  <Search className="w-5 h-5 mr-3" />
+                  <span>View Inspections</span>
+                </Link>
 
                 {/* User Info Section */}
                 <div className="px-4 py-4 bg-gray-50 rounded-lg border-2 border-gray-200 space-y-4 mt-4">
