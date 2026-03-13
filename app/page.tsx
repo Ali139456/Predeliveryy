@@ -43,7 +43,7 @@ export default function Home() {
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-center w-full min-w-0">
               {/* Hero content: H1, tagline, features, Built for, CTAs - all in one div */}
               <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-center lg:text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 max-w-2xl overflow-visible mx-auto lg:mx-0">
-                <h1 className="hero-h1 hyphens-none mt-8 sm:mt-10 md:mt-12 lg:mt-[4.5rem]">
+                <h1 className="hero-h1 hyphens-none mt-16 sm:mt-20 md:mt-12 lg:mt-[4.5rem]">
                   <span className="text-[#FF6600]">Pre-Delivery Inspections</span><span className="text-white">, Digitised</span>
                 </h1>
                 <p className="hero-tagline text-white/90 leading-relaxed break-words min-w-0">
@@ -578,7 +578,7 @@ export default function Home() {
                   alt="Pre Delivery"
                   width={240}
                   height={72}
-                  className="h-[5.5rem] sm:h-16 md:h-20 w-auto object-contain"
+                  className="h-[6.5rem] sm:h-16 md:h-20 w-auto object-contain"
                 />
               </Link>
               <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-4">

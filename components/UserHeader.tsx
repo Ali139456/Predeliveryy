@@ -65,7 +65,7 @@ function UserHeader() {
           <div className="max-w-7xl mx-auto w-full">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[5.5rem] sm:h-16 md:h-20 lg:h-24 w-auto object-contain" priority />
+                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[6.5rem] sm:h-16 md:h-20 lg:h-24 w-auto object-contain" priority />
               </Link>
               <div className="h-10 w-20 bg-white/10 rounded-lg animate-pulse" aria-hidden />
             </div>
@@ -87,7 +87,7 @@ function UserHeader() {
           <div className="flex items-center justify-between gap-2">
             <Link href="/" className="transition-colors flex items-center group hover:opacity-90 min-w-0 shrink">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[5.5rem] sm:h-16 md:h-20 lg:h-24 w-auto object-contain" priority />
+                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[6.5rem] sm:h-16 md:h-20 lg:h-24 w-auto object-contain" priority />
               </div>
             </Link>
             
@@ -145,7 +145,7 @@ function UserHeader() {
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center min-w-0" onClick={() => setMobileMenuOpen(false)}>
                     <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                      <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[5.5rem] sm:h-[4.5rem] w-auto object-contain" />
+                      <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[6.5rem] sm:h-[4.5rem] w-auto object-contain" />
                     </div>
                   </Link>
                   <button
@@ -214,7 +214,7 @@ function UserHeader() {
           {/* Logo on blue nav (no white container) */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
             <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-              <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[5.5rem] sm:h-16 md:h-20 lg:h-24 w-auto object-contain" />
+              <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[6.5rem] sm:h-16 md:h-20 lg:h-24 w-auto object-contain" />
             </div>
           </Link>
 
@@ -369,7 +369,7 @@ function UserHeader() {
               <div className="flex items-center justify-between px-3 sm:px-4 py-4 border-b border-gray-200 shrink-0">
                 <Link href="/" className="flex items-center transition-colors min-w-0" onClick={() => setMobileMenuOpen(false)}>
                   <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
-                    <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[5.5rem] sm:h-[4.5rem] w-auto object-contain" />
+                    <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className="h-[6.5rem] sm:h-[4.5rem] w-auto object-contain" />
                   </div>
                 </Link>
                 <button
