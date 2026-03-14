@@ -116,7 +116,7 @@ export default function PdfExportProgress({
         }
 
         setProgressSafe(100);
-        const blob = new Blob(chunks, { type: 'application/pdf' });
+        const blob = new Blob(chunks as BlobPart[], { type: 'application/pdf' });
         if (blob.size === 0) throw new Error('PDF file is empty');
         if (cancelled) return;
 
