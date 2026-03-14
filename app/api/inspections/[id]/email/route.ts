@@ -43,12 +43,23 @@ export async function POST(
       );
     }
 
+    // Generate a lighter PDF for email (fewer photos) to stay under Resend 40MB limit
+    const RESEND_EMAIL_SIZE_LIMIT_BYTES = 38 * 1024 * 1024; // 38MB (leave room for body + base64 overhead)
     let pdfBuffer: Buffer;
     try {
-      pdfBuffer = await generatePDF(inspection);
+      pdfBuffer = await generatePDF(inspection, { forEmail: true });
     } catch (pdfError: unknown) {
       const msg = pdfError instanceof Error ? pdfError.message : 'Unknown error';
       return NextResponse.json({ success: false, error: `Failed to generate PDF: ${msg}` }, { status: 500 });
+    }
+    if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'This report is too large to email (limit 40MB). Please download the PDF and share it via link or use an inspection with fewer photos.',
+        },
+        { status: 413 }
+      );
     }
 
     const pdfFileName = `Inspection-${inspection.inspectionNumber}-${Date.now()}.pdf`;

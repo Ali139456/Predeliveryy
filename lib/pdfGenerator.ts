@@ -115,6 +115,9 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
 const IMAGE_FETCH_TIMEOUT_MS = 8000;
 const MAX_GENERAL_PHOTOS = 12;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM = 3;
+/** Lighter limits for email (Resend 40MB limit) */
+const MAX_GENERAL_PHOTOS_EMAIL = 4;
+const MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL = 1;
 const IMAGE_LOAD_CONCURRENCY = 6;
 
 function fetchImageFromUrl(url: string): Promise<Buffer | null> {
@@ -291,7 +294,13 @@ function drawPageHeader(
   doc.setTextColor(0, 0, 0);
 }
 
-export async function generatePDF(inspection: IInspection): Promise<Buffer> {
+export type GeneratePDFOptions = { forEmail?: boolean };
+
+export async function generatePDF(inspection: IInspection, options?: GeneratePDFOptions): Promise<Buffer> {
+  const forEmail = options?.forEmail === true;
+  const maxGeneral = forEmail ? MAX_GENERAL_PHOTOS_EMAIL : MAX_GENERAL_PHOTOS;
+  const maxPerItem = forEmail ? MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL : MAX_PHOTOS_PER_CHECKLIST_ITEM;
+
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -321,7 +330,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // Pre-load all images in parallel (capped) for fast PDF generation
   const imageSources: string[] = [];
   if (inspection.photos && inspection.photos.length > 0) {
-    const general = inspection.photos.slice(0, MAX_GENERAL_PHOTOS);
+    const general = inspection.photos.slice(0, maxGeneral);
     for (const photo of general) {
       const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : (typeof photo === 'string' ? photo : (photo as any)?.fileName);
       if (imageSrc) imageSources.push(imageSrc);
@@ -332,7 +341,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     if (!category?.items) continue;
     for (const item of category.items) {
       if (!item.photos?.length) continue;
-      const itemPhotos = item.photos.slice(0, MAX_PHOTOS_PER_CHECKLIST_ITEM);
+      const itemPhotos = item.photos.slice(0, maxPerItem);
       for (const photo of itemPhotos) {
         const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : (typeof photo === 'string' ? photo : (photo as any)?.fileName);
         if (imageSrc) imageSources.push(imageSrc);
@@ -591,7 +600,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     const photoSpacing = 8;
     const photoWidth = (contentWidth - photoSpacing) / photosPerRow;
     const photoHeight = photoWidth * 0.75;
-    const generalPhotos = inspection.photos.slice(0, MAX_GENERAL_PHOTOS);
+    const generalPhotos = inspection.photos.slice(0, maxGeneral);
     
     for (let i = 0; i < generalPhotos.length; i++) {
       const photo = generalPhotos[i];
@@ -743,7 +752,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       const itemPhotoWidth = (contentWidth - 12) / 3;
       const itemPhotoHeight = itemPhotoWidth * 0.75;
       const photoSpacing = 6;
-      const itemPhotosSlice = item.photos.slice(0, MAX_PHOTOS_PER_CHECKLIST_ITEM);
+      const itemPhotosSlice = item.photos.slice(0, maxPerItem);
       
       for (let i = 0; i < itemPhotosSlice.length; i++) {
         const photo = itemPhotosSlice[i];

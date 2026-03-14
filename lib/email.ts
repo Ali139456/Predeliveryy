@@ -94,8 +94,9 @@ export async function sendEmail(
     }
   } catch (error: any) {
     // Re-throw if it's already a formatted error
-    if (error.message?.includes('Cannot send to external emails') || 
-        error.message?.includes('Invalid Resend API key')) {
+    if (error.message?.includes('Cannot send to external emails') ||
+        error.message?.includes('Invalid Resend API key') ||
+        error.message?.includes('too large to email')) {
       throw error;
     }
     
@@ -221,6 +222,10 @@ export async function sendEmailWithPDF(
         throw new Error(
           'Invalid Resend API key. Please check your RESEND_API_KEY environment variable in Vercel.'
         );
+      } else if (error.message?.includes('size limit') || error.message?.includes('40MB') || error.message?.includes('exceeded the size')) {
+        throw new Error(
+          'This report is too large to email (Resend limit 40MB). Please download the PDF and share it another way, or use an inspection with fewer photos.'
+        );
       } else if (error.message?.includes('domain') || error.message?.includes('not verified') || error.message?.includes('from')) {
         throw new Error(
           `Cannot send to external emails with ${fromEmail}. ` +
@@ -240,8 +245,9 @@ export async function sendEmailWithPDF(
     }
   } catch (error: any) {
     // Re-throw if it's already a formatted error
-    if (error.message?.includes('Cannot send to external emails') || 
-        error.message?.includes('Invalid Resend API key')) {
+    if (error.message?.includes('Cannot send to external emails') ||
+        error.message?.includes('Invalid Resend API key') ||
+        error.message?.includes('too large to email')) {
       throw error;
     }
     
@@ -249,6 +255,10 @@ export async function sendEmailWithPDF(
     if (error.message?.includes('API key') || error.message?.includes('Unauthorized')) {
       throw new Error(
         'Invalid Resend API key. Please check your RESEND_API_KEY environment variable in Vercel.'
+      );
+    } else if (error.message?.includes('size limit') || error.message?.includes('40MB') || error.message?.includes('exceeded the size')) {
+      throw new Error(
+        'This report is too large to email (Resend limit 40MB). Please download the PDF and share it another way, or use an inspection with fewer photos.'
       );
     } else if (error.message?.includes('domain') || error.message?.includes('not verified') || error.message?.includes('from')) {
       throw new Error(
