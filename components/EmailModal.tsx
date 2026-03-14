@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Send, Mail, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+import { X, Send, Mail, AlertCircle, CheckCircle, Loader2, Copy } from 'lucide-react';
 
 interface EmailModalProps {
   isOpen: boolean;
@@ -15,6 +15,15 @@ export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyErrorToClipboard = () => {
+    if (!error) return;
+    navigator.clipboard.writeText(error).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   useEffect(() => {
     if (isOpen) {
@@ -130,9 +139,24 @@ export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }
 
           {/* Error Message */}
           {error && (
-            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start animate-fade-in">
-              <AlertCircle className="w-5 h-5 text-red-600 mr-3 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-700 font-medium">{error}</p>
+            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start gap-3 animate-fade-in">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-red-700 font-medium whitespace-pre-wrap break-words max-h-24 overflow-y-auto pr-1">{error}</p>
+                {error.includes('RESEND_FROM_EMAIL') && (
+                  <p className="text-xs text-red-600 mt-2 font-semibold">
+                    Quick fix: In Vercel → Project → Settings → Environment Variables, add RESEND_FROM_EMAIL = Pre Delivery &lt;noreply@predelivery.ai&gt; then redeploy.
+                  </p>
+                )}
+                <button
+                  type="button"
+                  onClick={copyErrorToClipboard}
+                  className="mt-2 text-xs text-red-600 hover:text-red-800 underline flex items-center gap-1"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  {copied ? 'Copied!' : 'Copy instructions'}
+                </button>
+              </div>
             </div>
           )}
 

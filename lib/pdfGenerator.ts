@@ -112,7 +112,7 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
   }
 }
 
-const IMAGE_FETCH_TIMEOUT_MS = 2500;
+const IMAGE_FETCH_TIMEOUT_MS = 8000;
 const MAX_GENERAL_PHOTOS = 12;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM = 3;
 const IMAGE_LOAD_CONCURRENCY = 6;
@@ -123,7 +123,19 @@ function fetchImageFromUrl(url: string): Promise<Buffer | null> {
       resolve(null); // Don't hang PDF generation on slow images
     }, IMAGE_FETCH_TIMEOUT_MS);
     const protocol = url.startsWith('https') ? https : http;
-    const req = protocol.get(url, (res) => {
+    const opts: https.RequestOptions = { headers: { 'User-Agent': 'PreDelivery-PDFGenerator/1.0 (Node)' } };
+    const req = protocol.get(url, opts, (res) => {
+      if (res.statusCode === 301 || res.statusCode === 302) {
+        const location = res.headers.location;
+        if (location) {
+          const nextUrl = location.startsWith('http') ? location : new URL(location, url).href;
+          fetchImageFromUrl(nextUrl).then((buf) => {
+            clearTimeout(timeout);
+            resolve(buf);
+          });
+          return;
+        }
+      }
       const chunks: Buffer[] = [];
       res.on('data', (chunk) => chunks.push(chunk));
       res.on('end', () => {
@@ -224,40 +236,87 @@ function formatValue(value: any): string {
   return String(value);
 }
 
+const PDF_HEADER_HEIGHT = 50;
+// Theme: app primary blue #0033FF and darker #0029CC
+const PDF_THEME_MAIN = [0, 51, 255] as const;
+const PDF_THEME_STRIP = [0, 41, 204] as const;
+
+function drawPageHeader(
+  doc: jsPDF,
+  pageWidth: number,
+  margin: number,
+  inspection: IInspection,
+  logoBase64: string | null
+) {
+  doc.setFillColor(...PDF_THEME_MAIN);
+  doc.rect(0, 0, pageWidth, PDF_HEADER_HEIGHT, 'F');
+  doc.setFillColor(...PDF_THEME_STRIP);
+  doc.rect(0, 0, pageWidth, 3, 'F');
+
+  // Left: logo (or "PreDelivery Global" if no logo)
+  if (logoBase64) {
+    try {
+      const logoHeight = 22;
+      const logoWidth = Math.min(70, logoHeight * 2.8);
+      const logoY = (PDF_HEADER_HEIGHT - logoHeight) / 2;
+      doc.addImage(logoBase64, 'PNG', margin, logoY, logoWidth, logoHeight);
+    } catch (e) {
+      // fallback to text if image fails
+    }
+  }
+  if (!logoBase64) {
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('PreDelivery Global', margin, 28);
+  }
+
+  // Right side of header: Report #, Generated, Status (inside the blue bar)
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(255, 255, 255);
+  const infoBlockWidth = 78;
+  const infoBlockLeft = pageWidth - margin - infoBlockWidth;
+  const infoY1 = 20;
+  const infoY2 = 28;
+  const infoY3 = 36;
+  doc.text(`Report #: ${inspection.inspectionNumber || 'N/A'}`, infoBlockLeft, infoY1, { align: 'left' });
+  doc.text(`Generated: ${new Date().toLocaleString()}`, infoBlockLeft, infoY2, { align: 'left' });
+  doc.text(`Status: ${inspection.status?.toUpperCase() || 'DRAFT'}`, infoBlockLeft, infoY3, { align: 'left' });
+
+  // Line at bottom of header bar
+  doc.setDrawColor(PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]);
+  doc.setLineWidth(0.5);
+  doc.line(margin, PDF_HEADER_HEIGHT - 0.5, pageWidth - margin, PDF_HEADER_HEIGHT - 0.5);
+  doc.setTextColor(0, 0, 0);
+}
+
 export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 15;
   const contentWidth = pageWidth - (margin * 2);
-  
-  // ============================================
-  // CLEAN HEADER
-  // ============================================
-  doc.setFillColor(79, 70, 229);
-  doc.rect(0, 0, pageWidth, 50, 'F');
-  
-  doc.setFillColor(99, 102, 241);
-  doc.rect(0, 0, pageWidth, 3, 'F');
-  
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(26);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Pre delivery inspection', margin, 28);
-  
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(240, 240, 255);
-  doc.text('Comprehensive Vehicle Inspection Report', margin, 38);
-  
-  doc.setFontSize(9);
-  doc.text(`Report #: ${inspection.inspectionNumber || 'N/A'}`, pageWidth - margin, 28, { align: 'right' });
-  doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth - margin, 38, { align: 'right' });
-  doc.text(`Status: ${inspection.status?.toUpperCase() || 'DRAFT'}`, pageWidth - margin, 48, { align: 'right' });
-  
-  doc.setTextColor(0, 0, 0);
-  
-  let yPos = 60;
+
+  let logoBase64: string | null = null;
+  try {
+    const logoPath = path.join(process.cwd(), 'public', 'Pre Delivery Logo', 'Original Logo Transparent Background.png');
+    if (fs.existsSync(logoPath)) {
+      const buf = fs.readFileSync(logoPath);
+      logoBase64 = `data:image/png;base64,${buf.toString('base64')}`;
+    } else {
+      const altPath = path.join(process.cwd(), 'public', 'PD-Logo-Mockup.png');
+      if (fs.existsSync(altPath)) {
+        const buf = fs.readFileSync(altPath);
+        logoBase64 = `data:image/png;base64,${buf.toString('base64')}`;
+      }
+    }
+  } catch (e) {
+    console.warn('Logo not found for PDF header');
+  }
+
+  drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+  let yPos = PDF_HEADER_HEIGHT + 10;
 
   // Pre-load all images in parallel (capped) for fast PDF generation
   const imageSources: string[] = [];
@@ -287,7 +346,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // SECTION 1: INSPECTOR INFORMATION (Table)
   // ============================================
   // Section title
-  doc.setFillColor(79, 70, 229);
+  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
   doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -308,7 +367,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     body: inspectorData,
     theme: 'striped',
     headStyles: {
-      fillColor: [99, 102, 241],
+      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       fontSize: 10,
@@ -338,11 +397,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    yPos = 20;
+    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    yPos = PDF_HEADER_HEIGHT + 10;
   }
 
   // Section title
-  doc.setFillColor(79, 70, 229);
+  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
   doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -372,7 +432,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     body: vehicleData,
     theme: 'striped',
     headStyles: {
-      fillColor: [99, 102, 241],
+      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       fontSize: 10,
@@ -402,11 +462,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    yPos = 20;
+    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    yPos = PDF_HEADER_HEIGHT + 10;
   }
 
   // Section title
-  doc.setFillColor(79, 70, 229);
+  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
   doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -435,7 +496,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     body: locationData,
     theme: 'striped',
     headStyles: {
-      fillColor: [99, 102, 241],
+      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       fontSize: 10,
@@ -465,11 +526,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
 
   if (yPos > pageHeight - 50) {
     doc.addPage();
-    yPos = 20;
+    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    yPos = PDF_HEADER_HEIGHT + 10;
   }
 
   // Section title
-  doc.setFillColor(79, 70, 229);
+  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
   doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -483,7 +545,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     body: [['Scanned Code', formatValue(inspection.barcode)]],
     theme: 'striped',
     headStyles: {
-      fillColor: [99, 102, 241],
+      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       fontSize: 10,
@@ -511,11 +573,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   if (yPos > pageHeight - 120) {
     doc.addPage();
-    yPos = 20;
+    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    yPos = PDF_HEADER_HEIGHT + 10;
   }
 
   // Section title
-  doc.setFillColor(79, 70, 229);
+  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
   doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -541,7 +604,8 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       if (row > 0 && col === 0) {
         if (yPos + photoHeight > pageHeight - 50) {
           doc.addPage();
-          yPos = 20;
+          drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+          yPos = PDF_HEADER_HEIGHT + 10;
         } else {
           yPos = yPos + (row * (photoHeight + photoSpacing));
         }
@@ -550,7 +614,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       const x = margin + (col * (photoWidth + photoSpacing));
       const y = yPos;
       
-      const imageData = imageCache.get(imageSrc) ?? null;
+      const imageData = imageCache.get(imageSrc) ?? (fileName ? imageCache.get(fileName) : null) ?? null;
       await addImageToPDF(doc, imageData, x, y, photoWidth, photoHeight, fileName);
       
       if ((i + 1) % photosPerRow === 0 || i === generalPhotos.length - 1) {
@@ -575,11 +639,12 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     
     if (yPos > pageHeight - 100) {
       doc.addPage();
-      yPos = 20;
+      drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+      yPos = PDF_HEADER_HEIGHT + 10;
     }
-    
+
     // Category header
-    doc.setFillColor(99, 102, 241);
+    doc.setFillColor(PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]);
     doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
     
     doc.setFontSize(12);
@@ -632,7 +697,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       body: tableData,
       theme: 'striped',
       headStyles: {
-        fillColor: [79, 70, 229],
+        fillColor: [PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]],
         textColor: [255, 255, 255],
         fontStyle: 'bold',
         fontSize: 10,
@@ -644,7 +709,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       },
       columnStyles: {
         0: { cellWidth: 75, fontStyle: 'bold', textColor: [30, 30, 40], halign: 'left' },
-        1: { cellWidth: 28, halign: 'center', fontStyle: 'bold', textColor: [79, 70, 229] },
+        1: { cellWidth: 28, halign: 'center', fontStyle: 'bold', textColor: [PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]] },
         2: { cellWidth: 'auto', textColor: [60, 60, 80], halign: 'left' },
         3: { cellWidth: 35, halign: 'center', fontSize: 8, textColor: [100, 100, 120] },
       },
@@ -663,13 +728,14 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
       
       if (yPos > pageHeight - 90) {
         doc.addPage();
-        yPos = 20;
+        drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+        yPos = PDF_HEADER_HEIGHT + 10;
       }
-      
+
       // Item photo header
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(79, 70, 229);
+      doc.setTextColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
       doc.text(`${item.item} - Photos:`, margin + 6, yPos);
       yPos += 8;
       
@@ -686,16 +752,17 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();
-          yPos = 20;
+          drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+          yPos = PDF_HEADER_HEIGHT + 10;
         }
-        
+
         const col = i % 3;
         const row = Math.floor(i / 3);
         
         const x = margin + 6 + (col * (itemPhotoWidth + photoSpacing));
         const y = yPos + (row * (itemPhotoHeight + photoSpacing));
         
-        const imageData = imageCache.get(imageSrc) ?? null;
+        const imageData = imageCache.get(imageSrc) ?? (fileName ? imageCache.get(fileName) : null) ?? null;
         await addImageToPDF(doc, imageData, x, y, itemPhotoWidth, itemPhotoHeight, fileName);
         
         if ((i + 1) % 3 === 0 || i === itemPhotosSlice.length - 1) {
@@ -714,14 +781,14 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // ============================================
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    yPos = 20;
+    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    yPos = PDF_HEADER_HEIGHT + 10;
   }
 
-  const signatureWidth = (contentWidth - 20) / 2;
+  const signatureWidth = contentWidth - 20;
   const signatureHeight = 35;
-  const signatureSpacing = 20;
 
-  // Technician Signature
+  // Technician Signature only
   const techSigX = margin + 10;
   const techSigY = yPos + 5;
 
@@ -752,56 +819,24 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     doc.text('Not signed', techSigX + signatureWidth / 2, techSigY + signatureHeight / 2, { align: 'center' });
   }
 
-  // Manager Signature
-  const mgrSigX = margin + 10 + signatureWidth + signatureSpacing;
-  const mgrSigY = yPos + 5;
-
-  if (inspection.signatures?.manager) {
-    try {
-      doc.addImage(inspection.signatures.manager, 'PNG', mgrSigX, mgrSigY, signatureWidth, signatureHeight);
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight);
-    } catch (e) {
-      doc.setFillColor(250, 250, 250);
-      doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight, 'F');
-      doc.setDrawColor(200, 200, 200);
-      doc.setLineWidth(0.3);
-      doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight);
-      doc.setFontSize(9);
-      doc.setTextColor(150, 150, 150);
-      doc.text('Signature on file', mgrSigX + signatureWidth / 2, mgrSigY + signatureHeight / 2, { align: 'center' });
-    }
-  } else {
-    doc.setFillColor(250, 250, 250);
-    doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight, 'F');
-    doc.setDrawColor(200, 200, 200);
-    doc.setLineWidth(0.3);
-    doc.rect(mgrSigX, mgrSigY, signatureWidth, signatureHeight);
-    doc.setFontSize(9);
-    doc.setTextColor(150, 150, 150);
-    doc.text('Not signed', mgrSigX + signatureWidth / 2, mgrSigY + signatureHeight / 2, { align: 'center' });
-  }
-
-  // Signature labels
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(60, 60, 80);
   doc.text('Technician Signature:', techSigX, yPos);
-  doc.text('Manager Signature:', mgrSigX, yPos);
 
   // ============================================
   // SECTION 8: ADDITIONAL INFORMATION (Table)
   // ============================================
-  yPos = mgrSigY + signatureHeight + 20;
+  yPos = techSigY + signatureHeight + 20;
 
   if (yPos > pageHeight - 70) {
     doc.addPage();
-    yPos = 20;
+    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    yPos = PDF_HEADER_HEIGHT + 10;
   }
 
   // Section title
-  doc.setFillColor(79, 70, 229);
+  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
   doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
@@ -822,7 +857,7 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
     body: additionalFields,
     theme: 'striped',
     headStyles: {
-      fillColor: [99, 102, 241],
+      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
       textColor: [255, 255, 255],
       fontStyle: 'bold',
       fontSize: 10,
@@ -847,32 +882,23 @@ export async function generatePDF(inspection: IInspection): Promise<Buffer> {
   // FOOTER - On Every Page
   // ============================================
   const pageCount = doc.getNumberOfPages();
+  const footerY = pageHeight - 10;
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     
-    doc.setDrawColor(79, 70, 229);
+    doc.setDrawColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
     doc.setLineWidth(0.5);
     doc.line(margin, pageHeight - 18, pageWidth - margin, pageHeight - 18);
     
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
     doc.setFont('helvetica', 'normal');
-    doc.text(
-      `Page ${i} of ${pageCount}`,
-      pageWidth / 2,
-      pageHeight - 10,
-      { align: 'center' }
-    );
+    doc.text(`Page ${i} of ${pageCount}`, pageWidth / 2, footerY, { align: 'center' });
     
-    doc.setFontSize(9);
-    doc.setTextColor(79, 70, 229);
+    doc.setFontSize(8);
+    doc.setTextColor(60, 60, 80);
     doc.setFont('helvetica', 'bold');
-    doc.text('Pre delivery inspection', pageWidth - margin, pageHeight - 10, { align: 'right' });
-    
-    doc.setFontSize(7);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(100, 100, 100);
-    doc.text('© 2025 Pre delivery inspection - All Rights Reserved', margin, pageHeight - 10);
+    doc.text('PreDelivery Global Pty Ltd', margin, footerY);
   }
   
   return Buffer.from(doc.output('arraybuffer'));

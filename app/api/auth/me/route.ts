@@ -12,7 +12,8 @@ export async function GET(request: NextRequest) {
 
     const userDoc = await getUserById(user.userId);
     if (!userDoc) {
-      return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+      // Return 200 + success: false so clients get JSON and can handle (e.g. redirect to login). 404 would show as "Failed to load resource" and break callers.
+      return NextResponse.json({ success: false, error: 'User not found' });
     }
 
     return NextResponse.json({

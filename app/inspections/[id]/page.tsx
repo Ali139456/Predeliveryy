@@ -28,6 +28,7 @@ function InspectionDetailContent() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
   
   // Check if view=readonly query parameter is present (from admin overview)
   const isReadOnlyView = searchParams.get('view') === 'readonly';
@@ -130,6 +131,7 @@ function InspectionDetailContent() {
   };
 
   const handleExport = async () => {
+    setExportingPdf(true);
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 55000);
@@ -166,7 +168,9 @@ function InspectionDetailContent() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      const fileName = `inspection-${inspection?.inspectionNumber || params.id}.pdf`.replace(/[^a-z0-9.-]/gi, '_');
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
+      const fileName = filenameMatch ? filenameMatch[1] : `${(inspection?.inspectionNumber || params.id).toString().replace(/[^a-z0-9.-]/gi, '_')}.pdf`;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
@@ -185,6 +189,8 @@ function InspectionDetailContent() {
           : msg;
         alert(`Error exporting PDF: ${friendly}`);
       }
+    } finally {
+      setExportingPdf(false);
     }
   };
 
@@ -220,6 +226,16 @@ function InspectionDetailContent() {
 
   return (
     <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
+      {/* PDF export loader overlay */}
+      {exportingPdf && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm mx-4 flex flex-col items-center gap-4 border-2 border-[#0033FF]/30">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0033FF]/20 border-t-[#0033FF]" />
+            <p className="text-gray-800 font-semibold text-center">Generating PDF...</p>
+            <p className="text-gray-500 text-sm text-center">This may take 10–15 seconds</p>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
@@ -242,7 +258,8 @@ function InspectionDetailContent() {
             </button>
             <button
               onClick={handleExport}
-              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base"
+              disabled={exportingPdf}
+              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
               Export PDF
@@ -258,24 +275,27 @@ function InspectionDetailContent() {
               </h1>
             </div>
             <div className="flex flex-wrap gap-2 shrink-0">
-              {isReadOnlyView && (
-                <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
-                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1.5 sm:mr-2 shrink-0" />
-                  <span className="text-yellow-300 font-semibold">View Only Mode</span>
-                </div>
-              )}
-              {!isReadOnlyView && user?.role === 'admin' && (
-                <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-green-900/50 border-2 border-green-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
-                  <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mr-1.5 sm:mr-2 shrink-0" />
-                  <span className="text-green-300 font-semibold">Edit Mode</span>
-                </div>
-              )}
-              {!isReadOnlyView && user?.role !== 'admin' && (
-                <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
-                  <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1.5 sm:mr-2 shrink-0" />
-                  <span className="text-yellow-300 font-semibold">View Only Mode</span>
-                </div>
-              )}
+              {(() => {
+                const isOwner = user && inspection && String(user.email || '').toLowerCase() === String(inspection.inspectorEmail || '').toLowerCase();
+                const readOnly = !user ? false : (isReadOnlyView || (!isOwner && user.role !== 'admin'));
+                if (readOnly) {
+                  return (
+                    <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
+                      <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1.5 sm:mr-2 shrink-0" />
+                      <span className="text-yellow-300 font-semibold">View Only Mode</span>
+                    </div>
+                  );
+                }
+                if (user?.role === 'admin') {
+                  return (
+                    <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-green-900/50 border-2 border-green-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
+                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mr-1.5 sm:mr-2 shrink-0" />
+                      <span className="text-green-300 font-semibold">Edit Mode</span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
           </div>
           <InspectionForm 
@@ -283,8 +303,7 @@ function InspectionDetailContent() {
             initialData={inspection}
             readOnly={(() => {
               const isOwner = user && inspection && String(user.email || '').toLowerCase() === String(inspection.inspectorEmail || '').toLowerCase();
-              if (isOwner) return false;
-              return isReadOnlyView || user?.role !== 'admin';
+              return !user ? false : (isReadOnlyView || (!isOwner && user.role !== 'admin'));
             })()}
           />
         </div>

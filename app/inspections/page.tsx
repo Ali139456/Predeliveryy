@@ -26,6 +26,7 @@ export default function InspectionsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [exportingId, setExportingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchInspections();
@@ -54,6 +55,7 @@ export default function InspectionsPage() {
   };
 
   const handleExport = async (id: string) => {
+    setExportingId(id);
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 55000);
@@ -90,7 +92,9 @@ export default function InspectionsPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      const fileName = `inspection-${id}.pdf`.replace(/[^a-z0-9.-]/gi, '_');
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
+      const fileName = filenameMatch ? filenameMatch[1] : `inspection-${id}.pdf`.replace(/[^a-z0-9.-]/gi, '_');
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
@@ -109,11 +113,23 @@ export default function InspectionsPage() {
           : msg;
         alert(`Error exporting PDF: ${friendly}`);
       }
+    } finally {
+      setExportingId(null);
     }
   };
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* PDF export loader overlay */}
+      {exportingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm mx-4 flex flex-col items-center gap-4 border-2 border-[#0033FF]/30">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0033FF]/20 border-t-[#0033FF]" />
+            <p className="text-gray-800 font-semibold text-center">Generating PDF...</p>
+            <p className="text-gray-500 text-sm text-center">This may take 10–15 seconds</p>
+          </div>
+        </div>
+      )}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 min-w-0">
         <Link
           href="/"
@@ -238,7 +254,8 @@ export default function InspectionsPage() {
                     </Link>
                     <button
                       onClick={() => handleExport(inspection._id)}
-                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md"
+                      disabled={exportingId === inspection._id}
+                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                       <Download className="w-3 h-3 mr-1.5" />
                       Export
@@ -299,7 +316,8 @@ export default function InspectionsPage() {
                             </Link>
                             <button
                               onClick={() => handleExport(inspection._id)}
-                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                              disabled={exportingId === inspection._id}
+                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                             >
                               <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
                               <span className="hidden sm:inline">Export</span>

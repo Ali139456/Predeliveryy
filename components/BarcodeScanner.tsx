@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { QrCode, X, Camera, Upload, Loader2 } from 'lucide-react';
+import { QrCode, X, Upload, Loader2 } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 
 interface BarcodeScannerProps {
@@ -36,7 +36,6 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const startScanning = async () => {
     try {
@@ -195,24 +194,6 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
     }
   };
 
-  // Capture image from camera for OCR
-  const handleCameraCapture = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const imageBase64 = await fileToBase64(file);
-      await processImageWithOCR(imageBase64);
-    } catch (err: any) {
-      setError(err.message || 'Failed to capture image');
-    }
-
-    // Reset camera input
-    if (cameraInputRef.current) {
-      cameraInputRef.current.value = '';
-    }
-  };
-
   useEffect(() => {
     return () => {
       if (scannerRef.current) {
@@ -225,7 +206,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
     <div className="space-y-4 min-w-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <label className="text-sm font-medium text-black shrink-0">
-          {scanType === 'VIN' ? 'VIN Scanner' : scanType === 'COMPLIANCE' ? 'Compliance Plate Scanner' : 'Vehicle Identification Scanner'}
+          Vehicle ID scan
         </label>
         {!readOnly && (
           <div className="flex flex-wrap gap-2 min-w-0">
@@ -234,71 +215,39 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                 <button
                   type="button"
                   onClick={startScanning}
-                  className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#3833FF] text-white rounded-lg hover:bg-[#3833FF]/90 shadow-md text-sm whitespace-nowrap shrink-0"
+                  className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md text-sm whitespace-nowrap shrink-0"
                 >
                   <QrCode className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
-                  <span className="hidden sm:inline">{scanType === 'VIN' ? 'Scan VIN' : scanType === 'COMPLIANCE' ? 'Scan Compliance Plate' : 'Scan Vehicle ID'}</span>
+                  <span className="hidden sm:inline">Vehicle ID scan</span>
                   <span className="sm:hidden">Scan</span>
                 </button>
-                {(scanType === 'COMPLIANCE' || scanType === 'ANY') && (
-                  <>
-                    <input
-                      ref={cameraInputRef}
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      onChange={handleCameraCapture}
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => cameraInputRef.current?.click()}
-                      disabled={isProcessingOCR}
-                      className="flex items-center justify-center px-3 py-2 sm:px-4 bg-green-600 text-white rounded-lg hover:bg-green-500 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
-                    >
-                      {isProcessingOCR ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-1.5 sm:mr-2 animate-spin flex-shrink-0" />
-                          <span className="hidden sm:inline">Processing...</span>
-                          <span className="sm:hidden">...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Camera className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
-                          <span className="hidden sm:inline">OCR Scan</span>
-                          <span className="sm:hidden">OCR</span>
-                        </>
-                      )}
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={isProcessingOCR}
-                      className="flex items-center justify-center px-3 py-2 sm:px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-500 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
-                    >
-                      {isProcessingOCR ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-1.5 sm:mr-2 animate-spin flex-shrink-0" />
-                          <span className="hidden sm:inline">Processing...</span>
-                          <span className="sm:hidden">...</span>
-                        </>
-                      ) : (
-                        <>
-                          <Upload className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
-                          <span className="hidden sm:inline">Upload Image</span>
-                          <span className="sm:hidden">Upload</span>
-                        </>
-                      )}
-                    </button>
-                  </>
-                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isProcessingOCR}
+                  className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#0033FF]/90 text-white rounded-lg hover:bg-[#0033FF]/80 border-2 border-[#0033FF]/50 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
+                >
+                  {isProcessingOCR ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-1.5 sm:mr-2 animate-spin flex-shrink-0" />
+                      <span className="hidden sm:inline">Processing...</span>
+                      <span className="sm:hidden">...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                      <span className="hidden sm:inline">Upload image</span>
+                      <span className="sm:hidden">Upload</span>
+                    </>
+                  )}
+                </button>
               </>
             ) : (
               <button

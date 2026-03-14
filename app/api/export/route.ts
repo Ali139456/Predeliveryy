@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         return new NextResponse(uint8Array, {
           headers: {
             'Content-Type': 'application/pdf',
-            'Content-Disposition': `attachment; filename="Inspection-${sanitizedNumber}.pdf"`,
+            'Content-Disposition': `attachment; filename="${sanitizedNumber}.pdf"`,
             'Content-Length': uint8Array.length.toString(),
           },
         });

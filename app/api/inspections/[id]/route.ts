@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
-import { logAuditEvent } from '@/lib/audit';
+import { logAuditEventWithUser } from '@/lib/audit';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
@@ -44,9 +44,12 @@ export async function PUT(
   try {
     const result = await getInspectionAndUser(request, params.id);
     if ('error' in result) return result.error;
-    const { userDoc, inspection, supabase } = result;
+    const { user, userDoc, inspection, supabase } = result;
     if (userDoc.role !== 'admin') {
-      if (inspection.status !== 'draft' || inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()) {
+      const inspectorMatches =
+        !inspection.inspectorEmail ||
+        inspection.inspectorEmail.toLowerCase() === userDoc.email?.toLowerCase();
+      if (inspection.status !== 'draft' || !inspectorMatches) {
         return NextResponse.json(
           { success: false, error: 'Forbidden: You can only edit your own draft inspections' },
           { status: 403 }
@@ -70,12 +73,16 @@ export async function PUT(
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     if (!updated) return NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 });
 
-    await logAuditEvent(request, {
-      action: 'inspection.updated',
-      resourceType: 'inspection',
-      resourceId: params.id,
-      details: { inspectionNumber: updated.inspection_number, status: updated.status },
-    });
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
+    const ua = request.headers.get('user-agent') || 'unknown';
+    logAuditEventWithUser(
+      user.userId,
+      userDoc.email ?? '',
+      userDoc.name ?? userDoc.email ?? '',
+      { action: 'inspection.updated', resourceType: 'inspection', resourceId: params.id, details: { inspectionNumber: updated.inspection_number, status: updated.status } },
+      ip,
+      ua
+    ).catch(() => {});
 
     return NextResponse.json({ success: true, data: inspectionRowToInspection(updated as InspectionRow) });
   } catch (error: unknown) {
@@ -103,15 +110,20 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 });
     }
 
-    await logAuditEvent(request, {
-      action: 'inspection.deleted',
-      resourceType: 'inspection',
-      resourceId: params.id,
-      details: { inspectionNumber: row.inspection_number, inspectorName: row.inspector_name },
-    });
-
     const { error } = await supabase.from('inspections').delete().eq('id', params.id);
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
+    const ua = request.headers.get('user-agent') || 'unknown';
+    logAuditEventWithUser(
+      user.userId,
+      userDoc.email ?? '',
+      userDoc.name ?? userDoc.email ?? 'Admin',
+      { action: 'inspection.deleted', resourceType: 'inspection', resourceId: params.id, details: { inspectionNumber: row.inspection_number, inspectorName: row.inspector_name } },
+      ip,
+      ua
+    ).catch(() => {});
+
     return NextResponse.json({ success: true, data: {} });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

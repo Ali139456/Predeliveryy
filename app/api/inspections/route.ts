@@ -6,6 +6,22 @@ import { getUserById } from '@/lib/db-users';
 import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 
+/** Get next short inspection number in form "PD 1001", "PD 1002", etc. */
+async function getNextInspectionNumber(supabase: ReturnType<typeof getSupabase>): Promise<string> {
+  const { data: rows } = await supabase
+    .from('inspections')
+    .select('inspection_number')
+    .like('inspection_number', 'PD %');
+  let maxNum = 1000;
+  if (rows?.length) {
+    for (const r of rows) {
+      const n = parseInt(String(r?.inspection_number ?? '').replace(/^PD\s*/i, ''), 10);
+      if (!Number.isNaN(n)) maxNum = Math.max(maxNum, n);
+    }
+  }
+  return `PD ${maxNum + 1}`;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser(request);
@@ -26,12 +42,12 @@ export async function POST(request: NextRequest) {
       body.inspectorEmail = body.inspectorEmail.toLowerCase();
     }
 
+    const supabase = getSupabase();
     if (!body.inspectionNumber) {
-      body.inspectionNumber = `INSP-${Date.now()}`;
+      body.inspectionNumber = await getNextInspectionNumber(supabase);
     }
 
     const row = inspectionBodyToRow(body) as Record<string, unknown>;
-    const supabase = getSupabase();
     const { data: inserted, error } = await supabase
       .from('inspections')
       .insert(row)

@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Toast from '@/components/Toast';
-import { ArrowLeft, FileCheck } from 'lucide-react';
+import { ArrowLeft, FileCheck, FileEdit, PlusCircle, X } from 'lucide-react';
 import Link from 'next/link';
 
 // Lazy load heavy components
@@ -17,11 +17,45 @@ const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
   ssr: false,
 });
 
+interface DraftInspection {
+  _id: string;
+  inspectionNumber: string;
+}
+
 export default function NewInspectionPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [drafts, setDrafts] = useState<DraftInspection[]>([]);
+  const [draftsLoading, setDraftsLoading] = useState(false);
+  const [draftBannerDismissed, setDraftBannerDismissed] = useState(false);
   const router = useRouter();
+
+  // Fetch user's drafts when logged in (for "Continue draft" choice)
+  useEffect(() => {
+    if (!user?.email) {
+      setDrafts([]);
+      return;
+    }
+    let cancelled = false;
+    setDraftsLoading(true);
+    fetch('/api/inspections?status=draft', { credentials: 'include' })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled || !data.success || !Array.isArray(data.data)) return;
+        const userDrafts = data.data.filter(
+          (d: any) => d.status === 'draft' && (d.inspectorEmail || '').toLowerCase() === (user.email || '').toLowerCase()
+        );
+        const sorted = userDrafts.sort(
+          (a: any, b: any) =>
+            new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime()
+        );
+        setDrafts(sorted);
+      })
+      .catch(() => { if (!cancelled) setDrafts([]); })
+      .finally(() => { if (!cancelled) setDraftsLoading(false); });
+    return () => { cancelled = true; };
+  }, [user?.email]);
 
   useEffect(() => {
     checkAuth();
@@ -164,7 +198,40 @@ export default function NewInspectionPage() {
           <span className="font-semibold">Back to Home</span>
         </Link>
 
+        {!draftsLoading && drafts.length > 0 && !draftBannerDismissed && (
+          <div className="mb-6 p-4 sm:p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl max-w-7xl mx-auto relative">
+            <button
+              type="button"
+              onClick={() => setDraftBannerDismissed(true)}
+              className="absolute top-3 right-3 p-1 rounded-lg text-amber-700 hover:bg-amber-200/80 focus:ring-2 focus:ring-amber-400 transition-colors"
+              aria-label="Dismiss"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <p className="text-sm font-semibold text-amber-900 mb-3 pr-8">You have a saved draft. Choose one:</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href={`/inspections/${drafts[0]._id}`}
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0029CC] transition-all shadow-md"
+              >
+                <FileEdit className="w-4 h-4" />
+                Continue draft {drafts[0].inspectionNumber ? `(${drafts[0].inspectionNumber})` : ''}
+              </Link>
+              <span className="self-center text-black/60 text-sm">or scroll down to start a new inspection</span>
+            </div>
+            {drafts.length > 1 && (
+              <p className="text-xs text-amber-800/80 mt-2">
+                You have {drafts.length} drafts. Opening the most recent above; others are in Inspection History.
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
+          <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+            <PlusCircle className="w-5 h-5 text-[#0033FF]" />
+            New inspection
+          </h2>
           <InspectionForm />
         </div>
       </div>

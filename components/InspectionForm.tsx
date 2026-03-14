@@ -93,7 +93,7 @@ type InspectionFormData = z.infer<typeof inspectionSchema>;
 
 const defaultChecklist = [
   {
-    category: 'Pre-Inspection',
+    category: 'Pre delivery Inspection',
     items: [
       { item: 'Check outstanding recalls/Reworks/SSP (record evidence)', status: 'OK' as const, notes: '', photos: [] },
       { item: 'Confirm Owner\'s Manual + Warranty Booklet present', status: 'OK' as const, notes: '', photos: [] },
@@ -204,6 +204,19 @@ const defaultChecklist = [
   },
 ];
 
+function getTodayDateString(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** Normalize date to yyyy-MM-dd for <input type="date"> (avoids "does not conform" warning with ISO strings). */
+function toDateOnly(val: string | Date | undefined | null): string {
+  if (val == null || val === '') return getTodayDateString();
+  const d = typeof val === 'string' ? new Date(val) : val;
+  if (Number.isNaN(d.getTime())) return getTodayDateString();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 interface InspectionFormProps {
   inspectionId?: string;
   initialData?: any;
@@ -279,14 +292,16 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     formState: { errors },
   } = useForm<InspectionFormData>({
     resolver: zodResolver(inspectionSchema),
-    defaultValues: initialData || {
-      inspectorName: '',
-      inspectorEmail: '',
-      inspectionDate: new Date().toISOString().split('T')[0],
-      checklist: defaultChecklist,
-      photos: [],
-      privacyConsent: false,
-    },
+    defaultValues: initialData
+      ? { ...initialData, inspectionDate: toDateOnly(initialData.inspectionDate) }
+      : {
+          inspectorName: '',
+          inspectorEmail: '',
+          inspectionDate: getTodayDateString(),
+          checklist: defaultChecklist,
+          photos: [],
+          privacyConsent: false,
+        },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -294,101 +309,35 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     name: 'checklist',
   });
 
-  // Auto-fetch inspector email from logged-in user and load existing draft
+  // Sync inspection date from initialData to yyyy-MM-dd so the date input displays correctly in view mode
   useEffect(() => {
-    if (readOnly || initialData || inspectionId) return; // Skip if read-only, has initial data, or editing existing inspection
-    
-    const fetchUserAndDraft = async () => {
+    if (initialData?.inspectionDate != null) {
+      setValue('inspectionDate', toDateOnly(initialData.inspectionDate));
+    }
+  }, [initialData?.inspectionDate, setValue]);
+
+  // Auto-fetch inspector email/name from logged-in user when starting a new inspection (no draft auto-load)
+  useEffect(() => {
+    if (readOnly || initialData || inspectionId) return;
+
+    const fetchUser = async () => {
       try {
-        // Fetch user email first
         const userResponse = await fetch('/api/auth/me', { credentials: 'include' });
         const userData = await userResponse.json();
-        if (userData.success && userData.user && userData.user.email) {
-          // Auto-populate inspector email and name
-          setValue('inspectorEmail', userData.user.email);
-          if (userData.user.name && !getValues('inspectorName')) {
-            setValue('inspectorName', userData.user.name);
+        if (userData.success && userData.user) {
+          if (userData.user.email) {
+            setValue('inspectorEmail', userData.user.email);
           }
-          
-          // Check for existing draft
-          const draftResponse = await fetch('/api/inspections?status=draft', { credentials: 'include' });
-          const draftData = await draftResponse.json();
-          
-          if (draftData.success && draftData.data && draftData.data.length > 0) {
-            // Find the most recent draft for this user
-            const userDrafts = draftData.data.filter((draft: any) => 
-              draft.inspectorEmail?.toLowerCase() === userData.user.email.toLowerCase() && 
-              draft.status === 'draft'
-            );
-            
-            if (userDrafts.length > 0) {
-              // Sort by updatedAt descending to get the most recent
-              const mostRecentDraft = userDrafts.sort((a: any, b: any) => 
-                new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime()
-              )[0];
-              
-              // Load draft data into form
-              setDraftId(mostRecentDraft._id);
-              
-              // Update form values with draft data
-              if (mostRecentDraft.inspectorName) {
-                setValue('inspectorName', mostRecentDraft.inspectorName);
-              }
-              if (mostRecentDraft.inspectorEmail) {
-                setValue('inspectorEmail', mostRecentDraft.inspectorEmail);
-              }
-              if (mostRecentDraft.inspectionDate) {
-                const date = new Date(mostRecentDraft.inspectionDate);
-                setValue('inspectionDate', date.toISOString().split('T')[0]);
-              }
-              if (mostRecentDraft.vehicleInfo) {
-                Object.entries(mostRecentDraft.vehicleInfo).forEach(([key, value]) => {
-                  if (value) {
-                    setValue(`vehicleInfo.${key}` as any, value);
-                  }
-                });
-              }
-              if (mostRecentDraft.checklist && mostRecentDraft.checklist.length > 0) {
-                setValue('checklist', mostRecentDraft.checklist);
-              }
-              if (mostRecentDraft.barcode) {
-                setBarcode(mostRecentDraft.barcode);
-              }
-              if (mostRecentDraft.location) {
-                setLocation(mostRecentDraft.location);
-              }
-              if (mostRecentDraft.photos && mostRecentDraft.photos.length > 0) {
-                setPhotos(mostRecentDraft.photos.map((p: any) => 
-                  typeof p === 'string' ? { fileName: p } : p
-                ));
-              }
-              if (mostRecentDraft.signatures) {
-                setSignatures(mostRecentDraft.signatures);
-              }
-              if (mostRecentDraft.privacyConsent !== undefined) {
-                setValue('privacyConsent', mostRecentDraft.privacyConsent);
-              }
-              
-              // Update URL to show draft ID without reloading
-              if (typeof window !== 'undefined') {
-                window.history.replaceState({}, '', `/inspections/${mostRecentDraft._id}`);
-              }
-              
-              // Show notification that draft was loaded
-              setToast({
-                message: 'Draft loaded successfully. Continuing where you left off...',
-                type: 'info'
-              });
-            }
+          if (userData.user.name) {
+            setValue('inspectorName', userData.user.name);
           }
         }
       } catch (error) {
-        console.error('Failed to fetch user email or draft:', error);
+        console.error('Failed to fetch user:', error);
       }
     };
-    
-    fetchUserAndDraft();
-  }, [readOnly, initialData, inspectionId, setValue, getValues]);
+    fetchUser();
+  }, [readOnly, initialData, inspectionId, setValue]);
 
   // Check authentication periodically and on visibility change
   useEffect(() => {
@@ -479,13 +428,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       const draftData = {
         inspectorName: values.inspectorName || '',
         inspectorEmail: values.inspectorEmail || '',
-        inspectionDate: values.inspectionDate || new Date().toISOString().split('T')[0],
+        inspectionDate: values.inspectionDate || getTodayDateString(),
         vehicleInfo: values.vehicleInfo || {},
         checklist: values.checklist || defaultChecklist,
         location: location.start || location.current ? location : {},
         barcode: barcode || undefined,
         photos: photos || [],
-        signatures: signatures.technician || signatures.manager ? signatures : undefined,
+        signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: 'draft' as const,
         privacyConsent: values.privacyConsent || false,
       };
@@ -776,12 +725,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
         const inspectionData = {
           ...data,
-          inspectionNumber: `INSP-${Date.now()}`,
           inspectionDate: new Date(data.inspectionDate),
           location: locationData,
           barcode: barcode || undefined,
           photos: photos || [],
-          signatures: (signatures.technician || signatures.manager) ? signatures : undefined,
+          signatures: signatures.technician ? { technician: signatures.technician } : undefined,
           status: 'completed' as const, // Set to completed when user submits
         };
 
@@ -836,7 +784,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     try {
       const inspectionData = {
         ...data,
-        inspectionNumber: idToUse || `INSP-${Date.now()}`,
+        inspectionNumber: initialData?.inspectionNumber,
         inspectionDate: new Date(data.inspectionDate),
         location: location.start || location.current 
           ? location 
@@ -849,7 +797,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             } : {}),
         barcode: barcode || undefined,
         photos: photos || [],
-        signatures: (signatures.technician || signatures.manager) ? signatures : undefined,
+        signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: 'completed' as const, // Mark as completed when user submits
       };
 
@@ -977,6 +925,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             if (!item.status) {
               return { valid: false, error: `Item status is required for "${item.item}" in category "${category.category}"` };
             }
+            // Photo required on all items that are not optional (status 'N' = N/A)
+            const isOptional = item.status === 'N';
+            if (!isOptional) {
+              const itemPhotos = item.photos ?? [];
+              if (!itemPhotos.length) {
+                return { valid: false, error: `Please add at least one photo for "${item.item}" in category "${category.category}"` };
+              }
+            }
           }
         }
         return { valid: true };
@@ -988,8 +944,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         if (!values.privacyConsent) {
           return { valid: false, error: 'Privacy consent is required to proceed' };
         }
-        if (!signatures.technician && !signatures.manager) {
-          return { valid: false, error: 'At least one signature (Technician or Manager) is required' };
+        if (!signatures.technician) {
+          return { valid: false, error: 'Technician signature is required' };
         }
         return { valid: true };
       default:
@@ -1484,6 +1440,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
               {category.items?.map((item: any, itemIndex: number) => {
                 const itemPhotos = watch(`checklist.${categoryIndex}.items.${itemIndex}.photos`) ?? item.photos ?? [];
+                const itemStatus = watch(`checklist.${categoryIndex}.items.${itemIndex}.status`) ?? item.status;
+                const photoRequired = itemStatus !== 'N' && itemStatus !== 'na';
                 return (
                   <div 
                     key={itemIndex} 
@@ -1537,17 +1495,24 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                       rows={2}
                     />
-                    <ItemPhotoUpload
-                      photos={itemPhotos}
-                      onPhotosChange={(newPhotos: any) => {
-                        if (!readOnly) {
-                          setValue(`checklist.${categoryIndex}.items.${itemIndex}.photos`, newPhotos);
-                        }
-                      }}
-                      maxPhotos={5}
-                      itemName={item.item}
-                      readOnly={readOnly}
-                    />
+                    <div>
+                      {photoRequired && (
+                        <p className="text-xs font-medium text-black/80 mb-1">
+                          Photos <span className="text-red-500">*</span> required
+                        </p>
+                      )}
+                      <ItemPhotoUpload
+                        photos={itemPhotos}
+                        onPhotosChange={(newPhotos: any) => {
+                          if (!readOnly) {
+                            setValue(`checklist.${categoryIndex}.items.${itemIndex}.photos`, newPhotos);
+                          }
+                        }}
+                        maxPhotos={5}
+                        itemName={item.item}
+                        readOnly={readOnly}
+                      />
+                    </div>
                   </div>
                 );
               })}
@@ -1570,11 +1535,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       </div>
 
       <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-[#0033FF]/30">
-        <h3 className="text-base font-bold text-black mb-4">Pre delivery inspection Pty Ltd - Inspection Disclaimer</h3>
+        <h3 className="text-base font-bold text-black mb-4">PreDelivery Global Pty Ltd - Inspection Disclaimer</h3>
         <div className="text-sm text-black space-y-4 leading-relaxed">
           <p>
-            This inspection report has been prepared by <strong className="text-black">Pre delivery inspection Pty Ltd</strong> 
-            {" ("}<strong className="text-black">Pre delivery inspection</strong>{") "}to identify potential health or safety hazards commonly 
+            This inspection report has been prepared by <strong className="text-black">PreDelivery Global Pty Ltd</strong> 
+            {" ("}<strong className="text-black">PreDelivery Global</strong>{") "}to identify potential health or safety hazards commonly 
             associated with recovered stolen vehicles, including but not limited to sharps and meth residue.
           </p>
           <p>
@@ -1583,13 +1548,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             structural or roadworthiness assessment.
           </p>
           <p>
-            While all care has been taken to identify visible or accessible risks, Pre delivery inspection cannot guarantee that all hazards—particularly 
+            While all care has been taken to identify visible or accessible risks, PreDelivery Global cannot guarantee that all hazards—particularly 
             those hidden, embedded, or requiring forensic-level testing—will be detected. Additional specialist cleaning, decontamination, or 
             forensic testing may be required.
           </p>
           <p>
             This report is intended for use by the client named and should not be relied upon by third parties without written consent from 
-            Pre delivery inspection. Whilst Pre delivery inspection its staff and/or contractors, undertake that they have taken due care in undertaking the 
+            PreDelivery Global. Whilst PreDelivery Global its staff and/or contractors, undertake that they have taken due care in undertaking the 
             inspection, it accepts no liability for any loss, injury, or damage arising from the use of this report outside its intended purpose.
           </p>
         </div>
@@ -1641,7 +1606,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           )}
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div>
           <SignaturePad
             onSave={(signature) => {
               if (!readOnly) {
@@ -1651,17 +1616,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             }}
             label="Technician Signature"
             value={signatures.technician}
-            readOnly={readOnly}
-          />
-          <SignaturePad
-            onSave={(signature) => {
-              if (!readOnly) {
-                setSignatures({ ...signatures, manager: signature });
-                setValue('signatures.manager', signature);
-              }
-            }}
-            label="Manager Signature"
-            value={signatures.manager}
             readOnly={readOnly}
           />
         </div>

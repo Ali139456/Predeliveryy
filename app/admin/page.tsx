@@ -172,6 +172,8 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredInspections, setFilteredInspections] = useState(stats?.recent || []);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   useEffect(() => {
     if (!stats?.recent) {
@@ -195,6 +197,45 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
 
     setFilteredInspections(filtered);
   }, [searchTerm, stats?.recent]);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredInspections.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredInspections.map((i) => i.id ?? i._id).filter(Boolean) as string[]));
+    }
+  };
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!window.confirm(`Delete ${ids.length} inspection(s)? This cannot be undone.`)) return;
+    setBulkDeleting(true);
+    try {
+      const res = await fetch('/api/inspections/bulk-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ ids }),
+      });
+      const data = await res.json();
+      if (data.success && onRefetch) {
+        setSelectedIds(new Set());
+        await onRefetch();
+      } else if (!data.success) alert(data.error ?? 'Failed to delete');
+    } catch (e) {
+      alert('Failed to delete inspections');
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -262,12 +303,35 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
               className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
             />
           </div>
+          {selectedIds.size > 0 && (
+            <button
+              type="button"
+              onClick={handleBulkDelete}
+              disabled={bulkDeleting}
+              className="inline-flex items-center px-3 sm:px-4 py-2 sm:py-2.5 text-sm font-semibold bg-red-600 text-white rounded-xl hover:bg-red-700 disabled:opacity-50 transition-all shadow-md"
+            >
+              {bulkDeleting ? (
+                <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+              ) : (
+                <Trash2 className="w-4 h-4 mr-2" />
+              )}
+              Delete selected ({selectedIds.size})
+            </button>
+          )}
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white w-10">
+                  <input
+                    type="checkbox"
+                    checked={filteredInspections.length > 0 && selectedIds.size === filteredInspections.length}
+                    onChange={toggleSelectAll}
+                    className="rounded border-gray-300 text-[#0033FF] focus:ring-[#0033FF]"
+                  />
+                </th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspection #</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspector</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Status</th>
@@ -276,13 +340,25 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
               </tr>
             </thead>
             <tbody>
-              {filteredInspections.map((inspection, index) => (
+              {filteredInspections.map((inspection, index) => {
+                const id = inspection.id ?? inspection._id;
+                return (
                 <tr 
-                  key={inspection.id ?? inspection._id ?? index} 
+                  key={id ?? index} 
                   className={`border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 ${
                     index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                   }`}
                 >
+                  <td className="py-3 px-2 sm:px-4">
+                    {id && (
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(id)}
+                        onChange={() => toggleSelect(id)}
+                        className="rounded border-gray-300 text-[#0033FF] focus:ring-[#0033FF]"
+                      />
+                    )}
+                  </td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">{inspection.inspectionNumber}</td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{inspection.inspectorName}</td>
                   <td className="py-3 px-2 sm:px-4">
@@ -314,7 +390,12 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                           if (!window.confirm(`Delete inspection ${inspection.inspectionNumber ?? id}? This cannot be undone.`)) return;
                           setDeletingId(id);
                           try {
-                            const res = await fetch(`/api/inspections/${id}`, { method: 'DELETE' });
+                            const res = await fetch('/api/inspections/bulk-delete', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include',
+                              body: JSON.stringify({ ids: [id] }),
+                            });
                             const data = await res.json();
                             if (data.success && onRefetch) await onRefetch();
                             else if (!data.success) alert(data.error ?? 'Failed to delete');
@@ -324,7 +405,7 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                             setDeletingId(null);
                           }
                         }}
-                        disabled={deletingId !== null}
+                        disabled={deletingId !== null || bulkDeleting}
                         className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-all shadow-md hover:shadow-lg"
                         title="Delete inspection"
                       >
@@ -340,10 +421,10 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                     </div>
                   </td>
                 </tr>
-              ))}
+              ); })}
               {filteredInspections.length === 0 && (
                 <tr key="no-inspections">
-                  <td colSpan={5} className="py-8 text-center text-slate-400">
+                  <td colSpan={6} className="py-8 text-center text-slate-400">
                     {searchTerm ? 'No inspections found matching your search' : 'No inspections yet'}
                   </td>
                 </tr>

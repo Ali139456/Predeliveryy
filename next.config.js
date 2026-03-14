@@ -21,12 +21,15 @@ const nextConfig = {
   compress: true,
   // Optimize production builds
   productionBrowserSourceMaps: false,
-  // Optimize CSS - disabled due to critters dependency issue
-  // experimental: {
-  //   optimizeCss: true,
-  // },
+  // Avoid eval-based source maps in dev (can cause "Invalid or unexpected token" on Windows when path has spaces/backslashes)
+  webpack: (config, { dev }) => {
+    if (dev && typeof config.devtool === 'string' && config.devtool.includes('eval')) {
+      config.devtool = 'cheap-module-source-map';
+    }
+    return config;
+  },
 }
 
-module.exports = nextConfig
+module.exports = nextConfig;
 
 
