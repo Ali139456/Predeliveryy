@@ -100,7 +100,9 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const supabase = getSupabase();
-    let query = supabase.from('inspections').select('*').order('created_at', { ascending: false }).limit(100);
+    // List view: select only fields needed for table (no photos, checklist, signatures) for faster response
+    const listFields = 'id, inspection_number, inspector_name, inspector_email, inspection_date, status, barcode, created_at';
+    let query = supabase.from('inspections').select(listFields).order('created_at', { ascending: false }).limit(100);
 
     if (userDoc.role !== 'admin') {
       query = query.eq('inspector_email', userDoc.email.toLowerCase());
@@ -131,7 +133,17 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    const inspections = (rows || []).map((r) => inspectionRowToInspection(r as InspectionRow));
+    const inspections = (rows || []).map((r: Record<string, unknown>) => ({
+      _id: r.id,
+      id: r.id,
+      inspectionNumber: r.inspection_number,
+      inspectorName: r.inspector_name,
+      inspectorEmail: r.inspector_email,
+      inspectionDate: r.inspection_date,
+      status: r.status,
+      barcode: r.barcode ?? undefined,
+      createdAt: r.created_at,
+    }));
     const response = NextResponse.json({ success: true, data: inspections });
     response.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
     return response;

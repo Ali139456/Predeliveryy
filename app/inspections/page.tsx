@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search, Download, Eye, Calendar, FileText, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
+
+const PdfExportProgress = dynamic(() => import('@/components/PdfExportProgress'), { ssr: false });
 
 interface Inspection {
   _id: string;
@@ -27,16 +30,23 @@ export default function InspectionsPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [exportingId, setExportingId] = useState<string | null>(null);
+  const [exportUrl, setExportUrl] = useState<string | null>(null);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(searchTerm), 350);
+    return () => clearTimeout(t);
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchInspections();
-  }, [searchTerm, statusFilter, startDate, endDate]);
+  }, [debouncedSearch, statusFilter, startDate, endDate]);
 
   const fetchInspections = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (searchTerm) params.append('search', searchTerm);
+      if (debouncedSearch) params.append('search', debouncedSearch);
       if (statusFilter) params.append('status', statusFilter);
       if (startDate) params.append('startDate', startDate);
       if (endDate) params.append('endDate', endDate);
@@ -54,81 +64,34 @@ export default function InspectionsPage() {
     }
   };
 
-  const handleExport = async (id: string) => {
+  const handleExport = (id: string) => {
     setExportingId(id);
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 55000);
-      const response = await fetch(`/api/export?id=${id}`, {
-        credentials: 'include',
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      
-      // Check if response is ok
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: `HTTP error! status: ${response.status}` }));
-        throw new Error(errorData.error || `Failed to export PDF. Status: ${response.status}`);
-      }
-      
-      // Check content type
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/pdf')) {
-        // Try to get error message if it's JSON
-        const errorData = await response.json().catch(() => null);
-        if (errorData) {
-          throw new Error(errorData.error || 'Failed to generate PDF');
-        }
-        throw new Error('Invalid response format. Expected PDF.');
-      }
-      
-      const blob = await response.blob();
-      
-      // Verify blob is not empty
-      if (blob.size === 0) {
-        throw new Error('PDF file is empty');
-      }
-      
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const contentDisposition = response.headers.get('Content-Disposition');
-      const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
-      const fileName = filenameMatch ? filenameMatch[1] : `inspection-${id}.pdf`.replace(/[^a-z0-9.-]/gi, '_');
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }, 100);
-    } catch (error: any) {
-      console.error('Export error:', error);
-      if (typeof window !== 'undefined') {
-        const msg = error?.message || 'Unknown error';
-        const friendly = msg === 'Failed to fetch' || error?.name === 'AbortError'
-          ? 'Export timed out or the connection was lost. Try again; if the inspection has many photos, export may take longer.'
-          : msg;
-        alert(`Error exporting PDF: ${friendly}`);
-      }
-    } finally {
-      setExportingId(null);
+    setExportUrl(`/api/export?id=${id}`);
+  };
+
+  const handleExportComplete = (error?: Error) => {
+    setExportingId(null);
+    setExportUrl(null);
+    if (error && typeof window !== 'undefined') {
+      alert(`Error exporting PDF: ${error.message}`);
     }
+  };
+
+  const getExportFileName = (response: Response) => {
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
+    return filenameMatch ? filenameMatch[1] : `inspection.pdf`.replace(/[^a-z0-9.-]/gi, '_');
   };
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* PDF export loader overlay */}
-      {exportingId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm mx-4 flex flex-col items-center gap-4 border-2 border-[#0033FF]/30">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0033FF]/20 border-t-[#0033FF]" />
-            <p className="text-gray-800 font-semibold text-center">Generating PDF...</p>
-            <p className="text-gray-500 text-sm text-center">This may take 10–15 seconds</p>
-          </div>
-        </div>
+      {exportingId && exportUrl && (
+        <PdfExportProgress
+          isActive={!!exportingId}
+          exportUrl={exportUrl}
+          getFileName={getExportFileName}
+          onComplete={handleExportComplete}
+        />
       )}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 min-w-0">
         <Link

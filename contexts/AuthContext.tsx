@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
 type User = {
@@ -25,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(null);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const sessionCheckedRef = useRef(false);
 
   const refetch = useCallback(async () => {
     setLoading(true);
@@ -43,15 +44,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
     } finally {
       setLoading(false);
+      sessionCheckedRef.current = true;
     }
   }, []);
 
   useEffect(() => {
     if (pathname === '/login') {
       setLoading(false);
+      setUser(null);
+      sessionCheckedRef.current = false;
       return;
     }
-    refetch();
+    // Refetch only once on app load or when returning from login (avoid refetch on every navigation)
+    if (!sessionCheckedRef.current) {
+      refetch();
+    }
   }, [pathname, refetch]);
 
   const value: AuthContextValue = { user, loading, setUser, refetch };

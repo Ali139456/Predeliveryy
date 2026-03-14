@@ -5,6 +5,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { ArrowLeft, Send, Download, FileText, Lock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Lazy load heavy components
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
@@ -20,75 +21,32 @@ const EmailModal = dynamic(() => import('@/components/EmailModal'), {
   ssr: false,
 });
 
+const PdfExportProgress = dynamic(() => import('@/components/PdfExportProgress'), { ssr: false });
+
 function InspectionDetailContent() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { user, loading: authLoading } = useAuth();
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
-  
-  // Check if view=readonly query parameter is present (from admin overview)
+  const [exportUrl, setExportUrl] = useState<string | null>(null);
+
   const isReadOnlyView = searchParams.get('view') === 'readonly';
 
   useEffect(() => {
-    fetchUser();
-    if (params.id) {
-      fetchInspection();
-    }
-    
-    // Check auth when page becomes visible (user comes back to tab)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        fetchUser();
-      }
-    };
-    
-    // Check auth on browser back/forward navigation
-    const handlePopState = () => {
-      fetchUser();
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('popstate', handlePopState);
-    
-    // Periodic auth check (every 2 minutes - reduced frequency)
-    const authInterval = setInterval(() => {
-      fetchUser();
-    }, 120000);
-    
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('popstate', handlePopState);
-      clearInterval(authInterval);
-    };
-  }, [params.id]);
-
-  const fetchUser = async () => {
-    try {
-      const response = await fetch('/api/auth/me', { credentials: 'include' });
-      const data = await response.json();
-      if (data.success && data.user) {
-        setUser(data.user);
-      } else {
-        // User is not logged in - redirect to login
-        if (user) {
-          // User was logged in before, session expired
-          router.push('/login');
-        } else {
-          // First time check, not logged in
-          router.push('/login');
-        }
-        setUser(null);
-      }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      setUser(null);
+    if (!authLoading && !user) {
       router.push('/login');
+      return;
     }
-  };
+    if (params.id && user) {
+      fetchInspection();
+    } else if (!params.id) {
+      setLoading(false);
+    }
+  }, [params.id, user, authLoading]);
 
   const fetchInspection = async () => {
     try {
@@ -130,71 +88,26 @@ function InspectionDetailContent() {
     }
   };
 
-  const handleExport = async () => {
+  const handleExport = () => {
+    setExportUrl(`/api/export?id=${params.id}`);
     setExportingPdf(true);
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 55000);
-      const response = await fetch(`/api/export?id=${params.id}`, {
-        credentials: 'include',
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      
-      // Check if response is ok
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ error: `HTTP error! status: ${response.status}` }));
-        throw new Error(errorData.error || `Failed to export PDF. Status: ${response.status}`);
-      }
-      
-      // Check content type
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/pdf')) {
-        // Try to get error message if it's JSON
-        const errorData = await response.json().catch(() => null);
-        if (errorData) {
-          throw new Error(errorData.error || 'Failed to generate PDF');
-        }
-        throw new Error('Invalid response format. Expected PDF.');
-      }
-      
-      const blob = await response.blob();
-      
-      // Verify blob is not empty
-      if (blob.size === 0) {
-        throw new Error('PDF file is empty');
-      }
-      
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      const contentDisposition = response.headers.get('Content-Disposition');
-      const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
-      const fileName = filenameMatch ? filenameMatch[1] : `${(inspection?.inspectionNumber || params.id).toString().replace(/[^a-z0-9.-]/gi, '_')}.pdf`;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      
-      // Clean up
-      setTimeout(() => {
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }, 100);
-    } catch (error: any) {
-      console.error('Export error:', error);
-      if (typeof window !== 'undefined') {
-        const msg = error?.message || 'Unknown error';
-        const friendly = msg === 'Failed to fetch' || error?.name === 'AbortError'
-          ? 'Export timed out or the connection was lost. Try again; if the inspection has many photos, export may take longer.'
-          : msg;
-        alert(`Error exporting PDF: ${friendly}`);
-      }
-    } finally {
-      setExportingPdf(false);
+  };
+
+  const handleExportComplete = (error?: Error) => {
+    setExportingPdf(false);
+    setExportUrl(null);
+    if (error && typeof window !== 'undefined') {
+      alert(`Error exporting PDF: ${error.message}`);
     }
   };
 
-  if (loading) {
+  const getExportFileName = (response: Response) => {
+    const contentDisposition = response.headers.get('Content-Disposition');
+    const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
+    return filenameMatch ? filenameMatch[1] : `${(inspection?.inspectionNumber || params.id)?.toString().replace(/[^a-z0-9.-]/gi, '_')}.pdf`;
+  };
+
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -226,15 +139,13 @@ function InspectionDetailContent() {
 
   return (
     <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
-      {/* PDF export loader overlay */}
-      {exportingPdf && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm mx-4 flex flex-col items-center gap-4 border-2 border-[#0033FF]/30">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#0033FF]/20 border-t-[#0033FF]" />
-            <p className="text-gray-800 font-semibold text-center">Generating PDF...</p>
-            <p className="text-gray-500 text-sm text-center">This may take 10–15 seconds</p>
-          </div>
-        </div>
+      {exportingPdf && exportUrl && (
+        <PdfExportProgress
+          isActive={exportingPdf}
+          exportUrl={exportUrl}
+          getFileName={getExportFileName}
+          onComplete={handleExportComplete}
+        />
       )}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
