@@ -733,8 +733,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           status: 'completed' as const, // Set to completed when user submits
         };
 
-        console.log('Submitting inspection data:', inspectionData);
-
         const response = await fetch('/api/inspections', {
           method: 'POST',
           credentials: 'include',
@@ -1728,17 +1726,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     type="button"
                     onClick={async (e) => {
                       e.preventDefault();
-                      console.log('Button clicked, starting form submission...');
-                      console.log('Form errors:', errors);
-                      console.log('Form values:', getValues());
-                      
                       const result = await handleSubmit(
                         (data) => {
-                          console.log('Form validation passed, calling onSubmit...');
                           onSubmit(data);
                         },
                         (errors) => {
-                          console.log('Form validation failed:', errors);
                           const firstError = Object.values(errors)[0] as any;
                           setToast({
                             message: firstError?.message || 'Please check all required fields',

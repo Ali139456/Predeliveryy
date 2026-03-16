@@ -3,8 +3,8 @@ import { getUserByEmail, getUserByPhone } from '@/lib/db-users';
 import { sendEmail } from '@/lib/email';
 import { generateOTP, storeOTP } from '@/lib/otp';
 
-async function sendOTPSms(phoneNumber: string, otp: string): Promise<void> {
-  console.log(`OTP for ${phoneNumber}: ${otp}`);
+async function sendOTPSms(_phoneNumber: string, _otp: string): Promise<void> {
+  // TODO: Integrate real SMS provider (Twilio, etc.). Do not log OTP.
 }
 
 export async function POST(request: NextRequest) {

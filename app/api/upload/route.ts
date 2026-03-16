@@ -34,17 +34,8 @@ export async function POST(request: NextRequest) {
     'Expires': '0',
   };
   
-  // Log that the route was hit
-  console.log('=== UPLOAD ROUTE HIT ===');
-  console.log('Request method:', request.method);
-  console.log('Request URL:', request.url);
-  console.log('Request headers:', Object.fromEntries(request.headers.entries()));
-  
   try {
-    // Check storage configuration
     const hasStorage = hasSupabaseStorageConfig();
-    console.log('Upload request received:', { hasSupabaseStorage: hasStorage });
-    
     if (!hasStorage) {
       return NextResponse.json(
         { 
@@ -54,22 +45,17 @@ export async function POST(request: NextRequest) {
         { status: 500, headers: corsHeaders }
       );
     }
-    // Check request method explicitly (shouldn't be needed but helps with debugging)
     if (request.method !== 'POST') {
-      console.error('Invalid method:', request.method);
       return NextResponse.json(
         { success: false, error: `Method ${request.method} not allowed. Only POST is supported.` },
         { status: 405, headers: corsHeaders }
       );
     }
     
-    console.log('Reading form data...');
     let formData: FormData;
     try {
       formData = await request.formData();
-      console.log('Form data read successfully');
     } catch (formDataError: any) {
-      console.error('Error reading form data:', formDataError);
       return NextResponse.json(
         { 
           success: false, 
@@ -108,7 +94,6 @@ export async function POST(request: NextRequest) {
       bytes = await file.arrayBuffer();
       buffer = Buffer.from(bytes);
     } catch (bufferError: any) {
-      console.error('Error converting file to buffer:', bufferError);
       return NextResponse.json(
         { success: false, error: 'Failed to process file. Please try again.' },
         { status: 500, headers: corsHeaders }
@@ -125,13 +110,13 @@ export async function POST(request: NextRequest) {
           metadata = await extractEXIFMetadata(buffer, file.name, file.size, contentType);
         } catch (exifError: any) {
           // If EXIF extraction fails, skip it (non-critical)
-          console.warn('EXIF extraction failed (non-critical, upload continues):', exifError.message || exifError);
+          // EXIF extraction failed; upload continues without metadata
           metadata = null;
         }
       }
     } catch (exifError: any) {
       // If EXIF extraction fails, continue without metadata - this is non-critical
-      console.warn('EXIF extraction failed (non-critical, upload continues):', exifError.message || exifError);
+          // EXIF extraction failed; upload continues
       metadata = null;
     }
     
@@ -140,13 +125,10 @@ export async function POST(request: NextRequest) {
     let fileUrl: string | undefined;
     
     try {
-      console.log('Uploading to Supabase Storage:', { fileName, contentType, size: buffer.length });
       const result = await uploadToSupabaseStorage(buffer, fileName, contentType);
       uploadedFileName = result.path;
       fileUrl = result.url;
-      console.log('Supabase Storage upload successful:', { path: uploadedFileName, url: fileUrl });
     } catch (storageError: any) {
-      console.error('Supabase Storage upload failed:', storageError?.message || storageError);
       return NextResponse.json(
         { 
           success: false, 
@@ -179,19 +161,11 @@ export async function POST(request: NextRequest) {
       } : null,
     };
     
-    console.log('Upload successful, returning response:', { fileName: uploadedFileName, hasMetadata: !!metadata });
-    
     return NextResponse.json(responseData, { 
       status: 200,
       headers: corsHeaders,
     });
   } catch (error: any) {
-    console.error('=== UNEXPECTED UPLOAD ERROR ===');
-    console.error('Error type:', error?.constructor?.name);
-    console.error('Error message:', error?.message);
-    console.error('Error stack:', error?.stack);
-    console.error('Full error:', error);
-    
     const errorMessage = error?.message || 'An unexpected error occurred during upload';
     
     return NextResponse.json(
