@@ -137,17 +137,71 @@ export async function sendNewUserCredentials(
   const fromEmail = getFromEmail();
 
   const subject = 'Your Pre Delivery Inspector Account';
+  const safeName = name.replace(/</g, '&lt;');
+  const safeEmail = recipientEmail.replace(/</g, '&lt;');
+  const safePassword = password.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const safeLoginUrl = loginUrl.replace(/"/g, '&quot;');
+
   const html = `
-    <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">
-      <h2 style="color: #0033FF;">Welcome to Pre Delivery</h2>
-      <p>Hi ${name.replace(/</g, '&lt;')},</p>
-      <p>An administrator has created an inspector account for you. You can log in using the details below.</p>
-      <p><strong>Login URL:</strong><br/><a href="${loginUrl.replace(/"/g, '&quot;')}" style="color: #0033FF;">${loginUrl}</a></p>
-      <p><strong>Email:</strong> ${recipientEmail.replace(/</g, '&lt;')}</p>
-      <p><strong>Temporary password:</strong> <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">${password.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></p>
-      <p>We recommend changing your password after your first login.</p>
-      <p style="color: #666; font-size: 14px;">— Pre Delivery</p>
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Pre Delivery</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f1f5f9;">
+    <tr>
+      <td align="center" style="padding: 32px 16px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 520px; background-color:#ffffff; border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); overflow: hidden;">
+          <!-- Header -->
+          <tr>
+            <td style="background-color: #0033FF; background: linear-gradient(135deg, #0033FF 0%, #0029CC 100%); padding: 28px 32px; text-align: center;">
+              <h1 style="margin:0; color:#ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.02em;">Pre Delivery</h1>
+              <p style="margin: 6px 0 0; color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 500;">Verified before your drive</p>
+            </td>
+          </tr>
+          <!-- Content -->
+          <tr>
+            <td style="padding: 32px;">
+              <h2 style="margin: 0 0 8px; color: #0f172a; font-size: 20px; font-weight: 700;">Welcome, ${safeName}</h2>
+              <p style="margin: 0 0 24px; color: #475569; font-size: 15px; line-height: 1.5;">An administrator has created an inspector account for you. Use the details below to sign in.</p>
+              <!-- Credentials card -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 20px;">
+                    <p style="margin: 0 0 6px; color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Login URL</p>
+                    <p style="margin: 0 0 16px;"><a href="${safeLoginUrl}" style="color: #0033FF; font-size: 14px; text-decoration: none; word-break: break-all;">${safeLoginUrl}</a></p>
+                    <p style="margin: 0 0 6px; color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Email</p>
+                    <p style="margin: 0 0 16px; color: #0f172a; font-size: 14px;">${safeEmail}</p>
+                    <p style="margin: 0 0 6px; color: #64748b; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Temporary password</p>
+                    <p style="margin: 0;"><code style="display: inline-block; background: #ffffff; color: #0f172a; padding: 10px 14px; border-radius: 8px; font-size: 15px; font-weight: 600; border: 1px solid #e2e8f0; letter-spacing: 0.02em;">${safePassword}</code></p>
+                  </td>
+                </tr>
+              </table>
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="center" style="padding: 8px 0 20px;">
+                    <a href="${safeLoginUrl}" style="display: inline-block; background-color: #0033FF; background: linear-gradient(135deg, #0033FF 0%, #0029CC 100%); color: #ffffff; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 32px; border-radius: 10px;">Log in to your account</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin: 0; padding: 14px 16px; background: #fffbeb; border-left: 4px solid #FF6600; border-radius: 6px; color: #92400e; font-size: 13px; line-height: 1.5;">We recommend changing your password after your first login.</p>
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 20px 32px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center;">
+              <p style="margin: 0; color: #64748b; font-size: 13px;">PreDelivery Global Pty Ltd</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
   `;
 
   const { data, error } = await client.emails.send({
