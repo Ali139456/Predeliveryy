@@ -51,4 +51,10 @@ mongodb-backup/
 # reference/temporary PDFs (keep if needed for documentation)
 # *.pdf
 
-
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

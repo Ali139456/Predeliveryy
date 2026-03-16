@@ -157,7 +157,7 @@ export default function LoginPage() {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {error && (
-                  <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
+                  <div role="alert" className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
                     <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-red-700 font-medium">
                       {error.includes('NEXT_PUBLIC_SUPABASE_URL') || error.includes('deployment platform')
