@@ -98,20 +98,6 @@ function UserHeader() {
               <Link href="/#benefits" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Benefits</Link>
               <Link href="/contact" className={`${textColor} ${linkHoverColor} transition-colors font-medium text-sm`}>Contact</Link>
               <Link
-                href="/inspection/new"
-                className="flex items-center px-3 py-2 text-sm bg-white/15 hover:bg-white/25 text-white rounded-lg transition-all font-medium border border-white/30"
-              >
-                <FileCheck className="w-4 h-4 mr-1.5" />
-                <span className="hidden lg:inline">New Inspection</span>
-              </Link>
-              <Link
-                href="/inspections"
-                className="flex items-center px-3 py-2 text-sm bg-white/15 hover:bg-white/25 text-white rounded-lg transition-all font-medium border border-white/30"
-              >
-                <Search className="w-4 h-4 mr-1.5" />
-                <span className="hidden lg:inline">View Inspections</span>
-              </Link>
-              <Link
                 href="/login"
                 className="flex items-center px-5 py-2 text-sm bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-lg hover:shadow-xl font-semibold border border-white/30 hover:scale-105"
               >
@@ -160,12 +146,6 @@ function UserHeader() {
                   <Link href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#FFB366] transition-colors font-medium py-2">How it Works</Link>
                   <Link href="/#benefits" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#FFB366] transition-colors font-medium py-2">Benefits</Link>
                   <Link href="/contact" onClick={() => setMobileMenuOpen(false)} className="text-white hover:text-[#FFB366] transition-colors font-medium py-2">Contact</Link>
-                  <Link href="/inspection/new" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-white hover:text-[#FFB366] transition-colors font-medium py-2">
-                    <FileCheck className="w-4 h-4" /> New Inspection
-                  </Link>
-                  <Link href="/inspections" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-2 text-white hover:text-[#FFB366] transition-colors font-medium py-2">
-                    <Search className="w-4 h-4" /> View Inspections
-                  </Link>
                   <Link
                     href="/login"
                     onClick={() => setMobileMenuOpen(false)}

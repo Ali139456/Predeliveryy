@@ -67,6 +67,7 @@ export interface InspectionRow {
   vehicle_info: VehicleInfo;
   checklist: InspectionChecklistCategory[];
   photos: InspectionPhoto[];
+  walkaround_videos?: WalkAroundVideo[] | null;
   status: 'draft' | 'completed';
   signatures: { technician?: string; manager?: string };
   privacy_consent: boolean;
@@ -86,6 +87,7 @@ export interface IInspection {
   vehicleInfo?: VehicleInfo;
   checklist: InspectionChecklistCategory[];
   photos: InspectionPhoto[];
+  walkAroundVideos?: WalkAroundVideo[];
   status: 'draft' | 'completed';
   signatures?: { technician?: string; manager?: string };
   privacyConsent: boolean;
@@ -129,7 +131,12 @@ export interface InspectionChecklistCategory {
     item: string;
     status: string;
     notes?: string;
-    photos?: { fileName: string; url?: string; metadata?: Record<string, unknown> }[];
+    photos?: {
+      fileName: string;
+      url?: string;
+      metadata?: Record<string, unknown>;
+      damageMarkers?: { id?: string; x: number; y: number; label: string }[];
+    }[];
   }[];
 }
 
@@ -137,6 +144,12 @@ export interface InspectionPhoto {
   fileName: string;
   url?: string;
   metadata?: Record<string, unknown>;
+}
+
+export interface WalkAroundVideo {
+  fileName: string;
+  url?: string;
+  metadata?: Record<string, unknown> | null;
 }
 
 // Mappers: row (snake_case) <-> app (camelCase)
@@ -167,6 +180,7 @@ export function inspectionRowToInspection(row: InspectionRow): IInspection & { _
     vehicleInfo: row.vehicle_info,
     checklist: row.checklist || [],
     photos: row.photos || [],
+    walkAroundVideos: row.walkaround_videos || [],
     status: row.status,
     signatures: row.signatures,
     privacyConsent: row.privacy_consent,
@@ -206,6 +220,7 @@ export function inspectionBodyToRow(body: Record<string, unknown>): Record<strin
     vehicle_info: body.vehicleInfo ?? {},
     checklist: body.checklist ?? [],
     photos: body.photos ?? [],
+    walkaround_videos: body.walkAroundVideos ?? [],
     status: body.status ?? 'draft',
     signatures: body.signatures ?? {},
     privacy_consent: body.privacyConsent,

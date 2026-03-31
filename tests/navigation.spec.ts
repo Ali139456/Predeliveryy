@@ -62,6 +62,11 @@ test.describe('Navigation', () => {
 
   test('privacy page is reachable', async ({ page }) => {
     await page.goto('/privacy');
-    await expect(page.getByText(/Privacy|privacy/i).first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Privacy Policy/i })).toBeVisible();
+  });
+
+  test('terms page is reachable', async ({ page }) => {
+    await page.goto('/terms');
+    await expect(page.getByRole('heading', { name: /Terms.*Conditions/i })).toBeVisible();
   });
 });

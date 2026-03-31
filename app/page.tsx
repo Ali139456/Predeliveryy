@@ -44,7 +44,7 @@ export default function Home() {
               {/* Hero content: H1, tagline, features, Built for, CTAs - all in one div */}
               <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-center lg:text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 max-w-2xl overflow-visible mx-auto lg:mx-0">
                 <h1 className="hero-h1 hyphens-none mt-16 sm:mt-20 md:mt-12 lg:mt-[4.5rem]">
-                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span><span className="text-white">, Digitised</span>
+                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span><span className="text-white"> Digitised</span>
                 </h1>
                 <p className="hero-tagline text-white/90 leading-relaxed break-words min-w-0">
                   Verify vehicle condition before handover with a defensible digital record.
@@ -78,7 +78,7 @@ export default function Home() {
                 </div>
 
                 <p className="text-white/70 hero-built-for max-w-2xl break-words min-w-0">
-                  Built for OEM's, logistics delivery partners, dealerships, fleets and insurers who need inspection certainty before delivery.
+                  Built for OEM's, logistics delivery partners, dealerships, and fleets who need inspection certainty before delivery.
                 </p>
 
                 <div className="mt-3 lg:mt-0 text-center lg:text-left flex flex-col items-center lg:items-start">
@@ -97,16 +97,16 @@ export default function Home() {
 
               {/* PD Logo mockup - centered on mobile; on lg right column spanning 2 rows */}
               <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
-                <div className="hero-phone w-full max-w-[75vw] sm:max-w-[280px] md:max-w-[320px] lg:max-w-[360px] xl:max-w-[400px] 2xl:max-w-[450px] max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[650px] mx-auto">
+                <div className="hero-phone w-full max-h-[min(72vh,560px)] sm:max-h-[min(78vh,560px)] md:max-h-[min(82vh,620px)] lg:max-h-[min(75vh,720px)] mx-auto flex flex-col items-center">
                   <Image
                     src="/PD-Logo-Mockup.png"
-                    alt="Pre Delivery - verified before your drive"
-                    width={450}
-                    height={600}
-                    className="w-[450px] max-w-full h-[600px] max-h-[55vh] sm:max-h-[380px] md:max-h-[420px] lg:max-h-[600px] object-contain object-center drop-shadow-2xl"
-                    style={{ width: 450, height: 600 }}
+                    alt="Pre Delivery — verified before you drive"
+                    width={520}
+                    height={693}
+                    className="w-[min(520px,100%)] max-w-full h-auto max-h-[min(68vh,520px)] sm:max-h-[min(75vh,540px)] md:max-h-[min(78vh,580px)] lg:max-h-[min(72vh,680px)] object-contain object-center drop-shadow-2xl"
+                    style={{ width: 'min(520px, 100%)', height: 'auto' }}
                     priority
-                    sizes="(max-width: 640px) 75vw, (max-width: 768px) 280px, (max-width: 1024px) 320px, (max-width: 1280px) 360px, (max-width: 1536px) 400px, 440px"
+                    sizes="(max-width: 640px) 92vw, (max-width: 768px) 520px, (max-width: 1024px) 520px, (max-width: 1280px) 560px, 600px"
                   />
                 </div>
               </div>
@@ -582,7 +582,7 @@ export default function Home() {
                 />
               </Link>
               <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-4">
-                Comprehensive pre-delivery inspection management system for OEM's, vehicle transport partners, dealerships, fleets and insurers.
+                Comprehensive pre-delivery inspection management system for OEM's, vehicle transport partners, dealerships, and fleets.
               </p>
             </div>
 
@@ -607,13 +607,16 @@ export default function Home() {
 
             {/* Resources */}
             <div>
-              <h3 className="text-white font-bold mb-4 text-lg">Resources</h3>
+              <h3 className="text-white font-bold mb-4 text-lg">Legal &amp; resources</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Support</a>
+                  <Link href="/terms" className="text-white/70 hover:text-white transition-colors text-sm">Terms &amp; Conditions</Link>
                 </li>
                 <li>
                   <Link href="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">Privacy Policy</Link>
+                </li>
+                <li>
+                  <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Support</a>
                 </li>
               </ul>
             </div>
@@ -643,8 +646,8 @@ export default function Home() {
               <p className="text-white/70 text-sm text-center md:text-left">
                 © 2025 Pre Delivery Inspection. All rights reserved.
               </p>
-              <div className="flex items-center gap-6">
-                <a href="#" className="text-white/70 hover:text-white transition-colors text-sm">Terms of Service</a>
+              <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
+                <Link href="/terms" className="text-white/70 hover:text-white transition-colors text-sm">Terms &amp; Conditions</Link>
                 <Link href="/privacy" className="text-white/70 hover:text-white transition-colors text-sm">Privacy Policy</Link>
               </div>
             </div>

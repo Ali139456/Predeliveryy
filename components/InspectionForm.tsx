@@ -7,6 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import PhotoUpload from './PhotoUpload';
 import ItemPhotoUpload from './ItemPhotoUpload';
+import VideoUpload from './VideoUpload';
+import VoiceNotesButton from './VoiceNotesButton';
 import dynamic from 'next/dynamic';
 import EnhancedGPSLocation from './EnhancedGPSLocation';
 import EmailModal from './EmailModal';
@@ -54,6 +56,13 @@ const inspectionSchema = z.object({
           notes: z.string().optional(),
           photos: z.array(z.object({
             fileName: z.string(),
+            url: z.string().optional(),
+            damageMarkers: z.array(z.object({
+              id: z.string().optional(),
+              x: z.number(),
+              y: z.number(),
+              label: z.string(),
+            })).optional(),
             metadata: z.object({
               width: z.number().optional(),
               height: z.number().optional(),
@@ -80,6 +89,11 @@ const inspectionSchema = z.object({
       longitude: z.number().optional(),
     }).optional().nullable(),
   })),
+  walkAroundVideos: z.array(z.object({
+    fileName: z.string(),
+    url: z.string().optional(),
+    metadata: z.any().optional().nullable(),
+  })).optional(),
   signatures: z.object({
     technician: z.string().optional(),
     manager: z.string().optional(),
@@ -242,6 +256,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const [photos, setPhotos] = useState<Array<{ fileName: string; metadata?: any }>>(
     initialData?.photos?.map((p: any) => typeof p === 'string' ? { fileName: p } : p) || []
   );
+  const [walkAroundVideos, setWalkAroundVideos] = useState<
+    Array<{ fileName: string; url?: string; metadata?: Record<string, unknown> | null }>
+  >(
+    Array.isArray((initialData as any)?.walkAroundVideos)
+      ? (initialData as any).walkAroundVideos.map((v: any) =>
+          typeof v === 'string' ? { fileName: v } : v
+        )
+      : []
+  );
   const [signatures, setSignatures] = useState({
     technician: initialData?.signatures?.technician || '',
     manager: initialData?.signatures?.manager || '',
@@ -293,13 +316,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   } = useForm<InspectionFormData>({
     resolver: zodResolver(inspectionSchema),
     defaultValues: initialData
-      ? { ...initialData, inspectionDate: toDateOnly(initialData.inspectionDate) }
+      ? {
+          ...initialData,
+          inspectionDate: toDateOnly(initialData.inspectionDate),
+          walkAroundVideos: Array.isArray((initialData as any).walkAroundVideos)
+            ? (initialData as any).walkAroundVideos
+            : [],
+        }
       : {
           inspectorName: '',
           inspectorEmail: '',
           inspectionDate: getTodayDateString(),
           checklist: defaultChecklist,
           photos: [],
+          walkAroundVideos: [],
           privacyConsent: false,
         },
   });
@@ -411,6 +441,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     setValue('photos', photos);
   }, [photos, setValue]);
 
+  useEffect(() => {
+    setValue('walkAroundVideos', walkAroundVideos);
+  }, [walkAroundVideos, setValue]);
+
   // Auto-save draft function
   const saveDraft = useCallback(async (silent = true) => {
     if (readOnly || isSavingDraft) return; // Skip if read-only or already saving
@@ -434,6 +468,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         location: location.start || location.current ? location : {},
         barcode: barcode || undefined,
         photos: photos || [],
+        walkAroundVideos: walkAroundVideos || [],
         signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: 'draft' as const,
         privacyConsent: values.privacyConsent || false,
@@ -506,7 +541,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     } finally {
       setIsSavingDraft(false);
     }
-  }, [readOnly, isSavingDraft, getValues, location, barcode, photos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep]);
+  }, [readOnly, isSavingDraft, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep]);
 
   // Auto-save draft periodically and when data changes
   useEffect(() => {
@@ -545,13 +580,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     const debounceTimer = setTimeout(() => {
       const values = getValues();
       // Only save if there's actual data entered
-      if (values.inspectorName || values.inspectorEmail || values.inspectionDate || barcode || photos.length > 0) {
+      if (values.inspectorName || values.inspectorEmail || values.inspectionDate || barcode || photos.length > 0 || walkAroundVideos.length > 0) {
         saveDraft(true); // Silent save
       }
     }, 5000); // Debounce for 5 seconds after last change
     
     return () => clearTimeout(debounceTimer);
-  }, [readOnly, isAuthenticated, getValues, barcode, photos, location, saveDraft]);
+  }, [readOnly, isAuthenticated, getValues, barcode, photos, walkAroundVideos, location, saveDraft]);
 
   // Helper function to save a specific section
   const saveSection = async (sectionName: string, sectionData: any) => {
@@ -640,7 +675,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   // Save Photos section
   const savePhotos = async () => {
-    await saveSection('photos', { photos });
+    await saveSection('photos', { photos, walkAroundVideos });
   };
 
   // Save Checklist section
@@ -729,6 +764,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           location: locationData,
           barcode: barcode || undefined,
           photos: photos || [],
+          walkAroundVideos: walkAroundVideos || [],
           signatures: signatures.technician ? { technician: signatures.technician } : undefined,
           status: 'completed' as const, // Set to completed when user submits
         };
@@ -795,6 +831,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             } : {}),
         barcode: barcode || undefined,
         photos: photos || [],
+        walkAroundVideos: walkAroundVideos || [],
         signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: 'completed' as const, // Mark as completed when user submits
       };
@@ -1314,6 +1351,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           )}
         </div>
         <PhotoUpload photos={photos} onPhotosChange={setPhotos} readOnly={readOnly} />
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <h4 className="text-sm font-bold text-black mb-2">Walk-around video (optional)</h4>
+          <div className="text-black">
+            <VideoUpload videos={walkAroundVideos} onVideosChange={setWalkAroundVideos} readOnly={readOnly} />
+          </div>
+        </div>
       </div>
     </>
   );
@@ -1480,19 +1523,32 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                         <option value="na">➖ N/A (Legacy)</option>
                       </select>
                     </div>
-                    <textarea
-                      {...register(`checklist.${categoryIndex}.items.${itemIndex}.notes`)}
-                      placeholder="Notes (optional)"
-                      disabled={readOnly}
-                      className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-none mb-2 ${
-                          isExt 
-                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
-                            : isInt 
-                            ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
-                      } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                      rows={2}
-                    />
+                    <div className="mb-2">
+                      <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+                        <span className="text-xs font-medium text-gray-600">Notes</span>
+                        <VoiceNotesButton
+                          disabled={readOnly}
+                          onAppend={(text) => {
+                            const key = `checklist.${categoryIndex}.items.${itemIndex}.notes`;
+                            const cur = (getValues(key as `checklist.${number}.items.${number}.notes`) as string) || '';
+                            setValue(key as `checklist.${number}.items.${number}.notes`, `${cur}${text}`, { shouldDirty: true });
+                          }}
+                        />
+                      </div>
+                      <textarea
+                        {...register(`checklist.${categoryIndex}.items.${itemIndex}.notes`)}
+                        placeholder="Type notes or use Voice to notes (e.g. damage rear bumper)"
+                        disabled={readOnly}
+                        className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-none ${
+                          isExt
+                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400'
+                            : isInt
+                              ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400'
+                              : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
+                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+                        rows={3}
+                      />
+                    </div>
                     <div>
                       {photoRequired && (
                         <p className="text-xs font-medium text-black/80 mb-1">

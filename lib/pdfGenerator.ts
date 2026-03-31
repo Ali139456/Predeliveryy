@@ -8,6 +8,7 @@ import { getCloudinaryUrl, hasCloudinaryConfig } from '@/lib/cloudinary';
 import { hasSupabaseStorageConfig, getSupabaseStoragePublicUrl } from '@/lib/supabase-storage';
 import https from 'https';
 import http from 'http';
+import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 
 // Helper function to load image as base64 (fileName can be a path or a full URL)
 async function loadImageAsBase64(fileName: string): Promise<string | null> {
@@ -640,6 +641,38 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     yPos += 15;
   }
 
+  const walkAround = (inspection as { walkAroundVideos?: Array<{ fileName: string; url?: string } | string> }).walkAroundVideos;
+  if (walkAround && walkAround.length > 0) {
+    if (yPos > pageHeight - 80) {
+      doc.addPage();
+      drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+      yPos = PDF_HEADER_HEIGHT + 10;
+    }
+    doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
+    doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(255, 255, 255);
+    doc.text('Walk-around videos', margin + 6, yPos + 2);
+    yPos += 14;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(40, 40, 50);
+    for (let vi = 0; vi < Math.min(walkAround.length, 5); vi++) {
+      const v = walkAround[vi];
+      const entry = typeof v === 'string' ? { fileName: v } : v;
+      const link = getPhotoDisplayUrl(entry as { fileName: string; url?: string });
+      const line = link.length > 110 ? `${link.slice(0, 107)}…` : link;
+      doc.text(line, margin + 6, yPos);
+      yPos += 5;
+    }
+    if (walkAround.length > 5) {
+      doc.text(`… and ${walkAround.length - 5} more (see digital report)`, margin + 6, yPos);
+      yPos += 6;
+    }
+    yPos += 8;
+  }
+
   // ============================================
   // SECTION 6: INSPECTION CHECKLIST (Table Format)
   // ============================================
@@ -773,6 +806,19 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
         
         const imageData = imageCache.get(imageSrc) ?? (fileName ? imageCache.get(fileName) : null) ?? null;
         await addImageToPDF(doc, imageData, x, y, itemPhotoWidth, itemPhotoHeight, fileName);
+
+        const markers =
+          typeof photo === 'object' && photo && Array.isArray((photo as { damageMarkers?: { label: string }[] }).damageMarkers)
+            ? (photo as { damageMarkers: { label: string }[] }).damageMarkers
+            : null;
+        if (markers?.length) {
+          doc.setFontSize(7);
+          doc.setFont('helvetica', 'normal');
+          doc.setTextColor(90, 50, 30);
+          const txt = `Damage: ${markers.map((m) => m.label).join('; ')}`;
+          const short = txt.length > 95 ? `${txt.slice(0, 92)}…` : txt;
+          doc.text(short, x, y + itemPhotoHeight + 3);
+        }
         
         if ((i + 1) % 3 === 0 || i === itemPhotosSlice.length - 1) {
           yPos = y + itemPhotoHeight + photoSpacing;

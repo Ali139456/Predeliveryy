@@ -4,7 +4,7 @@ import { extractEXIFMetadata } from '@/lib/exifExtractor';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
-export const maxDuration = 30; // 30 seconds max for uploads
+export const maxDuration = 300; // large video uploads (up to 200MB) may need several minutes
 export const dynamic = 'force-dynamic'; // Force dynamic rendering on Vercel
 
 // Handle OPTIONS for CORS preflight
@@ -74,17 +74,22 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Validate file size (e.g., max 10MB)
-    const maxSize = 10 * 1024 * 1024; // 10MB
+    const contentType = file.type || 'application/octet-stream';
+    const isVideo = contentType.startsWith('video/');
+    const maxSize = isVideo ? 200 * 1024 * 1024 : 10 * 1024 * 1024; // 200MB video, 10MB images
     if (file.size > maxSize) {
       return NextResponse.json(
-        { success: false, error: 'File size exceeds maximum allowed size of 10MB' },
+        {
+          success: false,
+          error: isVideo
+            ? 'Video file size exceeds maximum allowed size of 200MB'
+            : 'File size exceeds maximum allowed size of 10MB',
+        },
         { status: 400, headers: corsHeaders }
       );
     }
     
     const fileName = `inspections/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const contentType = file.type || 'application/octet-stream';
     
     // Convert file to buffer first (can only read once)
     let bytes: ArrayBuffer;

@@ -13,7 +13,8 @@ test.describe('Forms', () => {
       await page.getByPlaceholder('your@email.com').fill('invalid@example.com');
       await page.getByPlaceholder('••••••••').fill('wrongpassword');
       await page.getByRole('button', { name: 'Sign In' }).click();
-      await expect(page.getByRole('alert')).toBeVisible({ timeout: 10000 });
+      // Scope to form so we don't match Next.js route announcer (also role="alert")
+      await expect(page.locator('form').getByRole('alert')).toBeVisible({ timeout: 10000 });
     });
 
     test('login form can switch to phone number', async ({ page }) => {

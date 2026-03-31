@@ -1,175 +1,234 @@
-'use client';
+import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
+import LegalPageShell from '@/components/LegalPageShell';
 
-import Link from 'next/link';
-import { ArrowLeft, Shield, Lock, FileText, Trash2, Check } from 'lucide-react';
+export const metadata: Metadata = {
+  title: 'Privacy Policy | Predelivery.ai',
+  description:
+    'Privacy Policy for Predelivery.ai — how we collect, use and protect your personal information under Australian privacy law.',
+};
 
-export default function PrivacyPage() {
+export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-black">
-        {/* Subtle light streaks effect */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/4 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-          <div className="absolute top-0 right-1/3 w-px h-full bg-gradient-to-b from-transparent via-[#3833FF] to-transparent"></div>
-        </div>
-        
-        <div className="container mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-32 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            {/* Left Column - Content */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-8 text-white leading-tight">
-                Privacy & Data Protection
-              </h1>
-              
-              {/* Bullet Points */}
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    GDPR-compliant data handling and protection
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Encrypted data storage and secure transmission
-                  </p>
-                </div>
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#3833FF] flex items-center justify-center mr-4 mt-1">
-                    <Check className="w-4 h-4 text-white" />
-                  </div>
-                  <p className="text-lg sm:text-xl text-white/90">
-                    Your rights to access, modify, and delete your data
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Right Column - Visual Element */}
-            <div className="relative hidden lg:block">
-              <div className="relative">
-                <div className="absolute inset-0 bg-[#3833FF]/20 rounded-2xl blur-2xl transform rotate-6"></div>
-                <div className="relative bg-gradient-to-br from-[#3833FF]/10 to-black/50 rounded-2xl p-8 border border-[#3833FF]/30 backdrop-blur-sm">
-                  <div className="flex items-center justify-center h-64">
-                    <div className="text-center">
-                      <div className="w-24 h-24 rounded-2xl bg-[#3833FF] flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#3833FF]/50">
-                        <Shield className="w-12 h-12 text-white" />
-                      </div>
-                      <p className="text-white/80 text-lg">Data Security</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <LegalPageShell active="privacy" pageTitle="Privacy Policy">
+      <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+        Privacy Policy – Predelivery.ai
+      </h1>
+      <p className="mt-2 text-sm font-medium text-[#0033FF]">
+        Effective Date: 30th March 2026
+      </p>
 
-      <div className="container mx-auto px-4 py-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 px-5 py-3 mb-6 bg-[#3833FF]/10 hover:bg-[#3833FF]/20 text-black rounded-xl border-2 border-[#3833FF]/30 hover:border-[#3833FF]/50 shadow-lg transition-all duration-300 group"
-        >
-          <div className="w-8 h-8 rounded-lg bg-[#3833FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-            <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
-          </div>
-          <span className="font-semibold">Back to Home</span>
-        </Link>
+      <p className="mt-6 text-[15px] leading-relaxed text-gray-700">
+        Predelivery.ai (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;) is committed to protecting your privacy and handling your personal
+        information in accordance with the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).
+      </p>
+      <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+        This Privacy Policy explains how we collect, use, disclose and protect your personal information when you use our
+        platform, website and services (&quot;Platform&quot;).
+      </p>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-4xl border-2 border-[#3833FF]/30">
-          <h1 className="text-3xl font-bold mb-8 text-black">Privacy & Data Protection</h1>
+      <Section n={1} title="What Information We Collect" isFirst>
+        <p className="mb-4 text-[15px] leading-relaxed text-gray-700">
+          We may collect the following types of personal information:
+        </p>
+        <Sub n="1.1" title="Personal and Contact Information" />
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Name</li>
+          <li>Email address</li>
+          <li>Phone number</li>
+          <li>Business or employer details</li>
+        </ul>
+        <Sub n="1.2" title="Vehicle and Inspection Data" />
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Vehicle Identification Number (VIN)</li>
+          <li>Vehicle condition data</li>
+          <li>Inspection results and reports</li>
+          <li>Photos and videos of vehicles</li>
+        </ul>
+        <Sub n="1.3" title="Location Information" />
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>GPS location data associated with inspections</li>
+        </ul>
+        <Sub n="1.4" title="Technical and Usage Information" />
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>IP address</li>
+          <li>Device and browser information</li>
+          <li>Log data and usage activity</li>
+        </ul>
+        <Sub n="1.5" title="Account Information" />
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Login credentials</li>
+          <li>User preferences</li>
+        </ul>
+      </Section>
 
-          <div className="space-y-8">
-            <section>
-              <div className="flex items-center mb-4">
-                <Shield className="w-6 h-6 text-[#3833FF] mr-2" />
-                <h2 className="text-2xl font-semibold text-black">Data Collection</h2>
-              </div>
-              <p className="text-black/70 mb-4">
-                We collect inspection data including inspector information, vehicle details,
-                inspection checklists, photos, GPS locations, and barcodes. All data is
-                collected with explicit consent and stored securely.
-              </p>
-            </section>
+      <Section n={2} title="How We Collect Information">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">We collect personal information:</p>
+        <ul className="ml-4 list-disc space-y-2 text-[15px] text-gray-700">
+          <li>Directly from you when you use the Platform</li>
+          <li>When you upload inspection data or images</li>
+          <li>Automatically through your use of the Platform (e.g. cookies, analytics)</li>
+          <li>From third-party integrations (e.g. VIN data providers)</li>
+        </ul>
+      </Section>
 
-            <section>
-              <div className="flex items-center mb-4">
-                <Lock className="w-6 h-6 text-[#3833FF] mr-2" />
-                <h2 className="text-2xl font-semibold text-black">Data Security</h2>
-              </div>
-              <ul className="list-disc list-inside text-black/70 space-y-2">
-                <li>All data is encrypted in transit and at rest</li>
-                <li>Cloud storage uses industry-standard security practices</li>
-                <li>Access controls limit data access to authorized personnel only</li>
-                <li>Regular security audits and updates</li>
-              </ul>
-            </section>
+      <Section n={3} title="How We Use Your Information">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">We use your personal information to:</p>
+        <ul className="ml-4 list-disc space-y-2 text-[15px] text-gray-700">
+          <li>Provide and operate the Platform</li>
+          <li>Generate inspection reports and analytics</li>
+          <li>Improve and develop our AI models and services</li>
+          <li>Provide customer support</li>
+          <li>Communicate with you</li>
+          <li>Comply with legal and regulatory obligations</li>
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          We may use de-identified and aggregated data to train and improve our AI system.
+        </p>
+      </Section>
 
-            <section>
-              <div className="flex items-center mb-4">
-                <FileText className="w-6 h-6 text-blue-400 mr-2" />
-                <h2 className="text-2xl font-semibold text-blue-200">Data Retention</h2>
-              </div>
-              <p className="text-black/70 mb-4">
-                Inspection data is retained for a configurable period (default: 365 days).
-                After the retention period expires, data is automatically deleted in
-                accordance with our data retention policy.
-              </p>
-            </section>
+      <Section n={4} title="AI and Automated Processing">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">Predelivery.ai uses artificial intelligence to assist with:</p>
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Damage detection</li>
+          <li>Condition scoring</li>
+          <li>Data analysis</li>
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">These outputs are:</p>
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Indicative only</li>
+          <li>Not guaranteed to be accurate</li>
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          You should not rely solely on AI outputs for decision-making.
+        </p>
+      </Section>
 
-            <section>
-              <div className="flex items-center mb-4">
-                <Trash2 className="w-6 h-6 text-red-400 mr-2" />
-                <h2 className="text-2xl font-semibold text-red-200">Your Rights</h2>
-              </div>
-              <ul className="list-disc list-inside text-slate-300 space-y-2">
-                <li>
-                  <strong className="text-red-300">Right to Access:</strong> You can request a copy of your inspection data
-                </li>
-                <li>
-                  <strong className="text-red-300">Right to Rectification:</strong> You can update or correct your data
-                </li>
-                <li>
-                  <strong className="text-red-300">Right to Erasure:</strong> You can request deletion of your data
-                </li>
-                <li>
-                  <strong className="text-red-300">Right to Data Portability:</strong> You can export your data in a
-                  machine-readable format
-                </li>
-                <li>
-                  <strong className="text-red-300">Right to Object:</strong> You can object to certain processing of your
-                  data
-                </li>
-              </ul>
-            </section>
+      <Section n={5} title="Disclosure of Personal Information">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">We may disclose your personal information to:</p>
+        <ul className="ml-4 list-disc space-y-2 text-[15px] text-gray-700">
+          <li>Business customers (e.g. dealers, fleet operators, OEMs)</li>
+          <li>Service providers (e.g. cloud hosting, analytics providers)</li>
+          <li>Professional advisors (e.g. legal, accounting)</li>
+          <li>Government or regulatory authorities where required</li>
+        </ul>
+      </Section>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-green-200">GDPR Compliance</h2>
-              <p className="text-black/70 mb-4">
-                This application is designed to comply with the General Data Protection
-                Regulation (GDPR) and other applicable data protection laws. We implement
-                appropriate technical and organizational measures to ensure data protection.
-              </p>
-            </section>
+      <Section n={6} title="Overseas Disclosure">
+        <p className="text-[15px] leading-relaxed text-gray-700">
+          Your personal information may be stored or processed overseas, including via cloud service providers.
+        </p>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          We take reasonable steps to ensure overseas recipients comply with Australian privacy standards.
+        </p>
+      </Section>
 
-            <section>
-              <h2 className="text-2xl font-semibold mb-4 text-yellow-200">Contact</h2>
-              <p className="text-slate-300">
-                For privacy-related inquiries or to exercise your rights, please contact the
-                data protection officer or system administrator.
-              </p>
-            </section>
-          </div>
-        </div>
-      </div>
-    </div>
+      <Section n={7} title="Data Security">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">We take reasonable steps to protect your personal information, including:</p>
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Encryption</li>
+          <li>Secure cloud infrastructure</li>
+          <li>Access controls</li>
+          <li>Audit logs</li>
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          However, no system is completely secure, and we cannot guarantee absolute security.
+        </p>
+      </Section>
+
+      <Section n={8} title="Data Retention">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">We retain personal information:</p>
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>As long as necessary to provide our services</li>
+          <li>To comply with legal obligations</li>
+          <li>For legitimate business purposes</li>
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          We may retain de-identified data indefinitely for analytics and AI training.
+        </p>
+      </Section>
+
+      <Section n={9} title="Your Rights">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">Under Australian privacy law, you have the right to:</p>
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Access your personal information</li>
+          <li>Request correction of inaccurate information</li>
+          <li>Request deletion (where applicable)</li>
+          <li>Make a complaint about how your data is handled</li>
+        </ul>
+      </Section>
+
+      <Section n={10} title="Access and Correction">
+        <p className="text-[15px] leading-relaxed text-gray-700">
+          To request access or correction of your personal information, please contact us using the details below.
+        </p>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          We may need to verify your identity before processing your request.
+        </p>
+      </Section>
+
+      <Section n={11} title="Cookies and Tracking">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">We use cookies and similar technologies to:</p>
+        <ul className="ml-4 list-disc space-y-1 text-[15px] text-gray-700">
+          <li>Improve platform performance</li>
+          <li>Analyse usage</li>
+          <li>Enhance user experience</li>
+        </ul>
+        <p className="mt-4 text-[15px] leading-relaxed text-gray-700">
+          You can manage cookies through your browser settings.
+        </p>
+      </Section>
+
+      <Section n={12} title="Third-Party Services">
+        <p className="text-[15px] leading-relaxed text-gray-700">
+          Our Platform may integrate with third-party services. We are not responsible for the privacy practices of those third
+          parties.
+        </p>
+      </Section>
+
+      <Section n={13} title="Changes to This Policy">
+        <p className="text-[15px] leading-relaxed text-gray-700">
+          We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated effective
+          date.
+        </p>
+      </Section>
+
+      <Section n={14} title="Contact Us">
+        <p className="mb-3 text-[15px] leading-relaxed text-gray-700">
+          If you have any questions or requests regarding this Privacy Policy, please contact us:
+        </p>
+        <p className="text-[15px] font-semibold text-gray-900">
+          Email:{' '}
+          <a href="mailto:info@predelivery.ai" className="text-[#0033FF] hover:underline">
+            info@predelivery.ai
+          </a>
+        </p>
+      </Section>
+    </LegalPageShell>
   );
 }
 
+function Section({
+  n,
+  title,
+  children,
+  isFirst,
+}: {
+  n: number;
+  title: string;
+  children: ReactNode;
+  isFirst?: boolean;
+}) {
+  return (
+    <section className={isFirst ? 'mt-8' : 'mt-10 border-t border-gray-100 pt-8'}>
+      <h2 className="text-lg font-bold text-gray-900 sm:text-xl">
+        {n}. {title}
+      </h2>
+      <div className="mt-4">{children}</div>
+    </section>
+  );
+}
 
+function Sub({ n, title }: { n: string; title: string }) {
+  return <h3 className="mt-6 text-base font-semibold text-gray-900">{n} {title}</h3>;
+}
