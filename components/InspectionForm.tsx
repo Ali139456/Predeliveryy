@@ -1471,9 +1471,24 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         {(() => {
-          const total = Math.max(1, fields.length);
+          const total = fields.length;
+          if (!total) {
+            return (
+              <div className="rounded-lg border border-gray-200 p-4 bg-gray-50 text-sm text-gray-700">
+                Checklist is loading…
+              </div>
+            );
+          }
+
           const safeIndex = Math.max(0, Math.min(activeChecklistCategory, total - 1));
           const category = fields[safeIndex];
+          if (!category) {
+            return (
+              <div className="rounded-lg border border-gray-200 p-4 bg-gray-50 text-sm text-gray-700">
+                Checklist is loading…
+              </div>
+            );
+          }
           const categoryIndex = safeIndex;
           const categoryName = category?.category || '';
           const isExt = isExterior(categoryName);
@@ -1509,10 +1524,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   </button>
                   <button
                     type="button"
-                    onClick={() => setActiveChecklistCategory((i) => Math.min(fields.length - 1, i + 1))}
-                    disabled={readOnly || categoryIndex >= fields.length - 1}
+                    onClick={() => setActiveChecklistCategory((i) => Math.min(total - 1, i + 1))}
+                    disabled={readOnly || categoryIndex >= total - 1}
                     className={`px-3 py-2 text-sm rounded-lg font-semibold transition-all border ${
-                      readOnly || categoryIndex >= fields.length - 1
+                      readOnly || categoryIndex >= total - 1
                         ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
                         : 'bg-white text-black border-gray-300 hover:bg-gray-50'
                     }`}
