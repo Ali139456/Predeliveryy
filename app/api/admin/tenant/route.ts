@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { requireAuth } from '@/lib/auth';
 import getSupabase from '@/lib/supabase';
 import { enforceRateLimit } from '@/lib/rateLimit';
 
-export async function GET(request: Request) {
-  await enforceRateLimit(request, 'admin.tenant.get', { limit: 60, windowSeconds: 60, scope: 'user+ip' });
-  const user = await requireAuth();
+export async function GET(request: NextRequest) {
+  await enforceRateLimit(request, 'admin.tenant.get', { limit: 60, windowSeconds: 60, scope: 'ip+user' });
+  const user = await requireAuth(['admin'])(request);
   const supabase = getSupabase();
 
   const { data, error } = await supabase
@@ -21,9 +21,9 @@ export async function GET(request: Request) {
   return NextResponse.json({ success: true, data });
 }
 
-export async function PUT(request: Request) {
-  await enforceRateLimit(request, 'admin.tenant.put', { limit: 30, windowSeconds: 60, scope: 'user+ip' });
-  const user = await requireAuth();
+export async function PUT(request: NextRequest) {
+  await enforceRateLimit(request, 'admin.tenant.put', { limit: 30, windowSeconds: 60, scope: 'ip+user' });
+  const user = await requireAuth(['admin'])(request);
   const supabase = getSupabase();
 
   const body = (await request.json().catch(() => null)) as any;
