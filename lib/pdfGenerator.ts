@@ -5,10 +5,10 @@ import fs from 'fs';
 import path from 'path';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getCloudinaryUrl, hasCloudinaryConfig } from '@/lib/cloudinary';
-import { hasSupabaseStorageConfig, getSupabaseStoragePublicUrl } from '@/lib/supabase-storage';
 import https from 'https';
 import http from 'http';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
+import { getS3Url } from '@/lib/s3';
 
 // Helper function to load image as base64 (fileName can be a path or a full URL)
 async function loadImageAsBase64(fileName: string): Promise<string | null> {
@@ -24,17 +24,18 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
       return null;
     }
 
-    if (hasSupabaseStorageConfig()) {
+    // Tenant-scoped S3 private keys
+    if (fileName.startsWith('tenants/')) {
       try {
-        const supabaseUrl = getSupabaseStoragePublicUrl(fileName);
-        const imageBuffer = await fetchImageFromUrl(supabaseUrl);
+        const signed = await getS3Url(fileName);
+        const imageBuffer = await fetchImageFromUrl(signed);
         if (imageBuffer) {
           const ext = path.extname(fileName).toLowerCase();
           const mimeType = getMimeType(ext);
           return `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
         }
       } catch (e) {
-        console.warn(`Failed to load image from Supabase Storage: ${fileName}`, e);
+        console.warn(`Failed to load image from S3: ${fileName}`, e);
       }
     }
 
@@ -114,10 +115,10 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
 }
 
 const IMAGE_FETCH_TIMEOUT_MS = 8000;
-const MAX_GENERAL_PHOTOS = 12;
-const MAX_PHOTOS_PER_CHECKLIST_ITEM = 3;
+const MAX_GENERAL_PHOTOS = 10;
+const MAX_PHOTOS_PER_CHECKLIST_ITEM = 2;
 /** Lighter limits for email (Resend 40MB limit) */
-const MAX_GENERAL_PHOTOS_EMAIL = 4;
+const MAX_GENERAL_PHOTOS_EMAIL = 3;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL = 1;
 const IMAGE_LOAD_CONCURRENCY = 6;
 
@@ -201,7 +202,12 @@ async function addImageToPDF(
 ): Promise<void> {
   if (imageData) {
     try {
-      doc.addImage(imageData, x, y, width, height);
+      const format =
+        typeof imageData === 'string' && imageData.startsWith('data:image/png')
+          ? 'PNG'
+          : 'JPEG';
+      // Use FAST compression to keep emailed PDFs small.
+      doc.addImage(imageData, format as any, x, y, width, height, undefined, 'FAST');
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.2);
       doc.rect(x, y, width, height);
@@ -433,7 +439,6 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     ['Compliance Date', formatValue(vehicleInfo.complianceDate)],
     ['Build Date', formatValue(vehicleInfo.buildDate)],
     ['License Plate', formatValue(vehicleInfo.licensePlate)],
-    ['Booking Number', formatValue(vehicleInfo.bookingNumber)],
   ];
 
   autoTable(doc, {

@@ -491,6 +491,10 @@ function UsersTab({ userRole }: { userRole?: string }) {
         )}
       </div>
 
+      {userRole === 'admin' && (
+        <OrganisationDetailsCard />
+      )}
+
       <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -574,6 +578,151 @@ function UsersTab({ userRole }: { userRole?: string }) {
           }}
         />
       )}
+    </div>
+  );
+}
+
+function OrganisationDetailsCard() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    businessName: '',
+    abn: '',
+    businessAddress: '',
+    contactName: '',
+    contactEmail: '',
+    contactNumber: '',
+  });
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/admin/tenant');
+        const data = await res.json();
+        if (data.success && data.data) {
+          setForm({
+            businessName: data.data.businessName || data.data.name || '',
+            abn: data.data.abn || '',
+            businessAddress: data.data.businessAddress || '',
+            contactName: data.data.contactName || '',
+            contactEmail: data.data.contactEmail || '',
+            contactNumber: data.data.contactNumber || '',
+          });
+        }
+      } catch (e: any) {
+        setError(e?.message || 'Failed to load organisation details');
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const save = async () => {
+    setSaving(true);
+    setError(null);
+    setSuccess(null);
+    try {
+      const res = await fetch('/api/admin/tenant', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Failed to save');
+      setSuccess('Organisation saved');
+      setTimeout(() => setSuccess(null), 2000);
+    } catch (e: any) {
+      setError(e?.message || 'Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
+      <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
+        <h3 className="text-lg font-bold text-black">Organisation</h3>
+        <button
+          type="button"
+          onClick={save}
+          disabled={loading || saving}
+          className="px-4 py-2 bg-[#0033FF] text-white rounded-xl font-semibold disabled:opacity-50"
+        >
+          {saving ? 'Saving...' : 'Save'}
+        </button>
+      </div>
+
+      {error && (
+        <div className="p-3 mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="p-3 mb-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+          {success}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Business name</label>
+          <input
+            value={form.businessName}
+            onChange={(e) => setForm({ ...form, businessName: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">ABN</label>
+          <input
+            value={form.abn}
+            onChange={(e) => setForm({ ...form, abn: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+            disabled={loading}
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Business address</label>
+          <input
+            value={form.businessAddress}
+            onChange={(e) => setForm({ ...form, businessAddress: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Contact name</label>
+          <input
+            value={form.contactName}
+            onChange={(e) => setForm({ ...form, contactName: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+            disabled={loading}
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Contact number</label>
+          <input
+            value={form.contactNumber}
+            onChange={(e) => setForm({ ...form, contactNumber: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+            disabled={loading}
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-semibold text-gray-700 mb-1">Contact email</label>
+          <input
+            type="email"
+            value={form.contactEmail}
+            onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
+            disabled={loading}
+          />
+        </div>
+      </div>
     </div>
   );
 }

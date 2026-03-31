@@ -5,7 +5,7 @@ import type { AuditLogRow } from '@/types/db';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth(['admin'])(request);
+    const authUser = await requireAuth(['admin'])(request);
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'csv';
     const action = searchParams.get('action');
@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate');
 
     const supabase = getSupabase();
-    let query = supabase.from('audit_logs').select('*').order('timestamp', { ascending: false });
+    let query = supabase
+      .from('audit_logs')
+      .select('*')
+      .eq('tenant_id', authUser.tenantId)
+      .order('timestamp', { ascending: false });
 
     if (action) query = query.eq('action', action);
     if (resourceType) query = query.eq('resource_type', resourceType);

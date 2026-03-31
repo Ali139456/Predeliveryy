@@ -2,7 +2,7 @@
 
 import { useState, useRef, memo, useCallback } from 'react';
 import Image from 'next/image';
-import { X, Upload, Image as ImageIcon, MapPin } from 'lucide-react';
+import { X, Camera, Image as ImageIcon, MapPin } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
@@ -192,6 +192,34 @@ function ItemPhotoUpload({
   const [annotateIndex, setAnnotateIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const compressImage = async (file: File): Promise<File> => {
+    if (!file.type.startsWith('image/')) return file;
+    try {
+      const bitmap = await createImageBitmap(file);
+      const maxDim = 1600;
+      const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+      const targetW = Math.max(1, Math.round(bitmap.width * scale));
+      const targetH = Math.max(1, Math.round(bitmap.height * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return file;
+      ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+
+      const blob: Blob | null = await new Promise((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', 0.8)
+      );
+      if (!blob) return file;
+
+      const name = file.name.replace(/\.(png|webp|heic|heif|jpg|jpeg)$/i, '.jpg');
+      return new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+    } catch {
+      return file;
+    }
+  };
+
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -207,7 +235,8 @@ function ItemPhotoUpload({
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        const result = await uploadToVercelBlobViaAPI(file);
+        const toUpload = await compressImage(file);
+        const result = await uploadToVercelBlobViaAPI(toUpload);
 
         return {
           fileName: result.fileName,
@@ -260,8 +289,8 @@ function ItemPhotoUpload({
             disabled={uploading || photos.length >= maxPhotos}
             className="flex items-center px-2 py-1 text-xs bg-[#3833FF]/50 text-white rounded-lg hover:bg-[#3833FF]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            <Upload className="w-3 h-3 mr-1" />
-            {uploading ? 'Uploading...' : 'Add'}
+            <Camera className="w-3 h-3 mr-1" />
+            {uploading ? 'Uploading...' : 'Take'}
           </button>
         )}
       </div>
@@ -270,6 +299,7 @@ function ItemPhotoUpload({
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        capture="environment"
         multiple
         onChange={handleFileSelect}
         className="hidden"

@@ -2,8 +2,23 @@
 
 export type UserRole = 'technician' | 'manager' | 'admin';
 
+export interface TenantRow {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ITenant {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface UserRow {
   id: string;
+  tenant_id: string;
   email: string;
   phone_number: string;
   password: string;
@@ -16,6 +31,7 @@ export interface UserRow {
 
 export interface IUser {
   id: string;
+  tenantId: string;
   email: string;
   phoneNumber: string;
   name: string;
@@ -27,6 +43,7 @@ export interface IUser {
 
 export interface AuditLogRow {
   id: string;
+  tenant_id: string;
   user_id: string;
   user_email: string;
   user_name: string;
@@ -42,6 +59,7 @@ export interface AuditLogRow {
 
 export interface IAuditLog {
   id: string;
+  tenantId: string;
   userId: string;
   userEmail: string;
   userName: string;
@@ -58,6 +76,7 @@ export interface IAuditLog {
 // Inspection: nested objects stay as-is in JSONB; only top-level keys are snake_case in DB
 export interface InspectionRow {
   id: string;
+  tenant_id: string;
   inspection_number: string;
   inspector_name: string;
   inspector_email: string;
@@ -78,6 +97,7 @@ export interface InspectionRow {
 
 export interface IInspection {
   id: string;
+  tenantId: string;
   inspectionNumber: string;
   inspectorName: string;
   inspectorEmail: string;
@@ -122,7 +142,6 @@ export interface VehicleInfo {
   complianceDate?: string;
   buildDate?: string;
   licensePlate?: string;
-  bookingNumber?: string;
 }
 
 export interface InspectionChecklistCategory {
@@ -157,6 +176,7 @@ export function userRowToUser(row: UserRow): IUser & { _id?: string } {
   return {
     id: row.id,
     _id: row.id, // backward compatibility for frontend
+    tenantId: row.tenant_id,
     email: row.email,
     phoneNumber: row.phone_number,
     name: row.name,
@@ -171,6 +191,7 @@ export function inspectionRowToInspection(row: InspectionRow): IInspection & { _
   return {
     id: row.id,
     _id: row.id, // backward compatibility for frontend
+    tenantId: row.tenant_id,
     inspectionNumber: row.inspection_number,
     inspectorName: row.inspector_name,
     inspectorEmail: row.inspector_email,
@@ -194,6 +215,7 @@ export function auditRowToLog(row: AuditLogRow): IAuditLog & { _id?: string } {
   return {
     id: row.id,
     _id: row.id,
+    tenantId: row.tenant_id,
     userId: row.user_id,
     userEmail: row.user_email,
     userName: row.user_name,
@@ -211,6 +233,7 @@ export function auditRowToLog(row: AuditLogRow): IAuditLog & { _id?: string } {
 // Build inspection row for insert/update from app-shaped body
 export function inspectionBodyToRow(body: Record<string, unknown>): Record<string, unknown> {
   return {
+    tenant_id: body.tenantId,
     inspection_number: body.inspectionNumber,
     inspector_name: body.inspectorName,
     inspector_email: body.inspectorEmail,

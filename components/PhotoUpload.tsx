@@ -2,7 +2,7 @@
 
 import { useState, useRef, memo } from 'react';
 import Image from 'next/image';
-import { Camera, X, Upload } from 'lucide-react';
+import { Camera, X } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
@@ -29,6 +29,9 @@ interface PhotoUploadProps {
   onPhotosChange: (photos: PhotoData[]) => void;
   maxPhotos?: number;
   readOnly?: boolean;
+  label?: string;
+  buttonLabel?: string;
+  uploadTag?: Record<string, unknown>;
 }
 
 function PhotoUpload({
@@ -36,10 +39,41 @@ function PhotoUpload({
   onPhotosChange,
   maxPhotos = 20,
   readOnly = false,
+  label = 'Photos',
+  buttonLabel = 'Take photo',
+  uploadTag,
 }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const compressImage = async (file: File): Promise<File> => {
+    if (!file.type.startsWith('image/')) return file;
+    try {
+      const bitmap = await createImageBitmap(file);
+      const maxDim = 1600;
+      const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+      const targetW = Math.max(1, Math.round(bitmap.width * scale));
+      const targetH = Math.max(1, Math.round(bitmap.height * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = targetW;
+      canvas.height = targetH;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return file;
+      ctx.drawImage(bitmap, 0, 0, targetW, targetH);
+
+      const blob: Blob | null = await new Promise((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', 0.8)
+      );
+      if (!blob) return file;
+
+      const name = file.name.replace(/\.(png|webp|heic|heif|jpg|jpeg)$/i, '.jpg');
+      return new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
+    } catch {
+      return file;
+    }
+  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -57,13 +91,17 @@ function PhotoUpload({
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
+        const toUpload = await compressImage(file);
         // Upload via server API route (supports Vercel Blob, Cloudinary, or S3)
-        const result = await uploadToVercelBlobViaAPI(file);
+        const result = await uploadToVercelBlobViaAPI(toUpload);
         
         return {
           fileName: result.fileName, // Store pathname or identifier
           url: result.url, // Store full URL for immediate use
-          metadata: result.metadata || null,
+          metadata:
+            uploadTag && Object.keys(uploadTag).length
+              ? { ...(result.metadata || {}), ...uploadTag }
+              : result.metadata || null,
         };
       });
 
@@ -93,19 +131,19 @@ function PhotoUpload({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-slate-200">
-          Photos ({Array.isArray(photos) ? photos.length : 0}/{maxPhotos})
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <label className="text-sm font-semibold text-black">
+          {label} <span className="text-gray-500 font-medium">({Array.isArray(photos) ? photos.length : 0}/{maxPhotos})</span>
         </label>
         {!readOnly && (
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading || (Array.isArray(photos) ? photos.length >= maxPhotos : false)}
-            className="flex items-center px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            className="flex items-center justify-center px-4 py-2 min-h-11 bg-pink-600 text-white rounded-lg hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap"
           >
-            <Upload className="w-4 h-4 mr-2" />
-            {uploading ? 'Uploading...' : 'Add Photos'}
+            <Camera className="w-4 h-4 mr-2" />
+            {uploading ? 'Uploading...' : buttonLabel}
           </button>
         )}
       </div>
@@ -114,6 +152,7 @@ function PhotoUpload({
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        capture="environment"
         multiple
         onChange={handleFileSelect}
         className="hidden"

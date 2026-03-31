@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserByEmail, getUserByPhone, comparePassword } from '@/lib/db-users';
 import { generateToken } from '@/lib/auth';
+import { enforceRateLimit } from '@/lib/rateLimit';
+import { logAuditEvent } from '@/lib/audit';
 
 export async function POST(request: NextRequest) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:auth:login', { windowSeconds: 60, limit: 10, scope: 'ip' });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
     const { email, phoneNumber, password } = await request.json();
 
     if ((!email && !phoneNumber) || !password) {
@@ -34,12 +41,14 @@ export async function POST(request: NextRequest) {
       id: user.id,
       email: user.email,
       role: user.role,
+      tenantId: (user as any).tenantId,
     });
 
     const response = NextResponse.json({
       success: true,
       user: {
         id: user.id,
+        tenantId: (user as any).tenantId,
         email: user.email,
         phoneNumber: user.phoneNumber,
         name: user.name,
@@ -53,6 +62,13 @@ export async function POST(request: NextRequest) {
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24 * 7,
+    });
+
+    await logAuditEvent(request, {
+      action: 'auth.login',
+      resourceType: 'user',
+      resourceId: user.id,
+      details: { email: user.email, role: user.role },
     });
 
     return response;

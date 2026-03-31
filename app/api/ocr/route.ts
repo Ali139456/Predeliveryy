@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 // Ensure Node.js runtime for OCR
 export const runtime = 'nodejs';
@@ -72,13 +73,27 @@ async function extractTextWithAzureVision(imageBase64: string): Promise<string> 
     throw new Error('Azure Vision credentials are not configured');
   }
 
-  const endpoint = process.env.AZURE_VISION_ENDPOINT;
+  const rawEndpoint = process.env.AZURE_VISION_ENDPOINT;
   const key = process.env.AZURE_VISION_KEY;
+  if (!rawEndpoint) {
+    throw new Error('Azure Vision endpoint is not configured');
+  }
+  // Some environments accidentally store the endpoint without a scheme. Normalise + validate
+  const endpoint = rawEndpoint.startsWith('http://') || rawEndpoint.startsWith('https://')
+    ? rawEndpoint
+    : `https://${rawEndpoint}`;
+  try {
+    // Validate URL early to avoid opaque "string did not match the expected pattern" errors
+    // eslint-disable-next-line no-new
+    new URL(endpoint);
+  } catch {
+    throw new Error('Azure Vision endpoint is invalid. It must be a full URL like https://<resource>.cognitiveservices.azure.com');
+  }
   
   // Remove data URL prefix if present
   const base64Data = imageBase64.includes(',') ? imageBase64.split(',')[1] : imageBase64;
   
-  const apiUrl = `${endpoint}/vision/v3.2/read/analyze`;
+  const apiUrl = `${endpoint.replace(/\/$/, '')}/vision/v3.2/read/analyze`;
 
   // Start the read operation
   const readResponse = await fetch(apiUrl, {
@@ -159,6 +174,10 @@ export async function POST(request: NextRequest) {
   };
 
   try {
+    const rl = await enforceRateLimit(request, 'api:ocr:post', { windowSeconds: 60, limit: 20, scope: 'ip+user' });
+    if (!rl.allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429, headers: corsHeaders });
+    }
     const body = await request.json();
     const { imageBase64, provider } = body;
 

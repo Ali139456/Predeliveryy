@@ -25,7 +25,12 @@ export async function GET(request: NextRequest) {
     const supabase = getSupabase();
 
     if (id) {
-      const { data: row, error } = await supabase.from('inspections').select('*').eq('id', id).single();
+      const { data: row, error } = await supabase
+        .from('inspections')
+        .select('*')
+        .eq('id', id)
+        .eq('tenant_id', user.tenantId)
+        .single();
       if (error || !row) {
         return NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 });
       }
@@ -57,7 +62,11 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    let query = supabase.from('inspections').select('*').order('created_at', { ascending: false });
+    let query = supabase
+      .from('inspections')
+      .select('*')
+      .eq('tenant_id', user.tenantId)
+      .order('created_at', { ascending: false });
     if (userDoc.role !== 'admin') {
       query = query.eq('inspector_email', userDoc.email.toLowerCase());
     }

@@ -11,7 +11,8 @@ interface EmailModalProps {
 }
 
 export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }: EmailModalProps) {
-  const [emails, setEmails] = useState('');
+  const [input, setInput] = useState('');
+  const [emailList, setEmailList] = useState<string[]>([]);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -27,7 +28,8 @@ export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }
 
   useEffect(() => {
     if (isOpen) {
-      setEmails('');
+      setInput('');
+      setEmailList([]);
       setError(null);
       setSuccess(false);
     }
@@ -38,40 +40,59 @@ export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }
     return emailRegex.test(email.trim());
   };
 
+  const addEmail = (raw: string) => {
+    const next = raw.trim();
+    if (!next) return;
+    if (!validateEmail(next)) {
+      setError(`Invalid email address: ${next}`);
+      return;
+    }
+    if (emailList.some((e) => e.toLowerCase() === next.toLowerCase())) return;
+    if (emailList.length >= 3) {
+      setError('Maximum 3 email addresses');
+      return;
+    }
+    setEmailList((prev) => [...prev, next]);
+    setInput('');
+    setError(null);
+  };
+
+  const removeEmail = (idx: number) => {
+    setEmailList((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
 
-    if (!emails.trim()) {
-      setError('Please enter at least one email address');
-      return;
+    const finalList = [...emailList];
+    // If user typed a last email without pressing enter/comma
+    if (input.trim()) {
+      if (finalList.length >= 3) {
+        setError('Maximum 3 email addresses');
+        return;
+      }
+      if (!validateEmail(input.trim())) {
+        setError(`Invalid email address: ${input.trim()}`);
+        return;
+      }
+      finalList.push(input.trim());
     }
 
-    const emailList = emails
-      .split(',')
-      .map((email) => email.trim())
-      .filter((email) => email.length > 0);
-
-    if (emailList.length === 0) {
+    if (finalList.length === 0) {
       setError('Please enter at least one valid email address');
-      return;
-    }
-
-    // Validate all emails
-    const invalidEmails = emailList.filter((email) => !validateEmail(email));
-    if (invalidEmails.length > 0) {
-      setError(`Invalid email addresses: ${invalidEmails.join(', ')}`);
       return;
     }
 
     setSending(true);
     try {
-      await onSend(emailList);
+      await onSend(finalList);
       setSuccess(true);
       setTimeout(() => {
         onClose();
-        setEmails('');
+        setInput('');
+        setEmailList([]);
         setSuccess(false);
       }, 2000);
     } catch (err: any) {
@@ -121,20 +142,53 @@ export default function EmailModal({ isOpen, onClose, onSend, inspectionNumber }
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Email Addresses <span className="text-red-500">*</span>
             </label>
-            <textarea
-              value={emails}
-              onChange={(e) => {
-                setEmails(e.target.value);
-                setError(null);
-              }}
-              placeholder="Enter email addresses separated by commas&#10;Example: john@example.com, jane@example.com"
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black resize-none"
-              rows={4}
-              disabled={sending || success}
-            />
-            <p className="text-xs text-gray-500 mt-2">
-              Separate multiple emails with commas
-            </p>
+            <div className="w-full px-4 py-3 border border-gray-200 rounded-xl focus-within:ring-2 focus-within:ring-[#0033FF] focus-within:border-[#0033FF] bg-white text-black">
+              <div className="flex flex-wrap gap-2 mb-2">
+                {emailList.map((email, idx) => (
+                  <span
+                    key={`${email}-${idx}`}
+                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 text-sm text-gray-800 border border-gray-200"
+                  >
+                    {email}
+                    <button
+                      type="button"
+                      onClick={() => removeEmail(idx)}
+                      disabled={sending || success}
+                      className="text-gray-500 hover:text-gray-800"
+                      aria-label={`Remove ${email}`}
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <input
+                value={input}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  setError(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    addEmail(input.replace(/,+$/, ''));
+                  }
+                  if (e.key === 'Backspace' && !input && emailList.length) {
+                    removeEmail(emailList.length - 1);
+                  }
+                }}
+                onBlur={() => addEmail(input)}
+                placeholder="Type an email and press Enter (max 3)"
+                className="w-full outline-none bg-white text-black placeholder-gray-400"
+                disabled={sending || success}
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Up to 3 recipients. Press Enter after each address.
+              </p>
+            </div>
           </div>
 
           {/* Error Message */}

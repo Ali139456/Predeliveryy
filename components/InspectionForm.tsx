@@ -24,7 +24,7 @@ const SignaturePad = dynamic(() => import('./SignaturePad'), {
   ssr: false,
   loading: () => <div className="text-black">Loading signature pad...</div>,
 });
-import { Save, Send, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, Check, User, Car, MapPin, ClipboardCheck, FileText, PenTool } from 'lucide-react';
+import { Save, Send, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, Check, User, Car, MapPin, ClipboardCheck, PenTool } from 'lucide-react';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -44,7 +44,6 @@ const inspectionSchema = z.object({
     buildDate: z.string().optional(),
     year: z.string().optional(),
     licensePlate: z.string().optional(),
-    bookingNumber: z.string().optional(),
   }).optional(),
   checklist: z.array(
     z.object({
@@ -52,7 +51,7 @@ const inspectionSchema = z.object({
       items: z.array(
         z.object({
           item: z.string().min(1, 'Item is required'),
-          status: z.enum(['OK', 'C', 'A', 'R', 'RP', 'N', 'pass', 'fail', 'na']),
+          status: z.enum(['OK', 'C', 'A', 'R', 'RP', 'N']),
           notes: z.string().optional(),
           photos: z.array(z.object({
             fileName: z.string(),
@@ -98,9 +97,8 @@ const inspectionSchema = z.object({
     technician: z.string().optional(),
     manager: z.string().optional(),
   }).optional(),
-  privacyConsent: z.boolean().refine((val) => val === true, {
-    message: 'Privacy consent is required',
-  }),
+  // Client terms are handled via ToS agreement; no inspector consent required in-form
+  privacyConsent: z.boolean().optional(),
 });
 
 type InspectionFormData = z.infer<typeof inspectionSchema>;
@@ -270,20 +268,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     manager: initialData?.signatures?.manager || '',
   });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [activeChecklistCategory, setActiveChecklistCategory] = useState(0);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [draftId, setDraftId] = useState<string | null>(inspectionId || null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
 
-  const totalSteps = 6;
+  const totalSteps = 5;
   const steps = [
     { number: 1, title: 'Inspector Info', icon: User },
     { number: 2, title: 'Vehicle & Identification', icon: Car },
     { number: 3, title: 'GPS & Photos', icon: MapPin },
     { number: 4, title: 'Checklist', icon: ClipboardCheck },
-    { number: 5, title: 'Disclaimer', icon: FileText },
-    { number: 6, title: 'Signatures', icon: PenTool },
+    { number: 5, title: 'Signatures', icon: PenTool },
   ];
 
   // Restore step from URL on mount (so refresh keeps you on the same step)
@@ -330,7 +328,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           checklist: defaultChecklist,
           photos: [],
           walkAroundVideos: [],
-          privacyConsent: false,
+          privacyConsent: true,
         },
   });
 
@@ -471,7 +469,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         walkAroundVideos: walkAroundVideos || [],
         signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: 'draft' as const,
-        privacyConsent: values.privacyConsent || false,
+        privacyConsent: true,
       };
       
       let savedDraftId = draftId;
@@ -922,8 +920,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       case 2:
         // Vehicle info validation - at least VIN or License Plate should be provided
         const vehicleInfo = values.vehicleInfo || {};
-        if (!vehicleInfo.vin && !vehicleInfo.licensePlate && !vehicleInfo.bookingNumber) {
-          return { valid: false, error: 'Please provide at least VIN, License Plate, or Booking Number' };
+        if (!vehicleInfo.vin && !vehicleInfo.licensePlate) {
+          return { valid: false, error: 'Please provide at least VIN or License Plate' };
         }
         return { valid: true };
       case 3:
@@ -960,9 +958,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             if (!item.status) {
               return { valid: false, error: `Item status is required for "${item.item}" in category "${category.category}"` };
             }
-            // Photo required on all items that are not optional (status 'N' = N/A)
-            const isOptional = item.status === 'N';
-            if (!isOptional) {
+            // Photos only required for repair-related items (fraud prevention + faster flow)
+            const needsRepairPhoto = item.status === 'R' || item.status === 'RP';
+            if (needsRepairPhoto) {
               const itemPhotos = item.photos ?? [];
               if (!itemPhotos.length) {
                 return { valid: false, error: `Please add at least one photo for "${item.item}" in category "${category.category}"` };
@@ -972,13 +970,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         }
         return { valid: true };
       case 5:
-        // Disclaimer - just needs to be viewed, no validation needed
-        return { valid: true };
-      case 6:
-        // Signatures and privacy consent validation
-        if (!values.privacyConsent) {
-          return { valid: false, error: 'Privacy consent is required to proceed' };
-        }
+        // Signatures (client terms handled via ToS)
         if (!signatures.technician) {
           return { valid: false, error: 'Technician signature is required' };
         }
@@ -1037,8 +1029,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       case 4:
         return renderStep4();
       case 5:
-        return renderStep5();
-      case 6:
         return renderStep6();
       default:
         return null;
@@ -1276,12 +1266,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           />
         </div>
         <div>
-          <input
-            {...register('vehicleInfo.bookingNumber')}
-            placeholder="Booking Number"
-            disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-          />
+          {/* Booking number removed */}
         </div>
       </div>
     </>
@@ -1350,7 +1335,53 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             </button>
           )}
         </div>
-        <PhotoUpload photos={photos} onPhotosChange={setPhotos} readOnly={readOnly} />
+        <div className="space-y-4">
+          <p className="text-sm font-semibold text-black">General photos (guided)</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {(['front', 'rear', 'left', 'right'] as const).map((slot) => {
+              const slotLabel =
+                slot === 'front'
+                  ? 'Photo – front of vehicle'
+                  : slot === 'rear'
+                    ? 'Photo – rear of vehicle'
+                    : slot === 'left'
+                      ? 'Photo – left side of vehicle'
+                      : 'Photo – right side of vehicle';
+
+              const slotPhotos = (photos as any[])
+                .map((p: any) => (typeof p === 'string' ? { fileName: p } : p))
+                .filter((p: any) => (p?.metadata as any)?.slot === slot);
+
+              const otherPhotos = (photos as any[])
+                .map((p: any) => (typeof p === 'string' ? { fileName: p } : p))
+                .filter((p: any) => (p?.metadata as any)?.slot !== slot);
+
+              return (
+                <div key={slot} className="rounded-xl border border-gray-200 p-3 bg-white">
+                  <PhotoUpload
+                    photos={slotPhotos}
+                    onPhotosChange={(nextSlotPhotos) => {
+                      // keep only 1 (latest) for each guided slot
+                      const one = nextSlotPhotos.slice(-1).map((p: any) => ({
+                        ...p,
+                        metadata: { ...(p.metadata || {}), slot },
+                      }));
+                      setPhotos([...otherPhotos, ...one]);
+                    }}
+                    readOnly={readOnly}
+                    label={slotLabel}
+                    buttonLabel="Take photo"
+                    maxPhotos={1}
+                    uploadTag={{ slot }}
+                  />
+                </div>
+              );
+            })}
+          </div>
+          <p className="text-xs text-gray-600">
+            Tip: Use these 4 guided photos for the main angles. Extra general photos can be added later if needed.
+          </p>
+        </div>
         <div className="mt-8 pt-6 border-t border-gray-200">
           <h4 className="text-sm font-bold text-black mb-2">Walk-around video (optional)</h4>
           <div className="text-black">
@@ -1439,22 +1470,64 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           </div>
         </div>
 
-        {fields.map((category, categoryIndex) => {
-          const categoryName = category.category || '';
+        {(() => {
+          const total = Math.max(1, fields.length);
+          const safeIndex = Math.max(0, Math.min(activeChecklistCategory, total - 1));
+          const category = fields[safeIndex];
+          const categoryIndex = safeIndex;
+          const categoryName = category?.category || '';
           const isExt = isExterior(categoryName);
           const isInt = isInterior(categoryName);
-          
+          const progressPct = Math.round(((categoryIndex + 1) / total) * 100);
+
           return (
-            <div 
-              key={category.id} 
-              className={`rounded-lg p-4 border ${
-                isExt 
-                  ? 'border-blue-200' 
-                  : isInt 
-                  ? 'border-amber-200' 
-                  : 'border-gray-200'
-              }`}
-            >
+            <>
+              <div className="mb-4">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div className="text-sm font-semibold text-black">
+                    Section {categoryIndex + 1} of {total}
+                  </div>
+                  <div className="text-xs font-medium text-gray-600">
+                    {progressPct}% complete
+                  </div>
+                </div>
+                <div className="mt-2 h-2 w-full rounded-full bg-gray-200 overflow-hidden">
+                  <div className="h-full rounded-full bg-[#0033FF]" style={{ width: `${progressPct}%` }} />
+                </div>
+                <div className="mt-3 flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveChecklistCategory((i) => Math.max(0, i - 1))}
+                    disabled={readOnly || categoryIndex === 0}
+                    className={`px-3 py-2 text-sm rounded-lg font-semibold transition-all border ${
+                      readOnly || categoryIndex === 0
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                        : 'bg-white text-black border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    Previous section
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveChecklistCategory((i) => Math.min(fields.length - 1, i + 1))}
+                    disabled={readOnly || categoryIndex >= fields.length - 1}
+                    className={`px-3 py-2 text-sm rounded-lg font-semibold transition-all border ${
+                      readOnly || categoryIndex >= fields.length - 1
+                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                        : 'bg-white text-black border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    Next section
+                  </button>
+                </div>
+              </div>
+
+              <div
+                key={category.id}
+                className={`rounded-lg p-4 border ${
+                  isExt ? 'border-blue-200' : isInt ? 'border-amber-200' : 'border-gray-200'
+                }`}
+              >
               <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
                 isExt ? 'border-blue-200' : isInt ? 'border-amber-200' : 'border-gray-200'
               }`}>
@@ -1482,17 +1555,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {category.items?.map((item: any, itemIndex: number) => {
                 const itemPhotos = watch(`checklist.${categoryIndex}.items.${itemIndex}.photos`) ?? item.photos ?? [];
                 const itemStatus = watch(`checklist.${categoryIndex}.items.${itemIndex}.status`) ?? item.status;
-                const photoRequired = itemStatus !== 'N' && itemStatus !== 'na';
+                const photoRequired = itemStatus === 'R' || itemStatus === 'RP';
                 return (
                   <div 
                     key={itemIndex} 
                     className="mb-3 p-3 rounded-lg border border-gray-200 bg-transparent"
                   >
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
-                      <input
+                      <textarea
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)}
                         disabled={readOnly}
-                        className={`flex-1 w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${
+                        className={`flex-1 w-full min-w-0 px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-none ${
                           isExt 
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
@@ -1500,6 +1573,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                             : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                         } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
                         placeholder="Item name"
+                        rows={2}
                       />
                       <select
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.status`)}
@@ -1518,9 +1592,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                         <option value="R">🔨 R - Repair</option>
                         <option value="RP">🔄 RP - Replace</option>
                         <option value="N">➖ N - Not applicable</option>
-                        <option value="pass">✅ Pass (Legacy)</option>
-                        <option value="fail">❌ Fail (Legacy)</option>
-                        <option value="na">➖ N/A (Legacy)</option>
                       </select>
                     </div>
                     <div className="mb-2">
@@ -1552,7 +1623,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     <div>
                       {photoRequired && (
                         <p className="text-xs font-medium text-black/80 mb-1">
-                          Photos <span className="text-red-500">*</span> required
+                          Photos <span className="text-red-500">*</span> required (repair items only)
                         </p>
                       )}
                       <ItemPhotoUpload
@@ -1570,58 +1641,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   </div>
                 );
               })}
-            </div>
+              </div>
+            </>
           );
-        })}
+        })()}
       </div>
     );
   };
-
-  const renderStep5 = () => (
-    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30">
-      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
-        <div className="flex items-center flex-1">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
-            <span className="text-white font-bold text-lg">5</span>
-          </div>
-          <h2 className="text-xl font-bold text-black">Disclaimer & Terms</h2>
-        </div>
-      </div>
-
-      <div className="bg-gray-50 rounded-lg p-4 md:p-6 border border-[#0033FF]/30">
-        <h3 className="text-base font-bold text-black mb-4">PreDelivery Global Pty Ltd - Inspection Disclaimer</h3>
-        <div className="text-sm text-black space-y-4 leading-relaxed">
-          <p>
-            This inspection report has been prepared by <strong className="text-black">PreDelivery Global Pty Ltd</strong> 
-            {" ("}<strong className="text-black">PreDelivery Global</strong>{") "}to identify potential health or safety hazards commonly 
-            associated with recovered stolen vehicles, including but not limited to sharps and meth residue.
-          </p>
-          <p>
-            The inspection is non-invasive, visual in nature, and limited to accessible areas of the vehicle at the time of inspection. 
-            No guarantee is made as to the complete absence of hazards and contaminants, and this report does not constitute a mechanical, 
-            structural or roadworthiness assessment.
-          </p>
-          <p>
-            While all care has been taken to identify visible or accessible risks, PreDelivery Global cannot guarantee that all hazards—particularly 
-            those hidden, embedded, or requiring forensic-level testing—will be detected. Additional specialist cleaning, decontamination, or 
-            forensic testing may be required.
-          </p>
-          <p>
-            This report is intended for use by the client named and should not be relied upon by third parties without written consent from 
-            PreDelivery Global. Whilst PreDelivery Global its staff and/or contractors, undertake that they have taken due care in undertaking the 
-            inspection, it accepts no liability for any loss, injury, or damage arising from the use of this report outside its intended purpose.
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-[#0033FF]/10 border-2 border-[#0033FF]/50 rounded-lg p-4">
-        <p className="text-sm text-black font-semibold text-center">
-          By proceeding with the signature step, you acknowledge that you have read, understood, and agree to the terms and conditions 
-          outlined in this disclaimer.
-        </p>
-      </div>
-    </div>
-  );
 
   const renderStep6 = () => (
     <>
@@ -1629,7 +1655,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
           <div className="flex items-center flex-1">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
-              <span className="text-white font-bold text-lg">6</span>
+              <span className="text-white font-bold text-lg">5</span>
             </div>
             <h2 className="text-xl font-bold text-black">Signatures</h2>
           </div>
@@ -1675,28 +1701,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
       </div>
 
-      <div className={`bg-slate-800/95 rounded-2xl shadow-xl p-4 md:p-6 border-2 border-yellow-500/30 ${readOnly ? 'mt-6' : ''}`}>
-        <label className="flex items-start cursor-pointer group">
-          <span className="relative inline-flex items-center justify-center w-5 h-5 mt-1 mr-4 rounded border-2 border-slate-500 bg-slate-600/50 flex-shrink-0 transition-colors group-hover:border-yellow-500/70">
-            <input
-              type="checkbox"
-              {...register('privacyConsent')}
-              disabled={readOnly}
-              className={`absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10 rounded ${readOnly ? 'cursor-not-allowed' : ''}`}
-            />
-            {watch('privacyConsent') && (
-              <Check className="w-3.5 h-3.5 text-yellow-500 pointer-events-none stroke-[3]" />
-            )}
-          </span>
-          <span className="text-sm text-slate-200 group-hover:text-slate-100 transition-colors">
-            I consent to the collection and storage of this inspection data in accordance with
-            privacy regulations <span className="text-red-400 font-semibold">*</span>
-          </span>
-        </label>
-        {errors.privacyConsent && (
-          <p className="text-red-400 text-sm mt-2 ml-9 font-medium">{errors.privacyConsent.message}</p>
-        )}
-      </div>
+      {/* Consent removed – handled via Terms of Service agreement */}
     </>
   );
 
@@ -1719,7 +1724,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {renderStep2()}
               {renderStep3()}
               {renderStep4()}
-              {renderStep5()}
               {renderStep6()}
             </>
           ) : (

@@ -6,7 +6,7 @@ import type { AuditLogRow } from '@/types/db';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth(['admin', 'manager'])(request);
+    const authUser = await requireAuth(['admin', 'manager'])(request);
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1', 10);
     const limit = parseInt(searchParams.get('limit') || '50', 10);
@@ -18,7 +18,11 @@ export async function GET(request: NextRequest) {
     const resourceId = searchParams.get('resourceId');
 
     const supabase = getSupabase();
-    let query = supabase.from('audit_logs').select('*', { count: 'exact' }).order('timestamp', { ascending: false });
+    let query = supabase
+      .from('audit_logs')
+      .select('*', { count: 'exact' })
+      .eq('tenant_id', authUser.tenantId)
+      .order('timestamp', { ascending: false });
 
     if (action) query = query.eq('action', action);
     if (resourceType) query = query.eq('resource_type', resourceType);
@@ -37,9 +41,9 @@ export async function GET(request: NextRequest) {
     const logs = (rows || []).map((r) => auditRowToLog(r as AuditLogRow));
     const total = count ?? 0;
 
-    const { data: actionRows } = await supabase.from('audit_logs').select('action');
+    const { data: actionRows } = await supabase.from('audit_logs').select('action').eq('tenant_id', authUser.tenantId);
     const actionTypes = Array.from(new Set((actionRows || []).map((r: { action: string }) => r.action)));
-    const { data: resourceRows } = await supabase.from('audit_logs').select('resource_type');
+    const { data: resourceRows } = await supabase.from('audit_logs').select('resource_type').eq('tenant_id', authUser.tenantId);
     const resourceTypes = Array.from(new Set((resourceRows || []).map((r: { resource_type: string }) => r.resource_type)));
 
     return NextResponse.json({

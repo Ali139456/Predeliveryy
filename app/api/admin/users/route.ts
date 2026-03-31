@@ -20,11 +20,12 @@ function validatePassword(password: string): string | null {
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth(['admin', 'manager'])(request);
+    const authUser = await requireAuth(['admin', 'manager'])(request);
     const supabase = getSupabase();
     const { data: rows, error } = await supabase
       .from('users')
       .select('id, email, phone_number, name, role, is_active, created_at, updated_at')
+      .eq('tenant_id', authUser.tenantId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    await requireAuth(['admin'])(request);
+    const authUser = await requireAuth(['admin'])(request);
     const { email, phoneNumber, password, name, role, isActive } = await request.json();
 
     if (!email || !password || !name || !phoneNumber) {
@@ -68,11 +69,21 @@ export async function POST(request: NextRequest) {
     if (err) return NextResponse.json({ success: false, error: err }, { status: 400 });
 
     const supabase = getSupabase();
-    const { data: existingEmail } = await supabase.from('users').select('id').eq('email', email.toLowerCase()).single();
+    const { data: existingEmail } = await supabase
+      .from('users')
+      .select('id')
+      .eq('tenant_id', authUser.tenantId)
+      .eq('email', email.toLowerCase())
+      .single();
     if (existingEmail) {
       return NextResponse.json({ success: false, error: 'User with this email already exists' }, { status: 400 });
     }
-    const { data: existingPhone } = await supabase.from('users').select('id').eq('phone_number', phoneNumber.trim()).single();
+    const { data: existingPhone } = await supabase
+      .from('users')
+      .select('id')
+      .eq('tenant_id', authUser.tenantId)
+      .eq('phone_number', phoneNumber.trim())
+      .single();
     if (existingPhone) {
       return NextResponse.json({ success: false, error: 'User with this phone number already exists' }, { status: 400 });
     }
@@ -81,6 +92,7 @@ export async function POST(request: NextRequest) {
     const { data: user, error } = await supabase
       .from('users')
       .insert({
+        tenant_id: authUser.tenantId,
         email: email.toLowerCase(),
         phone_number: phoneNumber.trim(),
         password: hashed,

@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
       success: true,
       user: {
         id: userDoc.id,
+        tenantId: (userDoc as any).tenantId,
         email: userDoc.email,
         phoneNumber: userDoc.phoneNumber,
         name: userDoc.name,

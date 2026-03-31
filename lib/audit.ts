@@ -23,6 +23,7 @@ export async function logAuditEvent(
     const userAgent = request.headers.get('user-agent') || 'unknown';
 
     const payload = {
+      tenant_id: user ? user.tenantId : 'unknown',
       user_id: user ? user.userId : 'anonymous',
       user_email: user ? user.email : 'anonymous@system',
       user_name: user ? user.email : 'Anonymous User',
@@ -51,6 +52,7 @@ export async function logAuditEvent(
 }
 
 export async function logAuditEventWithUser(
+  tenantId: string,
   userId: string,
   userEmail: string,
   userName: string,
@@ -61,6 +63,7 @@ export async function logAuditEventWithUser(
   try {
     const supabase = getSupabase();
     await supabase.from('audit_logs').insert({
+      tenant_id: tenantId,
       user_id: userId,
       user_email: userEmail,
       user_name: userName,

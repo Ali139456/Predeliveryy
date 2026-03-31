@@ -21,12 +21,13 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = getSupabase();
-    const { error } = await supabase.from('inspections').delete().in('id', ids);
+    const { error } = await supabase.from('inspections').delete().in('id', ids).eq('tenant_id', user.tenantId);
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
 
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown';
     const ua = request.headers.get('user-agent') || 'unknown';
     logAuditEventWithUser(
+      user.tenantId,
       user.userId,
       userDoc.email ?? '',
       userDoc.name ?? userDoc.email ?? 'Admin',

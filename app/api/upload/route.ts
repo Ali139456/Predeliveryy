@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { uploadToSupabaseStorage, hasSupabaseStorageConfig } from '@/lib/supabase-storage';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
+import { uploadToS3, getS3Url } from '@/lib/s3';
+import { requireAuth } from '@/lib/auth';
+import { enforceRateLimit } from '@/lib/rateLimit';
+import { logAuditEvent } from '@/lib/audit';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
@@ -35,16 +38,12 @@ export async function POST(request: NextRequest) {
   };
   
   try {
-    const hasStorage = hasSupabaseStorageConfig();
-    if (!hasStorage) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Supabase is not configured. Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY. Create a public Storage bucket named "inspections" in Supabase Dashboard.' 
-        },
-        { status: 500, headers: corsHeaders }
-      );
+    const { allowed } = await enforceRateLimit(request, 'api:upload', { windowSeconds: 60, limit: 30, scope: 'ip+user' });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429, headers: corsHeaders });
     }
+
+    const user = await requireAuth()(request);
     if (request.method !== 'POST') {
       return NextResponse.json(
         { success: false, error: `Method ${request.method} not allowed. Only POST is supported.` },
@@ -89,7 +88,11 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    const fileName = `inspections/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    // Tenant-scoped key prefix (prevents cross-tenant guessing)
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const ext = safeName.includes('.') ? safeName.split('.').pop() : '';
+    const kind = isVideo ? 'videos' : 'images';
+    const key = `tenants/${user.tenantId}/inspections/${kind}/${Date.now()}-${safeName}`;
     
     // Convert file to buffer first (can only read once)
     let bytes: ArrayBuffer;
@@ -125,36 +128,28 @@ export async function POST(request: NextRequest) {
       metadata = null;
     }
     
-    // Upload to Supabase Storage
-    let uploadedFileName: string | undefined;
-    let fileUrl: string | undefined;
-    
     try {
-      const result = await uploadToSupabaseStorage(buffer, fileName, contentType);
-      uploadedFileName = result.path;
-      fileUrl = result.url;
+      await uploadToS3(buffer, key, contentType);
     } catch (storageError: any) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: `Upload failed: ${storageError?.message || 'Storage error'}. Ensure the "inspections" bucket exists in Supabase Dashboard (Storage) and is set to Public.`
-        },
+        { success: false, error: `Upload failed: ${storageError?.message || 'Storage error'}` },
         { status: 500, headers: corsHeaders }
       );
     }
-    
-    if (!uploadedFileName || !fileUrl) {
-      return NextResponse.json(
-        { success: false, error: 'Failed to upload file. Please try again.' },
-        { status: 500, headers: corsHeaders }
-      );
-    }
+
+    const previewUrl = await getS3Url(key);
+    await logAuditEvent(request, {
+      action: 'file.uploaded',
+      resourceType: 'file',
+      resourceId: key,
+      details: { key, contentType, bytes: file.size, ext },
+    });
     
     // Always return a proper JSON response
     const responseData = {
       success: true,
-      fileName: uploadedFileName,
-      url: fileUrl,
+      fileName: key,
+      url: previewUrl, // signed, short-lived preview
       metadata: metadata ? {
         width: metadata.width,
         height: metadata.height,

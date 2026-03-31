@@ -5,7 +5,7 @@ import type { InspectionRow } from '@/types/db';
 
 export async function GET(request: NextRequest) {
   try {
-    await requireAuth(['admin', 'manager'])(request);
+    const authUser = await requireAuth(['admin', 'manager'])(request);
     const supabase = getSupabase();
 
     const [
@@ -15,11 +15,11 @@ export async function GET(request: NextRequest) {
       { count: totalUsers },
       { count: activeUsers },
     ] = await Promise.all([
-      supabase.from('inspections').select('*', { count: 'exact', head: true }),
-      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('status', 'completed'),
-      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('status', 'draft'),
-      supabase.from('users').select('*', { count: 'exact', head: true }),
-      supabase.from('users').select('*', { count: 'exact', head: true }).eq('is_active', true),
+      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('tenant_id', authUser.tenantId),
+      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('tenant_id', authUser.tenantId).eq('status', 'completed'),
+      supabase.from('inspections').select('*', { count: 'exact', head: true }).eq('tenant_id', authUser.tenantId).eq('status', 'draft'),
+      supabase.from('users').select('*', { count: 'exact', head: true }).eq('tenant_id', authUser.tenantId),
+      supabase.from('users').select('*', { count: 'exact', head: true }).eq('tenant_id', authUser.tenantId).eq('is_active', true),
     ]);
 
     const sixMonthsAgo = new Date();
@@ -27,12 +27,14 @@ export async function GET(request: NextRequest) {
     const { data: recentRows } = await supabase
       .from('inspections')
       .select('*')
+      .eq('tenant_id', authUser.tenantId)
       .order('created_at', { ascending: false })
       .limit(10);
 
     const { data: allRecent } = await supabase
       .from('inspections')
       .select('created_at')
+      .eq('tenant_id', authUser.tenantId)
       .gte('created_at', sixMonthsAgo.toISOString());
 
     const monthlyMap: Record<string, number> = {};

@@ -19,6 +19,18 @@
 .DS_Store
 *.pem
 
+# brand/marketing source asset drops (not app assets)
+/Jpg/
+/Png/
+/Social media Kit/
+/Source Files/
+
+# large design exports / duplicates
+/public/Pre Delivery Logo.zip
+/public/iphone mockup.png
+/public/iphone-mockup.png
+/public/PD Logo Mockup.png
+
 # debug
 npm-debug.log*
 yarn-debug.log*

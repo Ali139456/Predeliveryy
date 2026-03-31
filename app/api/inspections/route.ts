@@ -5,25 +5,14 @@ import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
-
-/** Get next short inspection number in form "PD 1001", "PD 1002", etc. */
-async function getNextInspectionNumber(supabase: ReturnType<typeof getSupabase>): Promise<string> {
-  const { data: rows } = await supabase
-    .from('inspections')
-    .select('inspection_number')
-    .like('inspection_number', 'PD %');
-  let maxNum = 1000;
-  if (rows?.length) {
-    for (const r of rows) {
-      const n = parseInt(String(r?.inspection_number ?? '').replace(/^PD\s*/i, ''), 10);
-      if (!Number.isNaN(n)) maxNum = Math.max(maxNum, n);
-    }
-  }
-  return `PD ${maxNum + 1}`;
-}
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await enforceRateLimit(request, 'api:inspections:post', { windowSeconds: 60, limit: 30, scope: 'ip+user' });
+    if (!rl.allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const user = await getCurrentUser(request);
     if (!user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -35,6 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+    body.tenantId = user.tenantId;
 
     if (userDoc.role !== 'admin') {
       body.inspectorEmail = userDoc.email.toLowerCase();
@@ -44,7 +34,18 @@ export async function POST(request: NextRequest) {
 
     const supabase = getSupabase();
     if (!body.inspectionNumber) {
-      body.inspectionNumber = await getNextInspectionNumber(supabase);
+      // Tenant-scoped numbering (max across tenant only)
+      const { data: rows } = await supabase
+        .from('inspections')
+        .select('inspection_number')
+        .eq('tenant_id', user.tenantId)
+        .like('inspection_number', 'PD %');
+      let maxNum = 1000;
+      (rows || []).forEach((r: { inspection_number?: string }) => {
+        const n = parseInt(String(r?.inspection_number ?? '').replace(/^PD\s*/i, ''), 10);
+        if (!Number.isNaN(n)) maxNum = Math.max(maxNum, n);
+      });
+      body.inspectionNumber = `PD ${maxNum + 1}`;
     }
 
     const row = inspectionBodyToRow(body) as Record<string, unknown>;
@@ -88,6 +89,10 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const rl = await enforceRateLimit(request, 'api:inspections:get', { windowSeconds: 60, limit: 120, scope: 'ip+user' });
+    if (!rl.allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const user = await getCurrentUser(request);
     if (!user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -102,7 +107,12 @@ export async function GET(request: NextRequest) {
     const supabase = getSupabase();
     // List view: select only fields needed for table (no photos, checklist, signatures) for faster response
     const listFields = 'id, inspection_number, inspector_name, inspector_email, inspection_date, status, barcode, created_at';
-    let query = supabase.from('inspections').select(listFields).order('created_at', { ascending: false }).limit(100);
+    let query = supabase
+      .from('inspections')
+      .select(listFields)
+      .eq('tenant_id', user.tenantId)
+      .order('created_at', { ascending: false })
+      .limit(100);
 
     if (userDoc.role !== 'admin') {
       query = query.eq('inspector_email', userDoc.email.toLowerCase());
