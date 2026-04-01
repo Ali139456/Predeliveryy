@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Mic, Square } from 'lucide-react';
+import { Loader2, Mic, Square } from 'lucide-react';
 
 type Props = {
   onAppend: (text: string) => void;
@@ -9,17 +9,61 @@ type Props = {
   className?: string;
 };
 
-/** Browser speech-to-text (Chrome / Edge / Safari). Appends transcribed phrases to notes. */
+/** Browser speech-to-text (Chrome / Edge / Safari). Phrases are polished via API when logged in (AI if OPENAI_API_KEY is set). */
 export default function VoiceNotesButton({ onAppend, disabled, className = '' }: Props) {
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
+  const [polishing, setPolishing] = useState(false);
   const recognitionRef = useRef<{ stop: () => void } | null>(null);
+  const polishInFlightRef = useRef(0);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const w = window as unknown as { SpeechRecognition?: unknown; webkitSpeechRecognition?: unknown };
     setSupported(!!(w.SpeechRecognition || w.webkitSpeechRecognition));
   }, []);
+
+  const appendSentence = useCallback((text: string) => {
+    const t = text.trim();
+    if (!t) return;
+    onAppend(/[.!?]$/.test(t) ? `${t} ` : `${t}. `);
+  }, [onAppend]);
+
+  const polishAndAppend = useCallback(
+    (phrase: string) => {
+      const raw = phrase.trim();
+      if (!raw) return;
+      polishInFlightRef.current += 1;
+      if (polishInFlightRef.current === 1) setPolishing(true);
+      void (async () => {
+        try {
+          const res = await fetch('/api/inspections/polish-voice-note', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ raw }),
+          });
+          if (res.ok) {
+            const data = (await res.json()) as { polished?: string };
+            if (typeof data.polished === 'string' && data.polished.trim()) {
+              appendSentence(data.polished);
+              return;
+            }
+          }
+          appendSentence(raw);
+        } catch {
+          appendSentence(raw);
+        } finally {
+          polishInFlightRef.current -= 1;
+          if (polishInFlightRef.current <= 0) {
+            polishInFlightRef.current = 0;
+            setPolishing(false);
+          }
+        }
+      })();
+    },
+    [appendSentence]
+  );
 
   const stop = useCallback(() => {
     try {
@@ -63,7 +107,7 @@ export default function VoiceNotesButton({ onAppend, disabled, className = '' }:
       for (let i = ev.resultIndex; i < ev.results.length; i++) {
         if (!ev.results[i].isFinal) continue;
         const phrase = ev.results[i][0].transcript.trim();
-        if (phrase) onAppend(phrase.endsWith('.') || phrase.endsWith('!') ? `${phrase} ` : `${phrase}. `);
+        if (phrase) polishAndAppend(phrase);
       }
     };
 
@@ -83,7 +127,7 @@ export default function VoiceNotesButton({ onAppend, disabled, className = '' }:
     } catch {
       setListening(false);
     }
-  }, [disabled, onAppend, stop]);
+  }, [disabled, polishAndAppend, stop]);
 
   useEffect(() => () => stop(), [stop]);
 
@@ -105,10 +149,22 @@ export default function VoiceNotesButton({ onAppend, disabled, className = '' }:
           ? 'bg-red-600 text-white border-red-700 animate-pulse'
           : 'bg-white text-[#0033FF] border-[#0033FF]/40 hover:bg-[#0033FF]/5'
       } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
-      title={listening ? 'Stop recording' : 'Speak to add text to notes (e.g. damage rear bumper)'}
+      title={
+        listening
+          ? 'Stop recording'
+          : polishing
+            ? 'Turning speech into report wording…'
+            : 'Speak to add notes (e.g. damage rear bumper); wording is polished for the report'
+      }
     >
-      {listening ? <Square className="w-3.5 h-3.5 fill-current" /> : <Mic className="w-3.5 h-3.5" />}
-      {listening ? 'Stop' : 'Voice to notes'}
+      {listening ? (
+        <Square className="w-3.5 h-3.5 fill-current" />
+      ) : polishing ? (
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+      ) : (
+        <Mic className="w-3.5 h-3.5" />
+      )}
+      {listening ? 'Stop' : polishing ? 'Wording…' : 'Voice to notes'}
     </button>
   );
 }

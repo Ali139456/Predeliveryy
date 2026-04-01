@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useRef, memo, useCallback } from 'react';
-import Image from 'next/image';
 import { X, Camera, Image as ImageIcon, MapPin } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
+import CameraCaptureModal from './CameraCaptureModal';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 
@@ -190,13 +190,13 @@ function ItemPhotoUpload({
   const [uploading, setUploading] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [annotateIndex, setAnnotateIndex] = useState<number | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
 
-  const compressImage = async (file: File): Promise<File> => {
+  const compressImage = useCallback(async (file: File): Promise<File> => {
     if (!file.type.startsWith('image/')) return file;
     try {
       const bitmap = await createImageBitmap(file);
-      const maxDim = 1600;
+      const maxDim = 1400;
       const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
       const targetW = Math.max(1, Math.round(bitmap.width * scale));
       const targetH = Math.max(1, Math.round(bitmap.height * scale));
@@ -209,7 +209,7 @@ function ItemPhotoUpload({
       ctx.drawImage(bitmap, 0, 0, targetW, targetH);
 
       const blob: Blob | null = await new Promise((resolve) =>
-        canvas.toBlob(resolve, 'image/jpeg', 0.8)
+        canvas.toBlob(resolve, 'image/jpeg', 0.76)
       );
       if (!blob) return file;
 
@@ -218,49 +218,40 @@ function ItemPhotoUpload({
     } catch {
       return file;
     }
-  };
+  }, []);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    if (photos.length + files.length > maxPhotos) {
-      if (typeof window !== 'undefined') {
-        alert(`Maximum ${maxPhotos} photos allowed for this item`);
+  const uploadSingleFile = useCallback(
+    async (file: File) => {
+      if (photos.length >= maxPhotos) {
+        if (typeof window !== 'undefined') {
+          alert(`Maximum ${maxPhotos} photos allowed for this item`);
+        }
+        return;
       }
-      return;
-    }
-
-    setUploading(true);
-
-    try {
-      const uploadPromises = Array.from(files).map(async (file) => {
+      setUploading(true);
+      try {
         const toUpload = await compressImage(file);
         const result = await uploadToVercelBlobViaAPI(toUpload);
-
-        return {
+        const next = {
           fileName: result.fileName,
           url: result.url,
           metadata: result.metadata || null,
           damageMarkers: [] as DamageMarker[],
         };
-      });
-
-      const uploadedFiles = await Promise.all(uploadPromises);
-      onPhotosChange([...photos, ...uploadedFiles]);
-    } catch (error: unknown) {
-      if (typeof window !== 'undefined') {
-        const errorMessage = error instanceof Error ? error.message : 'Upload failed. Please check your storage configuration.';
-        alert(`Upload failed: ${errorMessage}`);
+        onPhotosChange([...photos, next]);
+        setCameraOpen(false);
+      } catch (error: unknown) {
+        if (typeof window !== 'undefined') {
+          const errorMessage = error instanceof Error ? error.message : 'Upload failed. Please check your storage configuration.';
+          alert(`Upload failed: ${errorMessage}`);
+        }
+        console.error('Photo upload error:', error);
+      } finally {
+        setUploading(false);
       }
-      console.error('Photo upload error:', error);
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
+    },
+    [compressImage, maxPhotos, onPhotosChange, photos]
+  );
 
   const removePhoto = (index: number) => {
     const newPhotos = photos.filter((_, i) => i !== index);
@@ -285,7 +276,7 @@ function ItemPhotoUpload({
         {!readOnly && (
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => setCameraOpen(true)}
             disabled={uploading || photos.length >= maxPhotos}
             className="flex items-center px-2 py-1 text-xs bg-[#3833FF]/50 text-white rounded-lg hover:bg-[#3833FF]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
@@ -295,14 +286,10 @@ function ItemPhotoUpload({
         )}
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        multiple
-        onChange={handleFileSelect}
-        className="hidden"
+      <CameraCaptureModal
+        isOpen={cameraOpen}
+        onClose={() => setCameraOpen(false)}
+        onCaptured={(file) => uploadSingleFile(file)}
       />
 
       {photos.length > 0 && (
@@ -317,14 +304,14 @@ function ItemPhotoUpload({
                   className="relative aspect-square cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLightboxImage(imageUrl)}
                 >
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={imageUrl}
                     alt={`${itemName || 'Item'} photo ${index + 1}`}
-                    width={80}
-                    height={80}
-                    className="w-full h-full aspect-square object-cover rounded-lg border border-slate-500/50"
+                    className="w-full h-full aspect-square object-cover rounded-lg border border-slate-500/50 bg-slate-800/30"
                     loading="lazy"
-                    unoptimized
+                    decoding="async"
+                    referrerPolicy="same-origin"
                   />
                   {markerCount > 0 && (
                     <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-[#FF6600] text-white text-[9px] font-bold">

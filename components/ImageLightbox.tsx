@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import Image from 'next/image';
 import { X } from 'lucide-react';
 
 interface ImageLightboxProps {
@@ -37,13 +36,13 @@ export default function ImageLightbox({ isOpen, imageUrl, onClose }: ImageLightb
           <X className="w-5 h-5" />
         </button>
         <div className="relative w-full aspect-square max-h-[70vh]">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={imageUrl}
             alt="Full size image"
-            width={800}
-            height={800}
             className="w-full h-full object-contain rounded-lg"
-            unoptimized
+            decoding="async"
+            referrerPolicy="same-origin"
           />
         </div>
       </div>

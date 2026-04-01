@@ -9,6 +9,7 @@ import {
   Settings, 
   BarChart3, 
   UserPlus,
+  Building2,
   CheckCircle,
   Clock,
   TrendingUp,
@@ -131,7 +132,7 @@ export default function AdminDashboard() {
                   : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
               }`}
             >
-              👥 Users
+              👥 {user?.role === 'admin' ? 'Organisation & users' : 'Users'}
             </button>
             <button
               onClick={() => setActiveTab('audit')}
@@ -160,7 +161,9 @@ export default function AdminDashboard() {
       {/* Content */}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} onRefetch={fetchStats} />}
-        {activeTab === 'users' && <UsersTab userRole={user?.role} />}
+        {activeTab === 'users' && (
+          <UsersTab userRole={user?.role} userTenantId={user?.tenantId as string | undefined} />
+        )}
         {activeTab === 'audit' && <AuditLogTab />}
         {activeTab === 'settings' && <SettingsTab />}
       </div>
@@ -437,16 +440,81 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
   );
 }
 
-function UsersTab({ userRole }: { userRole?: string }) {
+type TenantOption = { id: string; label: string; businessName: string };
+
+type TenantRowUi = {
+  id: string;
+  name: string;
+  businessName: string;
+  abn: string;
+  businessAddress: string;
+  contactName: string;
+  contactEmail: string;
+  contactNumber: string;
+};
+
+/** Native `<option>` lists use OS styling; light field + dark text keeps options readable (Windows/Chrome). */
+const MODAL_SELECT_CLASS =
+  'w-full px-4 py-2.5 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF]';
+
+function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?: string }) {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showAddOrgModal, setShowAddOrgModal] = useState(false);
+  const [tenantOptions, setTenantOptions] = useState<TenantOption[]>([]);
+  const [tenantsList, setTenantsList] = useState<TenantRowUi[]>([]);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  const fetchTenants = async () => {
+    if (userRole !== 'admin') return;
+    try {
+      const res = await fetch('/api/admin/tenants');
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data)) {
+        const rows: TenantRowUi[] = data.data.map(
+          (t: {
+            id: string;
+            name: string;
+            businessName?: string;
+            abn?: string;
+            businessAddress?: string;
+            contactName?: string;
+            contactEmail?: string;
+            contactNumber?: string;
+          }) => ({
+            id: t.id,
+            name: t.name || '',
+            businessName: (t.businessName || '').trim(),
+            abn: (t.abn || '').trim(),
+            businessAddress: (t.businessAddress || '').trim(),
+            contactName: (t.contactName || '').trim(),
+            contactEmail: (t.contactEmail || '').trim(),
+            contactNumber: (t.contactNumber || '').trim(),
+          })
+        );
+        setTenantsList(rows);
+        setTenantOptions(
+          rows.map((t) => ({
+            id: t.id,
+            businessName: t.businessName,
+            label: t.businessName || t.name || t.id,
+          }))
+        );
+      }
+    } catch (e) {
+      console.error('Failed to load organisations:', e);
+    }
+  };
 
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    fetchTenants();
+  }, [userRole]);
 
   const fetchUsers = async () => {
     try {
@@ -473,27 +541,120 @@ function UsersTab({ userRole }: { userRole?: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50">
-            <Users className="w-6 h-6 text-white" />
-          </div>
-          <h2 className="text-2xl font-bold text-black">Users</h2>
+      <div className="flex items-center">
+        <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50">
+          <Users className="w-6 h-6 text-white" />
         </div>
-        {userRole === 'admin' && (
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="flex items-center px-6 py-3 bg-[#0033FF] text-white rounded-xl hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 hover:shadow-xl transform hover:scale-105"
-          >
-            <UserPlus className="w-5 h-5 mr-2" />
-            Add User
-          </button>
-        )}
+        <div>
+          <h2 className="text-2xl font-bold text-black">
+            {userRole === 'admin' ? 'Organisation & users' : 'Users'}
+          </h2>
+          {userRole === 'admin' && (
+            <p className="text-sm text-gray-600 mt-1 max-w-2xl">
+              Manage organisations in the table below, then add users to each organisation.
+            </p>
+          )}
+        </div>
       </div>
 
       {userRole === 'admin' && (
-        <OrganisationDetailsCard />
+        <>
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+            <div>
+              <h3 className="text-lg font-bold text-black">Organisations</h3>
+              <p className="text-sm text-gray-600 mt-0.5">
+                Every organisation you create appears here. Use the button to add one in a popup.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAddOrgModal(true)}
+              className="flex items-center justify-center px-6 py-3 bg-white text-[#0033FF] border-2 border-[#0033FF] rounded-xl hover:bg-[#0033FF]/5 transition-all shadow-md font-semibold shrink-0"
+            >
+              <Building2 className="w-5 h-5 mr-2" />
+              Add organisation
+            </button>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[720px]">
+                <thead>
+                  <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
+                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">
+                      Business name
+                    </th>
+                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">ABN</th>
+                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">
+                      Address
+                    </th>
+                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">
+                      Contact
+                    </th>
+                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Email</th>
+                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Phone</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tenantsList.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        className="py-8 px-4 text-center text-sm text-gray-600 bg-gray-50"
+                      >
+                        No organisations yet. Click <strong>Add organisation</strong> to create one.
+                      </td>
+                    </tr>
+                  ) : (
+                    tenantsList.map((t, index) => (
+                      <tr
+                        key={t.id}
+                        className={`border-b border-gray-200 ${
+                          index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                        }`}
+                      >
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">
+                          {t.businessName || t.name || '—'}
+                        </td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.abn || '—'}</td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black max-w-[200px]">
+                          <span className="line-clamp-2" title={t.businessAddress}>
+                            {t.businessAddress || '—'}
+                          </span>
+                        </td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.contactName || '—'}</td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black break-all max-w-[160px]">
+                          {t.contactEmail || '—'}
+                        </td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.contactNumber || '—'}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
+
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h3 className="text-lg font-bold text-black">Users</h3>
+          <p className="text-sm text-gray-600 mt-0.5">
+            Create accounts for staff. They appear in the table below.
+          </p>
+        </div>
+        {userRole === 'admin' && (
+          <button
+            type="button"
+            onClick={() => setShowAddModal(true)}
+            className="flex items-center justify-center px-6 py-3 bg-[#0033FF] text-white rounded-xl hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 hover:shadow-xl shrink-0 w-full sm:w-auto"
+          >
+            <UserPlus className="w-5 h-5 mr-2" />
+            Add user
+          </button>
+        )}
+      </div>
 
       <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
         <div className="overflow-x-auto">
@@ -501,6 +662,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
             <thead>
               <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Name</th>
+                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Organisation</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Email</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Phone</th>
                 <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Role</th>
@@ -517,6 +679,11 @@ function UsersTab({ userRole }: { userRole?: string }) {
                   }`}
                 >
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">{user.name}</td>
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black max-w-[200px]">
+                    <span className="line-clamp-2" title={user.organizationDisplay || ''}>
+                      {user.organizationDisplay || '—'}
+                    </span>
+                  </td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{user.email}</td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{user.phoneNumber || '-'}</td>
                   <td className="py-3 px-2 sm:px-4">
@@ -561,8 +728,20 @@ function UsersTab({ userRole }: { userRole?: string }) {
 
       {showAddModal && (
         <AddUserModal
+          tenantOptions={tenantOptions}
+          defaultTenantId={userTenantId}
           onClose={() => {
             setShowAddModal(false);
+            fetchUsers();
+          }}
+        />
+      )}
+
+      {showAddOrgModal && (
+        <AddOrganisationModal
+          onClose={() => setShowAddOrgModal(false)}
+          onCreated={() => {
+            fetchTenants();
             fetchUsers();
           }}
         />
@@ -571,6 +750,7 @@ function UsersTab({ userRole }: { userRole?: string }) {
       {showEditModal && editingUser && (
         <EditUserModal
           user={editingUser}
+          tenantOptions={tenantOptions}
           onClose={() => {
             setShowEditModal(false);
             setEditingUser(null);
@@ -582,11 +762,22 @@ function UsersTab({ userRole }: { userRole?: string }) {
   );
 }
 
-function OrganisationDetailsCard() {
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+const emptyOrgForm = {
+  businessName: '',
+  abn: '',
+  businessAddress: '',
+  contactName: '',
+  contactEmail: '',
+  contactNumber: '',
+};
+
+function AddOrganisationModal({
+  onClose,
+  onCreated,
+}: {
+  onClose: () => void;
+  onCreated: () => void;
+}) {
   const [form, setForm] = useState({
     businessName: '',
     abn: '',
@@ -595,139 +786,146 @@ function OrganisationDetailsCard() {
     contactEmail: '',
     contactNumber: '',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetch('/api/admin/tenant');
-        const data = await res.json();
-        if (data.success && data.data) {
-          setForm({
-            businessName: data.data.businessName || data.data.name || '',
-            abn: data.data.abn || '',
-            businessAddress: data.data.businessAddress || '',
-            contactName: data.data.contactName || '',
-            contactEmail: data.data.contactEmail || '',
-            contactNumber: data.data.contactNumber || '',
-          });
-        }
-      } catch (e: any) {
-        setError(e?.message || 'Failed to load organisation details');
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, []);
-
-  const save = async () => {
-    setSaving(true);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.businessName.trim()) {
+      setError('Business name is required');
+      return;
+    }
+    setLoading(true);
     setError(null);
-    setSuccess(null);
     try {
-      const res = await fetch('/api/admin/tenant', {
-        method: 'PUT',
+      const res = await fetch('/api/admin/tenants', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
       const data = await res.json();
-      if (!data.success) throw new Error(data.error || 'Failed to save');
-      setSuccess('Organisation saved');
-      setTimeout(() => setSuccess(null), 2000);
-    } catch (e: any) {
-      setError(e?.message || 'Failed to save');
+      if (!data.success) throw new Error(data.error || 'Failed to create organisation');
+      setForm({ ...emptyOrgForm });
+      onCreated();
+      onClose();
+    } catch (err: any) {
+      setError(err.message || 'Failed to create organisation');
     } finally {
-      setSaving(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
-      <div className="flex items-center justify-between gap-3 flex-wrap mb-4">
-        <h3 className="text-lg font-bold text-black">Organisation</h3>
-        <button
-          type="button"
-          onClick={save}
-          disabled={loading || saving}
-          className="px-4 py-2 bg-[#0033FF] text-white rounded-xl font-semibold disabled:opacity-50"
-        >
-          {saving ? 'Saving...' : 'Save'}
-        </button>
-      </div>
-
-      {error && (
-        <div className="p-3 mb-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-          {error}
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+      <div
+        className="relative z-[201] bg-black/95 rounded-xl shadow-2xl p-6 sm:p-8 w-full max-w-lg border-2 border-[#0033FF]/30 max-h-[90vh] overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="add-org-title"
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 id="add-org-title" className="text-xl sm:text-2xl font-bold text-white flex items-center">
+            <Building2 className="w-6 h-6 mr-2 shrink-0" />
+            Add organisation
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-200 transition-colors text-2xl leading-none"
+          >
+            ✕
+          </button>
         </div>
-      )}
-      {success && (
-        <div className="p-3 mb-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
-          {success}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Business name</label>
-          <input
-            value={form.businessName}
-            onChange={(e) => setForm({ ...form, businessName: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">ABN</label>
-          <input
-            value={form.abn}
-            onChange={(e) => setForm({ ...form, abn: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
-            disabled={loading}
-          />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Business address</label>
-          <input
-            value={form.businessAddress}
-            onChange={(e) => setForm({ ...form, businessAddress: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Contact name</label>
-          <input
-            value={form.contactName}
-            onChange={(e) => setForm({ ...form, contactName: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
-            disabled={loading}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Contact number</label>
-          <input
-            value={form.contactNumber}
-            onChange={(e) => setForm({ ...form, contactNumber: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
-            disabled={loading}
-          />
-        </div>
-        <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Contact email</label>
-          <input
-            type="email"
-            value={form.contactEmail}
-            onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-black"
-            disabled={loading}
-          />
-        </div>
+        <p className="text-sm text-slate-400 mb-6">
+          Creates a new organisation record. Then use <span className="text-slate-300 font-medium">Add user</span> to assign people to it.
+        </p>
+        {error && (
+          <div className="p-3 mb-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg text-sm">{error}</div>
+        )}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Business name *</label>
+            <input
+              value={form.businessName}
+              onChange={(e) => setForm({ ...form, businessName: e.target.value })}
+              required
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white placeholder-slate-400"
+              placeholder="Registered business name"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">ABN</label>
+            <input
+              value={form.abn}
+              onChange={(e) => setForm({ ...form, abn: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Business address</label>
+            <input
+              value={form.businessAddress}
+              onChange={(e) => setForm({ ...form, businessAddress: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Contact name</label>
+            <input
+              value={form.contactName}
+              onChange={(e) => setForm({ ...form, contactName: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Contact number</label>
+            <input
+              value={form.contactNumber}
+              onChange={(e) => setForm({ ...form, contactNumber: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Contact email</label>
+            <input
+              type="email"
+              value={form.contactEmail}
+              onChange={(e) => setForm({ ...form, contactEmail: e.target.value })}
+              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white"
+            />
+          </div>
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 px-4 py-2 border border-slate-500/50 text-slate-300 rounded-lg hover:bg-slate-700/50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 font-semibold"
+            >
+              {loading ? 'Creating...' : 'Create organisation'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
 }
 
-function AddUserModal({ onClose }: { onClose: () => void }) {
+function AddUserModal({
+  onClose,
+  tenantOptions,
+  defaultTenantId,
+}: {
+  onClose: () => void;
+  tenantOptions: TenantOption[];
+  defaultTenantId?: string;
+}) {
+  const [tenantId, setTenantId] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -741,6 +939,16 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordStrength, setPasswordStrength] = useState<'weak' | 'medium' | 'strong'>('weak');
+
+  useEffect(() => {
+    if (!tenantOptions.length) {
+      setTenantId('');
+      return;
+    }
+    const preferred = defaultTenantId && tenantOptions.some((t) => t.id === defaultTenantId);
+    const nextId = preferred ? defaultTenantId! : tenantOptions[0].id;
+    setTenantId(nextId);
+  }, [tenantOptions, defaultTenantId]);
 
   // Validate email uniqueness
   const checkEmail = async (email: string) => {
@@ -839,11 +1047,20 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
     setLoading(true);
     setError(null);
 
+    if (!tenantId) {
+      setError('Select an organisation first. Create one with Add organisation if needed.');
+      setLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          tenantId,
+        }),
       });
 
       const data = await response.json();
@@ -865,15 +1082,39 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50">
-      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#0033FF]/30">
-        <h2 className="text-2xl font-bold mb-6 text-white">Add User</h2>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+      <div className="relative z-[201] bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#0033FF]/30 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold text-white">Add user</h2>
+        <p className="text-sm text-slate-400 mt-2 mb-6">
+          Choose the organisation this account belongs to, then enter their login details.
+        </p>
         {error && (
           <div className="p-3 mb-4 bg-red-900/50 border border-red-500/50 text-red-300 rounded-lg bg-slate-800/95">
             {error}
           </div>
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Organisation *</label>
+            {tenantOptions.length === 0 ? (
+              <p className="text-sm text-amber-300/90 bg-amber-900/20 border border-amber-700/50 rounded-lg p-3">
+                No organisations found. Close this dialog and use <strong>Add organisation</strong> first.
+              </p>
+            ) : (
+              <select
+                value={tenantId}
+                onChange={(e) => setTenantId(e.target.value)}
+                required
+                className={MODAL_SELECT_CLASS}
+              >
+                {tenantOptions.map((t) => (
+                  <option key={t.id} value={t.id} className="text-gray-900 bg-white">
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">Name</label>
             <input
@@ -963,11 +1204,17 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white hover:bg-slate-600/70"
+              className={MODAL_SELECT_CLASS}
             >
-              <option value="technician" className="bg-slate-700">Technician</option>
-              <option value="manager" className="bg-slate-700">Manager</option>
-              <option value="admin" className="bg-slate-700">Admin</option>
+              <option value="technician" className="text-gray-900 bg-white">
+                Technician
+              </option>
+              <option value="manager" className="text-gray-900 bg-white">
+                Manager
+              </option>
+              <option value="admin" className="text-gray-900 bg-white">
+                Admin
+              </option>
             </select>
           </div>
           <div className="flex gap-3">
@@ -980,10 +1227,10 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || tenantOptions.length === 0 || !tenantId}
               className="flex-1 px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#0033FF]/50"
             >
-              {loading ? 'Creating...' : 'Create User'}
+              {loading ? 'Creating...' : 'Create user'}
             </button>
           </div>
         </form>
@@ -992,7 +1239,16 @@ function AddUserModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
+function EditUserModal({
+  user,
+  tenantOptions,
+  onClose,
+}: {
+  user: any;
+  tenantOptions: TenantOption[];
+  onClose: () => void;
+}) {
+  const [tenantId, setTenantId] = useState(user.tenantId || '');
   const [formData, setFormData] = useState({
     name: user.name || '',
     email: user.email || '',
@@ -1118,6 +1374,10 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
         isActive: formData.isActive,
       };
 
+      if (tenantId && tenantId !== user.tenantId) {
+        updateData.tenantId = tenantId;
+      }
+
       // Only include password if it's provided
       if (formData.password && formData.password.trim() !== '') {
         updateData.password = formData.password;
@@ -1143,8 +1403,8 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 bg-slate-800/95 flex items-center justify-center z-50 p-4">
-      <div className="bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#0033FF]/30 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+      <div className="relative z-[201] bg-black/95 rounded-xl shadow-2xl p-8 w-full max-w-md border-2 border-[#0033FF]/30 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white flex items-center">
             <Edit className="w-6 h-6 mr-2" />
@@ -1163,6 +1423,27 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
           </div>
         )}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-200 mb-2">Organisation *</label>
+            {tenantOptions.length === 0 ? (
+              <p className="text-sm text-amber-300/90 bg-amber-900/20 border border-amber-700/50 rounded-lg p-3">
+                No organisations loaded. Close and reopen from the admin tab.
+              </p>
+            ) : (
+              <select
+                value={tenantId}
+                onChange={(e) => setTenantId(e.target.value)}
+                required
+                className={MODAL_SELECT_CLASS}
+              >
+                {tenantOptions.map((t) => (
+                  <option key={t.id} value={t.id} className="text-gray-900 bg-white">
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
           <div>
             <label className="block text-sm font-medium text-slate-200 mb-2">Name</label>
             <input
@@ -1252,11 +1533,17 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
             <select
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              className="w-full px-4 py-2 border border-slate-500/50 rounded-lg bg-slate-600/50 text-white hover:bg-slate-600/70"
+              className={MODAL_SELECT_CLASS}
             >
-              <option value="technician" className="bg-slate-700">Technician</option>
-              <option value="manager" className="bg-slate-700">Manager</option>
-              <option value="admin" className="bg-slate-700">Admin</option>
+              <option value="technician" className="text-gray-900 bg-white">
+                Technician
+              </option>
+              <option value="manager" className="text-gray-900 bg-white">
+                Manager
+              </option>
+              <option value="admin" className="text-gray-900 bg-white">
+                Admin
+              </option>
             </select>
           </div>
           <div>
@@ -1280,7 +1567,7 @@ function EditUserModal({ user, onClose }: { user: any; onClose: () => void }) {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || tenantOptions.length === 0 || !tenantId}
               className="flex-1 px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 transition-all shadow-lg shadow-[#0033FF]/50"
             >
               {loading ? 'Updating...' : 'Update User'}

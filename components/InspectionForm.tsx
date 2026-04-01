@@ -337,6 +337,28 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     name: 'checklist',
   });
 
+  const activeCategoryTitle = watch(
+    `checklist.${Math.min(activeChecklistCategory, Math.max(0, fields.length - 1))}.category` as `checklist.${number}.category`
+  );
+
+  const overallProgressPercent = useMemo(() => {
+    const catCount = Math.max(1, fields.length);
+    if (currentStep === 5) return 100;
+    if (currentStep <= 3) return Math.round((currentStep / totalSteps) * 100);
+    const base = (3 / totalSteps) * 100;
+    const span = (1 / totalSteps) * 100;
+    return Math.min(99, Math.round(base + ((activeChecklistCategory + 1) / catCount) * span));
+  }, [currentStep, totalSteps, fields.length, activeChecklistCategory]);
+
+  useEffect(() => {
+    if (currentStep !== 4) {
+      setActiveChecklistCategory(0);
+      return;
+    }
+    const maxIdx = Math.max(0, fields.length - 1);
+    setActiveChecklistCategory((i) => Math.min(i, maxIdx));
+  }, [currentStep, fields.length]);
+
   // Sync inspection date from initialData to yyyy-MM-dd so the date input displays correctly in view mode
   useEffect(() => {
     if (initialData?.inspectionDate != null) {
@@ -925,12 +947,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         }
         return { valid: true };
       case 3:
-        // GPS and photos validation
+        // GPS required; general photos optional (repair items carry photos on checklist)
         if (!location || (!location.current && !location.start)) {
           return { valid: false, error: 'Please capture GPS location before proceeding' };
-        }
-        if (!photos || photos.length === 0) {
-          return { valid: false, error: 'Please upload at least one photo' };
         }
         return { valid: true };
       case 4:
@@ -1379,7 +1398,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             })}
           </div>
           <p className="text-xs text-gray-600">
-            Tip: Use these 4 guided photos for the main angles. Extra general photos can be added later if needed.
+            Optional: guided angles help documentation. General photos are not required to continue—repair items use photos on the checklist.
           </p>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-200">
@@ -1554,17 +1573,18 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   {categoryName || `Category ${categoryIndex + 1}`}
                 </h3>
               </div>
-              <input
+              <textarea
                 {...register(`checklist.${categoryIndex}.category`)}
                 disabled={readOnly}
-                className={`w-full px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${
+                rows={3}
+                className={`w-full min-h-[4.5rem] px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-y ${
                   isExt 
                     ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                     : isInt 
                     ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
                     : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                 } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                placeholder="Category name"
+                placeholder="Category name (full title visible—resize if needed)"
               />
 
               {category.items?.map((item: any, itemIndex: number) => {
@@ -1576,24 +1596,24 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     key={itemIndex} 
                     className="mb-3 p-3 rounded-lg border border-gray-200 bg-transparent"
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2 gap-2">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between mb-2">
                       <textarea
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)}
                         disabled={readOnly}
-                        className={`flex-1 w-full min-w-0 px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-none ${
+                        className={`flex-1 w-full min-w-0 px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-y min-h-[5.5rem] ${
                           isExt 
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
                             ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
                             : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
                         } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                        placeholder="Item name"
-                        rows={2}
+                        placeholder="Inspection item (full description)"
+                        rows={4}
                       />
                       <select
                         {...register(`checklist.${categoryIndex}.items.${itemIndex}.status`)}
                         disabled={readOnly}
-                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black font-medium w-full sm:w-auto ${
+                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black font-medium w-full sm:w-auto sm:min-w-[12.5rem] sm:max-w-[14rem] shrink-0 self-stretch sm:self-auto ${
                           isExt 
                             ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
                             : isInt 
@@ -1722,6 +1742,48 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-0 sm:px-2 min-w-0 overflow-x-hidden">
+      {!readOnly && (
+        <div className="sticky top-0 z-30 -mx-0.5 px-2 py-2.5 mb-1 bg-slate-900/95 backdrop-blur-sm border border-slate-600/60 rounded-xl shadow-lg">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-slate-200">
+            <span className="font-semibold text-white">
+              Step {currentStep} of {totalSteps}
+              <span className="text-slate-400 font-normal"> — {steps[currentStep - 1]?.title}</span>
+            </span>
+            {currentStep === 4 && fields.length > 0 && (
+              <span className="text-[#9ec5ff] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
+                Checklist {activeChecklistCategory + 1}/{fields.length}
+                {activeCategoryTitle ? `: ${activeCategoryTitle}` : ''}
+              </span>
+            )}
+            <span className="text-slate-400 tabular-nums font-medium">{overallProgressPercent}%</span>
+          </div>
+          <div className="mt-2 h-2 w-full rounded-full bg-slate-700 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-[#0033FF] transition-[width] duration-300 ease-out"
+              style={{ width: `${overallProgressPercent}%` }}
+            />
+          </div>
+          <div className="flex gap-1 sm:gap-1.5 mt-2 overflow-x-auto pb-0.5">
+            {steps.map((s) => {
+              const Icon = s.icon;
+              return (
+                <span
+                  key={s.number}
+                  className={`inline-flex items-center gap-1 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold border ${
+                    currentStep === s.number
+                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
+                      : 'bg-slate-800/80 text-slate-400 border-slate-600/50'
+                  }`}
+                >
+                  <Icon className="w-3 h-3 opacity-90" aria-hidden />
+                  {s.title}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       {success && (
         <div className="p-4 bg-green-900/50 border-2 border-green-500/50 rounded-xl flex items-center animate-fade-in shadow-lg bg-slate-800/95">
           <CheckCircle className="w-6 h-6 text-green-400 mr-3 flex-shrink-0" />

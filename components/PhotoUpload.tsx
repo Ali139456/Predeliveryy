@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, memo } from 'react';
-import Image from 'next/image';
+import { useState, memo, useCallback } from 'react';
 import { Camera, X } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
+import CameraCaptureModal from './CameraCaptureModal';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 
@@ -45,13 +45,13 @@ function PhotoUpload({
 }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
 
-  const compressImage = async (file: File): Promise<File> => {
+  const compressImage = useCallback(async (file: File): Promise<File> => {
     if (!file.type.startsWith('image/')) return file;
     try {
       const bitmap = await createImageBitmap(file);
-      const maxDim = 1600;
+      const maxDim = 1400;
       const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
       const targetW = Math.max(1, Math.round(bitmap.width * scale));
       const targetH = Math.max(1, Math.round(bitmap.height * scale));
@@ -64,7 +64,7 @@ function PhotoUpload({
       ctx.drawImage(bitmap, 0, 0, targetW, targetH);
 
       const blob: Blob | null = await new Promise((resolve) =>
-        canvas.toBlob(resolve, 'image/jpeg', 0.8)
+        canvas.toBlob(resolve, 'image/jpeg', 0.76)
       );
       if (!blob) return file;
 
@@ -73,54 +73,42 @@ function PhotoUpload({
     } catch {
       return file;
     }
-  };
+  }, []);
 
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    const currentCount = Array.isArray(photos) ? photos.length : 0;
-    if (currentCount + files.length > maxPhotos) {
-      if (typeof window !== 'undefined') {
-        alert(`Maximum ${maxPhotos} photos allowed`);
+  const uploadSingleFile = useCallback(
+    async (file: File) => {
+      const currentCount = Array.isArray(photos) ? photos.length : 0;
+      if (currentCount >= maxPhotos) {
+        if (typeof window !== 'undefined') alert(`Maximum ${maxPhotos} photos allowed`);
+        return;
       }
-      return;
-    }
-
-    setUploading(true);
-
-    try {
-      const uploadPromises = Array.from(files).map(async (file) => {
+      setUploading(true);
+      try {
         const toUpload = await compressImage(file);
-        // Upload via server API route (supports Vercel Blob, Cloudinary, or S3)
         const result = await uploadToVercelBlobViaAPI(toUpload);
-        
-        return {
-          fileName: result.fileName, // Store pathname or identifier
-          url: result.url, // Store full URL for immediate use
+        const next = {
+          fileName: result.fileName,
+          url: result.url,
           metadata:
             uploadTag && Object.keys(uploadTag).length
               ? { ...(result.metadata || {}), ...uploadTag }
               : result.metadata || null,
         };
-      });
-
-      const uploadedFiles = await Promise.all(uploadPromises);
-      const currentPhotos = photos.map((p: any) => typeof p === 'string' ? { fileName: p } : p);
-      onPhotosChange([...currentPhotos, ...uploadedFiles]);
-    } catch (error: any) {
-      if (typeof window !== 'undefined') {
-        const errorMessage = error.message || 'Upload failed. Please check your storage configuration.';
-        alert(`Upload failed: ${errorMessage}`);
+        const currentPhotos = photos.map((p: any) => (typeof p === 'string' ? { fileName: p } : p));
+        onPhotosChange([...currentPhotos, next]);
+        setCameraOpen(false);
+      } catch (error: unknown) {
+        if (typeof window !== 'undefined') {
+          const errorMessage = error instanceof Error ? error.message : 'Upload failed. Please check your storage configuration.';
+          alert(`Upload failed: ${errorMessage}`);
+        }
+        console.error('Photo upload error:', error);
+      } finally {
+        setUploading(false);
       }
-      console.error('Photo upload error:', error);
-    } finally {
-      setUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
+    },
+    [compressImage, maxPhotos, onPhotosChange, photos, uploadTag]
+  );
 
   const removePhoto = (index: number) => {
     const newPhotos = photos
@@ -138,7 +126,7 @@ function PhotoUpload({
         {!readOnly && (
           <button
             type="button"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => setCameraOpen(true)}
             disabled={uploading || (Array.isArray(photos) ? photos.length >= maxPhotos : false)}
             className="flex items-center justify-center px-4 py-2 min-h-11 bg-pink-600 text-white rounded-lg hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap"
           >
@@ -148,15 +136,7 @@ function PhotoUpload({
         )}
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        multiple
-        onChange={handleFileSelect}
-        className="hidden"
-      />
+      <CameraCaptureModal isOpen={cameraOpen} onClose={() => setCameraOpen(false)} onCaptured={(file) => uploadSingleFile(file)} />
 
       {Array.isArray(photos) && photos.length > 0 && (
         <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
@@ -169,14 +149,14 @@ function PhotoUpload({
                   className="relative aspect-square cursor-pointer hover:opacity-80 transition-opacity"
                   onClick={() => setLightboxImage(imageUrl)}
                 >
-                <Image
-                    src={imageUrl}
+                {/* eslint-disable-next-line @next/next/no-img-element -- API/signed/redirect URLs; next/image breaks cookies/redirects */}
+                <img
+                  src={imageUrl}
                   alt={`Photo ${index + 1}`}
-                    width={100}
-                    height={100}
-                    className="w-full h-full aspect-square object-cover rounded-lg"
+                  className="w-full h-full aspect-square object-cover rounded-lg bg-gray-100"
                   loading="lazy"
-                  unoptimized
+                  decoding="async"
+                  referrerPolicy="same-origin"
                 />
                 </div>
                 {!readOnly && (

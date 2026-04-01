@@ -22,16 +22,20 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    await requireAuth(['admin', 'manager'])(request);
+    const authUser = await requireAuth(['admin', 'manager'])(request);
     const supabase = getSupabase();
     const { data: row, error } = await supabase
       .from('users')
-      .select('id, email, phone_number, name, role, is_active, created_at, updated_at')
+      .select('id, email, phone_number, name, role, is_active, organization, tenant_id, created_at, updated_at')
       .eq('id', params.id)
       .single();
 
     if (error || !row) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
+
+    if (authUser.role !== 'admin' && row.tenant_id !== authUser.tenantId) {
+      return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
     const user = userRowToUser({ ...row, password: '' } as UserRow);
@@ -57,8 +61,45 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    const { email, phoneNumber, password, name, role, isActive } = await request.json();
+    const { email, phoneNumber, password, name, role, isActive, organization, tenantId } =
+      await request.json();
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+
+    if (tenantId !== undefined && typeof tenantId === 'string' && tenantId !== existing.tenant_id) {
+      const { data: tenantRow } = await supabase.from('tenants').select('id').eq('id', tenantId).single();
+      if (!tenantRow) {
+        return NextResponse.json({ success: false, error: 'Organisation not found' }, { status: 400 });
+      }
+      const nextEmail = (email && email.toLowerCase()) || existing.email;
+      const nextPhone = phoneNumber !== undefined ? String(phoneNumber).trim() : existing.phone_number;
+      const { data: emailTaken } = await supabase
+        .from('users')
+        .select('id')
+        .eq('tenant_id', tenantId)
+        .eq('email', nextEmail)
+        .neq('id', params.id)
+        .maybeSingle();
+      if (emailTaken) {
+        return NextResponse.json(
+          { success: false, error: 'This email is already used in the selected organisation' },
+          { status: 400 }
+        );
+      }
+      const { data: phoneTaken } = await supabase
+        .from('users')
+        .select('id')
+        .eq('tenant_id', tenantId)
+        .eq('phone_number', nextPhone)
+        .neq('id', params.id)
+        .maybeSingle();
+      if (phoneTaken) {
+        return NextResponse.json(
+          { success: false, error: 'This phone number is already used in the selected organisation' },
+          { status: 400 }
+        );
+      }
+      updates.tenant_id = tenantId;
+    }
 
     if (email && email.toLowerCase() !== existing.email) {
       const { data: conflict } = await supabase.from('users').select('id').eq('email', email.toLowerCase()).single();
@@ -85,6 +126,10 @@ export async function PUT(
     if (name) updates.name = name;
     if (role) updates.role = role;
     if (isActive !== undefined) updates.is_active = isActive;
+    if (organization !== undefined) {
+      updates.organization =
+        typeof organization === 'string' && organization.trim() ? organization.trim() : null;
+    }
 
     if (password) {
       const err = validatePassword(password);
@@ -96,7 +141,7 @@ export async function PUT(
       .from('users')
       .update(updates)
       .eq('id', params.id)
-      .select('id, email, phone_number, name, role, is_active')
+      .select('id, email, phone_number, name, role, is_active, organization, tenant_id')
       .single();
 
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -109,7 +154,17 @@ export async function PUT(
       details: {
         email: user.email,
         phoneNumber: user.phone_number,
-        changes: Object.keys({ email, phoneNumber, name, role, isActive, password: password ? '***' : undefined }).filter(Boolean),
+        tenantId: user.tenant_id,
+        changes: Object.keys({
+          email,
+          phoneNumber,
+          name,
+          role,
+          isActive,
+          organization,
+          tenantId,
+          password: password ? '***' : undefined,
+        }).filter(Boolean),
       },
     });
 
@@ -122,6 +177,8 @@ export async function PUT(
         name: user.name,
         role: user.role,
         isActive: user.is_active,
+        organization: user.organization,
+        tenantId: user.tenant_id,
       },
     });
   } catch (error: unknown) {

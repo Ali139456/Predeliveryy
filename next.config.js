@@ -1,6 +1,14 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Stable Turbopack root (absolute) — avoids resolution quirks when the folder path contains spaces (e.g. "Pre Delivery App")
+  experimental: {
+    turbo: {
+      root: path.resolve(__dirname),
+    },
+  },
   images: {
     domains: ['localhost', 'res.cloudinary.com', 'images.unsplash.com'],
     remotePatterns: [
@@ -14,9 +22,8 @@ const nextConfig = {
   },
   // Performance optimizations
   swcMinify: true,
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
+  // Note: compiler.removeConsole is not supported with `next dev --turbo` (Next.js 14).
+  // Production `next build` still strips dead code via SWC minify; avoid removeConsole here so Turbopack dev works.
   // Compression
   compress: true,
   // Optimize production builds
@@ -25,6 +32,10 @@ const nextConfig = {
   webpack: (config, { dev }) => {
     if (dev && typeof config.devtool === 'string' && config.devtool.includes('eval')) {
       config.devtool = 'cheap-module-source-map';
+    }
+    // Windows + paths with spaces: persistent pack cache often leaves .next/server out of sync → 404 on /_next/static and "__webpack_modules__ is not a function"
+    if (dev) {
+      config.cache = false;
     }
     return config;
   },

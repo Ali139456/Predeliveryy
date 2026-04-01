@@ -25,6 +25,7 @@ export interface UserRow {
   name: string;
   role: UserRole;
   is_active: boolean;
+  organization?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -37,6 +38,7 @@ export interface IUser {
   name: string;
   role: UserRole;
   isActive: boolean;
+  organization?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -182,6 +184,7 @@ export function userRowToUser(row: UserRow): IUser & { _id?: string } {
     name: row.name,
     role: row.role,
     isActive: row.is_active,
+    organization: row.organization ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

@@ -118,7 +118,7 @@ const IMAGE_FETCH_TIMEOUT_MS = 8000;
 const MAX_GENERAL_PHOTOS = 10;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM = 2;
 /** Lighter limits for email (Resend 40MB limit) */
-const MAX_GENERAL_PHOTOS_EMAIL = 3;
+const MAX_GENERAL_PHOTOS_EMAIL = 2;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL = 1;
 const IMAGE_LOAD_CONCURRENCY = 6;
 
@@ -168,6 +168,26 @@ function getMimeType(ext: string): string {
     '.webp': 'image/webp',
   };
   return mimeMap[ext] || 'image/jpeg';
+}
+
+/** Downscale embedded images for email PDFs (keeps total attachment under provider limits). */
+async function shrinkDataUriForEmail(dataUri: string | null): Promise<string | null> {
+  if (!dataUri || !dataUri.startsWith('data:image')) return dataUri;
+  try {
+    const sharp = (await import('sharp')).default;
+    const normalized = dataUri.replace(/\s/g, '');
+    const base64Match = /^data:image\/[\w+.-]+;base64,(.+)$/i.exec(normalized);
+    if (!base64Match) return dataUri;
+    const buf = Buffer.from(base64Match[1], 'base64');
+    const out = await sharp(buf)
+      .rotate()
+      .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 62, mozjpeg: true })
+      .toBuffer();
+    return `data:image/jpeg;base64,${out.toString('base64')}`;
+  } catch {
+    return dataUri;
+  }
 }
 
 /** Run promises in parallel with a concurrency limit */
@@ -356,7 +376,15 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     }
   }
   const uniqueSources = Array.from(new Set(imageSources));
-  const imageCache = await runWithConcurrency(uniqueSources, (src) => loadImageAsBase64(src), IMAGE_LOAD_CONCURRENCY);
+  const imageCache = await runWithConcurrency(
+    uniqueSources,
+    async (src) => {
+      const raw = await loadImageAsBase64(src);
+      if (forEmail && raw) return shrinkDataUriForEmail(raw);
+      return raw;
+    },
+    IMAGE_LOAD_CONCURRENCY
+  );
   
   // ============================================
   // SECTION 1: INSPECTOR INFORMATION (Table)
@@ -853,8 +881,17 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   const techSigY = yPos + 5;
 
   if (inspection.signatures?.technician) {
+    let sigSrc = inspection.signatures.technician;
+    let sigFormat: 'PNG' | 'JPEG' = 'PNG';
+    if (forEmail && typeof sigSrc === 'string' && sigSrc.startsWith('data:')) {
+      const shrunk = await shrinkDataUriForEmail(sigSrc);
+      if (shrunk?.startsWith('data:image/jpeg')) {
+        sigSrc = shrunk;
+        sigFormat = 'JPEG';
+      }
+    }
     try {
-      doc.addImage(inspection.signatures.technician, 'PNG', techSigX, techSigY, signatureWidth, signatureHeight);
+      doc.addImage(sigSrc, sigFormat as 'PNG' | 'JPEG', techSigX, techSigY, signatureWidth, signatureHeight);
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
       doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
@@ -905,7 +942,6 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   yPos += 12;
 
   const additionalFields = [
-    ['Privacy Consent', formatValue(inspection.privacyConsent)],
     ['Data Retention Days', formatValue(inspection.dataRetentionDays)],
     ['Created At', formatValue(inspection.createdAt ? new Date(inspection.createdAt).toLocaleString() : null)],
     ['Updated At', formatValue(inspection.updatedAt ? new Date(inspection.updatedAt).toLocaleString() : null)],

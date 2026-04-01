@@ -18,24 +18,59 @@ function validatePassword(password: string): string | null {
   return null;
 }
 
+type TenantEmbed = { id?: string; name?: string; business_name?: string | null } | null;
+
+function mapUserListRow(r: Record<string, unknown>) {
+  const t = r.tenants as TenantEmbed;
+  const row = {
+    id: r.id as string,
+    tenant_id: r.tenant_id as string,
+    email: r.email as string,
+    phone_number: r.phone_number as string,
+    password: '',
+    name: r.name as string,
+    role: r.role as UserRow['role'],
+    is_active: r.is_active as boolean,
+    organization: (r.organization as string | null) ?? null,
+    created_at: r.created_at as string,
+    updated_at: r.updated_at as string,
+  };
+  const base = userRowToUser(row);
+  const business = (t?.business_name as string) || '';
+  const tenantName = (t?.name as string) || '';
+  const customOrg = typeof r.organization === 'string' ? r.organization.trim() : '';
+  const organizationDisplay = customOrg || business || tenantName || '—';
+  return {
+    ...base,
+    tenantBusinessName: business || null,
+    tenantName: tenantName || null,
+    organizationDisplay,
+  };
+}
+
 export async function GET(request: NextRequest) {
   try {
     const authUser = await requireAuth(['admin', 'manager'])(request);
     const supabase = getSupabase();
-    const { data: rows, error } = await supabase
+
+    let q = supabase
       .from('users')
-      .select('id, email, phone_number, name, role, is_active, created_at, updated_at')
-      .eq('tenant_id', authUser.tenantId)
+      .select(
+        'id, email, phone_number, name, role, is_active, organization, tenant_id, created_at, updated_at, tenants ( id, name, business_name )'
+      )
       .order('created_at', { ascending: false });
+
+    if (authUser.role !== 'admin') {
+      q = q.eq('tenant_id', authUser.tenantId);
+    }
+
+    const { data: rows, error } = await q;
 
     if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
-    const users = (rows || []).map((r) => {
-      const row = { ...r, password: '' } as UserRow;
-      return userRowToUser(row);
-    });
+    const users = (rows || []).map((r) => mapUserListRow(r as Record<string, unknown>));
 
     return NextResponse.json({ success: true, data: users });
   } catch (error: unknown) {
@@ -53,7 +88,8 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const authUser = await requireAuth(['admin'])(request);
-    const { email, phoneNumber, password, name, role, isActive } = await request.json();
+    const body = await request.json();
+    const { email, phoneNumber, password, name, role, isActive, tenantId, organization } = body;
 
     if (!email || !password || !name || !phoneNumber) {
       return NextResponse.json(
@@ -68,11 +104,24 @@ export async function POST(request: NextRequest) {
     const err = validatePassword(password);
     if (err) return NextResponse.json({ success: false, error: err }, { status: 400 });
 
+    let targetTenantId = authUser.tenantId;
+    if (tenantId && typeof tenantId === 'string') {
+      const supabaseCheck = getSupabase();
+      const { data: tenantRow } = await supabaseCheck.from('tenants').select('id').eq('id', tenantId).single();
+      if (!tenantRow) {
+        return NextResponse.json({ success: false, error: 'Organisation not found' }, { status: 400 });
+      }
+      targetTenantId = tenantId;
+    }
+
+    const orgLabel =
+      typeof organization === 'string' && organization.trim() ? organization.trim() : null;
+
     const supabase = getSupabase();
     const { data: existingEmail } = await supabase
       .from('users')
       .select('id')
-      .eq('tenant_id', authUser.tenantId)
+      .eq('tenant_id', targetTenantId)
       .eq('email', email.toLowerCase())
       .single();
     if (existingEmail) {
@@ -81,7 +130,7 @@ export async function POST(request: NextRequest) {
     const { data: existingPhone } = await supabase
       .from('users')
       .select('id')
-      .eq('tenant_id', authUser.tenantId)
+      .eq('tenant_id', targetTenantId)
       .eq('phone_number', phoneNumber.trim())
       .single();
     if (existingPhone) {
@@ -92,15 +141,16 @@ export async function POST(request: NextRequest) {
     const { data: user, error } = await supabase
       .from('users')
       .insert({
-        tenant_id: authUser.tenantId,
+        tenant_id: targetTenantId,
         email: email.toLowerCase(),
         phone_number: phoneNumber.trim(),
         password: hashed,
         name,
         role: role || 'technician',
         is_active: isActive !== undefined ? isActive : true,
+        organization: orgLabel,
       })
-      .select('id, email, phone_number, name, role, is_active')
+      .select('id, email, phone_number, name, role, is_active, organization')
       .single();
 
     if (error) {
@@ -114,7 +164,7 @@ export async function POST(request: NextRequest) {
       action: 'user.created',
       resourceType: 'user',
       resourceId: user.id,
-      details: { email: user.email, name: user.name, role: user.role },
+      details: { email: user.email, name: user.name, role: user.role, tenantId: targetTenantId },
     });
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || new URL(request.url).origin;
@@ -140,6 +190,7 @@ export async function POST(request: NextRequest) {
         name: user.name,
         role: user.role,
         isActive: user.is_active,
+        organization: user.organization,
         emailSent,
         emailError: emailError ?? undefined,
       },
