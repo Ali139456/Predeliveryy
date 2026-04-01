@@ -9,11 +9,32 @@ import https from 'https';
 import http from 'http';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { getS3Url } from '@/lib/s3';
+import { hasSupabaseStorageConfig, getSupabaseStorageSignedOrPublicUrl } from '@/lib/supabase-storage';
+
+/** Prefer `tenants/…` path for PDF fetch so private Supabase buckets work (ignore stored getPublicUrl). */
+function resolvePdfImageSource(photo: string | { fileName?: string; url?: string } | null | undefined): string | null {
+  if (photo == null) return null;
+  if (typeof photo === 'string') {
+    const s = photo.trim();
+    return s || null;
+  }
+  const fn = typeof (photo as { fileName?: string }).fileName === 'string' ? (photo as { fileName: string }).fileName.trim() : '';
+  if (fn.startsWith('tenants/')) {
+    return fn;
+  }
+  const u = typeof (photo as { url?: string }).url === 'string' ? (photo as { url: string }).url.trim() : '';
+  if (u && (u.startsWith('https://') || u.startsWith('http://'))) {
+    return u;
+  }
+  if (fn) return fn;
+  if (u && u.startsWith('/')) return u;
+  return null;
+}
 
 // Helper function to load image as base64 (fileName can be a path or a full URL)
 async function loadImageAsBase64(fileName: string): Promise<string | null> {
   try {
-    // If it's already a full URL (e.g. Supabase public URL stored in photo.url), fetch directly
+    // If it's already a full URL (e.g. presigned or public CDN), fetch directly
     if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
       const imageBuffer = await fetchImageFromUrl(fileName);
       if (imageBuffer) {
@@ -24,9 +45,20 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
       return null;
     }
 
-    // Tenant-scoped S3 private keys
+    // Tenant-scoped keys: Supabase Storage (private bucket) first, then S3/local
     if (fileName.startsWith('tenants/')) {
       try {
+        if (hasSupabaseStorageConfig()) {
+          const supa = await getSupabaseStorageSignedOrPublicUrl(fileName, 7200);
+          if (supa) {
+            const imageBuffer = await fetchImageFromUrl(supa);
+            if (imageBuffer) {
+              const ext = path.extname(fileName).toLowerCase();
+              const mimeType = getMimeType(ext);
+              return `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
+            }
+          }
+        }
         const signed = await getS3Url(fileName);
         const imageBuffer = await fetchImageFromUrl(signed);
         if (imageBuffer) {
@@ -35,7 +67,7 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
           return `data:${mimeType};base64,${imageBuffer.toString('base64')}`;
         }
       } catch (e) {
-        console.warn(`Failed to load image from S3: ${fileName}`, e);
+        console.warn(`Failed to load tenant image: ${fileName}`, e);
       }
     }
 
@@ -359,7 +391,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   if (inspection.photos && inspection.photos.length > 0) {
     const general = inspection.photos.slice(0, maxGeneral);
     for (const photo of general) {
-      const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : (typeof photo === 'string' ? photo : (photo as any)?.fileName);
+      const imageSrc = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
       if (imageSrc) imageSources.push(imageSrc);
     }
   }
@@ -370,7 +402,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       if (!item.photos?.length) continue;
       const itemPhotos = item.photos.slice(0, maxPerItem);
       for (const photo of itemPhotos) {
-        const imageSrc = typeof photo === 'object' && photo?.url ? photo.url : (typeof photo === 'string' ? photo : (photo as any)?.fileName);
+        const imageSrc = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
         if (imageSrc) imageSources.push(imageSrc);
       }
     }
@@ -639,7 +671,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     for (let i = 0; i < generalPhotos.length; i++) {
       const photo = generalPhotos[i];
       const fileName = typeof photo === 'string' ? photo : (photo as any).fileName;
-      const imageSrc = typeof photo === 'object' && (photo as any)?.url ? (photo as any).url : fileName;
+      const imageSrc = resolvePdfImageSource(photo as string | { fileName?: string; url?: string }) ?? fileName;
       
       const col = i % photosPerRow;
       const row = Math.floor(i / photosPerRow);
@@ -823,7 +855,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       for (let i = 0; i < itemPhotosSlice.length; i++) {
         const photo = itemPhotosSlice[i];
         const fileName = typeof photo === 'string' ? photo : (photo as any).fileName;
-        const imageSrc = typeof photo === 'object' && (photo as any)?.url ? (photo as any).url : fileName;
+        const imageSrc = resolvePdfImageSource(photo as string | { fileName?: string; url?: string }) ?? fileName;
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();

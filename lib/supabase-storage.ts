@@ -15,8 +15,8 @@ export interface SupabaseUploadResult {
 }
 
 /**
- * Upload a file to Supabase Storage (inspections bucket).
- * Bucket must be created in Supabase Dashboard and set to Public for getPublicUrl to work.
+ * Upload a file to Supabase Storage (default bucket `inspections` or SUPABASE_STORAGE_BUCKET).
+ * Private buckets: uploads work with the service role; reads in the app use signed URLs from /api/files/signed or PDF via createSignedUrl.
  */
 export async function uploadToSupabaseStorage(
   buffer: Buffer,
@@ -49,4 +49,27 @@ export function getSupabaseStoragePublicUrl(path: string): string {
   const supabase = getSupabase();
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
   return data.publicUrl;
+}
+
+/**
+ * Signed URL for private buckets; falls back to public URL if signing is not available.
+ * Used by /api/files/signed for tenant-scoped paths.
+ */
+export async function getSupabaseStorageSignedOrPublicUrl(
+  objectPath: string,
+  expiresInSeconds: number
+): Promise<string | null> {
+  try {
+    const supabase = getSupabase();
+    const { data, error } = await supabase.storage
+      .from(BUCKET)
+      .createSignedUrl(objectPath, expiresInSeconds);
+    if (!error && data?.signedUrl) {
+      return data.signedUrl;
+    }
+    const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(objectPath);
+    return pub?.publicUrl ?? null;
+  } catch {
+    return null;
+  }
 }

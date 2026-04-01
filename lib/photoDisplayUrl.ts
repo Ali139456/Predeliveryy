@@ -1,8 +1,9 @@
 /**
  * Returns the display URL for a photo (for <img src>).
- * - Local dev: API often returns `url` like `/uploads/tenants/...` — use it directly (static file, no cookie).
- * - Tenant S3 keys: prefer signed redirect only when no usable direct URL (avoids Next/Image + auth edge cases).
- * - Absolute `url` (e.g. fresh presigned S3) used when key-based path is not tenant-scoped.
+ * - Private Supabase buckets: `getPublicUrl`-style URLs in `url` are not usable in the browser; always use
+ *   `/api/files/signed?key=…` when `fileName` is `tenants/…` (server issues a short-lived signed URL).
+ * - Local dev: `url` like `/uploads/tenants/...` — static file under public/.
+ * - Other https `url` values (e.g. legacy presigned S3) used only when there is no tenant path.
  */
 export function getPhotoDisplayUrl(photo: string | { fileName?: string; url?: string }): string {
   if (typeof photo === 'string') {
@@ -14,7 +15,6 @@ export function getPhotoDisplayUrl(photo: string | { fileName?: string; url?: st
   const fileName = photo.fileName?.trim() ?? '';
   const url = photo.url?.trim() ?? '';
 
-  // Same-origin static files from local upload (no auth cookie needed)
   if (url.startsWith('/uploads/')) {
     return url;
   }

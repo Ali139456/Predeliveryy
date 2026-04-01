@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getS3Url } from '@/lib/s3';
+import { hasSupabaseStorageConfig, getSupabaseStorageSignedOrPublicUrl } from '@/lib/supabase-storage';
 import { requireAuth } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { logAuditEvent } from '@/lib/audit';
 
-// Ensure Node.js runtime for S3 signing
+// Node runtime: Supabase Storage signing and/or S3 presign
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +29,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
-    const signedUrl = await getS3Url(key);
+    let targetUrl: string;
+    if (hasSupabaseStorageConfig()) {
+      const supa = await getSupabaseStorageSignedOrPublicUrl(key, 3600);
+      targetUrl = supa ?? (await getS3Url(key));
+    } else {
+      targetUrl = await getS3Url(key);
+    }
+
     await logAuditEvent(request, {
       action: 'file.accessed',
       resourceType: 'file',
@@ -36,7 +44,7 @@ export async function GET(request: NextRequest) {
       details: { key },
     });
 
-    return NextResponse.redirect(signedUrl);
+    return NextResponse.redirect(targetUrl);
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Failed to sign URL';
     if (msg === 'Unauthorized' || msg === 'Forbidden') {

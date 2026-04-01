@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { extractEXIFMetadata } from '@/lib/exifExtractor';
 import { uploadToS3, getS3Url } from '@/lib/s3';
+import { hasSupabaseStorageConfig, uploadToSupabaseStorage } from '@/lib/supabase-storage';
 import { requireAuth } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { logAuditEvent } from '@/lib/audit';
@@ -128,28 +129,37 @@ export async function POST(request: NextRequest) {
       metadata = null;
     }
     
+    let storedPath = key;
+    let previewUrl: string;
+
     try {
-      await uploadToS3(buffer, key, contentType);
-    } catch (storageError: any) {
+      if (hasSupabaseStorageConfig()) {
+        const up = await uploadToSupabaseStorage(buffer, key, contentType);
+        storedPath = up.path;
+        previewUrl = up.url;
+      } else {
+        await uploadToS3(buffer, key, contentType);
+        previewUrl = await getS3Url(key);
+      }
+    } catch (storageError: unknown) {
+      const message = storageError instanceof Error ? storageError.message : 'Storage error';
       return NextResponse.json(
-        { success: false, error: `Upload failed: ${storageError?.message || 'Storage error'}` },
+        { success: false, error: `Upload failed: ${message}` },
         { status: 500, headers: corsHeaders }
       );
     }
-
-    const previewUrl = await getS3Url(key);
     await logAuditEvent(request, {
       action: 'file.uploaded',
       resourceType: 'file',
-      resourceId: key,
-      details: { key, contentType, bytes: file.size, ext },
+      resourceId: storedPath,
+      details: { key: storedPath, contentType, bytes: file.size, ext, storage: hasSupabaseStorageConfig() ? 'supabase' : 's3_or_local' },
     });
     
     // Always return a proper JSON response
     const responseData = {
       success: true,
-      fileName: key,
-      url: previewUrl, // signed, short-lived preview
+      fileName: storedPath,
+      url: previewUrl,
       metadata: metadata ? {
         width: metadata.width,
         height: metadata.height,
