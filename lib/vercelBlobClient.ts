@@ -37,11 +37,17 @@ export async function uploadToVercelBlobViaAPI(file: File): Promise<UploadResult
     let errorMessage = `Upload failed: ${response.status} ${response.statusText}`;
     const raw = await response.text();
     if (raw) {
-      try {
-        const errorData = JSON.parse(raw) as { error?: string; message?: string };
-        errorMessage = errorData.error || errorData.message || errorMessage;
-      } catch {
-        errorMessage = raw.length > 200 ? `${raw.slice(0, 200)}…` : raw;
+      const trimmed = raw.trimStart();
+      if (trimmed.startsWith('<!DOCTYPE') || trimmed.startsWith('<html')) {
+        errorMessage =
+          'Server error while uploading (check Vercel logs). If you use Supabase only, ensure storage env vars and bucket exist.';
+      } else {
+        try {
+          const errorData = JSON.parse(raw) as { error?: string; message?: string };
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          errorMessage = raw.length > 200 ? `${raw.slice(0, 200)}…` : raw;
+        }
       }
     }
     console.error('Upload API error:', { status: response.status, statusText: response.statusText, body: raw?.slice(0, 500) });

@@ -27,11 +27,15 @@ const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || 'pre-delivery-inspections'
 // Local storage directory for fallback
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
-// Ensure upload directory exists
+// Ensure upload directory exists for local fallback (never throw — serverless FS is read-only and would crash route imports)
 if (!hasAWSCredentials) {
   const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+  try {
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+  } catch {
+    /* Supabase/S3 used in production; local uploads dir only for dev */
   }
 }
 
