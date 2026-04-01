@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home } from 'lucide-react';
@@ -24,6 +24,23 @@ export default function LoginPage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const router = useRouter();
+  const pathname = usePathname();
+  /** Remount inputs so browser autofill cannot leave stale values after we clear state */
+  const [loginInputKey, setLoginInputKey] = useState(0);
+  const prevPathnameRef = useRef<string | null>(null);
+
+  /** Clear when navigating *to* /login from another route (not on first mount / refresh). */
+  useEffect(() => {
+    const prev = prevPathnameRef.current;
+    prevPathnameRef.current = pathname;
+    if (pathname !== '/login') return;
+    if (prev === null || prev === '/login') return;
+    setEmail('');
+    setPhoneNumber('');
+    setPassword('');
+    setError(null);
+    setLoginInputKey((k) => k + 1);
+  }, [pathname]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +65,7 @@ export default function LoginPage() {
         setPhoneNumber('');
         setPassword('');
         setError(null);
+        setLoginInputKey((k) => k + 1);
         if (data.user.role === 'admin' || data.user.role === 'manager') {
           router.push('/admin');
         } else {
@@ -59,12 +77,17 @@ export default function LoginPage() {
         setEmail('');
         setPhoneNumber('');
         setPassword('');
+        setLoginInputKey((k) => k + 1);
+        // Autofill can repopulate after React clears; remount again on the next tick.
+        setTimeout(() => setLoginInputKey((k) => k + 1), 0);
       }
     } catch (err: any) {
       setError(err.message || 'Login failed');
       setEmail('');
       setPhoneNumber('');
       setPassword('');
+      setLoginInputKey((k) => k + 1);
+      setTimeout(() => setLoginInputKey((k) => k + 1), 0);
     } finally {
       setLoading(false);
     }
@@ -101,6 +124,10 @@ export default function LoginPage() {
             setResetEmail('');
             setResetPhone('');
             setResetUsePhone(false);
+            setEmail('');
+            setPhoneNumber('');
+            setPassword('');
+            setLoginInputKey((k) => k + 1);
           }, 3000);
         }
       } else {
@@ -155,7 +182,7 @@ export default function LoginPage() {
               <p className="text-gray-600 text-sm sm:text-base">Sign in to your account to continue</p>
             </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
                 {error && (
                   <div role="alert" className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
                     <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
@@ -180,6 +207,7 @@ export default function LoginPage() {
                         setPhoneNumber('');
                         setPassword('');
                         setError(null);
+                        setLoginInputKey((k) => k + 1);
                       }}
                       className="text-xs text-[#0033FF] hover:text-[#0033FF]/80 hover:underline transition-colors font-medium"
                     >
@@ -191,7 +219,10 @@ export default function LoginPage() {
                       <>
                         <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
+                          key={`login-phone-${loginInputKey}`}
                           type="tel"
+                          name="tel"
+                          autoComplete="tel"
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
                           required
@@ -203,7 +234,10 @@ export default function LoginPage() {
                       <>
                         <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
+                          key={`login-email-${loginInputKey}`}
                           type="email"
+                          name="email"
+                          autoComplete="username"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           required
@@ -234,7 +268,10 @@ export default function LoginPage() {
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
+                      key={`login-password-${loginInputKey}`}
                       type="password"
+                      name="password"
+                      autoComplete="current-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
@@ -292,6 +329,7 @@ export default function LoginPage() {
                     setEmail('');
                     setPhoneNumber('');
                     setPassword('');
+                    setLoginInputKey((k) => k + 1);
                   }}
                   className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
@@ -389,6 +427,7 @@ export default function LoginPage() {
                         setEmail('');
                         setPhoneNumber('');
                         setPassword('');
+                        setLoginInputKey((k) => k + 1);
                       }}
                       className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
                     >
@@ -477,6 +516,10 @@ export default function LoginPage() {
                         setOtp('');
                         setNewPassword('');
                         setConfirmPassword('');
+                        setEmail('');
+                        setPhoneNumber('');
+                        setPassword('');
+                        setLoginInputKey((k) => k + 1);
                       }, 2000);
                     } else {
                       setError(data.error || 'Failed to reset password');
