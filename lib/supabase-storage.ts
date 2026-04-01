@@ -1,6 +1,7 @@
 import getSupabase from '@/lib/supabase';
 
-const BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'inspections';
+/** Must match an existing bucket in Supabase Dashboard (override with SUPABASE_STORAGE_BUCKET). */
+const BUCKET = process.env.SUPABASE_STORAGE_BUCKET || 'inspection';
 
 export function hasSupabaseStorageConfig(): boolean {
   return !!(

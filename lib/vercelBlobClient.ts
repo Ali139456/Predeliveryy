@@ -35,43 +35,39 @@ export async function uploadToVercelBlobViaAPI(file: File): Promise<UploadResult
 
   if (!response.ok) {
     let errorMessage = `Upload failed: ${response.status} ${response.statusText}`;
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.error || errorData.message || errorMessage;
-      console.error('Upload API error:', {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorData,
-      });
-    } catch (e) {
-      // If response is not JSON, try to get text
+    const raw = await response.text();
+    if (raw) {
       try {
-        const text = await response.text();
-        errorMessage = text || errorMessage;
-        console.error('Upload API error (non-JSON):', {
-          status: response.status,
-          statusText: response.statusText,
-          body: text,
-        });
-      } catch (textError) {
-        console.error('Upload API error (could not read response):', {
-          status: response.status,
-          statusText: response.statusText,
-        });
+        const errorData = JSON.parse(raw) as { error?: string; message?: string };
+        errorMessage = errorData.error || errorData.message || errorMessage;
+      } catch {
+        errorMessage = raw.length > 200 ? `${raw.slice(0, 200)}…` : raw;
       }
     }
+    console.error('Upload API error:', { status: response.status, statusText: response.statusText, body: raw?.slice(0, 500) });
     throw new Error(errorMessage);
   }
 
-  const data = await response.json();
+  let data: { success?: boolean; error?: string; fileName?: string; url?: string; metadata?: UploadResult['metadata'] };
+  try {
+    data = JSON.parse(await response.text()) as typeof data;
+  } catch {
+    throw new Error('Invalid response from upload server');
+  }
 
   if (!data.success) {
     throw new Error(data.error || 'Upload failed');
   }
 
+  const fileName = data.fileName;
+  const url = data.url;
+  if (!fileName || !url) {
+    throw new Error('Upload response missing file URL');
+  }
+
   return {
-    fileName: data.fileName,
-    url: data.url,
+    fileName,
+    url,
     metadata: data.metadata || null,
   };
 }
