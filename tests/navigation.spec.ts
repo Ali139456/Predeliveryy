@@ -49,10 +49,18 @@ test.describe('Navigation', () => {
     await expect(page.getByRole('textbox', { name: /email|Email/i }).first()).toBeVisible();
   });
 
-  test('inspections page loads (shows list or auth prompt)', async ({ page }) => {
+  test('inspections route redirects to login when unauthenticated (or shows list with session)', async ({
+    page,
+  }) => {
     await page.goto('/inspections');
-    await expect(page).toHaveURL(/\/inspections/);
-    await expect(page.getByText(/Inspection History|Back to Home/i).first()).toBeVisible({ timeout: 10000 });
+    await expect(page).toHaveURL(/\/login|\/inspections/, { timeout: 10000 });
+    const url = page.url();
+    if (url.includes('/login')) {
+      await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible({ timeout: 10000 });
+      await expect(url).toMatch(/redirect=.*inspections/i);
+    } else {
+      await expect(page.getByText(/Inspection History|Back to Home/i).first()).toBeVisible({ timeout: 10000 });
+    }
   });
 
   test('unauthenticated user visiting /admin is redirected to login', async ({ page }) => {
