@@ -3,6 +3,18 @@ import { getUserByEmail, getUserByPhone, comparePassword } from '@/lib/db-users'
 import { generateToken } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { logAuditEvent } from '@/lib/audit';
+import { notifyUserOfLoginEmail } from '@/lib/email';
+
+const ROLES_LOGIN_EMAIL_ALERT = new Set<string>(['admin', 'technician']);
+
+function clientIpHint(request: NextRequest): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    const first = forwarded.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  return request.headers.get('x-real-ip')?.trim() || 'Unknown';
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,6 +82,15 @@ export async function POST(request: NextRequest) {
       resourceId: user.id,
       details: { email: user.email, role: user.role },
     });
+
+    if (ROLES_LOGIN_EMAIL_ALERT.has(user.role)) {
+      void notifyUserOfLoginEmail(user.email, {
+        name: user.name || '',
+        role: user.role,
+        whenUtc: new Date().toISOString(),
+        clientIp: clientIpHint(request),
+      });
+    }
 
     return response;
   } catch (error: unknown) {

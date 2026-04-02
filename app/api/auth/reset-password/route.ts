@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getUserByEmail, getUserByPhone } from '@/lib/db-users';
 import { sendEmail } from '@/lib/email';
 import { generateOTP, storeOTP } from '@/lib/otp';
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 async function sendOTPSms(_phoneNumber: string, _otp: string): Promise<void> {
   // TODO: Integrate real SMS provider (Twilio, etc.). Do not log OTP.
@@ -9,6 +10,15 @@ async function sendOTPSms(_phoneNumber: string, _otp: string): Promise<void> {
 
 export async function POST(request: NextRequest) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:auth:reset-password', {
+      windowSeconds: 60,
+      limit: 8,
+      scope: 'ip',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
     const { email, phoneNumber } = await request.json();
 
     if (!email && !phoneNumber) {

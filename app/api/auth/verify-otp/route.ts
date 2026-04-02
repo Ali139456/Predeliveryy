@@ -1,21 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { verifyAndRemoveOTP } from '@/lib/otp';
 import { getUserById } from '@/lib/db-users';
 import getSupabase from '@/lib/supabase';
 import { hashPassword } from '@/lib/db-users';
+import { enforceRateLimit } from '@/lib/rateLimit';
+
+const verifyBodySchema = z.object({
+  phoneNumber: z.string().trim().min(5).max(32),
+  otp: z.string().regex(/^\d{4,8}$/),
+  newPassword: z.string().min(8).max(200).optional(),
+});
 
 export async function POST(request: NextRequest) {
   try {
-    const { phoneNumber, otp, newPassword } = await request.json();
+    const { allowed } = await enforceRateLimit(request, 'api:auth:verify-otp', {
+      windowSeconds: 60,
+      limit: 20,
+      scope: 'ip',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
 
-    if (!phoneNumber || !otp) {
+    const raw = await request.json();
+    const parsed = verifyBodySchema.safeParse(raw);
+    if (!parsed.success) {
       return NextResponse.json(
-        { success: false, error: 'Phone number and OTP are required' },
+        { success: false, error: 'Invalid phone number or OTP format' },
         { status: 400 }
       );
     }
+    const { phoneNumber, otp, newPassword } = parsed.data;
 
-    const { valid, userId } = verifyAndRemoveOTP(phoneNumber.trim(), otp);
+    const { valid, userId } = verifyAndRemoveOTP(phoneNumber, otp);
     if (!valid || !userId) {
       return NextResponse.json(
         { success: false, error: 'Invalid or expired OTP' },

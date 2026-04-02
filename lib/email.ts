@@ -118,6 +118,60 @@ export async function sendEmail(
   }
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function roleLabelForLoginEmail(role: string): string {
+  if (role === 'technician') return 'Inspector';
+  if (role === 'admin') return 'Administrator';
+  return role;
+}
+
+/**
+ * Alerts the user that their account was used to sign in (admin / inspector).
+ * Never throws — login must succeed even if Resend is down or misconfigured.
+ */
+export async function notifyUserOfLoginEmail(
+  toEmail: string | null | undefined,
+  options: { name: string; role: string; whenUtc: string; clientIp: string }
+): Promise<void> {
+  const email = toEmail?.trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+  if (!isResendConfigured()) return;
+
+  try {
+    ensureFromEmailForExternalSend();
+  } catch {
+    return;
+  }
+
+  const { name, role, whenUtc, clientIp } = options;
+  const roleLabel = roleLabelForLoginEmail(role);
+  const subject = 'New sign-in to Pre Delivery';
+  const html = `
+    <div style="font-family: system-ui, sans-serif; line-height: 1.5; color: #111;">
+      <p>Hello ${escapeHtml(name || 'there')},</p>
+      <p>Your <strong>Pre Delivery</strong> account (<strong>${escapeHtml(roleLabel)}</strong>) was used to sign in successfully.</p>
+      <ul style="padding-left: 1.25rem;">
+        <li><strong>Time (UTC):</strong> ${escapeHtml(whenUtc)}</li>
+        <li><strong>Approximate IP:</strong> ${escapeHtml(clientIp)}</li>
+      </ul>
+      <p style="margin-top: 1.25rem;">If this was not you, change your password immediately and contact your organisation administrator.</p>
+    </div>
+  `.trim();
+
+  try {
+    await sendEmail([email], subject, html);
+  } catch {
+    // Intentionally ignore — do not block login
+  }
+}
+
 /**
  * Send welcome email to a new user/inspector with login URL and temporary password.
  * Used when admin creates a new user.

@@ -1,9 +1,9 @@
 /**
  * Returns the display URL for a photo (for <img src>).
- * - Private Supabase buckets: `getPublicUrl`-style URLs in `url` are not usable in the browser; always use
- *   `/api/files/signed?key=…` when `fileName` is `tenants/…` (server issues a short-lived signed URL).
+ * - Supabase: prefer `fileName` `tenants/…` → `/api/files/signed?key=…` (auth + expiring redirect). New uploads
+ *   store that pattern; avoid persisting durable public storage URLs.
  * - Local dev: `url` like `/uploads/tenants/...` — static file under public/.
- * - Other https `url` values (e.g. legacy presigned S3) used only when there is no tenant path.
+ * - Legacy https URLs (S3 presign, old public Supabase links) used only when there is no `tenants/` fileName.
  */
 export function getPhotoDisplayUrl(photo: string | { fileName?: string; url?: string }): string {
   if (typeof photo === 'string') {

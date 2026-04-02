@@ -5,12 +5,22 @@ import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
+import { logAuditEvent } from '@/lib/audit';
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 // Allow up to 60s for PDF generation (Vercel Pro). Hobby plan caps at 10s.
 export const maxDuration = 60;
 
 export async function GET(request: NextRequest) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:export:get', {
+      windowSeconds: 60,
+      limit: 40,
+      scope: 'ip+user',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const user = await getCurrentUser(request);
     if (!user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -49,11 +59,19 @@ export async function GET(request: NextRequest) {
         }
         const uint8Array = Buffer.isBuffer(pdfBuffer) ? new Uint8Array(pdfBuffer) : new Uint8Array(pdfBuffer);
         const sanitizedNumber = inspection.inspectionNumber.replace(/[^a-z0-9.-]/gi, '_');
+        await logAuditEvent(request, {
+          action: 'inspection.exported_pdf',
+          resourceType: 'inspection',
+          resourceId: id,
+          details: { inspectionNumber: inspection.inspectionNumber, bytes: uint8Array.length },
+        });
         return new NextResponse(uint8Array, {
           headers: {
             'Content-Type': 'application/pdf',
             'Content-Disposition': `attachment; filename="${sanitizedNumber}.pdf"`,
             'Content-Length': uint8Array.length.toString(),
+            'Cache-Control': 'private, no-store, no-cache, must-revalidate',
+            Pragma: 'no-cache',
           },
         });
       } catch (pdfError: unknown) {
@@ -76,6 +94,17 @@ export async function GET(request: NextRequest) {
     if (endDate) query = query.lte('inspection_date', endDate);
     const { data: rows } = await query;
     const inspections = (rows || []).map((r) => inspectionRowToInspection(r as InspectionRow));
+    await logAuditEvent(request, {
+      action: 'inspection.bulk_data_exported',
+      resourceType: 'inspection',
+      resourceId: undefined,
+      details: {
+        recordCount: inspections.length,
+        startDate: startDate || null,
+        endDate: endDate || null,
+        format: 'json',
+      },
+    });
     return NextResponse.json({ success: true, data: inspections });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';

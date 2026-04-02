@@ -1,11 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import getSupabase from '@/lib/supabase';
 import { logAuditEventWithUser } from '@/lib/audit';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
+import { enforceRateLimit } from '@/lib/rateLimit';
+
+const bulkDeleteSchema = z.object({
+  ids: z.array(z.string().uuid()).min(1).max(150),
+});
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = await enforceRateLimit(request, 'api:inspections:bulk-delete', {
+      windowSeconds: 60,
+      limit: 20,
+      scope: 'ip+user',
+    });
+    if (!rl.allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
     const user = await getCurrentUser(request);
     if (!user) return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     const userDoc = await getUserById(user.userId);
@@ -14,11 +29,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Forbidden: Only admins can delete inspections' }, { status: 403 });
     }
 
-    const body = await request.json();
-    const ids = Array.isArray(body?.ids) ? body.ids.filter((id: unknown) => typeof id === 'string') : [];
-    if (ids.length === 0) {
-      return NextResponse.json({ success: false, error: 'No inspection IDs provided' }, { status: 400 });
+    const raw = await request.json();
+    const parsed = bulkDeleteSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: parsed.error.issues.map((e) => e.message).join('; ') || 'Invalid request body' },
+        { status: 400 }
+      );
     }
+    const { ids } = parsed.data;
 
     const supabase = getSupabase();
     const { error } = await supabase.from('inspections').delete().in('id', ids).eq('tenant_id', user.tenantId);

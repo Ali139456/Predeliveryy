@@ -6,6 +6,7 @@ import { getUserById } from '@/lib/db-users';
 import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
+import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,12 +24,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
+    const raw = await request.json();
+    const parsed = parseInspectionApiBody(raw, 'create');
+    if (!parsed.ok) {
+      return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
+    }
+    const body = parsed.data;
+    if (body.privacyConsent === undefined) {
+      body.privacyConsent = true;
+    }
     body.tenantId = user.tenantId;
 
     if (userDoc.role !== 'admin') {
       body.inspectorEmail = userDoc.email.toLowerCase();
-    } else if (body.inspectorEmail) {
+    } else if (typeof body.inspectorEmail === 'string' && body.inspectorEmail) {
       body.inspectorEmail = body.inspectorEmail.toLowerCase();
     }
 
@@ -154,6 +163,20 @@ export async function GET(request: NextRequest) {
       barcode: r.barcode ?? undefined,
       createdAt: r.created_at,
     }));
+
+    await logAuditEvent(request, {
+      action: 'inspection.list_accessed',
+      resourceType: 'inspection',
+      resourceId: undefined,
+      details: {
+        resultCount: inspections.length,
+        status: status || null,
+        dateRange: startDate || endDate ? { startDate: startDate || null, endDate: endDate || null } : null,
+        search: searchTerm ? true : false,
+        inspectorFilter: userDoc.role === 'admin' && searchParams.get('inspectorEmail') ? true : false,
+      },
+    });
+
     const response = NextResponse.json({ success: true, data: inspections });
     response.headers.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=60');
     return response;

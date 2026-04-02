@@ -32,7 +32,13 @@ export async function GET(request: NextRequest) {
     let targetUrl: string;
     if (hasSupabaseStorageConfig()) {
       const supa = await getSupabaseStorageSignedOrPublicUrl(key, 3600);
-      targetUrl = supa ?? (await getS3Url(key));
+      if (!supa) {
+        return NextResponse.json(
+          { success: false, error: 'Could not create signed URL for this object' },
+          { status: 503 }
+        );
+      }
+      targetUrl = supa;
     } else {
       targetUrl = await getS3Url(key);
     }

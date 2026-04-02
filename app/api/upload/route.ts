@@ -5,6 +5,7 @@ import { hasSupabaseStorageConfig, uploadToSupabaseStorage } from '@/lib/supabas
 import { requireAuth } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { logAuditEvent } from '@/lib/audit';
+import { validateUploadBuffer } from '@/lib/secureUpload';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
@@ -107,6 +108,11 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Failed to process file. Please try again.' },
         { status: 500, headers: corsHeaders }
       );
+    }
+
+    const uploadCheck = validateUploadBuffer(contentType, buffer);
+    if (!uploadCheck.ok) {
+      return NextResponse.json({ success: false, error: uploadCheck.error }, { status: 400, headers: corsHeaders });
     }
     
     // Extract EXIF metadata using the buffer (non-blocking - don't fail upload if this fails)

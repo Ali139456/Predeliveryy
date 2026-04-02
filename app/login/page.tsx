@@ -66,7 +66,24 @@ export default function LoginPage() {
         setPassword('');
         setError(null);
         setLoginInputKey((k) => k + 1);
-        if (data.user.role === 'admin' || data.user.role === 'manager') {
+        const redirectParam =
+          typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null;
+        const safeRedirect = (() => {
+          if (!redirectParam || redirectParam.includes('://') || redirectParam.includes('\\')) return null;
+          const pathPart = redirectParam.split('?')[0];
+          if (!pathPart.startsWith('/') || pathPart.startsWith('//')) return null;
+          if (
+            pathPart.startsWith('/inspections') ||
+            pathPart.startsWith('/inspection/') ||
+            pathPart.startsWith('/admin')
+          ) {
+            return redirectParam;
+          }
+          return null;
+        })();
+        if (safeRedirect) {
+          router.push(safeRedirect);
+        } else if (data.user.role === 'admin' || data.user.role === 'manager') {
           router.push('/admin');
         } else {
           router.push('/');

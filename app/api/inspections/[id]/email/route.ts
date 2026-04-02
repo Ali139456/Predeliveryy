@@ -6,6 +6,13 @@ import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
+import { logAuditEvent } from '@/lib/audit';
+import { enforceRateLimit } from '@/lib/rateLimit';
+import { z } from 'zod';
+
+const emailRecipientsSchema = z.object({
+  recipients: z.array(z.string().email().max(320)).min(1).max(25),
+});
 
 export const maxDuration = 60;
 
@@ -14,6 +21,14 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:inspections:email', {
+      windowSeconds: 60,
+      limit: 15,
+      scope: 'ip+user',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const user = await getCurrentUser(request);
     if (!user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -23,14 +38,23 @@ export async function POST(
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
 
-    const body = await request.json();
-    const { recipients } = body;
-    if (!recipients || !Array.isArray(recipients) || recipients.length === 0) {
-      return NextResponse.json({ success: false, error: 'Recipients are required' }, { status: 400 });
+    const raw = await request.json();
+    const parsed = emailRecipientsSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Provide 1–25 valid recipient email addresses' },
+        { status: 400 }
+      );
     }
+    const { recipients } = parsed.data;
 
     const supabase = getSupabase();
-    const { data: row, error } = await supabase.from('inspections').select('*').eq('id', params.id).single();
+    const { data: row, error } = await supabase
+      .from('inspections')
+      .select('*')
+      .eq('id', params.id)
+      .eq('tenant_id', user.tenantId)
+      .single();
     if (error || !row) {
       return NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 });
     }
@@ -84,6 +108,16 @@ export async function POST(
       const msg = emailError instanceof Error ? emailError.message : 'Failed to send email. Please check your Resend configuration.';
       return NextResponse.json({ success: false, error: msg }, { status: 500 });
     }
+
+    await logAuditEvent(request, {
+      action: 'inspection.emailed',
+      resourceType: 'inspection',
+      resourceId: params.id,
+      details: {
+        inspectionNumber: inspection.inspectionNumber,
+        recipientCount: recipients.length,
+      },
+    });
 
     return NextResponse.json({ success: true, message: 'Email sent successfully' });
   } catch (error: unknown) {

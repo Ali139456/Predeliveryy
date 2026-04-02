@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 export async function GET(request: NextRequest) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:auth:me', {
+      windowSeconds: 60,
+      limit: 150,
+      scope: 'ip',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const user = await getCurrentUser(request);
     if (!user) {
       // Return 200 so "not logged in" doesn't show as error in console/network (expected for guests)

@@ -2,10 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
 import type { AuditLogRow } from '@/types/db';
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 export async function GET(request: NextRequest) {
   try {
-    const authUser = await requireAuth(['admin'])(request);
+    const { allowed } = await enforceRateLimit(request, 'api:admin:audit:export', {
+      windowSeconds: 60,
+      limit: 25,
+      scope: 'ip+user',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
+    const authUser = await requireAuth(['admin', 'manager'])(request);
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'csv';
     const action = searchParams.get('action');
@@ -34,9 +43,27 @@ export async function GET(request: NextRequest) {
     const rows = (logs || []) as AuditLogRow[];
 
     if (format === 'csv') {
-      const headers = ['Timestamp', 'User', 'Email', 'Action', 'Resource Type', 'Resource ID', 'Details', 'IP Address'];
+      const headers = [
+        'Log ID',
+        'Timestamp (UTC)',
+        'Created At (UTC)',
+        'Tenant ID',
+        'User ID',
+        'User',
+        'Email',
+        'Action',
+        'Resource Type',
+        'Resource ID',
+        'Details (JSON)',
+        'IP Address',
+        'User Agent',
+      ];
       const csvRows = rows.map((log) => [
+        log.id,
         new Date(log.timestamp).toISOString(),
+        new Date(log.created_at).toISOString(),
+        log.tenant_id,
+        log.user_id,
         log.user_name,
         log.user_email,
         log.action,
@@ -44,6 +71,7 @@ export async function GET(request: NextRequest) {
         log.resource_id || '',
         JSON.stringify(log.details || {}),
         log.ip_address || '',
+        log.user_agent || '',
       ]);
       const csv = [
         headers.join(','),

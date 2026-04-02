@@ -11,29 +11,56 @@ import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { getS3Url } from '@/lib/s3';
 import { hasSupabaseStorageConfig, getSupabaseStorageSignedOrPublicUrl } from '@/lib/supabase-storage';
 
+/** Stored upload `url` may be `/api/files/signed?key=…` (no cookie on PDF server) — resolve to object key. */
+function tenantKeyFromAppSignedPhotoUrl(u: string): string | null {
+  try {
+    const parsed = u.startsWith('http://') || u.startsWith('https://')
+      ? new URL(u)
+      : new URL(u, 'http://localhost');
+    if (!parsed.pathname.endsWith('/api/files/signed')) return null;
+    const key = parsed.searchParams.get('key');
+    if (!key) return null;
+    const decoded = decodeURIComponent(key);
+    return decoded.startsWith('tenants/') ? decoded : null;
+  } catch {
+    return null;
+  }
+}
+
 /** Prefer `tenants/…` path for PDF fetch so private Supabase buckets work (ignore stored getPublicUrl). */
 function resolvePdfImageSource(photo: string | { fileName?: string; url?: string } | null | undefined): string | null {
   if (photo == null) return null;
   if (typeof photo === 'string') {
     const s = photo.trim();
-    return s || null;
+    if (!s) return null;
+    const fromSigned = tenantKeyFromAppSignedPhotoUrl(s);
+    if (fromSigned) return fromSigned;
+    return s;
   }
   const fn = typeof (photo as { fileName?: string }).fileName === 'string' ? (photo as { fileName: string }).fileName.trim() : '';
   if (fn.startsWith('tenants/')) {
     return fn;
   }
   const u = typeof (photo as { url?: string }).url === 'string' ? (photo as { url: string }).url.trim() : '';
-  if (u && (u.startsWith('https://') || u.startsWith('http://'))) {
-    return u;
+  if (u) {
+    const fromSigned = tenantKeyFromAppSignedPhotoUrl(u);
+    if (fromSigned) return fromSigned;
+    if (u.startsWith('https://') || u.startsWith('http://')) {
+      return u;
+    }
+    if (u.startsWith('/')) return u;
   }
   if (fn) return fn;
-  if (u && u.startsWith('/')) return u;
   return null;
 }
 
 // Helper function to load image as base64 (fileName can be a path or a full URL)
 async function loadImageAsBase64(fileName: string): Promise<string | null> {
   try {
+    const fromSigned = tenantKeyFromAppSignedPhotoUrl(fileName);
+    if (fromSigned) {
+      return loadImageAsBase64(fromSigned);
+    }
     // If it's already a full URL (e.g. presigned or public CDN), fetch directly
     if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
       const imageBuffer = await fetchImageFromUrl(fileName);

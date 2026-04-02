@@ -85,25 +85,25 @@ export async function uploadToSupabaseStorage(
   }
 
   const path = data.path;
-  const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(path);
-  const url = urlData.publicUrl;
+  // Do not expose long-lived public object URLs; UI uses cookie-auth `/api/files/signed` → short-lived Supabase signed URL.
+  const url = `/api/files/signed?key=${encodeURIComponent(path)}`;
 
   return { path, url };
 }
 
 /**
- * Get public URL for a file in Supabase Storage (for existing paths stored as path only).
+ * Short-lived signed URL only (no public object URL). Prefer `/api/files/signed` from the browser.
  */
-export async function getSupabaseStoragePublicUrl(path: string): Promise<string> {
-  const supabase = getSupabase();
-  const bucket = await resolveStorageBucket(supabase);
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return data.publicUrl;
+export async function getSupabaseStoragePublicUrl(
+  path: string,
+  expiresInSeconds = 3600
+): Promise<string | null> {
+  return getSupabaseStorageSignedOrPublicUrl(path, expiresInSeconds);
 }
 
 /**
- * Signed URL for private buckets; falls back to public URL if signing is not available.
- * Used by /api/files/signed for tenant-scoped paths.
+ * Expiring signed URL for private buckets only (no getPublicUrl fallback — avoids durable public links).
+ * Used by /api/files/signed and PDF image fetch.
  */
 export async function getSupabaseStorageSignedOrPublicUrl(
   objectPath: string,
@@ -118,8 +118,7 @@ export async function getSupabaseStorageSignedOrPublicUrl(
     if (!error && data?.signedUrl) {
       return data.signedUrl;
     }
-    const { data: pub } = supabase.storage.from(bucket).getPublicUrl(objectPath);
-    return pub?.publicUrl ?? null;
+    return null;
   } catch {
     return null;
   }

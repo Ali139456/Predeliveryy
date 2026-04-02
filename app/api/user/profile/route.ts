@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import getSupabase from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { hashPassword } from '@/lib/db-users';
+import { enforceRateLimit } from '@/lib/rateLimit';
+
+const profileBodySchema = z.object({
+  email: z.string().email().max(320).optional(),
+  phoneNumber: z.string().trim().min(5).max(32).optional(),
+  password: z.string().max(200).optional(),
+  name: z.string().trim().min(1).max(200).optional(),
+});
 
 const PASSWORD_REGEX = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
 
@@ -17,12 +26,28 @@ function validatePassword(password: string): string | null {
 
 export async function PUT(request: NextRequest) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:user:profile:put', {
+      windowSeconds: 60,
+      limit: 30,
+      scope: 'ip+user',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const currentUser = await getCurrentUser(request);
     if (!currentUser) {
       return NextResponse.json({ success: false, error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { email, phoneNumber, password, name } = await request.json();
+    const raw = await request.json();
+    const parsed = profileBodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: parsed.error.issues.map((i) => i.message).join('; ') },
+        { status: 400 }
+      );
+    }
+    const { email, phoneNumber, password, name } = parsed.data;
     const user = await getUserById(currentUser.userId);
     if (!user) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });

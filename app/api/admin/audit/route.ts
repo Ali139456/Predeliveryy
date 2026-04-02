@@ -3,9 +3,18 @@ import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
 import { auditRowToLog } from '@/types/db';
 import type { AuditLogRow } from '@/types/db';
+import { enforceRateLimit } from '@/lib/rateLimit';
 
 export async function GET(request: NextRequest) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:admin:audit:list', {
+      windowSeconds: 60,
+      limit: 90,
+      scope: 'ip+user',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
     const authUser = await requireAuth(['admin', 'manager'])(request);
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1', 10);

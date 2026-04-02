@@ -6,6 +6,7 @@ import { getUserById } from '@/lib/db-users';
 import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
+import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
 
 async function getInspectionAndUser(request: NextRequest, id: string) {
   const user = await getCurrentUser(request);
@@ -84,9 +85,16 @@ export async function PUT(
       }
     }
 
-    const body = await request.json();
+    const raw = await request.json();
+    const parsed = parseInspectionApiBody(raw, 'update');
+    if (!parsed.ok) {
+      return NextResponse.json({ success: false, error: parsed.error }, { status: 400 });
+    }
+    const body = parsed.data;
     if (userDoc.role !== 'admin') body.inspectorEmail = userDoc.email.toLowerCase();
-    else if (body.inspectorEmail) body.inspectorEmail = body.inspectorEmail.toLowerCase();
+    else if (typeof body.inspectorEmail === 'string' && body.inspectorEmail) {
+      body.inspectorEmail = body.inspectorEmail.toLowerCase();
+    }
     if (body.status !== 'completed') body.status = 'draft';
 
     const row = inspectionBodyToRow(body) as Record<string, unknown>;
