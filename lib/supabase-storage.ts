@@ -123,3 +123,18 @@ export async function getSupabaseStorageSignedOrPublicUrl(
     return null;
   }
 }
+
+/** Server-side binary read (e.g. PDF generation). Avoids signed-URL HTTP redirects and fetch edge cases. */
+export async function downloadSupabaseStorageObject(objectPath: string): Promise<Buffer | null> {
+  try {
+    const supabase = getSupabase();
+    const bucket = await resolveStorageBucket(supabase);
+    const { data, error } = await supabase.storage.from(bucket).download(objectPath);
+    if (error || !data) return null;
+    const ab = await data.arrayBuffer();
+    const buf = Buffer.from(ab);
+    return buf.length > 0 ? buf : null;
+  } catch {
+    return null;
+  }
+}

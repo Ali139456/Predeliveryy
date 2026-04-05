@@ -73,10 +73,10 @@ export async function POST(
     try {
       pdfBuffer = await generatePDF(inspection, { forEmail: true });
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
-        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 12 });
+        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 18 });
       }
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
-        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 6 });
+        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 10 });
       }
     } catch (pdfError: unknown) {
       const msg = pdfError instanceof Error ? pdfError.message : 'Unknown error';

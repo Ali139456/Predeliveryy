@@ -9,7 +9,11 @@ import https from 'https';
 import http from 'http';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { getS3Url } from '@/lib/s3';
-import { hasSupabaseStorageConfig, getSupabaseStorageSignedOrPublicUrl } from '@/lib/supabase-storage';
+import {
+  hasSupabaseStorageConfig,
+  getSupabaseStorageSignedOrPublicUrl,
+  downloadSupabaseStorageObject,
+} from '@/lib/supabase-storage';
 
 /** Stored upload `url` may be `/api/files/signed?key=…` (no cookie on PDF server) — resolve to object key. */
 function tenantKeyFromAppSignedPhotoUrl(u: string): string | null {
@@ -17,10 +21,16 @@ function tenantKeyFromAppSignedPhotoUrl(u: string): string | null {
     const parsed = u.startsWith('http://') || u.startsWith('https://')
       ? new URL(u)
       : new URL(u, 'http://localhost');
-    if (!parsed.pathname.endsWith('/api/files/signed')) return null;
+    const pathNorm = parsed.pathname.replace(/\/$/, '');
+    if (!pathNorm.endsWith('/api/files/signed')) return null;
     const key = parsed.searchParams.get('key');
     if (!key) return null;
-    const decoded = decodeURIComponent(key);
+    let decoded = decodeURIComponent(key);
+    try {
+      decoded = decodeURIComponent(decoded);
+    } catch {
+      /* single-pass decode is enough */
+    }
     return decoded.startsWith('tenants/') ? decoded : null;
   } catch {
     return null;
@@ -61,6 +71,25 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
     if (fromSigned) {
       return loadImageAsBase64(fromSigned);
     }
+    // Browser-style path: /api/files/tenants/… (no cookie in PDF job — resolve to storage key)
+    if (fileName.startsWith('/api/files/') && !fileName.startsWith('/api/files/signed')) {
+      const rest = decodeURIComponent(fileName.slice('/api/files/'.length).split('?')[0]);
+      if (rest.startsWith('tenants/')) {
+        return loadImageAsBase64(rest);
+      }
+    }
+    // Local static files from photoDisplayUrl (/uploads/…)
+    if (fileName.startsWith('/uploads/') || fileName.startsWith('uploads/')) {
+      const rel = fileName.replace(/^\/?/, '');
+      const disk = path.join(process.cwd(), 'public', rel);
+      if (fs.existsSync(disk)) {
+        const fileBuffer = fs.readFileSync(disk);
+        const ext = path.extname(disk).toLowerCase();
+        const mimeType = getMimeType(ext);
+        return `data:${mimeType};base64,${fileBuffer.toString('base64')}`;
+      }
+      return null;
+    }
     // If it's already a full URL (e.g. presigned or public CDN), fetch directly
     if (fileName.startsWith('http://') || fileName.startsWith('https://')) {
       const imageBuffer = await fetchImageFromUrl(fileName);
@@ -72,10 +101,16 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
       return null;
     }
 
-    // Tenant-scoped keys: Supabase Storage (private bucket) first, then S3/local
+    // Tenant-scoped keys: Supabase download (service role) first, then signed URL fetch, then S3/local
     if (fileName.startsWith('tenants/')) {
       try {
         if (hasSupabaseStorageConfig()) {
+          const direct = await downloadSupabaseStorageObject(fileName);
+          if (direct) {
+            const ext = path.extname(fileName).toLowerCase();
+            const mimeType = getMimeType(ext);
+            return `data:${mimeType};base64,${direct.toString('base64')}`;
+          }
           const supa = await getSupabaseStorageSignedOrPublicUrl(fileName, 7200);
           if (supa) {
             const imageBuffer = await fetchImageFromUrl(supa);
@@ -173,14 +208,17 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
   }
 }
 
-const IMAGE_FETCH_TIMEOUT_MS = 8000;
-const MAX_GENERAL_PHOTOS = 10;
-const MAX_PHOTOS_PER_CHECKLIST_ITEM = 2;
-/** Lighter limits for email (Resend ~40MB limit; base64 + many pages add overhead) */
-const MAX_GENERAL_PHOTOS_EMAIL = 2;
-const MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL = 1;
-/** Hard cap on checklist photos in emailed PDFs (items can have many repair photos across the form). */
-const MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL = 24;
+const IMAGE_FETCH_TIMEOUT_MS = 20000;
+/** Downloaded PDF: up to 50 images total (25 general + 25 checklist; per-item max below). */
+const MAX_GENERAL_PHOTOS = 25;
+const MAX_PHOTOS_PER_CHECKLIST_ITEM = 12;
+/** Checklist photos embedded after general section (same form order; rest omitted). */
+const MAX_CHECKLIST_PHOTOS_TOTAL_PDF = 25;
+
+/** Email PDF: up to 50 images total with compression (20 general + 30 checklist). */
+const MAX_GENERAL_PHOTOS_EMAIL = 20;
+const MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL = 2;
+const MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL = 30;
 const IMAGE_LOAD_CONCURRENCY = 6;
 
 /** Ordered list of checklist image sources (respects per-item slice + optional global email cap). */
@@ -209,38 +247,50 @@ function enumerateChecklistImageSources(
 
 function fetchImageFromUrl(url: string): Promise<Buffer | null> {
   return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
-      resolve(null); // Don't hang PDF generation on slow images
-    }, IMAGE_FETCH_TIMEOUT_MS);
-    const protocol = url.startsWith('https') ? https : http;
-    const opts: https.RequestOptions = { headers: { 'User-Agent': 'PreDelivery-PDFGenerator/1.0 (Node)' } };
-    const req = protocol.get(url, opts, (res) => {
-      if (res.statusCode === 301 || res.statusCode === 302) {
-        const location = res.headers.location;
-        if (location) {
-          const nextUrl = location.startsWith('http') ? location : new URL(location, url).href;
-          fetchImageFromUrl(nextUrl).then((buf) => {
-            clearTimeout(timeout);
-            resolve(buf);
-          });
+    let settled = false;
+    const done = (result: Buffer | null) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeout);
+      resolve(result);
+    };
+    const timeout = setTimeout(() => done(null), IMAGE_FETCH_TIMEOUT_MS);
+
+    const go = (targetUrl: string, depth: number): void => {
+      if (depth > 10) {
+        done(null);
+        return;
+      }
+      const protocol = targetUrl.startsWith('https') ? https : http;
+      const opts: https.RequestOptions = { headers: { 'User-Agent': 'PreDelivery-PDFGenerator/1.0 (Node)' } };
+      const req = protocol.get(targetUrl, opts, (res) => {
+        const code = res.statusCode || 0;
+        if ([301, 302, 303, 307, 308].includes(code)) {
+          const location = res.headers.location;
+          res.resume();
+          if (location) {
+            const nextUrl = location.startsWith('http') ? location : new URL(location, targetUrl).href;
+            go(nextUrl, depth + 1);
+            return;
+          }
+        }
+        if (code !== 200) {
+          res.resume();
+          done(null);
           return;
         }
-      }
-      const chunks: Buffer[] = [];
-      res.on('data', (chunk) => chunks.push(chunk));
-      res.on('end', () => {
-        clearTimeout(timeout);
-        resolve(Buffer.concat(chunks));
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk) => chunks.push(chunk));
+        res.on('end', () => {
+          const buf = Buffer.concat(chunks);
+          done(buf.length > 0 ? buf : null);
+        });
+        res.on('error', () => done(null));
       });
-      res.on('error', () => {
-        clearTimeout(timeout);
-        resolve(null);
-      });
-    });
-    req.on('error', () => {
-      clearTimeout(timeout);
-      resolve(null);
-    });
+      req.on('error', () => done(null));
+    };
+
+    go(url, 0);
   });
 }
 
@@ -356,36 +406,17 @@ const PDF_HEADER_HEIGHT = 50;
 const PDF_THEME_MAIN = [0, 51, 255] as const;
 const PDF_THEME_STRIP = [0, 41, 204] as const;
 
-function drawPageHeader(
-  doc: jsPDF,
-  pageWidth: number,
-  margin: number,
-  inspection: IInspection,
-  logoBase64: string | null
-) {
+function drawPageHeader(doc: jsPDF, pageWidth: number, margin: number, inspection: IInspection) {
   doc.setFillColor(...PDF_THEME_MAIN);
   doc.rect(0, 0, pageWidth, PDF_HEADER_HEIGHT, 'F');
   doc.setFillColor(...PDF_THEME_STRIP);
   doc.rect(0, 0, pageWidth, 3, 'F');
 
-  // Left: logo (or "PreDelivery Global" if no logo)
-  if (logoBase64) {
-    try {
-      const logoHeight = 22;
-      const logoWidth = Math.min(70, logoHeight * 2.8);
-      const logoY = (PDF_HEADER_HEIGHT - logoHeight) / 2;
-      const logoFmt = logoBase64.startsWith('data:image/png') ? 'PNG' : 'JPEG';
-      doc.addImage(logoBase64, logoFmt as 'PNG' | 'JPEG', margin, logoY, logoWidth, logoHeight);
-    } catch (e) {
-      // fallback to text if image fails
-    }
-  }
-  if (!logoBase64) {
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(20);
-    doc.setFont('helvetica', 'bold');
-    doc.text('PreDelivery Global', margin, 28);
-  }
+  // Text-only branding (no embedded logo image in PDF)
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(20);
+  doc.setFont('helvetica', 'bold');
+  doc.text('PreDelivery Global', margin, 28);
 
   // Right side of header: Report #, Generated, Status (inside the blue bar)
   doc.setFontSize(9);
@@ -417,10 +448,9 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   const forEmail = options?.forEmail === true;
   const maxGeneral = forEmail ? MAX_GENERAL_PHOTOS_EMAIL : MAX_GENERAL_PHOTOS;
   const maxPerItem = forEmail ? MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL : MAX_PHOTOS_PER_CHECKLIST_ITEM;
-  const emailChecklistCap =
-    forEmail
-      ? Math.max(1, Math.min(options?.maxChecklistPhotosEmail ?? MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL, 500))
-      : MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL;
+  const maxChecklistPhotosForThisRun = forEmail
+    ? Math.max(1, Math.min(options?.maxChecklistPhotosEmail ?? MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL, 500))
+    : MAX_CHECKLIST_PHOTOS_TOTAL_PDF;
 
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -428,27 +458,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   const margin = 15;
   const contentWidth = pageWidth - (margin * 2);
 
-  let logoBase64: string | null = null;
-  try {
-    const logoPath = path.join(process.cwd(), 'public', 'Pre Delivery Logo', 'Original Logo Transparent Background.png');
-    if (fs.existsSync(logoPath)) {
-      const buf = fs.readFileSync(logoPath);
-      logoBase64 = `data:image/png;base64,${buf.toString('base64')}`;
-    } else {
-      const altPath = path.join(process.cwd(), 'public', 'PD-Logo-Mockup.png');
-      if (fs.existsSync(altPath)) {
-        const buf = fs.readFileSync(altPath);
-        logoBase64 = `data:image/png;base64,${buf.toString('base64')}`;
-      }
-    }
-    if (forEmail && logoBase64) {
-      logoBase64 = (await shrinkDataUriForEmail(logoBase64)) ?? logoBase64;
-    }
-  } catch (e) {
-    console.warn('Logo not found for PDF header');
-  }
-
-  drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+  // Reports use text header only (no raster logo in PDF).
+  drawPageHeader(doc, pageWidth, margin, inspection);
   let yPos = PDF_HEADER_HEIGHT + 10;
 
   // Pre-load all images in parallel (capped) for fast PDF generation
@@ -461,8 +472,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     }
   }
   const checklist = Array.isArray(inspection.checklist) ? inspection.checklist : [];
-  const checklistPhotoCap = forEmail ? emailChecklistCap : Number.MAX_SAFE_INTEGER;
-  const checklistSources = enumerateChecklistImageSources(checklist, maxPerItem, checklistPhotoCap);
+  const checklistSources = enumerateChecklistImageSources(checklist, maxPerItem, maxChecklistPhotosForThisRun);
   for (const src of checklistSources) {
     imageSources.push(src);
   }
@@ -532,7 +542,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    drawPageHeader(doc, pageWidth, margin, inspection);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -596,7 +606,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    drawPageHeader(doc, pageWidth, margin, inspection);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -660,7 +670,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 50) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    drawPageHeader(doc, pageWidth, margin, inspection);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -707,7 +717,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   // ============================================
   if (yPos > pageHeight - 120) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    drawPageHeader(doc, pageWidth, margin, inspection);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -738,7 +748,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       if (row > 0 && col === 0) {
         if (yPos + photoHeight > pageHeight - 50) {
           doc.addPage();
-          drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+          drawPageHeader(doc, pageWidth, margin, inspection);
           yPos = PDF_HEADER_HEIGHT + 10;
         } else {
           yPos = yPos + (row * (photoHeight + photoSpacing));
@@ -769,7 +779,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   if (walkAround && walkAround.length > 0) {
     if (yPos > pageHeight - 80) {
       doc.addPage();
-      drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+      drawPageHeader(doc, pageWidth, margin, inspection);
       yPos = PDF_HEADER_HEIGHT + 10;
     }
     doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
@@ -800,13 +810,13 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   // ============================================
   // SECTION 6: INSPECTION CHECKLIST (Table Format)
   // ============================================
-  let emailChecklistPhotosLeft = forEmail ? emailChecklistCap : Infinity;
+  let checklistPhotosRemaining = maxChecklistPhotosForThisRun;
   for (const category of checklist) {
     if (!category || !category.category) continue;
     
     if (yPos > pageHeight - 100) {
       doc.addPage();
-      drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+      drawPageHeader(doc, pageWidth, margin, inspection);
       yPos = PDF_HEADER_HEIGHT + 10;
     }
 
@@ -895,7 +905,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       
       if (yPos > pageHeight - 90) {
         doc.addPage();
-        drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+        drawPageHeader(doc, pageWidth, margin, inspection);
         yPos = PDF_HEADER_HEIGHT + 10;
       }
 
@@ -911,17 +921,15 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       const itemPhotoHeight = itemPhotoWidth * 0.75;
       const photoSpacing = 6;
       let itemPhotosSlice = item.photos.slice(0, maxPerItem);
-      if (forEmail) {
-        const kept: typeof itemPhotosSlice = [] as typeof itemPhotosSlice;
-        for (const photo of itemPhotosSlice) {
-          if (emailChecklistPhotosLeft <= 0) break;
-          const src = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
-          if (!src) continue;
-          kept.push(photo);
-          emailChecklistPhotosLeft -= 1;
-        }
-        itemPhotosSlice = kept;
+      const kept: typeof itemPhotosSlice = [] as typeof itemPhotosSlice;
+      for (const photo of itemPhotosSlice) {
+        if (checklistPhotosRemaining <= 0) break;
+        const src = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
+        if (!src) continue;
+        kept.push(photo);
+        checklistPhotosRemaining -= 1;
       }
+      itemPhotosSlice = kept;
       if (itemPhotosSlice.length === 0) continue;
 
       for (let i = 0; i < itemPhotosSlice.length; i++) {
@@ -931,7 +939,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();
-          drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+          drawPageHeader(doc, pageWidth, margin, inspection);
           yPos = PDF_HEADER_HEIGHT + 10;
         }
 
@@ -973,7 +981,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   // ============================================
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    drawPageHeader(doc, pageWidth, margin, inspection);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -1032,7 +1040,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 70) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+    drawPageHeader(doc, pageWidth, margin, inspection);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 

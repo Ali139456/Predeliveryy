@@ -1,10 +1,22 @@
 /**
  * Returns the display URL for a photo (for <img src>).
- * - Supabase: prefer `fileName` `tenants/…` → `/api/files/signed?key=…` (auth + expiring redirect). New uploads
- *   store that pattern; avoid persisting durable public storage URLs.
+ * - Supabase: `fileName` `tenants/…` → `/api/files/signed?key=…` (auth + expiring redirect).
+ * - If `url` is already `/api/files/signed?…` or an absolute signed URL, use it (avoids `/api/files/{fileName}` 404
+ *   when `fileName` is a display label or legacy basename).
  * - Local dev: `url` like `/uploads/tenants/...` — static file under public/.
- * - Legacy https URLs (S3 presign, old public Supabase links) used only when there is no `tenants/` fileName.
+ * - Legacy https URLs (S3 presign, Blob, old public links).
  */
+function isSignedFilesUrl(u: string): boolean {
+  if (u.startsWith('/api/files/signed')) return true;
+  try {
+    const parsed = new URL(u);
+    const p = parsed.pathname.replace(/\/$/, '');
+    return p.endsWith('/api/files/signed') && !!parsed.searchParams.get('key');
+  } catch {
+    return false;
+  }
+}
+
 export function getPhotoDisplayUrl(photo: string | { fileName?: string; url?: string }): string {
   if (typeof photo === 'string') {
     if (photo.startsWith('http://') || photo.startsWith('https://')) return photo;
@@ -21,6 +33,10 @@ export function getPhotoDisplayUrl(photo: string | { fileName?: string; url?: st
 
   if (fileName.startsWith('tenants/')) {
     return `/api/files/signed?key=${encodeURIComponent(fileName)}`;
+  }
+
+  if (url && isSignedFilesUrl(url)) {
+    return url;
   }
 
   if (url && (url.startsWith('https://') || url.startsWith('http://'))) {
