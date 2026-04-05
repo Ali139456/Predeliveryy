@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:turbo": "next dev --turbo",
     "dev:reset": "node scripts/clean-dev-cache.js && next dev",
+    "clean:next": "node scripts/clean-dev-cache.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

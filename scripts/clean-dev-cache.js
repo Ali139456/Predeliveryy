@@ -1,6 +1,11 @@
 /**
- * Removes Next.js dev artifacts that often corrupt on Windows (especially paths with spaces),
- * causing 404s for /_next/static/* (layout.css, main-app.js, etc.).
+ * Removes Next.js dev artifacts that often corrupt on Windows (especially paths with spaces).
+ *
+ * Symptoms: "Cannot find module './NNNN.js'", missing /_next/static/*, stale HMR after edits.
+ * Cause: webpack splits code into numbered chunks; after crashes, branch switches, or mixed
+ * turbo/webpack runs, .next can reference chunk IDs that no longer exist.
+ *
+ * Fix: stop `npm run dev`, run `npm run clean:next`, then `npm run dev` again.
  */
 const fs = require('fs');
 const path = require('path');
@@ -19,3 +24,4 @@ function rm(target) {
 
 rm('.next');
 rm('node_modules/.cache');
+rm('.turbo');
