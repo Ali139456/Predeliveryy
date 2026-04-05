@@ -10,8 +10,11 @@ const nextConfig = {
     },
   },
   images: {
-    domains: ['localhost', 'res.cloudinary.com', 'images.unsplash.com'],
     remotePatterns: [
+      { protocol: 'http', hostname: 'localhost', pathname: '/**' },
+      { protocol: 'https', hostname: 'localhost', pathname: '/**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
       { protocol: 'https', hostname: '**.supabase.co', pathname: '/storage/v1/object/public/**' },
       { protocol: 'https', hostname: '**.supabase.in', pathname: '/storage/v1/object/public/**' },
     ],
@@ -28,11 +31,8 @@ const nextConfig = {
   compress: true,
   // Optimize production builds
   productionBrowserSourceMaps: false,
-  // Avoid eval-based source maps in dev (can cause "Invalid or unexpected token" on Windows when path has spaces/backslashes)
+  // Do not override devtool in dev — Next.js reverts it and warns (improper-devtool). Use `npm run clean:next` if Windows + path spaces cause odd dev errors.
   webpack: (config, { dev }) => {
-    if (dev && typeof config.devtool === 'string' && config.devtool.includes('eval')) {
-      config.devtool = 'cheap-module-source-map';
-    }
     // Windows + paths with spaces: persistent pack cache often leaves .next/server out of sync → 404 on /_next/static and "__webpack_modules__ is not a function"
     if (dev) {
       config.cache = false;

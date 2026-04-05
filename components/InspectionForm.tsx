@@ -1037,6 +1037,28 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     goToStep(Math.max(currentStep - 1, 1));
   };
 
+  /** Footer Previous: on checklist step, go to previous category before leaving the step. */
+  const handleFooterPrevious = () => {
+    if (currentStep === 4 && fields.length > 0 && activeChecklistCategory > 0) {
+      setActiveChecklistCategory((i) => Math.max(0, i - 1));
+      return;
+    }
+    handlePrevious();
+  };
+
+  /** Footer Next: on checklist step, advance section until the last, then proceed to signatures. */
+  const handleFooterNext = async () => {
+    if (currentStep === 4 && fields.length > 0) {
+      const lastIdx = fields.length - 1;
+      const safeIdx = Math.max(0, Math.min(activeChecklistCategory, lastIdx));
+      if (safeIdx < lastIdx) {
+        setActiveChecklistCategory((i) => Math.min(lastIdx, i + 1));
+        return;
+      }
+    }
+    await handleNext();
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
@@ -1355,7 +1377,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           )}
         </div>
         <div className="space-y-4">
-          <p className="text-sm font-semibold text-black">General photos (guided)</p>
+          <p className="text-sm font-semibold text-black">General photos</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {(['front', 'rear', 'left', 'right'] as const).map((slot) => {
               const slotLabel =
@@ -1398,7 +1420,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             })}
           </div>
           <p className="text-xs text-gray-600">
-            Optional: guided angles help documentation. General photos are not required to continue—repair items use photos on the checklist.
+            General photos are not required to continue—repair items use photos on the checklist.
           </p>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-200">
@@ -1815,7 +1837,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t-2 border-slate-700/50 overflow-hidden">
           <button
             type="button"
-            onClick={handlePrevious}
+            onClick={handleFooterPrevious}
             disabled={currentStep === 1}
             className={`flex items-center justify-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md w-full sm:w-auto ${
               currentStep === 1
@@ -1831,7 +1853,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {currentStep < totalSteps ? (
               <button
                 type="button"
-                onClick={handleNext}
+                onClick={handleFooterNext}
                 className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-semibold hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 w-full sm:w-auto"
               >
                 Next

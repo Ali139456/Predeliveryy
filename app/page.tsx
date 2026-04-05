@@ -6,15 +6,14 @@ import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, Arro
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
-  const { user, loading } = useAuth();
-  const isLoggedIn = !!user;
-  // While auth is loading, show only hero to avoid flash (marketing sections appearing then disappearing after login)
-  const showMarketingSections = !loading && !isLoggedIn;
+  const { loading, user } = useAuth();
+  // Logged-in users: hero only (app entry). Guests: full landing page below the hero.
+  const showMarketingSections = !loading && !user;
   
   return (
     <div className="bg-white">
-      {/* Hero Section - same before and after login (mobile + screen); sections below only when not logged in */}
-      <div className="relative bg-gradient-to-b from-[#0033FF] via-[#0029CC] to-[#0033FF] min-h-screen w-full overflow-x-hidden">
+      {/* Hero Section - always; marketing + footer below only for guests */}
+      <div className="relative bg-gradient-to-b from-[#0033FF] via-[#0029CC] to-[#0033FF] min-h-[min(100dvh,900px)] lg:min-h-0 w-full overflow-x-clip">
         {/* Hero Background Image */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
           <Image
@@ -38,7 +37,7 @@ export default function Home() {
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
         
-        <div className="relative z-20 flex items-start lg:items-center min-h-screen pt-14 sm:pt-16 md:pt-20 pb-4">
+        <div className="relative z-20 flex items-start pt-14 sm:pt-16 md:pt-20 pb-8 sm:pb-12 md:pb-10 lg:py-12">
           <div className="container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 pt-8 sm:pt-10 md:pt-6 pb-12 sm:pb-16 md:pb-8 w-full max-w-full min-w-0 flex-1">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-center w-full min-w-0">
               {/* Hero content: H1, tagline, features, Built for, CTAs - all in one div */}
@@ -97,13 +96,13 @@ export default function Home() {
 
               {/* PD Logo mockup - centered on mobile; on lg right column spanning 2 rows */}
               <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
-                <div className="hero-phone w-full max-h-[min(72vh,560px)] sm:max-h-[min(78vh,560px)] md:max-h-[min(82vh,620px)] lg:max-h-[min(75vh,720px)] mx-auto flex flex-col items-center">
+                <div className="hero-phone w-full max-h-[min(56vh,480px)] sm:max-h-[min(60vh,520px)] md:max-h-[min(58vh,540px)] lg:max-h-[min(52vh,520px)] mx-auto flex flex-col items-center">
                   <Image
                     src="/PD-Logo-Mockup.png"
                     alt="Pre Delivery — verified before you drive"
                     width={520}
                     height={693}
-                    className="w-[min(520px,100%)] max-w-full h-auto max-h-[min(68vh,520px)] sm:max-h-[min(75vh,540px)] md:max-h-[min(78vh,580px)] lg:max-h-[min(72vh,680px)] object-contain object-center drop-shadow-2xl"
+                    className="w-[min(520px,100%)] max-w-full h-auto max-h-[min(52vh,440px)] sm:max-h-[min(56vh,480px)] md:max-h-[min(54vh,500px)] lg:max-h-[min(48vh,520px)] object-contain object-center drop-shadow-2xl"
                     style={{ width: 'min(520px, 100%)', height: 'auto' }}
                     priority
                     sizes="(max-width: 640px) 92vw, (max-width: 768px) 520px, (max-width: 1024px) 520px, (max-width: 1280px) 560px, 600px"
@@ -153,19 +152,19 @@ export default function Home() {
                 <p className="text-gray-600 text-sm leading-relaxed">Create verifiable records that support warranty and insurance claims.</p>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl overflow-hidden">
-                <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl overflow-hidden">
+                <div className="w-14 h-14 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <FileText className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Create a defensible delivery record</h3>
+                <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Create a defensible delivery record</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">Build comprehensive digital records that stand up in any dispute.</p>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl overflow-hidden">
-                <div className="w-14 h-14 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl overflow-hidden">
+                <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                   <Lock className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Prevent post registration risks</h3>
+                <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Prevent post registration risks</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">Identify and resolve issues before vehicle registration and delivery.</p>
               </div>
             </div>
@@ -220,30 +219,30 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#FF6600] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   3
                 </div>
                 <div className="relative z-10 pt-6 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
+                  <div className="w-20 h-20 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                     <FileCheck className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-[#FF6600]">Sign Off</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-[#0033FF]">Sign Off</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
                     Approve the inspection with digital signatures, creating a complete and legally defensible record.
                   </p>
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
+              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#FF6600] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   4
                 </div>
                 <div className="relative z-10 pt-6 flex flex-col items-center">
-                  <div className="w-20 h-20 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
+                  <div className="w-20 h-20 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                     <Zap className="w-10 h-10 text-white" strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-[#0033FF]">Deliver</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900 text-center group-hover:text-[#FF6600]">Deliver</h3>
                   <p className="text-gray-600 text-center leading-relaxed text-sm">
                     Hand over the vehicle with complete confidence, backed by a verified digital inspection record.
                   </p>
@@ -480,16 +479,16 @@ export default function Home() {
                 <p className="text-gray-600 text-sm">Granular permissions and access management</p>
               </div>
 
-              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#FF6600] shadow-sm hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
+              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#0033FF] shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="w-16 h-16 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <FileText className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-lg font-bold mb-3 text-gray-900">Audit trails, analytics and inspection history</h3>
                 <p className="text-gray-600 text-sm">Complete transparency and traceability</p>
               </div>
 
-              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#0033FF] shadow-sm hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
+              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#FF6600] shadow-sm hover:shadow-xl transition-all duration-300">
+                <div className="w-16 h-16 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                   <CheckCircle className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-lg font-bold mb-3 text-gray-900">Built by automotive experts</h3>

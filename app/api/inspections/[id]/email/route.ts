@@ -67,11 +67,17 @@ export async function POST(
       );
     }
 
-    // Generate a lighter PDF for email (fewer photos) to stay under Resend 40MB limit
-    const RESEND_EMAIL_SIZE_LIMIT_BYTES = 38 * 1024 * 1024; // 38MB (leave room for body + base64 overhead)
+    // Lighter PDF for email (capped + compressed images). Resend ~40MB; keep margin for API/base64.
+    const RESEND_EMAIL_SIZE_LIMIT_BYTES = 34 * 1024 * 1024;
     let pdfBuffer: Buffer;
     try {
       pdfBuffer = await generatePDF(inspection, { forEmail: true });
+      if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
+        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 12 });
+      }
+      if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
+        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 6 });
+      }
     } catch (pdfError: unknown) {
       const msg = pdfError instanceof Error ? pdfError.message : 'Unknown error';
       return NextResponse.json({ success: false, error: `Failed to generate PDF: ${msg}` }, { status: 500 });
@@ -80,7 +86,8 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
-          error: 'This report is too large to email (limit 40MB). Please download the PDF and share it via link or use an inspection with fewer photos.',
+          error:
+            'This report is still too large to email after compressing images. Please use Export PDF and share the file or a link instead.',
         },
         { status: 413 }
       );

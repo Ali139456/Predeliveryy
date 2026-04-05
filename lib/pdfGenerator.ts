@@ -176,10 +176,36 @@ async function loadImageAsBase64(fileName: string): Promise<string | null> {
 const IMAGE_FETCH_TIMEOUT_MS = 8000;
 const MAX_GENERAL_PHOTOS = 10;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM = 2;
-/** Lighter limits for email (Resend 40MB limit) */
+/** Lighter limits for email (Resend ~40MB limit; base64 + many pages add overhead) */
 const MAX_GENERAL_PHOTOS_EMAIL = 2;
 const MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL = 1;
+/** Hard cap on checklist photos in emailed PDFs (items can have many repair photos across the form). */
+const MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL = 24;
 const IMAGE_LOAD_CONCURRENCY = 6;
+
+/** Ordered list of checklist image sources (respects per-item slice + optional global email cap). */
+function enumerateChecklistImageSources(
+  checklist: IInspection['checklist'],
+  maxPerItem: number,
+  maxTotal: number
+): string[] {
+  const out: string[] = [];
+  const list = Array.isArray(checklist) ? checklist : [];
+  for (const category of list) {
+    if (!category?.items) continue;
+    for (const item of category.items) {
+      if (!item.photos?.length) continue;
+      const itemPhotos = item.photos.slice(0, maxPerItem);
+      for (const photo of itemPhotos) {
+        const imageSrc = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
+        if (!imageSrc) continue;
+        out.push(imageSrc);
+        if (out.length >= maxTotal) return out;
+      }
+    }
+  }
+  return out;
+}
 
 function fetchImageFromUrl(url: string): Promise<Buffer | null> {
   return new Promise((resolve) => {
@@ -240,8 +266,8 @@ async function shrinkDataUriForEmail(dataUri: string | null): Promise<string | n
     const buf = Buffer.from(base64Match[1], 'base64');
     const out = await sharp(buf)
       .rotate()
-      .resize({ width: 800, height: 800, fit: 'inside', withoutEnlargement: true })
-      .jpeg({ quality: 62, mozjpeg: true })
+      .resize({ width: 520, height: 520, fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 46, mozjpeg: true })
       .toBuffer();
     return `data:image/jpeg;base64,${out.toString('base64')}`;
   } catch {
@@ -348,7 +374,8 @@ function drawPageHeader(
       const logoHeight = 22;
       const logoWidth = Math.min(70, logoHeight * 2.8);
       const logoY = (PDF_HEADER_HEIGHT - logoHeight) / 2;
-      doc.addImage(logoBase64, 'PNG', margin, logoY, logoWidth, logoHeight);
+      const logoFmt = logoBase64.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+      doc.addImage(logoBase64, logoFmt as 'PNG' | 'JPEG', margin, logoY, logoWidth, logoHeight);
     } catch (e) {
       // fallback to text if image fails
     }
@@ -380,12 +407,20 @@ function drawPageHeader(
   doc.setTextColor(0, 0, 0);
 }
 
-export type GeneratePDFOptions = { forEmail?: boolean };
+export type GeneratePDFOptions = {
+  forEmail?: boolean;
+  /** Override default email checklist photo cap (smaller = lighter PDF for Resend). */
+  maxChecklistPhotosEmail?: number;
+};
 
 export async function generatePDF(inspection: IInspection, options?: GeneratePDFOptions): Promise<Buffer> {
   const forEmail = options?.forEmail === true;
   const maxGeneral = forEmail ? MAX_GENERAL_PHOTOS_EMAIL : MAX_GENERAL_PHOTOS;
   const maxPerItem = forEmail ? MAX_PHOTOS_PER_CHECKLIST_ITEM_EMAIL : MAX_PHOTOS_PER_CHECKLIST_ITEM;
+  const emailChecklistCap =
+    forEmail
+      ? Math.max(1, Math.min(options?.maxChecklistPhotosEmail ?? MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL, 500))
+      : MAX_CHECKLIST_PHOTOS_TOTAL_EMAIL;
 
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -406,6 +441,9 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
         logoBase64 = `data:image/png;base64,${buf.toString('base64')}`;
       }
     }
+    if (forEmail && logoBase64) {
+      logoBase64 = (await shrinkDataUriForEmail(logoBase64)) ?? logoBase64;
+    }
   } catch (e) {
     console.warn('Logo not found for PDF header');
   }
@@ -423,16 +461,10 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     }
   }
   const checklist = Array.isArray(inspection.checklist) ? inspection.checklist : [];
-  for (const category of checklist) {
-    if (!category?.items) continue;
-    for (const item of category.items) {
-      if (!item.photos?.length) continue;
-      const itemPhotos = item.photos.slice(0, maxPerItem);
-      for (const photo of itemPhotos) {
-        const imageSrc = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
-        if (imageSrc) imageSources.push(imageSrc);
-      }
-    }
+  const checklistPhotoCap = forEmail ? emailChecklistCap : Number.MAX_SAFE_INTEGER;
+  const checklistSources = enumerateChecklistImageSources(checklist, maxPerItem, checklistPhotoCap);
+  for (const src of checklistSources) {
+    imageSources.push(src);
   }
   const uniqueSources = Array.from(new Set(imageSources));
   const imageCache = await runWithConcurrency(
@@ -768,6 +800,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   // ============================================
   // SECTION 6: INSPECTION CHECKLIST (Table Format)
   // ============================================
+  let emailChecklistPhotosLeft = forEmail ? emailChecklistCap : Infinity;
   for (const category of checklist) {
     if (!category || !category.category) continue;
     
@@ -877,8 +910,20 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       const itemPhotoWidth = (contentWidth - 12) / 3;
       const itemPhotoHeight = itemPhotoWidth * 0.75;
       const photoSpacing = 6;
-      const itemPhotosSlice = item.photos.slice(0, maxPerItem);
-      
+      let itemPhotosSlice = item.photos.slice(0, maxPerItem);
+      if (forEmail) {
+        const kept: typeof itemPhotosSlice = [] as typeof itemPhotosSlice;
+        for (const photo of itemPhotosSlice) {
+          if (emailChecklistPhotosLeft <= 0) break;
+          const src = resolvePdfImageSource(photo as string | { fileName?: string; url?: string });
+          if (!src) continue;
+          kept.push(photo);
+          emailChecklistPhotosLeft -= 1;
+        }
+        itemPhotosSlice = kept;
+      }
+      if (itemPhotosSlice.length === 0) continue;
+
       for (let i = 0; i < itemPhotosSlice.length; i++) {
         const photo = itemPhotosSlice[i];
         const fileName = typeof photo === 'string' ? photo : (photo as any).fileName;
