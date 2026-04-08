@@ -593,12 +593,205 @@ async function getRasterDimensionsFromDataUri(dataUri: string): Promise<{ w: num
   return null;
 }
 
-const PDF_HEADER_HEIGHT = 50;
+/** Taller band: logo + report meta top-right, title one line at bottom */
+const PDF_HEADER_HEIGHT = 56;
 /** Transparent logo intrinsic ratio (width / height) for undistorted header placement */
 const PDF_HEADER_LOGO_ASPECT = 1609 / 1103;
 // Theme: app primary blue #0033FF and darker #0029CC
 const PDF_THEME_MAIN = [0, 51, 255] as const;
 const PDF_THEME_STRIP = [0, 41, 204] as const;
+/** Light blue zebra rows for inspection checklist tables (RGB) */
+const PDF_CHECKLIST_ROW_ALT_BLUE = [232, 244, 255] as const;
+
+/**
+ * Full legal disclaimer appended as the last page(s) of the PDF (before footers are drawn).
+ */
+const PDF_DISCLAIMER_PARAGRAPHS: Array<{ kind: 'h' | 'p' | 'ul'; text?: string; items?: string[] }> = [
+  {
+    kind: 'p',
+    text:
+      'This Pre-Delivery Inspection Report ("Report") has been prepared by Predelivery.ai based on a visual and non-invasive inspection of the vehicle at the time and location recorded in this Report.',
+  },
+  { kind: 'h', text: '1. Nature of Inspection' },
+  { kind: 'p', text: 'The inspection:' },
+  {
+    kind: 'ul',
+    items: [
+      'is limited to observable conditions at the time of inspection',
+      'is conducted without dismantling, disassembly, or invasive testing',
+      'relies on the checklist items, inputs, and evidence (including photos) recorded in the Report',
+    ],
+  },
+  { kind: 'p', text: 'Accordingly, components, systems, or defects that are:' },
+  {
+    kind: 'ul',
+    items: ['not visible', 'not accessible', 'concealed, latent, or developing'],
+  },
+  { kind: 'p', text: 'may not be identified.' },
+  { kind: 'h', text: '2. No Guarantee or Warranty' },
+  { kind: 'p', text: 'This Report:' },
+  {
+    kind: 'ul',
+    items: [
+      'does not constitute a guarantee or warranty as to the condition, performance, or future reliability of the vehicle',
+      'does not confirm the absence of defects',
+      'does not certify compliance with manufacturer specifications unless expressly stated',
+    ],
+  },
+  { kind: 'h', text: '3. Reliance on Information' },
+  { kind: 'p', text: 'This Report may rely on:' },
+  {
+    kind: 'ul',
+    items: [
+      'information provided by third parties (including dealers, manufacturers, or operators)',
+      'system inputs, VIN data, or documentation available at the time',
+    ],
+  },
+  { kind: 'p', text: 'Predelivery.ai does not warrant the completeness or accuracy of third-party information.' },
+  { kind: 'h', text: '4. AI-Assisted Analysis (if applicable)' },
+  { kind: 'p', text: 'Where applicable, this Report may incorporate:' },
+  {
+    kind: 'ul',
+    items: ['automated systems', 'image recognition', 'AI-assisted inspection or scoring tools'],
+  },
+  { kind: 'p', text: 'Such outputs are:' },
+  {
+    kind: 'ul',
+    items: [
+      'assistive only',
+      'subject to limitations in detection accuracy',
+      'not a substitute for mechanical or engineering assessment',
+    ],
+  },
+  { kind: 'h', text: '5. Limitation of Liability' },
+  { kind: 'p', text: 'To the maximum extent permitted by law:' },
+  {
+    kind: 'ul',
+    items: [
+      'Predelivery.ai is not liable for any indirect, incidental, or consequential loss, including loss of use, profit, or opportunity',
+      'Any liability arising from this Report is limited to the amount paid for the inspection service',
+      'Nothing in this disclaimer excludes rights under the Australian Consumer Law.',
+    ],
+  },
+  { kind: 'h', text: '6. Not a Mechanical or Engineering Report' },
+  { kind: 'p', text: 'This Report:' },
+  {
+    kind: 'ul',
+    items: [
+      'is not a mechanical inspection, engineering certification, or roadworthy certificate',
+      'should not be relied upon as a substitute for a comprehensive mechanical inspection',
+    ],
+  },
+  { kind: 'p', text: 'Independent specialist advice should be obtained where required.' },
+  { kind: 'h', text: '7. Time-Sensitive Nature' },
+  { kind: 'p', text: 'Vehicle condition may change after inspection due to:' },
+  {
+    kind: 'ul',
+    items: ['use', 'transport', 'environmental factors', 'subsequent handling'],
+  },
+  { kind: 'p', text: 'This Report reflects conditions at the time of inspection only.' },
+  { kind: 'h', text: '8. Use and Reliance' },
+  { kind: 'p', text: 'This Report is prepared for:' },
+  {
+    kind: 'ul',
+    items: ['the commissioning party (e.g. dealer, OEM, fleet operator, or customer)'],
+  },
+  { kind: 'p', text: 'It must not be:' },
+  {
+    kind: 'ul',
+    items: [
+      'relied upon by third parties',
+      'reproduced or used for other purposes',
+      'without prior written consent from Predelivery Global Pty Ltd',
+    ],
+  },
+  { kind: 'h', text: '9. Acceptance' },
+  { kind: 'p', text: 'By using this Report, the recipient acknowledges and accepts:' },
+  {
+    kind: 'ul',
+    items: ['the scope', 'limitations', 'and conditions set out in this disclaimer'],
+  },
+];
+
+function drawDisclaimerPages(
+  doc: jsPDF,
+  pageWidth: number,
+  pageHeight: number,
+  margin: number,
+  contentWidth: number,
+  inspection: IInspection,
+  logoBase64: string | null
+) {
+  const lineH = 4.8;
+  const paraGap = 3;
+  const bottomSafe = 28;
+
+  const ensureSpace = (needed: number, yRef: { y: number }) => {
+    if (yRef.y + needed > pageHeight - bottomSafe) {
+      doc.addPage();
+      drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+      yRef.y = PDF_HEADER_HEIGHT + 12;
+    }
+  };
+
+  doc.addPage();
+  drawPageHeader(doc, pageWidth, margin, inspection, logoBase64);
+  const yRef = { y: PDF_HEADER_HEIGHT + 14 };
+
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]);
+  doc.text('Disclaimer', margin, yRef.y);
+  yRef.y += 10;
+
+  doc.setFontSize(9);
+  doc.setTextColor(40, 40, 50);
+
+  for (const block of PDF_DISCLAIMER_PARAGRAPHS) {
+    if (block.kind === 'h') {
+      ensureSpace(lineH * 2 + paraGap, yRef);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      const lines = doc.splitTextToSize(block.text ?? '', contentWidth);
+      for (const line of lines) {
+        ensureSpace(lineH, yRef);
+        doc.text(line, margin, yRef.y);
+        yRef.y += lineH;
+      }
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9);
+      yRef.y += paraGap * 0.5;
+      continue;
+    }
+
+    if (block.kind === 'p' && block.text) {
+      doc.setFont('helvetica', 'normal');
+      const lines = doc.splitTextToSize(block.text, contentWidth);
+      for (const line of lines) {
+        ensureSpace(lineH, yRef);
+        doc.text(line, margin, yRef.y);
+        yRef.y += lineH;
+      }
+      yRef.y += paraGap * 0.5;
+      continue;
+    }
+
+    if (block.kind === 'ul' && block.items) {
+      doc.setFont('helvetica', 'normal');
+      for (const item of block.items) {
+        const bullet = `\u2022 ${item}`;
+        const lines = doc.splitTextToSize(bullet, contentWidth - 4);
+        for (let i = 0; i < lines.length; i++) {
+          ensureSpace(lineH, yRef);
+          const x = i === 0 ? margin : margin + 4;
+          doc.text(lines[i], x, yRef.y);
+          yRef.y += lineH;
+        }
+      }
+      yRef.y += paraGap * 0.5;
+    }
+  }
+}
 
 function drawPageHeader(
   doc: jsPDF,
@@ -616,44 +809,39 @@ function drawPageHeader(
   const infoBlockWidth = 82;
   const infoBlockLeft = pageWidth - margin - infoBlockWidth;
 
-  let titleX = margin;
   if (logoBase64) {
     try {
-      const logoHeight = 36;
+      const logoHeight = 32;
       const logoWidth = Math.min(logoHeight * PDF_HEADER_LOGO_ASPECT, 52);
-      const logoY = (PDF_HEADER_HEIGHT - logoHeight) / 2;
+      const logoY = 6;
       const fmt = logoBase64.startsWith('data:image/png') ? 'PNG' : 'JPEG';
       doc.addImage(logoBase64, fmt as 'PNG' | 'JPEG', margin, logoY, logoWidth, logoHeight);
-      titleX = margin + logoWidth + 4;
     } catch {
-      /* logo failed — title from left margin */
+      /* logo failed */
     }
   }
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(255, 255, 255);
-  // Title sits after the logo; horizontally centered in the band up to the report meta block
-  const titleRegionPad = 4;
-  const titleRegionRight = infoBlockLeft - titleRegionPad;
-  const titleMaxW = Math.max(36, titleRegionRight - titleX);
-  const titleCenterX = titleX + titleMaxW / 2;
-  const titleLines = doc.splitTextToSize(reportTitle, titleMaxW);
-  const titleLineHeight = 5;
-  const titleBlockH = titleLines.length * titleLineHeight;
-  let titleStartY = PDF_HEADER_HEIGHT / 2 - titleBlockH / 2 + titleLineHeight * 0.35;
-  titleLines.forEach((line: string, i: number) => {
-    doc.text(line, titleCenterX, titleStartY + i * titleLineHeight, { align: 'center' });
-  });
-
-  // Right: Report # and Generated (Australia/Sydney)
+  // Right: Report # and Generated (Australia/Sydney) — top of header band
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(255, 255, 255);
-  const infoY1 = 16;
-  const infoY2 = 30;
+  const infoY1 = 14;
+  const infoY2 = 24;
   doc.text(`Report #: ${inspection.inspectionNumber || 'N/A'}`, infoBlockLeft, infoY1, { align: 'left' });
   doc.text(`Generated: ${formatDateTimeAustraliaEastern(new Date())}`, infoBlockLeft, infoY2, { align: 'left' });
+
+  // Title: single line at bottom of blue band (below meta block), centered
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(255, 255, 255);
+  const titleMaxW = pageWidth - margin * 2;
+  let titleFont = 11;
+  doc.setFontSize(titleFont);
+  while (titleFont > 7.5 && doc.getTextWidth(reportTitle) > titleMaxW) {
+    titleFont -= 0.5;
+    doc.setFontSize(titleFont);
+  }
+  const titleBaselineY = PDF_HEADER_HEIGHT - 4;
+  doc.text(reportTitle, pageWidth / 2, titleBaselineY, { align: 'center' });
 
   // Line at bottom of header bar
   doc.setDrawColor(PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]);
@@ -1022,6 +1210,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       bodyStyles: {
         fontSize: 9,
         cellPadding: 3,
+        fillColor: [255, 255, 255],
       },
       columnStyles: {
         0: { cellWidth: 75, fontStyle: 'bold', textColor: [30, 30, 40], halign: 'left' },
@@ -1032,7 +1221,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       margin: { left: margin, right: margin },
       styles: { overflow: 'linebreak', cellPadding: 3 },
       alternateRowStyles: {
-        fillColor: [252, 252, 255],
+        fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
       },
       didParseCell: (data) => {
         if (data.section === 'body' && data.column.index === 2) {
@@ -1194,6 +1383,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   doc.setTextColor(60, 60, 80);
   doc.text('Technician Signature:', techSigX, yPos);
 
+  drawDisclaimerPages(doc, pageWidth, pageHeight, margin, contentWidth, inspection, headerLogo);
+
   // ============================================
   // FOOTER - On Every Page
   // ============================================
@@ -1214,7 +1405,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     doc.setFontSize(8);
     doc.setTextColor(60, 60, 80);
     doc.setFont('helvetica', 'bold');
-    doc.text('Pre Delivery', margin, footerY);
+    doc.text('Pre Delivery Global Pty Ltd', margin, footerY);
   }
   
   return Buffer.from(doc.output('arraybuffer'));

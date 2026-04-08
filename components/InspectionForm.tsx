@@ -1584,30 +1584,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   isExt ? 'border-blue-200' : isInt ? 'border-amber-200' : 'border-gray-200'
                 }`}
               >
-              <div className={`flex items-center gap-2 mb-3 pb-2 border-b ${
-                isExt ? 'border-blue-200' : isInt ? 'border-amber-200' : 'border-gray-200'
-              }`}>
-                {isExt && <span className="text-2xl">🚗</span>}
-                {isInt && <span className="text-2xl">🚙</span>}
-                <h3 className={`text-base font-bold ${
-                  isExt ? 'text-blue-700' : isInt ? 'text-amber-700' : 'text-black'
-                }`}>
+              <input type="hidden" {...register(`checklist.${categoryIndex}.category`)} />
+              <div className="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-lg border bg-sky-50 border-sky-200">
+                {isExt && <span className="text-2xl shrink-0">🚗</span>}
+                {isInt && <span className="text-2xl shrink-0">🚙</span>}
+                <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900">
                   {categoryName || `Category ${categoryIndex + 1}`}
                 </h3>
               </div>
-              <textarea
-                {...register(`checklist.${categoryIndex}.category`)}
-                disabled={readOnly}
-                rows={3}
-                className={`w-full min-h-[4.5rem] px-3 py-2 text-sm border rounded-lg mb-3 focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-y ${
-                  isExt 
-                    ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
-                    : isInt 
-                    ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                    : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
-                } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                placeholder="Category name (full title visible—resize if needed)"
-              />
+              <p className="text-xs text-gray-600 mb-3 -mt-1">
+                Voice to notes adds text to the notes field only. Choose OK, Repair, Replace, etc. from the status dropdown for each line.
+              </p>
 
               {category.items?.map((item: any, itemIndex: number) => {
                 const itemPhotos = watch(`checklist.${categoryIndex}.items.${itemIndex}.photos`) ?? item.photos ?? [];
