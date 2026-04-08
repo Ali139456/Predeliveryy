@@ -6,10 +6,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit, FileCheck, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 
-const LOGO_SRC = '/Pre Delivery Logo/Original Logo Transparent Background.png';
 const LOGO_CLASS =
-  'h-12 sm:h-14 md:h-16 lg:h-20 w-auto max-w-[70vw] object-contain object-left';
+  'h-28 sm:h-20 md:h-24 lg:h-28 w-auto max-w-[85vw] sm:max-w-[78vw] object-contain object-left';
 
 function UserHeader() {
   const { user, loading, setUser, refetch } = useAuth();
@@ -67,7 +67,7 @@ function UserHeader() {
           <div className="max-w-7xl mx-auto w-full">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center shrink-0 rounded-lg min-w-0">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className={LOGO_CLASS} priority />
+                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
               </Link>
               <div className="h-10 w-20 bg-white/10 rounded-lg animate-pulse" aria-hidden />
             </div>
@@ -91,7 +91,7 @@ function UserHeader() {
           <div className="relative flex items-center justify-between gap-2 min-h-[3rem] sm:min-h-[3.5rem]">
             <Link href="/" className="transition-colors flex items-center group hover:opacity-90 min-w-0 shrink z-10">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
-                <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className={LOGO_CLASS} priority />
+                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
               </div>
             </Link>
 
@@ -152,7 +152,7 @@ function UserHeader() {
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center min-w-0" onClick={() => setMobileMenuOpen(false)}>
                     <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                      <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className={LOGO_CLASS} priority />
+                      <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
                     </div>
                   </Link>
                   <button
@@ -243,7 +243,7 @@ function UserHeader() {
           {/* Logo on blue nav (no white container) */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
             <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-              <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className={LOGO_CLASS} priority />
+              <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
             </div>
           </Link>
 
@@ -398,7 +398,7 @@ function UserHeader() {
               <div className="flex items-center justify-between px-3 sm:px-4 py-4 border-b border-gray-200 shrink-0">
                 <Link href="/" className="flex items-center transition-colors min-w-0" onClick={() => setMobileMenuOpen(false)}>
                   <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
-                    <Image src={LOGO_SRC} alt="Pre delivery" width={280} height={80} className={LOGO_CLASS} priority />
+                    <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
                   </div>
                 </Link>
                 <button

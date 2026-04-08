@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { SITE_HERO_MOBILE_GRAPHICS_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 
 export default function Home() {
   const { loading, user } = useAuth();
@@ -50,7 +51,43 @@ export default function Home() {
                 </p>
 
                 <div className="text-center lg:text-left min-w-0 overflow-visible">
-                  <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full mx-auto lg:mx-0">
+                  {/* Mobile: two compact pills (3 + 2) — less bulky than one wide block */}
+                  <div
+                    className="sm:hidden grid grid-cols-2 gap-2 w-full max-w-xl mx-auto lg:mx-0 items-stretch"
+                    aria-label="Product highlights"
+                  >
+                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0">
+                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug text-white/92">
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">Photo images</span>
+                        </li>
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">OCR Scanner</span>
+                        </li>
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">GPS Pinning</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0 flex flex-col justify-center">
+                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug text-white/92">
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">Analytics Dashboard</span>
+                        </li>
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">Secure and Compliant</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* sm+: single pill row */}
+                  <div className="hidden sm:block rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full mx-auto lg:mx-0">
                     <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
                       <li className="flex items-center gap-1 shrink-0">
                         <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
@@ -94,18 +131,18 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* PD Logo mockup - centered on mobile; on lg right column spanning 2 rows */}
+              {/* Mobile app hero graphic - centered on mobile; on lg right column spanning 2 rows */}
               <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
-                <div className="hero-phone w-full max-h-[min(56vh,480px)] sm:max-h-[min(60vh,520px)] md:max-h-[min(58vh,540px)] lg:max-h-[min(52vh,520px)] mx-auto flex flex-col items-center">
+                <div className="hero-phone w-full max-h-[min(62vh,560px)] sm:max-h-[min(64vh,600px)] md:max-h-[min(62vh,620px)] lg:max-h-[min(58vh,600px)] mx-auto flex flex-col items-center">
                   <Image
-                    src="/PD-Logo-Mockup.png"
-                    alt="Pre Delivery — verified before you drive"
-                    width={520}
-                    height={693}
-                    className="w-[min(520px,100%)] max-w-full h-auto max-h-[min(52vh,440px)] sm:max-h-[min(56vh,480px)] md:max-h-[min(54vh,500px)] lg:max-h-[min(48vh,520px)] object-contain object-center drop-shadow-2xl"
-                    style={{ width: 'min(520px, 100%)', height: 'auto' }}
+                    src={SITE_HERO_MOBILE_GRAPHICS_SRC}
+                    alt="Pre Delivery mobile app — verified before your drive"
+                    width={7411}
+                    height={7263}
+                    className="w-[min(560px,100%)] max-w-full h-auto max-h-[min(58vh,480px)] sm:max-h-[min(62vh,520px)] md:max-h-[min(60vh,540px)] lg:max-h-[min(54vh,560px)] object-contain object-center drop-shadow-2xl"
+                    style={{ width: 'min(560px, 100%)', height: 'auto' }}
                     priority
-                    sizes="(max-width: 640px) 92vw, (max-width: 768px) 520px, (max-width: 1024px) 520px, (max-width: 1280px) 560px, 600px"
+                    sizes="(max-width: 640px) 92vw, (max-width: 768px) 560px, (max-width: 1024px) 560px, (max-width: 1280px) 600px, 640px"
                   />
                 </div>
               </div>
@@ -275,19 +312,23 @@ export default function Home() {
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=600&fit=crop&q=80"
-                    alt="Photo images - Vehicle inspection photography"
+                    alt="Photo images and video walk around - Vehicle inspection"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Photo images</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full max-w-[calc(100%-2rem)] text-left leading-tight">
+                    Photo images and Video walk around
+                  </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Photo images</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Capture and organize inspection photos with GPS metadata and timestamps</p>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Photo images and Video walk around</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Capture stills and video walk-arounds with GPS metadata and timestamps, organized for every inspection.
+                  </p>
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&q=80"
@@ -295,15 +336,15 @@ export default function Home() {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">VIN Capture</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">VIN Capture</div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Vehicle Identity Capture</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Vehicle Identity Capture</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Digitally extract VIN and compliance information from vehicle labels to create a verified pre-delivery record</p>
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
@@ -311,10 +352,10 @@ export default function Home() {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">GPS Pinning</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">GPS Pinning</div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">GPS Pinning</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">GPS Pinning</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Automatic location tracking for all inspection photos and activities</p>
                 </div>
               </div>
@@ -364,6 +405,24 @@ export default function Home() {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Fast & Efficient</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Streamlined workflow reduces inspection time by up to 60%</p>
+                </div>
+              </div>
+
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=600&fit=crop&q=80"
+                    alt="Voice to text - Inspector documenting findings"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Voice to text</div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Voice to text</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Dictate findings hands-free so inspectors can document quickly and accurately on the lot.
+                  </p>
                 </div>
               </div>
             </div>
@@ -573,11 +632,12 @@ export default function Home() {
             <div className="lg:col-span-1">
               <Link href="/" className="flex items-center mb-4 group hover:opacity-90 transition-opacity">
                 <Image
-                  src="/Pre Delivery Logo/Original Logo Transparent Background.png"
-                  alt="Pre Delivery"
-                  width={240}
-                  height={72}
-                  className="h-[6.5rem] sm:h-16 md:h-20 w-auto object-contain"
+                  src={SITE_LOGO_SRC}
+                  alt={SITE_LOGO_ALT}
+                  width={322}
+                  height={221}
+                  className="h-28 sm:h-24 md:h-28 w-auto object-contain"
+                  unoptimized
                 />
               </Link>
               <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-4">

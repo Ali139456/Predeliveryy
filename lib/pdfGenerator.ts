@@ -325,6 +325,80 @@ async function shrinkDataUriForEmail(dataUri: string | null): Promise<string | n
   }
 }
 
+/** Pre Delivery logo for PDF (same asset as site: `public/Transparent Logo.png`). */
+async function loadPdfHeaderLogoBase64(forEmail: boolean): Promise<string | null> {
+  const cwd = process.cwd();
+  const primaryLogo = path.join(cwd, 'public', 'Transparent Logo.png');
+  const secondaryLogo = path.join(cwd, 'public', 'logo.png');
+  const svgPath = path.join(cwd, 'public', 'branding', 'ovyt-wordmark-white.svg');
+  const pngFallbacks = [
+    path.join(cwd, 'public', 'branding', 'ovyt-logo.png'),
+    path.join(cwd, 'public', 'ovyt-logo.png'),
+  ];
+  try {
+    if (fs.existsSync(primaryLogo)) {
+      const sharp = (await import('sharp')).default;
+      const pngBuf = await sharp(primaryLogo)
+        .resize({ width: 400, height: 200, fit: 'inside', withoutEnlargement: true })
+        .png()
+        .toBuffer();
+      let dataUri = `data:image/png;base64,${pngBuf.toString('base64')}`;
+      if (forEmail) {
+        dataUri = (await shrinkDataUriForEmail(dataUri)) ?? dataUri;
+      }
+      return dataUri;
+    }
+  } catch (e) {
+    console.warn('PDF Pre Delivery logo (PNG):', e);
+  }
+  try {
+    if (fs.existsSync(secondaryLogo)) {
+      const sharp = (await import('sharp')).default;
+      const pngBuf = await sharp(secondaryLogo)
+        .resize({ width: 400, height: 200, fit: 'inside', withoutEnlargement: true })
+        .png()
+        .toBuffer();
+      let dataUri = `data:image/png;base64,${pngBuf.toString('base64')}`;
+      if (forEmail) {
+        dataUri = (await shrinkDataUriForEmail(dataUri)) ?? dataUri;
+      }
+      return dataUri;
+    }
+  } catch (e) {
+    console.warn('PDF Pre Delivery logo fallback (logo.png):', e);
+  }
+  try {
+    if (fs.existsSync(svgPath)) {
+      const sharp = (await import('sharp')).default;
+      const pngBuf = await sharp(svgPath)
+        .resize({ width: 320, height: 96, fit: 'inside', withoutEnlargement: true })
+        .png()
+        .toBuffer();
+      let dataUri = `data:image/png;base64,${pngBuf.toString('base64')}`;
+      if (forEmail) {
+        dataUri = (await shrinkDataUriForEmail(dataUri)) ?? dataUri;
+      }
+      return dataUri;
+    }
+  } catch (e) {
+    console.warn('PDF logo fallback (SVG):', e);
+  }
+  for (const p of pngFallbacks) {
+    if (!fs.existsSync(p)) continue;
+    try {
+      const buf = fs.readFileSync(p);
+      let dataUri = `data:image/png;base64,${buf.toString('base64')}`;
+      if (forEmail) {
+        dataUri = (await shrinkDataUriForEmail(dataUri)) ?? dataUri;
+      }
+      return dataUri;
+    } catch {
+      /* try next */
+    }
+  }
+  return null;
+}
+
 /** Run promises in parallel with a concurrency limit */
 async function runWithConcurrency<T>(items: T[], fn: (item: T) => Promise<string | null>, concurrency: number): Promise<Map<T, string | null>> {
   const results = new Map<T, string | null>();
@@ -388,6 +462,74 @@ async function addImageToPDF(
   }
 }
 
+/** Australian Eastern (Sydney) — AEST/AEDT handled automatically. */
+const PDF_TIMEZONE_AU_EASTERN = 'Australia/Sydney';
+
+function formatDateTimeAustraliaEastern(value: Date | string | number | null | undefined): string {
+  if (value === null || value === undefined || value === '') {
+    return 'Not provided';
+  }
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) {
+    return String(value);
+  }
+  return d.toLocaleString('en-AU', {
+    timeZone: PDF_TIMEZONE_AU_EASTERN,
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+    timeZoneName: 'short',
+  });
+}
+
+function formatDateAustraliaEastern(value: Date | string | number | null | undefined): string {
+  if (value === null || value === undefined || value === '') {
+    return 'Not provided';
+  }
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) {
+    return String(value);
+  }
+  return d.toLocaleDateString('en-AU', {
+    timeZone: PDF_TIMEZONE_AU_EASTERN,
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+/** Build absolute URL for PDF link annotations (relative app paths need a site origin). */
+function getAbsoluteUrlForPdfLink(href: string): string | null {
+  const h = href.trim();
+  if (!h) return null;
+  if (h.startsWith('https://') || h.startsWith('http://')) return h;
+  const fromEnv = (process.env.NEXT_PUBLIC_APP_URL || '').replace(/\/$/, '');
+  const vercel = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : '';
+  const base = fromEnv || vercel.replace(/\/$/, '');
+  if (!base) return null;
+  return h.startsWith('/') ? `${base}${h}` : `${base}/${h}`;
+}
+
+/** Underlined link text; adds click target when a public absolute URL is available. */
+function drawPdfTextLink(doc: jsPDF, text: string, x: number, y: number, href: string) {
+  const target = getAbsoluteUrlForPdfLink(href);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(0, 80, 180);
+  doc.text(text, x, y);
+  const w = doc.getTextWidth(text);
+  doc.setDrawColor(0, 80, 180);
+  doc.setLineWidth(0.15);
+  doc.line(x, y + 0.6, x + w, y + 0.6);
+  if (target) {
+    doc.link(x, y - 3.5, Math.max(w, 20), 5, { url: target });
+  }
+  doc.setTextColor(40, 40, 50);
+}
+
 function formatValue(value: any): string {
   if (value === null || value === undefined || value === '') {
     return 'Not provided';
@@ -396,40 +538,118 @@ function formatValue(value: any): string {
     return value ? 'Yes' : 'No';
   }
   if (value instanceof Date) {
-    return value.toLocaleString();
+    return formatDateTimeAustraliaEastern(value);
   }
   return String(value);
 }
 
+/**
+ * Checklist status from DB/UI can arrive as "'OK'", "O K", etc. Normalize so PDF shows clean codes (no stray quotes).
+ */
+function normalizeChecklistStatusForPdf(status: unknown): string {
+  if (status === null || status === undefined || status === '') {
+    return formatValue(status);
+  }
+  let s = String(status).trim();
+  s = s
+    .replace(/^[\s'"`\u2018\u2019\u201C\u201D\u00B4]+|[\s'"`\u2018\u2019\u201C\u201D\u00B4]+$/g, '')
+    .trim();
+  const compact = s.replace(/\s+/g, '').toUpperCase();
+  if (compact === 'OK') return 'OK';
+  if (compact === 'PASS') return 'PASS';
+  if (compact === 'FAIL') return 'FAIL';
+  if (compact === 'NA' || compact === 'N/A') return 'N/A';
+
+  const lower = s.toLowerCase();
+  if (lower === 'pass') return 'PASS';
+  if (lower === 'fail') return 'FAIL';
+  if (lower === 'na' || lower === 'n/a') return 'N/A';
+
+  const u = s.toUpperCase();
+  if (u === 'C') return 'C';
+  if (u === 'A') return 'A';
+  if (u === 'R') return 'R';
+  if (u === 'RP') return 'RP';
+  if (u === 'N') return 'N/A';
+
+  return formatValue(s);
+}
+
+async function getRasterDimensionsFromDataUri(dataUri: string): Promise<{ w: number; h: number } | null> {
+  if (!dataUri.startsWith('data:image')) return null;
+  try {
+    const sharp = (await import('sharp')).default;
+    const comma = dataUri.indexOf(',');
+    const b64 = comma >= 0 ? dataUri.slice(comma + 1) : '';
+    if (!b64) return null;
+    const buf = Buffer.from(b64, 'base64');
+    const m = await sharp(buf).metadata();
+    if (m.width && m.height && m.width > 0 && m.height > 0) {
+      return { w: m.width, h: m.height };
+    }
+  } catch {
+    /* ignore */
+  }
+  return null;
+}
+
 const PDF_HEADER_HEIGHT = 50;
+/** Transparent logo intrinsic ratio (width / height) for undistorted header placement */
+const PDF_HEADER_LOGO_ASPECT = 1609 / 1103;
 // Theme: app primary blue #0033FF and darker #0029CC
 const PDF_THEME_MAIN = [0, 51, 255] as const;
 const PDF_THEME_STRIP = [0, 41, 204] as const;
 
-function drawPageHeader(doc: jsPDF, pageWidth: number, margin: number, inspection: IInspection) {
+function drawPageHeader(
+  doc: jsPDF,
+  pageWidth: number,
+  margin: number,
+  inspection: IInspection,
+  logoBase64: string | null
+) {
   doc.setFillColor(...PDF_THEME_MAIN);
   doc.rect(0, 0, pageWidth, PDF_HEADER_HEIGHT, 'F');
   doc.setFillColor(...PDF_THEME_STRIP);
   doc.rect(0, 0, pageWidth, 3, 'F');
 
-  // Text-only branding (no embedded logo image in PDF)
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.text('PreDelivery Global', margin, 28);
+  const reportTitle = 'Pre Delivery Inspection Report';
+  const infoBlockWidth = 82;
+  const infoBlockLeft = pageWidth - margin - infoBlockWidth;
 
-  // Right side of header: Report #, Generated, Status (inside the blue bar)
+  let titleX = margin;
+  if (logoBase64) {
+    try {
+      const logoHeight = 36;
+      const logoWidth = Math.min(logoHeight * PDF_HEADER_LOGO_ASPECT, 52);
+      const logoY = (PDF_HEADER_HEIGHT - logoHeight) / 2;
+      const fmt = logoBase64.startsWith('data:image/png') ? 'PNG' : 'JPEG';
+      doc.addImage(logoBase64, fmt as 'PNG' | 'JPEG', margin, logoY, logoWidth, logoHeight);
+      titleX = margin + logoWidth + 4;
+    } catch {
+      /* logo failed — title from left margin */
+    }
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(255, 255, 255);
+  const titleMaxW = Math.max(36, infoBlockLeft - titleX - 4);
+  const titleLines = doc.splitTextToSize(reportTitle, titleMaxW);
+  const titleLineHeight = 5;
+  const titleBlockH = titleLines.length * titleLineHeight;
+  let titleStartY = PDF_HEADER_HEIGHT / 2 - titleBlockH / 2 + titleLineHeight * 0.35;
+  titleLines.forEach((line: string, i: number) => {
+    doc.text(line, titleX, titleStartY + i * titleLineHeight);
+  });
+
+  // Right: Report # and Generated (Australia/Sydney)
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(255, 255, 255);
-  const infoBlockWidth = 78;
-  const infoBlockLeft = pageWidth - margin - infoBlockWidth;
-  const infoY1 = 20;
-  const infoY2 = 28;
-  const infoY3 = 36;
+  const infoY1 = 16;
+  const infoY2 = 30;
   doc.text(`Report #: ${inspection.inspectionNumber || 'N/A'}`, infoBlockLeft, infoY1, { align: 'left' });
-  doc.text(`Generated: ${new Date().toLocaleString()}`, infoBlockLeft, infoY2, { align: 'left' });
-  doc.text(`Status: ${inspection.status?.toUpperCase() || 'DRAFT'}`, infoBlockLeft, infoY3, { align: 'left' });
+  doc.text(`Generated: ${formatDateTimeAustraliaEastern(new Date())}`, infoBlockLeft, infoY2, { align: 'left' });
 
   // Line at bottom of header bar
   doc.setDrawColor(PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]);
@@ -458,8 +678,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   const margin = 15;
   const contentWidth = pageWidth - (margin * 2);
 
-  // Reports use text header only (no raster logo in PDF).
-  drawPageHeader(doc, pageWidth, margin, inspection);
+  const headerLogo = await loadPdfHeaderLogoBase64(forEmail);
+  drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
   let yPos = PDF_HEADER_HEIGHT + 10;
 
   // Pre-load all images in parallel (capped) for fast PDF generation
@@ -502,22 +722,14 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   const inspectorData = [
     ['Inspector Name', formatValue(inspection.inspectorName)],
     ['Email Address', formatValue(inspection.inspectorEmail)],
-    ['Inspection Date', formatValue(inspection.inspectionDate ? new Date(inspection.inspectionDate).toLocaleDateString() : null)],
+    ['Inspection Date', inspection.inspectionDate ? formatDateAustraliaEastern(inspection.inspectionDate) : formatValue(null)],
     ['Inspection Number', formatValue(inspection.inspectionNumber)],
   ];
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Field', 'Value']],
     body: inspectorData,
     theme: 'striped',
-    headStyles: {
-      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-      halign: 'left',
-    },
     bodyStyles: {
       fontSize: 10,
       cellPadding: 5,
@@ -542,7 +754,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection);
+    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -572,16 +784,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Field', 'Value']],
     body: vehicleData,
     theme: 'striped',
-    headStyles: {
-      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-      halign: 'left',
-    },
     bodyStyles: {
       fontSize: 10,
       cellPadding: 5,
@@ -606,7 +810,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection);
+    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -621,31 +825,15 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   const location = inspection.location || {};
   const locationData = [
-    ['Start Latitude', formatValue(location.start?.latitude)],
-    ['Start Longitude', formatValue(location.start?.longitude)],
     ['Start Address', formatValue(location.start?.address)],
-    ['Start Time', formatValue(location.start?.timestamp ? new Date(location.start.timestamp).toLocaleString() : null)],
-    ['End Latitude', formatValue(location.end?.latitude)],
-    ['End Longitude', formatValue(location.end?.longitude)],
-    ['End Address', formatValue(location.end?.address)],
-    ['End Time', formatValue(location.end?.timestamp ? new Date(location.end.timestamp).toLocaleString() : null)],
-    ['Current Latitude', formatValue(location.latitude)],
-    ['Current Longitude', formatValue(location.longitude)],
-    ['Current Address', formatValue(location.address)],
+    ['Start Time', location.start?.timestamp ? formatDateTimeAustraliaEastern(location.start.timestamp) : formatValue(null)],
+    ['End Time', location.end?.timestamp ? formatDateTimeAustraliaEastern(location.end.timestamp) : formatValue(null)],
   ];
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Field', 'Value']],
     body: locationData,
     theme: 'striped',
-    headStyles: {
-      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-      halign: 'left',
-    },
     bodyStyles: {
       fontSize: 10,
       cellPadding: 5,
@@ -664,60 +852,11 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   yPos = (doc as any).lastAutoTable.finalY + 15;
 
   // ============================================
-  // SECTION 4: BARCODE (Table)
-  // ============================================
-  yPos = (doc as any).lastAutoTable.finalY + 15;
-
-  if (yPos > pageHeight - 50) {
-    doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection);
-    yPos = PDF_HEADER_HEIGHT + 10;
-  }
-
-  // Section title
-  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
-  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text('Barcode / QR Code', margin + 6, yPos + 2);
-  yPos += 12;
-
-  autoTable(doc, {
-    startY: yPos,
-    head: [['Field', 'Value']],
-    body: [['Scanned Code', formatValue(inspection.barcode)]],
-    theme: 'striped',
-    headStyles: {
-      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-      halign: 'left',
-    },
-    bodyStyles: {
-      fontSize: 10,
-      cellPadding: 5,
-    },
-    columnStyles: {
-      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
-      1: { cellWidth: 'auto', textColor: [30, 30, 40] },
-    },
-    margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 5 },
-    alternateRowStyles: {
-      fillColor: [252, 252, 255],
-    },
-  });
-
-  yPos = (doc as any).lastAutoTable.finalY + 15;
-
-  // ============================================
-  // SECTION 5: GENERAL PHOTOS
+  // SECTION 4: GENERAL PHOTOS
   // ============================================
   if (yPos > pageHeight - 120) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection);
+    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -748,7 +887,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       if (row > 0 && col === 0) {
         if (yPos + photoHeight > pageHeight - 50) {
           doc.addPage();
-          drawPageHeader(doc, pageWidth, margin, inspection);
+          drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
           yPos = PDF_HEADER_HEIGHT + 10;
         } else {
           yPos = yPos + (row * (photoHeight + photoSpacing));
@@ -779,7 +918,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   if (walkAround && walkAround.length > 0) {
     if (yPos > pageHeight - 80) {
       doc.addPage();
-      drawPageHeader(doc, pageWidth, margin, inspection);
+      drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
       yPos = PDF_HEADER_HEIGHT + 10;
     }
     doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
@@ -787,28 +926,31 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(255, 255, 255);
-    doc.text('Walk-around videos', margin + 6, yPos + 2);
+    doc.text('Walk-around video', margin + 6, yPos + 2);
     yPos += 14;
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(40, 40, 50);
     for (let vi = 0; vi < Math.min(walkAround.length, 5); vi++) {
       const v = walkAround[vi];
       const entry = typeof v === 'string' ? { fileName: v } : v;
-      const link = getPhotoDisplayUrl(entry as { fileName: string; url?: string });
-      const line = link.length > 110 ? `${link.slice(0, 107)}…` : link;
-      doc.text(line, margin + 6, yPos);
-      yPos += 5;
+      const href = getPhotoDisplayUrl(entry as { fileName: string; url?: string });
+      if (!href) continue;
+      const line = href.length > 96 ? `${href.slice(0, 93)}…` : href;
+      drawPdfTextLink(doc, line, margin + 6, yPos, href);
+      yPos += 6;
     }
     if (walkAround.length > 5) {
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(80, 80, 100);
       doc.text(`… and ${walkAround.length - 5} more (see digital report)`, margin + 6, yPos);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(40, 40, 50);
       yPos += 6;
     }
     yPos += 8;
   }
 
   // ============================================
-  // SECTION 6: INSPECTION CHECKLIST (Table Format)
+  // SECTION 5: INSPECTION CHECKLIST (Table Format)
   // ============================================
   let checklistPhotosRemaining = maxChecklistPhotosForThisRun;
   for (const category of checklist) {
@@ -816,7 +958,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     
     if (yPos > pageHeight - 100) {
       doc.addPage();
-      drawPageHeader(doc, pageWidth, margin, inspection);
+      drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
       yPos = PDF_HEADER_HEIGHT + 10;
     }
 
@@ -847,17 +989,10 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     for (const item of items) {
       if (!item || !item.item) continue;
       
-      const statusText = item.status === 'OK' ? '✓ OK' :
-                        item.status === 'C' ? 'C' :
-                        item.status === 'A' ? 'A' :
-                        item.status === 'R' ? 'R' :
-                        item.status === 'RP' ? 'RP' :
-                        item.status === 'N' ? 'N/A' :
-                        item.status === 'pass' ? '✓ PASS' :
-                        item.status === 'fail' ? '✗ FAIL' : 
-                        item.status === 'na' ? 'N/A' : formatValue(item.status);
-      
-      const notes = item.notes && item.notes.trim() ? item.notes : 'No notes';
+      const statusText = normalizeChecklistStatusForPdf(item.status);
+
+      let notes = item.notes && String(item.notes).trim() ? String(item.notes).trim() : '';
+      if (/^no\s*notes?$/i.test(notes)) notes = '';
       const photoCount = item.photos && item.photos.length > 0 ? `${item.photos.length} photo(s)` : 'No photos';
       
       tableData.push([
@@ -895,6 +1030,15 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       alternateRowStyles: {
         fillColor: [252, 252, 255],
       },
+      didParseCell: (data) => {
+        if (data.section === 'body' && data.column.index === 2) {
+          const raw = data.cell.text;
+          const t = (Array.isArray(raw) ? raw.join(' ') : String(raw ?? '')).trim();
+          if (!t || /^no\s*notes?$/i.test(t)) {
+            data.cell.text = [];
+          }
+        }
+      },
     });
     
     yPos = (doc as any).lastAutoTable.finalY + 12;
@@ -905,7 +1049,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       
       if (yPos > pageHeight - 90) {
         doc.addPage();
-        drawPageHeader(doc, pageWidth, margin, inspection);
+        drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
         yPos = PDF_HEADER_HEIGHT + 10;
       }
 
@@ -939,7 +1083,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();
-          drawPageHeader(doc, pageWidth, margin, inspection);
+          drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
           yPos = PDF_HEADER_HEIGHT + 10;
         }
 
@@ -977,16 +1121,16 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   }
 
   // ============================================
-  // SECTION 7: SIGNATURES (Table)
+  // SECTION 6: SIGNATURES (Table)
   // ============================================
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection);
+    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
-  const signatureWidth = contentWidth - 20;
-  const signatureHeight = 35;
+  const signatureMaxWidth = contentWidth - 20;
+  const signatureMaxHeight = 52;
 
   // Technician Signature only
   const techSigX = margin + 10;
@@ -1003,88 +1147,48 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       }
     }
     try {
-      doc.addImage(sigSrc, sigFormat as 'PNG' | 'JPEG', techSigX, techSigY, signatureWidth, signatureHeight);
+      let drawW = signatureMaxWidth;
+      let drawH = signatureMaxHeight;
+      let drawX = techSigX;
+      if (typeof sigSrc === 'string' && sigSrc.startsWith('data:image')) {
+        const dim = await getRasterDimensionsFromDataUri(sigSrc);
+        if (dim) {
+          const scale = Math.min(signatureMaxWidth / dim.w, signatureMaxHeight / dim.h);
+          drawW = dim.w * scale;
+          drawH = dim.h * scale;
+          drawX = techSigX + (signatureMaxWidth - drawW) / 2;
+        }
+      }
+      const drawY = techSigY + (signatureMaxHeight - drawH) / 2;
+      doc.addImage(sigSrc, sigFormat as 'PNG' | 'JPEG', drawX, drawY, drawW, drawH);
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
-      doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
+      doc.rect(techSigX, techSigY, signatureMaxWidth, signatureMaxHeight);
     } catch (e) {
       doc.setFillColor(250, 250, 250);
-      doc.rect(techSigX, techSigY, signatureWidth, signatureHeight, 'F');
+      doc.rect(techSigX, techSigY, signatureMaxWidth, signatureMaxHeight, 'F');
       doc.setDrawColor(200, 200, 200);
       doc.setLineWidth(0.3);
-      doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
+      doc.rect(techSigX, techSigY, signatureMaxWidth, signatureMaxHeight);
       doc.setFontSize(9);
       doc.setTextColor(150, 150, 150);
-      doc.text('Signature on file', techSigX + signatureWidth / 2, techSigY + signatureHeight / 2, { align: 'center' });
+      doc.text('Signature on file', techSigX + signatureMaxWidth / 2, techSigY + signatureMaxHeight / 2, { align: 'center' });
     }
   } else {
     doc.setFillColor(250, 250, 250);
-    doc.rect(techSigX, techSigY, signatureWidth, signatureHeight, 'F');
+    doc.rect(techSigX, techSigY, signatureMaxWidth, signatureMaxHeight, 'F');
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.3);
-    doc.rect(techSigX, techSigY, signatureWidth, signatureHeight);
+    doc.rect(techSigX, techSigY, signatureMaxWidth, signatureMaxHeight);
     doc.setFontSize(9);
     doc.setTextColor(150, 150, 150);
-    doc.text('Not signed', techSigX + signatureWidth / 2, techSigY + signatureHeight / 2, { align: 'center' });
+    doc.text('Not signed', techSigX + signatureMaxWidth / 2, techSigY + signatureMaxHeight / 2, { align: 'center' });
   }
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(60, 60, 80);
   doc.text('Technician Signature:', techSigX, yPos);
-
-  // ============================================
-  // SECTION 8: ADDITIONAL INFORMATION (Table)
-  // ============================================
-  yPos = techSigY + signatureHeight + 20;
-
-  if (yPos > pageHeight - 70) {
-    doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection);
-    yPos = PDF_HEADER_HEIGHT + 10;
-  }
-
-  // Section title
-  doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
-  doc.roundedRect(margin, yPos - 5, contentWidth, 10, 2, 2, 'F');
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(255, 255, 255);
-  doc.text('Additional Information', margin + 6, yPos + 2);
-  yPos += 12;
-
-  const additionalFields = [
-    ['Data Retention Days', formatValue(inspection.dataRetentionDays)],
-    ['Created At', formatValue(inspection.createdAt ? new Date(inspection.createdAt).toLocaleString() : null)],
-    ['Updated At', formatValue(inspection.updatedAt ? new Date(inspection.updatedAt).toLocaleString() : null)],
-  ];
-
-  autoTable(doc, {
-    startY: yPos,
-    head: [['Field', 'Value']],
-    body: additionalFields,
-    theme: 'striped',
-    headStyles: {
-      fillColor: [PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]],
-      textColor: [255, 255, 255],
-      fontStyle: 'bold',
-      fontSize: 10,
-      halign: 'left',
-    },
-    bodyStyles: {
-      fontSize: 10,
-      cellPadding: 5,
-    },
-    columnStyles: {
-      0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
-      1: { cellWidth: 'auto', textColor: [30, 30, 40] },
-    },
-    margin: { left: margin, right: margin },
-    styles: { overflow: 'linebreak', cellPadding: 5 },
-    alternateRowStyles: {
-      fillColor: [252, 252, 255],
-    },
-  });
 
   // ============================================
   // FOOTER - On Every Page
@@ -1106,7 +1210,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     doc.setFontSize(8);
     doc.setTextColor(60, 60, 80);
     doc.setFont('helvetica', 'bold');
-    doc.text('PreDelivery Global Pty Ltd', margin, footerY);
+    doc.text('Pre Delivery', margin, footerY);
   }
   
   return Buffer.from(doc.output('arraybuffer'));

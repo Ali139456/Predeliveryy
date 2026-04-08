@@ -124,13 +124,22 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           imageBase64: imageBase64, // Send full base64 string (API will handle data URL prefix)
           provider: 'auto', // Auto-select provider
         }),
       });
 
-      const result = await response.json();
+      const result = (await response.json().catch(() => ({}))) as {
+        success?: boolean;
+        text?: string;
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(result.error || `OCR request failed (${response.status})`);
+      }
 
       if (result.success && result.text) {
         const extractedText = result.text.trim();

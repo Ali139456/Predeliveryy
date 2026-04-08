@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home } from 'lucide-react';
+import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -165,7 +166,7 @@ export default function LoginPage() {
           <div className="flex items-center justify-between gap-2 min-w-0">
             <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
               <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all hover:scale-105">
-                <Image src="/Pre Delivery Logo/Original Logo Transparent Background.png" alt="Pre delivery" width={220} height={64} className="h-10 sm:h-12 md:h-16 w-auto object-contain" priority />
+                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className="h-14 sm:h-20 md:h-24 w-auto object-contain" unoptimized priority />
               </div>
             </Link>
             <Link

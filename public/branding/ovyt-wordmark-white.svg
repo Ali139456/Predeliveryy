@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="36" viewBox="0 0 140 36" role="img" aria-label="oVyt">
+  <!-- Blue slots use light blue so glyphs stay visible on #0033FF bars; orange is brand #FF6600 -->
+  <text x="2" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="0.02em">
+    <tspan fill="#B8DEFF">o</tspan><tspan fill="#FF6600">V</tspan><tspan fill="#B8DEFF">y</tspan><tspan fill="#FF6600">t</tspan>
+  </text>
+</svg>
