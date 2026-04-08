@@ -9,7 +9,9 @@ import { SITE_HERO_MOBILE_GRAPHICS_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/l
 export default function Home() {
   const { loading, user } = useAuth();
   // Logged-in users: hero only (app entry). Guests: full landing page below the hero.
-  const showMarketingSections = !loading && !user;
+  // Don't block guest marketing on /api/auth/me (it can take a couple seconds).
+  // If a user session exists, sections will be hidden once `user` is set.
+  const showMarketingSections = !user;
   
   return (
     <div className="bg-white">

@@ -109,10 +109,23 @@ function InspectionDetailContent() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-[#0033FF] mb-4"></div>
-          <p className="text-white">Loading inspection...</p>
+      <div className="min-h-screen bg-white overflow-x-hidden">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0">
+          <div className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mb-4 bg-white/70 text-black rounded-full border border-[#0033FF]/25 shadow-sm backdrop-blur-md text-xs sm:text-sm">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#0033FF] flex items-center justify-center shadow-sm">
+              <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white/40 border-t-white" aria-hidden />
+            </div>
+            <span className="font-semibold tracking-tight">Loading inspection…</span>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 border border-[#0033FF]/20">
+            <div className="h-7 w-64 bg-gray-100 rounded-lg animate-pulse mb-6" aria-hidden />
+            <div className="space-y-3">
+              <div className="h-4 w-full bg-gray-100 rounded animate-pulse" aria-hidden />
+              <div className="h-4 w-5/6 bg-gray-100 rounded animate-pulse" aria-hidden />
+              <div className="h-4 w-2/3 bg-gray-100 rounded animate-pulse" aria-hidden />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -125,12 +138,12 @@ function InspectionDetailContent() {
           <p className="text-white mb-4 text-lg">Inspection not found</p>
           <Link
             href="/inspections"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-[#0033FF]/20 hover:bg-[#0033FF]/40 text-white hover:text-white rounded-xl border-2 border-[#0033FF]/30 hover:border-[#0033FF]/50 shadow-lg hover:shadow-[#0033FF]/50 transition-all duration-300 group backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-white/10 hover:bg-white/15 text-white rounded-full border border-white/20 hover:border-white/35 shadow-sm hover:shadow-md transition-all duration-200 group backdrop-blur-md text-xs sm:text-sm"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#0033FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md">
-              <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#0033FF] flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm">
+              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
             </div>
-            <span className="font-semibold">Back to Inspections</span>
+            <span className="font-semibold tracking-tight">Back to Inspections</span>
           </Link>
         </div>
       </div>
@@ -147,16 +160,16 @@ function InspectionDetailContent() {
           onComplete={handleExportComplete}
         />
       )}
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 overflow-x-hidden">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 overflow-x-hidden">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"
-            className="inline-flex items-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 bg-[#0033FF]/10 hover:bg-[#0033FF]/20 text-black rounded-xl border-2 border-[#0033FF]/30 hover:border-[#0033FF]/50 shadow-lg transition-all duration-300 group w-fit text-sm sm:text-base"
+            className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group w-fit text-xs sm:text-sm backdrop-blur-md"
           >
-            <div className="w-8 h-8 rounded-lg bg-[#0033FF] flex items-center justify-center group-hover:scale-110 transition-transform shadow-md shrink-0">
-              <ArrowLeft className="w-4 h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#0033FF] flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm shrink-0">
+              <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
             </div>
-            <span className="font-semibold">Back to Inspections</span>
+            <span className="font-semibold tracking-tight">Back to Inspections</span>
           </Link>
 
           <div className="flex flex-wrap gap-2">
