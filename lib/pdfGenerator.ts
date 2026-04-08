@@ -633,13 +633,17 @@ function drawPageHeader(
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(255, 255, 255);
-  const titleMaxW = Math.max(36, infoBlockLeft - titleX - 4);
+  // Title sits after the logo; horizontally centered in the band up to the report meta block
+  const titleRegionPad = 4;
+  const titleRegionRight = infoBlockLeft - titleRegionPad;
+  const titleMaxW = Math.max(36, titleRegionRight - titleX);
+  const titleCenterX = titleX + titleMaxW / 2;
   const titleLines = doc.splitTextToSize(reportTitle, titleMaxW);
   const titleLineHeight = 5;
   const titleBlockH = titleLines.length * titleLineHeight;
   let titleStartY = PDF_HEADER_HEIGHT / 2 - titleBlockH / 2 + titleLineHeight * 0.35;
   titleLines.forEach((line: string, i: number) => {
-    doc.text(line, titleX, titleStartY + i * titleLineHeight);
+    doc.text(line, titleCenterX, titleStartY + i * titleLineHeight, { align: 'center' });
   });
 
   // Right: Report # and Generated (Australia/Sydney)
