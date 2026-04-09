@@ -815,7 +815,8 @@ function drawPageHeader(
       const logoWidth = Math.min(logoHeight * PDF_HEADER_LOGO_ASPECT, 52);
       const fmt = logoBase64.startsWith('data:image/png') ? 'PNG' : 'JPEG';
       doc.addImage(logoBase64, fmt as 'PNG' | 'JPEG', margin, logoY, logoWidth, logoHeight);
-      titleTopY = logoY + logoHeight + 5;
+      // Add a bit more breathing room between logo and title
+      titleTopY = logoY + logoHeight + 9;
     } catch {
       /* logo failed */
     }
