@@ -593,7 +593,7 @@ async function getRasterDimensionsFromDataUri(dataUri: string): Promise<{ w: num
   return null;
 }
 
-/** Taller band: logo + report meta top-right, title one line at bottom */
+/** Header band: logo + report title left-aligned under logo */
 const PDF_HEADER_HEIGHT = 56;
 /** Transparent logo intrinsic ratio (width / height) for undistorted header placement */
 const PDF_HEADER_LOGO_ASPECT = 1609 / 1103;
@@ -797,7 +797,7 @@ function drawPageHeader(
   doc: jsPDF,
   pageWidth: number,
   margin: number,
-  inspection: IInspection,
+  _inspection: IInspection,
   logoBase64: string | null
 ) {
   doc.setFillColor(...PDF_THEME_MAIN);
@@ -806,31 +806,21 @@ function drawPageHeader(
   doc.rect(0, 0, pageWidth, 3, 'F');
 
   const reportTitle = 'Pre Delivery Inspection Report';
-  const infoBlockWidth = 82;
-  const infoBlockLeft = pageWidth - margin - infoBlockWidth;
+  const logoY = 6;
+  const logoHeight = 32;
+  let titleTopY = 20;
 
   if (logoBase64) {
     try {
-      const logoHeight = 32;
       const logoWidth = Math.min(logoHeight * PDF_HEADER_LOGO_ASPECT, 52);
-      const logoY = 6;
       const fmt = logoBase64.startsWith('data:image/png') ? 'PNG' : 'JPEG';
       doc.addImage(logoBase64, fmt as 'PNG' | 'JPEG', margin, logoY, logoWidth, logoHeight);
+      titleTopY = logoY + logoHeight + 5;
     } catch {
       /* logo failed */
     }
   }
 
-  // Right: Report # and Generated (Australia/Sydney) — top of header band
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(255, 255, 255);
-  const infoY1 = 14;
-  const infoY2 = 24;
-  doc.text(`Report #: ${inspection.inspectionNumber || 'N/A'}`, infoBlockLeft, infoY1, { align: 'left' });
-  doc.text(`Generated: ${formatDateTimeAustraliaEastern(new Date())}`, infoBlockLeft, infoY2, { align: 'left' });
-
-  // Title: single line at bottom of blue band (below meta block), centered
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(255, 255, 255);
   const titleMaxW = pageWidth - margin * 2;
@@ -840,8 +830,12 @@ function drawPageHeader(
     titleFont -= 0.5;
     doc.setFontSize(titleFont);
   }
-  const titleBaselineY = PDF_HEADER_HEIGHT - 4;
-  doc.text(reportTitle, pageWidth / 2, titleBaselineY, { align: 'center' });
+  const titleLines = doc.splitTextToSize(reportTitle, titleMaxW);
+  let lineY = titleTopY;
+  for (const line of titleLines) {
+    doc.text(line, margin, lineY, { align: 'left' });
+    lineY += titleFont * 0.45;
+  }
 
   // Line at bottom of header bar
   doc.setDrawColor(PDF_THEME_STRIP[0], PDF_THEME_STRIP[1], PDF_THEME_STRIP[2]);
@@ -933,7 +927,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     margin: { left: margin, right: margin },
     styles: { overflow: 'linebreak', cellPadding: 5 },
     alternateRowStyles: {
-      fillColor: [252, 252, 255],
+      fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
     },
   });
 
@@ -989,7 +983,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     margin: { left: margin, right: margin },
     styles: { overflow: 'linebreak', cellPadding: 5 },
     alternateRowStyles: {
-      fillColor: [252, 252, 255],
+      fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
     },
   });
 
@@ -1037,7 +1031,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     margin: { left: margin, right: margin },
     styles: { overflow: 'linebreak', cellPadding: 5 },
     alternateRowStyles: {
-      fillColor: [252, 252, 255],
+      fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
     },
   });
 

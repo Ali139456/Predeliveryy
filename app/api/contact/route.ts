@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
 
     await sendEmail(
       [CONTACT_INBOX],
-      `[Contact] ${subject} — ${name}`,
+      subject,
       html
     );
 
