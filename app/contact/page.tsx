@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { Mail, Send, MessageSquare, User, FileText, CheckCircle, AlertCircle } from 'lucide-react';
-import Link from 'next/link';
-
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -29,10 +27,18 @@ export default function ContactPage() {
     setSuccess(false);
 
     try {
-      // Here you would typically send the form data to your API
-      // For now, we'll just simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = (await res.json()) as { success?: boolean; error?: string };
+
+      if (!res.ok || !data.success) {
+        setError(data.error || 'Failed to send message. Please try again.');
+        return;
+      }
+
       setSuccess(true);
       setFormData({
         name: '',
@@ -40,7 +46,7 @@ export default function ContactPage() {
         subject: 'General enquiry',
         message: ''
       });
-    } catch (err) {
+    } catch {
       setError('Failed to send message. Please try again.');
     } finally {
       setLoading(false);
