@@ -53,13 +53,13 @@ export default function Home() {
                 </p>
 
                 <div className="text-center lg:text-left min-w-0 overflow-visible">
-                  {/* Mobile: two compact pills (3 + 2) — less bulky than one wide block */}
+                  {/* Mobile: two compact pills (4 + 3) */}
                   <div
-                    className="sm:hidden grid grid-cols-2 gap-2 w-full max-w-xl mx-auto lg:mx-0 items-stretch"
+                    className="hero-mobile-feature-cards sm:hidden grid grid-cols-2 gap-2 w-full max-w-xl mx-auto lg:mx-0 items-stretch text-white"
                     aria-label="Product highlights"
                   >
-                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0">
-                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug text-white/92">
+                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0 flex flex-col justify-center">
+                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug">
                         <li className="flex items-start gap-1.5 w-full text-left">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
                           <span className="min-w-0 break-words">Photo images</span>
@@ -72,10 +72,18 @@ export default function Home() {
                           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
                           <span className="min-w-0 break-words">GPS Pinning</span>
                         </li>
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">Video walk around</span>
+                        </li>
                       </ul>
                     </div>
                     <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0 flex flex-col justify-center">
-                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug text-white/92">
+                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug">
+                        <li className="flex items-start gap-1.5 w-full text-left">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
+                          <span className="min-w-0 break-words">Voice to text</span>
+                        </li>
                         <li className="flex items-start gap-1.5 w-full text-left">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
                           <span className="min-w-0 break-words">Analytics Dashboard</span>
@@ -88,30 +96,44 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* sm+: single pill row */}
-                  <div className="hidden sm:block rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full mx-auto lg:mx-0">
-                    <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
-                      <li className="flex items-center gap-1 shrink-0">
-                        <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>Photo images</span>
-                      </li>
-                      <li className="flex items-center gap-1 shrink-0">
-                        <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>OCR Scanner</span>
-                      </li>
-                      <li className="flex items-center gap-1 shrink-0">
-                        <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>GPS Pinning</span>
-                      </li>
-                      <li className="flex items-center gap-1 shrink-0">
-                        <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>Analytics Dashboard</span>
-                      </li>
-                      <li className="flex items-center gap-1 shrink-0">
-                        <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                        <span>Secure and Compliant</span>
-                      </li>
-                    </ul>
+                  {/* sm+: two pills (4 + 3) */}
+                  <div className="hidden sm:flex flex-row flex-wrap items-center justify-center lg:justify-start gap-2 w-full max-w-full mx-auto lg:mx-0">
+                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full min-w-0">
+                      <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>Photo images</span>
+                        </li>
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>OCR Scanner</span>
+                        </li>
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>GPS Pinning</span>
+                        </li>
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>Video walk around</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full min-w-0">
+                      <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>Voice to text</span>
+                        </li>
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>Analytics Dashboard</span>
+                        </li>
+                        <li className="flex items-center gap-1 shrink-0">
+                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
+                          <span>Secure and Compliant</span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
 
