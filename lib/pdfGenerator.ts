@@ -866,7 +866,22 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   const contentWidth = pageWidth - (margin * 2);
 
   const headerLogo = await loadPdfHeaderLogoBase64(forEmail);
-  drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+  /** Top margin for autoTable on every page so body clears the fixed header bar. */
+  const autoTableTopMargin = PDF_HEADER_HEIGHT + 10;
+  /** Last PDF page that already has the report header (avoids double headers when multiple tables share a page). */
+  let lastHeaderPage = 0;
+  const drawHeaderHere = () => {
+    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+    lastHeaderPage = doc.getNumberOfPages();
+  };
+  const autoTableWillDrawPage = (data: { pageNumber: number }) => {
+    if (data.pageNumber !== lastHeaderPage) {
+      drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+      lastHeaderPage = data.pageNumber;
+    }
+  };
+
+  drawHeaderHere();
   let yPos = PDF_HEADER_HEIGHT + 10;
 
   // Pre-load all images in parallel (capped) for fast PDF generation
@@ -925,7 +940,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
-    margin: { left: margin, right: margin },
+    margin: { top: autoTableTopMargin, left: margin, right: margin, bottom: 28 },
+    willDrawPage: autoTableWillDrawPage,
     styles: { overflow: 'linebreak', cellPadding: 5 },
     alternateRowStyles: {
       fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
@@ -941,7 +957,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+    drawHeaderHere();
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -981,7 +997,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
-    margin: { left: margin, right: margin },
+    margin: { top: autoTableTopMargin, left: margin, right: margin, bottom: 28 },
+    willDrawPage: autoTableWillDrawPage,
     styles: { overflow: 'linebreak', cellPadding: 5 },
     alternateRowStyles: {
       fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
@@ -997,7 +1014,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+    drawHeaderHere();
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -1029,7 +1046,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       0: { cellWidth: 60, fontStyle: 'bold', textColor: [60, 60, 80] },
       1: { cellWidth: 'auto', textColor: [30, 30, 40] },
     },
-    margin: { left: margin, right: margin },
+    margin: { top: autoTableTopMargin, left: margin, right: margin, bottom: 28 },
+    willDrawPage: autoTableWillDrawPage,
     styles: { overflow: 'linebreak', cellPadding: 5 },
     alternateRowStyles: {
       fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
@@ -1043,7 +1061,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   // ============================================
   if (yPos > pageHeight - 120) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+    drawHeaderHere();
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
@@ -1074,7 +1092,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       if (row > 0 && col === 0) {
         if (yPos + photoHeight > pageHeight - 50) {
           doc.addPage();
-          drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+          drawHeaderHere();
           yPos = PDF_HEADER_HEIGHT + 10;
         } else {
           yPos = yPos + (row * (photoHeight + photoSpacing));
@@ -1105,7 +1123,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   if (walkAround && walkAround.length > 0) {
     if (yPos > pageHeight - 80) {
       doc.addPage();
-      drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+      drawHeaderHere();
       yPos = PDF_HEADER_HEIGHT + 10;
     }
     doc.setFillColor(PDF_THEME_MAIN[0], PDF_THEME_MAIN[1], PDF_THEME_MAIN[2]);
@@ -1145,7 +1163,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     
     if (yPos > pageHeight - 100) {
       doc.addPage();
-      drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+      drawHeaderHere();
       yPos = PDF_HEADER_HEIGHT + 10;
     }
 
@@ -1213,7 +1231,8 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
         2: { cellWidth: 'auto', textColor: [60, 60, 80], halign: 'left' },
         3: { cellWidth: 35, halign: 'center', fontSize: 8, textColor: [100, 100, 120] },
       },
-      margin: { left: margin, right: margin },
+      margin: { top: autoTableTopMargin, left: margin, right: margin, bottom: 28 },
+      willDrawPage: autoTableWillDrawPage,
       styles: { overflow: 'linebreak', cellPadding: 3 },
       alternateRowStyles: {
         fillColor: [...PDF_CHECKLIST_ROW_ALT_BLUE],
@@ -1237,7 +1256,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       
       if (yPos > pageHeight - 90) {
         doc.addPage();
-        drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+        drawHeaderHere();
         yPos = PDF_HEADER_HEIGHT + 10;
       }
 
@@ -1271,7 +1290,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
         
         if (yPos + itemPhotoHeight > pageHeight - 50) {
           doc.addPage();
-          drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+          drawHeaderHere();
           yPos = PDF_HEADER_HEIGHT + 10;
         }
 
@@ -1313,7 +1332,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
   // ============================================
   if (yPos > pageHeight - 100) {
     doc.addPage();
-    drawPageHeader(doc, pageWidth, margin, inspection, headerLogo);
+    drawHeaderHere();
     yPos = PDF_HEADER_HEIGHT + 10;
   }
 
