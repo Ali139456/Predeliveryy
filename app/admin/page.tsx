@@ -17,6 +17,7 @@ import {
   Download,
   Search,
   Eye,
+  Calendar,
   Edit,
   Check,
   Trash2
@@ -109,7 +110,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden pt-4 sm:pt-6 md:pt-8">
+    <div className="min-h-screen bg-white pt-4 sm:pt-6 md:pt-8 min-w-0">
       {/* Tabs */}
       <div className="bg-white border-b border-[#0033FF]/30 shadow-lg">
         <div className="container mx-auto px-3 sm:px-4">
@@ -322,8 +323,99 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
             </button>
           )}
         </div>
-        
-        <div className="overflow-x-auto">
+
+        {/* Mobile: stacked cards (avoids clipped table columns) */}
+        <div className="lg:hidden space-y-4 min-w-0">
+          {filteredInspections.map((inspection) => {
+            const id = inspection.id ?? inspection._id;
+            return (
+              <div
+                key={id ?? inspection.inspectionNumber}
+                className="rounded-2xl border-2 border-[#0033FF]/30 bg-white p-4 shadow-md space-y-3 min-w-0"
+              >
+                <div className="flex items-start gap-3 min-w-0">
+                  {id ? (
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(id)}
+                      onChange={() => toggleSelect(id)}
+                      className="mt-1 rounded border-gray-300 text-[#0033FF] focus:ring-[#0033FF] shrink-0"
+                      aria-label={`Select ${inspection.inspectionNumber}`}
+                    />
+                  ) : null}
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-black truncate">{inspection.inspectionNumber}</div>
+                    <div className="text-xs text-black/70 break-words">{inspection.inspectorName}</div>
+                  </div>
+                  <span
+                    className={`shrink-0 px-2 py-1 text-xs font-bold rounded-full ${
+                      inspection.status === 'completed'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}
+                  >
+                    {inspection.status}
+                  </span>
+                </div>
+                <div className="flex items-center text-xs text-black/70">
+                  <Calendar className="w-3.5 h-3.5 mr-2 text-black/50 shrink-0" />
+                  {new Date(inspection.createdAt).toLocaleDateString()}
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  <Link
+                    href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
+                    className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md"
+                  >
+                    <Eye className="w-3.5 h-3.5 mr-1.5" />
+                    View
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!id) return;
+                      if (!window.confirm(`Delete inspection ${inspection.inspectionNumber ?? id}? This cannot be undone.`)) return;
+                      setDeletingId(id);
+                      try {
+                        const res = await fetch('/api/inspections/bulk-delete', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          credentials: 'include',
+                          body: JSON.stringify({ ids: [id] }),
+                        });
+                        const data = await res.json();
+                        if (data.success && onRefetch) await onRefetch();
+                        else if (!data.success) alert(data.error ?? 'Failed to delete');
+                      } catch {
+                        alert('Failed to delete inspection');
+                      } finally {
+                        setDeletingId(null);
+                      }
+                    }}
+                    disabled={deletingId !== null || bulkDeleting}
+                    className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 shadow-md"
+                  >
+                    {deletingId === id ? (
+                      <span className="inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                        Delete
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          {filteredInspections.length === 0 && (
+            <div className="py-10 text-center text-sm text-slate-400">
+              {searchTerm ? 'No inspections found matching your search' : 'No inspections yet'}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: full table */}
+        <div className="hidden lg:block overflow-x-auto min-w-0">
           <table className="w-full">
             <thead>
               <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
@@ -352,7 +444,7 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                     index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                   }`}
                 >
-                  <td className="py-3 px-2 sm:px-4">
+                  <td className="py-3 px-2 sm:px-4 align-middle">
                     {id && (
                       <input
                         type="checkbox"
@@ -362,10 +454,10 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                       />
                     )}
                   </td>
-                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">{inspection.inspectionNumber}</td>
-                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{inspection.inspectorName}</td>
-                  <td className="py-3 px-2 sm:px-4">
-                    <span className={`px-2 sm:px-3 py-1 text-xs font-bold rounded-full ${
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black align-middle">{inspection.inspectionNumber}</td>
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black align-middle break-words">{inspection.inspectorName}</td>
+                  <td className="py-3 px-2 sm:px-4 align-middle">
+                    <span className={`inline-block px-2 sm:px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${
                       inspection.status === 'completed' 
                         ? 'bg-green-100 text-green-700 shadow-md' 
                         : 'bg-yellow-100 text-yellow-700 shadow-md'
@@ -373,14 +465,14 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                       {inspection.status}
                     </span>
                   </td>
-                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
+                  <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black align-middle whitespace-nowrap">
                     {new Date(inspection.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="py-3 px-2 sm:px-4">
-                    <div className="flex items-center gap-1 sm:gap-2">
+                  <td className="py-3 px-2 sm:px-4 align-middle">
+                    <div className="flex flex-wrap items-center gap-1 sm:gap-2">
                       <Link
                         href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
-                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105 shrink-0"
                       >
                         <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
                         <span className="hidden sm:inline">View</span>
@@ -409,7 +501,7 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                           }
                         }}
                         disabled={deletingId !== null || bulkDeleting}
-                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-all shadow-md hover:shadow-lg"
+                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-all shadow-md hover:shadow-lg shrink-0"
                         title="Delete inspection"
                       >
                         {deletingId === (inspection.id ?? inspection._id) ? (

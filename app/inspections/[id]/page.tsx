@@ -151,7 +151,7 @@ function InspectionDetailContent() {
   }
 
   return (
-    <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
+    <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
       {exportingPdf && exportUrl && (
         <PdfExportProgress
           isActive={exportingPdf}
@@ -160,7 +160,7 @@ function InspectionDetailContent() {
           onComplete={handleExportComplete}
         />
       )}
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 overflow-x-hidden">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0 max-w-full">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"

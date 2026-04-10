@@ -212,13 +212,13 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
   }, []);
 
   return (
-    <div className="space-y-4 min-w-0">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <label className="text-sm font-medium text-black shrink-0">
+    <div className="space-y-4 min-w-0 w-full max-w-full">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between w-full min-w-0">
+        <label className="text-sm font-medium text-black shrink-0 min-w-0">
           Vehicle ID scan
         </label>
         {!readOnly && (
-          <div className="flex flex-wrap gap-2 min-w-0">
+          <div className="flex flex-wrap gap-2 min-w-0 w-full sm:w-auto sm:justify-end">
             {!isScanning ? (
               <>
                 <button

@@ -278,11 +278,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const totalSteps = 5;
   const steps = [
     { number: 1, title: 'Inspector Info', icon: User },
-    { number: 2, title: 'Vehicle & Identification', icon: Car },
-    { number: 3, title: 'GPS & Photos', icon: MapPin },
+    { number: 2, title: 'Vehicle & Identification', shortTitle: 'Vehicle', icon: Car },
+    { number: 3, title: 'GPS & Photos', shortTitle: 'GPS', icon: MapPin },
     { number: 4, title: 'Checklist', icon: ClipboardCheck },
     { number: 5, title: 'Signatures', icon: PenTool },
-  ];
+  ] as const;
 
   // Restore step from URL on mount (so refresh keeps you on the same step)
   useEffect(() => {
@@ -1077,20 +1077,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStep1 = () => (
-    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30">
-      <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
-        <div className="flex items-center flex-1">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 min-w-0">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30 min-w-0">
+        <div className="flex items-center flex-1 min-w-0">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 sm:mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
             <span className="text-white font-bold text-lg">1</span>
           </div>
-          <h2 className="text-xl font-bold text-black">Inspector Information</h2>
+          <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Inspector Information</h2>
         </div>
         {!readOnly && inspectionId && (
           <button
             type="button"
             onClick={saveInspectorInfo}
             disabled={sectionSaving.inspectorInfo}
-            className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+            className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
           >
             {sectionSaving.inspectorInfo ? (
               <>
@@ -1162,15 +1162,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep2 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 min-w-0 ${readOnly ? '' : 'mb-4'}`}>
+      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 min-w-0 max-w-full ${readOnly ? '' : 'mb-4'}`}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 min-w-0">
-          <h3 className="text-base font-bold text-black shrink-0">Vehicle Identification Scan</h3>
+          <h3 className="text-base font-bold text-black shrink-0 min-w-0 pr-2">Vehicle Identification Scan</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveBarcode}
               disabled={sectionSaving.barcode}
-              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md w-fit self-start sm:self-auto shrink-0"
             >
               {sectionSaving.barcode ? (
                 <>
@@ -1205,19 +1205,19 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       </div>
 
       <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 ${readOnly ? 'mt-6' : ''}`}>
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
-          <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30 min-w-0">
+          <div className="flex items-center flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 sm:mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
               <span className="text-white font-bold text-lg">2</span>
             </div>
-            <h2 className="text-xl font-bold text-black">Vehicle Information</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Vehicle Information</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveVehicleInfo}
               disabled={sectionSaving.vehicleInfo}
-              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
             >
               {sectionSaving.vehicleInfo ? (
                 <>
@@ -1316,14 +1316,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const renderStep3 = () => (
     <>
       <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-black">GPS Location</h3>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 min-w-0">
+          <h3 className="text-base font-bold text-black min-w-0 pr-2">GPS Location</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveGPSLocation}
               disabled={sectionSaving.location}
-              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
             >
               {sectionSaving.location ? (
                 <>
@@ -1348,14 +1348,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       </div>
 
       <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? 'mt-6' : ''}`}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-base font-bold text-black">General Photos</h3>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 min-w-0">
+          <h3 className="text-base font-bold text-black min-w-0 pr-2">General Photos</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={savePhotos}
               disabled={sectionSaving.photos}
-              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
             >
               {sectionSaving.photos ? (
                 <>
@@ -1446,19 +1446,19 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
     return (
       <div className="bg-white rounded-xl p-4 md:p-6 space-y-4 border border-gray-200">
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b border-gray-200">
-          <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-lg bg-[#0033FF] flex items-center justify-center mr-4 flex-shrink-0">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b border-gray-200 min-w-0">
+          <div className="flex items-center flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-lg bg-[#0033FF] flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
               <span className="text-white font-bold text-lg">4</span>
             </div>
-            <h2 className="text-xl font-bold text-black">Inspection Checklist</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Inspection Checklist</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveChecklist}
               disabled={sectionSaving.checklist}
-              className="flex items-center px-3 py-1.5 text-sm bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center justify-center px-3 py-2 text-sm bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
             >
               {sectionSaving.checklist ? (
                 <>
@@ -1603,7 +1603,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                 return (
                   <div 
                     key={itemIndex} 
-                    className="mb-3 p-3 rounded-lg border border-gray-200 bg-transparent"
+                    className="mb-3 p-3 rounded-lg border border-sky-200/80 bg-[#e8f4ff]"
                   >
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between mb-2">
                       <textarea
@@ -1696,19 +1696,19 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const renderStep6 = () => (
     <>
       <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex items-center justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30">
-          <div className="flex items-center flex-1">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30 min-w-0">
+          <div className="flex items-center flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 sm:mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
               <span className="text-white font-bold text-lg">5</span>
             </div>
-            <h2 className="text-xl font-bold text-black">Signatures</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Signatures</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveSignatures}
               disabled={sectionSaving.signatures}
-              className="flex items-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md"
+              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
             >
               {sectionSaving.signatures ? (
                 <>
@@ -1750,7 +1750,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-0 sm:px-2 min-w-0 overflow-x-hidden">
+    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-3 sm:px-4 min-w-0 max-w-full">
       {!readOnly && (
         <div className="sticky top-0 z-30 -mx-0.5 px-2 py-2.5 mb-1 bg-slate-900/95 backdrop-blur-sm border border-slate-600/60 rounded-xl shadow-lg">
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-slate-200">
@@ -1772,20 +1772,28 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               style={{ width: `${overallProgressPercent}%` }}
             />
           </div>
-          <div className="flex gap-1 sm:gap-1.5 mt-2 overflow-x-auto pb-0.5">
+          <div className="flex gap-1 sm:gap-1.5 mt-2 overflow-x-auto pb-0.5 min-w-0 -mx-0.5 px-0.5">
             {steps.map((s) => {
               const Icon = s.icon;
+              const short = 'shortTitle' in s && s.shortTitle ? s.shortTitle : null;
               return (
                 <span
                   key={s.number}
-                  className={`inline-flex items-center gap-1 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold border ${
+                  className={`inline-flex items-center gap-1 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold border max-w-[42vw] sm:max-w-none ${
                     currentStep === s.number
                       ? 'bg-[#0033FF] text-white border-[#0033FF]'
                       : 'bg-slate-800/80 text-slate-400 border-slate-600/50'
                   }`}
                 >
-                  <Icon className="w-3 h-3 opacity-90" aria-hidden />
-                  {s.title}
+                  <Icon className="w-3 h-3 opacity-90 shrink-0" aria-hidden />
+                  {short ? (
+                    <>
+                      <span className="truncate sm:hidden">{short}</span>
+                      <span className="hidden sm:inline truncate">{s.title}</span>
+                    </>
+                  ) : (
+                    <span className="truncate">{s.title}</span>
+                  )}
                 </span>
               );
             })}

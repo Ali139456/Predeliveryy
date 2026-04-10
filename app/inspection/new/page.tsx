@@ -136,8 +136,8 @@ export default function NewInspectionPage() {
 
   if (!user) {
     return (
-      <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 overflow-x-hidden">
+      <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
+        <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0 max-w-full">
           {toast && (
             <Toast
               message={toast.message}
@@ -186,8 +186,8 @@ export default function NewInspectionPage() {
   }
 
   return (
-    <div className="h-screen overflow-y-auto overflow-x-hidden scrollbar-hide bg-white">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 overflow-x-hidden">
+    <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
+      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0 max-w-full">
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mt-4 mb-4 sm:mb-8 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group text-xs sm:text-sm backdrop-blur-md"
