@@ -119,28 +119,34 @@ export default function AuditLogTab() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center mr-4 shadow-lg">
-            <Shield className="w-6 h-6 text-white" />
+    <div className="space-y-6 min-w-0">
+      <div className="flex flex-col gap-3 min-w-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div className="flex min-w-0 items-center">
+          <div className="mr-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0033FF] shadow-md sm:mr-4 sm:h-12 sm:w-12 sm:shadow-lg">
+            <Shield className="h-5 w-5 text-white sm:h-6 sm:w-6" />
           </div>
-          <h2 className="text-2xl font-bold text-black">Audit Logs</h2>
+          <h2 className="text-xl font-bold text-black sm:text-2xl">Audit Logs</h2>
         </div>
-        <div className="flex gap-2">
+        <div className="flex w-full min-w-0 gap-2 sm:w-auto sm:shrink-0">
           <button
+            type="button"
+            aria-label="Export audit logs as CSV"
             onClick={() => handleExport('csv')}
-            className="flex items-center px-6 py-3 bg-[#0033FF] text-white rounded-xl hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 hover:shadow-xl transform hover:scale-105 font-semibold"
+            className="flex min-h-[2.5rem] flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#0033FF] px-2.5 py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#0033FF]/90 sm:min-h-0 sm:flex-initial sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm sm:shadow-lg sm:hover:shadow-xl md:px-5"
           >
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
+            <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+            <span className="sm:hidden">CSV</span>
+            <span className="hidden sm:inline">Export CSV</span>
           </button>
           <button
+            type="button"
+            aria-label="Export audit logs as JSON"
             onClick={() => handleExport('json')}
-            className="flex items-center px-6 py-3 bg-[#0033FF] text-white rounded-xl hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 hover:shadow-xl transform hover:scale-105 font-semibold"
+            className="flex min-h-[2.5rem] flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#0033FF] px-2.5 py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#0033FF]/90 sm:min-h-0 sm:flex-initial sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm sm:shadow-lg sm:hover:shadow-xl md:px-5"
           >
-            <Download className="w-4 h-4 mr-2" />
-            Export JSON
+            <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
+            <span className="sm:hidden">JSON</span>
+            <span className="hidden sm:inline">Export JSON</span>
           </button>
         </div>
       </div>

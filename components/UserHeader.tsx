@@ -389,123 +389,119 @@ function UserHeader() {
           <>
             {/* Backdrop */}
             <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            {/* Full Screen Menu */}
-            <div className="fixed inset-0 bg-white z-50 lg:hidden flex flex-col max-h-[100dvh] overflow-hidden">
-              {/* Header with Close Button */}
-              <div className="flex items-center justify-between px-3 sm:px-4 py-4 border-b border-gray-200 shrink-0">
-                <Link href="/" className="flex items-center transition-colors min-w-0" onClick={() => setMobileMenuOpen(false)}>
-                  <div className="flex items-center shrink-0 overflow-hidden rounded-lg bg-[#0033FF]/90 p-1.5">
+            {/* Full-screen menu — brand blue (matches public site / login) */}
+            <div className="fixed inset-0 z-50 flex max-h-[100dvh] flex-col overflow-hidden bg-gradient-to-b from-[#0033FF] via-[#0033FF] to-[#0029CC] lg:hidden">
+              <div className="flex shrink-0 items-center justify-between border-b border-white/20 px-3 py-4 sm:px-4">
+                <Link href="/" className="flex min-w-0 items-center transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  <div className="flex shrink-0 items-center overflow-hidden rounded-lg bg-white/10 p-1.5 ring-1 ring-white/20">
                     <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
                   </div>
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center justify-center w-10 h-10 text-gray-800 hover:bg-[#0033FF]/10 rounded-lg transition-colors"
+                  className="flex h-10 w-10 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/15"
                   aria-label="Close menu"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="h-6 w-6" />
                 </button>
               </div>
 
-              {/* Menu Items */}
-              <div className="flex-1 px-4 py-6 space-y-3 overflow-y-auto">
-                {/* Home Button */}
+              <div className="flex-1 space-y-3 overflow-y-auto px-4 py-6">
                 <Link
                   href="/"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                  className={`flex w-full items-center rounded-xl border px-4 py-4 text-sm font-semibold shadow-md transition-all ${
                     pathname === '/'
-                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
-                      : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
+                      ? 'border-white bg-white text-[#0033FF] shadow-lg'
+                      : 'border-white/25 bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  <Home className="w-5 h-5 mr-3" />
+                  <Home className="mr-3 h-5 w-5 shrink-0" />
                   <span>Home</span>
                 </Link>
 
-                {/* Dashboard Button */}
                 {(user.role === 'admin' || user.role === 'manager') && (
                   <Link
                     href="/admin"
                     onClick={() => setMobileMenuOpen(false)}
-                    className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                    className={`flex w-full items-center rounded-xl border px-4 py-4 text-sm font-semibold shadow-md transition-all ${
                       pathname === '/admin'
-                        ? 'bg-[#0033FF] text-white border-[#0033FF]'
-                        : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
+                        ? 'border-white bg-white text-[#0033FF] shadow-lg'
+                        : 'border-white/25 bg-white/10 text-white hover:bg-white/20'
                     }`}
                   >
-                    <LayoutDashboard className="w-5 h-5 mr-3" />
+                    <LayoutDashboard className="mr-3 h-5 w-5 shrink-0" />
                     <span>Dashboard</span>
                   </Link>
                 )}
 
-                {/* New Inspection */}
                 <Link
                   href="/inspection/new"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                  className={`flex w-full items-center rounded-xl border px-4 py-4 text-sm font-semibold shadow-md transition-all ${
                     pathname === '/inspection/new'
-                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
-                      : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
+                      ? 'border-white bg-white text-[#0033FF] shadow-lg'
+                      : 'border-white/25 bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  <FileCheck className="w-5 h-5 mr-3" />
+                  <FileCheck className="mr-3 h-5 w-5 shrink-0" />
                   <span>New Inspection</span>
                 </Link>
 
-                {/* View Inspections */}
                 <Link
                   href="/inspections"
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`flex items-center w-full px-4 py-4 rounded-lg font-semibold transition-all shadow-md border-2 ${
+                  className={`flex w-full items-center rounded-xl border px-4 py-4 text-sm font-semibold shadow-md transition-all ${
                     pathname === '/inspections'
-                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
-                      : 'bg-gray-50 text-gray-800 border-gray-200 hover:bg-gray-100'
+                      ? 'border-white bg-white text-[#0033FF] shadow-lg'
+                      : 'border-white/25 bg-white/10 text-white hover:bg-white/20'
                   }`}
                 >
-                  <Search className="w-5 h-5 mr-3" />
+                  <Search className="mr-3 h-5 w-5 shrink-0" />
                   <span>View Inspections</span>
                 </Link>
 
-                {/* User Info Section */}
-                <div className="px-4 py-4 bg-gray-50 rounded-lg border-2 border-gray-200 space-y-4 mt-4">
-                  {/* User Avatar & Name */}
+                <div className="mt-4 space-y-4 rounded-xl border border-white/25 bg-white/10 p-4 ring-1 ring-white/10">
                   <div className="flex items-center gap-3">
-                    <User className={`w-5 h-5 ${getRoleColor(user.role)}`} />
-                    <div className="flex-1">
-                      <div className="text-sm font-bold text-gray-900">
-                        {user.name || user.email}
-                      </div>
-                      <div className={`mt-1 inline-block px-2 py-1 rounded border text-xs font-semibold uppercase tracking-wider ${getRoleBadgeColor(user.role)}`}>
+                    <User className={`h-5 w-5 shrink-0 ${user.role === 'admin' ? 'text-[#FFB366]' : 'text-white'}`} />
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-bold text-white">{user.name || user.email}</div>
+                      <div
+                        className={`mt-1 inline-block rounded border px-2 py-1 text-xs font-semibold uppercase tracking-wider ${
+                          user.role === 'admin'
+                            ? 'border-[#FF6600]/60 bg-[#FF6600]/25 text-white'
+                            : 'border-white/40 bg-white/15 text-white'
+                        }`}
+                      >
                         {user.role}
                       </div>
                     </div>
                   </div>
 
-                  {/* Profile Edit Button */}
                   <button
+                    type="button"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       setShowProfileModal(true);
                     }}
-                    className="flex items-center justify-center w-full px-4 py-3 text-sm bg-[#0033FF] text-white rounded-lg hover:bg-[#0029CC] transition-all shadow-md border border-[#0033FF]"
+                    className="flex w-full items-center justify-center rounded-xl border border-white/30 bg-white px-4 py-3 text-sm font-semibold text-[#0033FF] shadow-md transition-all hover:bg-white/95"
                   >
-                    <Settings className="w-4 h-4 mr-2" />
+                    <Settings className="mr-2 h-4 w-4" />
                     <span>Edit Profile</span>
                   </button>
 
-                  {/* Logout Button */}
                   <button
+                    type="button"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       handleLogout();
                     }}
-                    className="flex items-center justify-center w-full px-4 py-3 text-sm bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-all shadow-md border border-red-200"
+                    className="flex w-full items-center justify-center rounded-xl border border-red-400/50 bg-red-500/20 px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-red-500/30"
                   >
-                    <LogOut className="w-4 h-4 mr-2" />
+                    <LogOut className="mr-2 h-4 w-4" />
                     <span>Logout</span>
                   </button>
                 </div>

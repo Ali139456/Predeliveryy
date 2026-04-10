@@ -160,37 +160,39 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0033FF] via-[#0029CC] to-[#001a80]">
-      {/* Blue Navbar */}
-      <nav className="bg-[#0033FF]/95 backdrop-blur-md border-b border-white/10">
+      <nav className="border-b border-white/10 bg-[#0033FF]/95 backdrop-blur-md">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2 min-w-0">
-            <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
-              <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all hover:scale-105">
-                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className="h-14 sm:h-20 md:h-24 w-auto object-contain" unoptimized priority />
+            <Link href="/" className="flex min-w-0 shrink items-center transition-colors hover:opacity-90">
+              <div className="flex shrink-0 items-center overflow-hidden rounded-lg transition-all hover:scale-105">
+                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className="h-14 w-auto object-contain sm:h-20 md:h-24" unoptimized priority />
               </div>
             </Link>
             <Link
               href="/"
-              className="flex items-center px-4 sm:px-5 py-2.5 text-sm bg-white/15 hover:bg-white/25 text-white rounded-xl transition-all border border-white/30 font-semibold shrink-0 backdrop-blur-sm"
+              className="flex shrink-0 items-center rounded-xl border border-white/30 bg-white/15 px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/25 sm:px-5"
             >
-              <Home className="w-4 h-4 sm:mr-2" />
+              <Home className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">Home</span>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Main Content - full blue area, form centered */}
-      <div className="relative min-h-[calc(100vh-80px)] flex flex-col items-center justify-center p-4 sm:p-6 py-8 sm:py-12">
-        {/* Subtle grid overlay */}
-        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '32px 32px' }} />
-        {/* Soft orbs */}
-        <div className="absolute top-1/4 -left-20 w-72 h-72 bg-[#FF6600]/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative flex min-h-[calc(100dvh-5rem)] flex-col items-center justify-center p-4 py-8 sm:p-6 sm:py-12">
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.06]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)',
+            backgroundSize: '32px 32px',
+          }}
+        />
+        <div className="pointer-events-none absolute -left-20 top-1/4 h-72 w-72 rounded-full bg-[#FF6600]/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-20 bottom-1/4 h-96 w-96 rounded-full bg-white/10 blur-3xl" />
 
-        <div className="relative w-full max-w-md min-w-0 flex justify-center">
-          {/* Login Card - white bg, original font colors */}
-          <div className="relative bg-white backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl w-full p-6 sm:p-8 md:p-10 border border-[#0033FF]/20 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]">
+        <div className="relative flex w-full max-w-md min-w-0 justify-center">
+          <div className="relative w-full rounded-2xl border border-[#0033FF]/20 bg-white p-6 shadow-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl sm:rounded-3xl sm:p-8 md:p-10">
             {/* Icon Header */}
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] mb-5 shadow-lg shadow-[#0033FF]/40">
@@ -326,7 +328,7 @@ export default function LoginPage() {
 
       {/* Reset Password Modal */}
       {showResetPassword && (
-        <div className="fixed inset-0 bg-[#0033FF]/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0033FF]/80 p-4 backdrop-blur-md">
           <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 md:p-10 border border-white/50 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)]">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-black">

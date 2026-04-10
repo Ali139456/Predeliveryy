@@ -110,14 +110,15 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-white pt-4 sm:pt-6 md:pt-8 min-w-0">
-      {/* Tabs */}
-      <div className="bg-white border-b border-[#0033FF]/30 shadow-lg">
-        <div className="container mx-auto px-3 sm:px-4">
-          <div className="flex gap-1 overflow-x-auto scrollbar-hide pb-px -mb-px">
+    <div className="min-h-screen bg-white pt-2 sm:pt-4 md:pt-6 min-w-0">
+      {/* Tabs — sticky so they stay visible on mobile while scrolling; horizontal scroll for long labels */}
+      <div className="sticky top-36 sm:top-32 md:top-36 lg:top-40 z-40 bg-white border-b border-[#0033FF]/30 shadow-lg">
+        <div className="container mx-auto px-3 sm:px-4 max-w-full min-w-0">
+          <p className="sr-only">Dashboard sections. Swipe sideways on small screens to see all tabs.</p>
+          <div className="flex gap-1 overflow-x-auto overflow-y-visible overscroll-x-contain pb-px -mb-px snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
             <button
               onClick={() => setActiveTab('overview')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
                 activeTab === 'overview'
                   ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
                   : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
@@ -127,7 +128,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('users')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
                 activeTab === 'users'
                   ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
                   : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
@@ -137,7 +138,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('audit')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
                 activeTab === 'audit'
                   ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
                   : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
@@ -147,7 +148,7 @@ export default function AdminDashboard() {
             </button>
             <button
               onClick={() => setActiveTab('settings')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
                 activeTab === 'settings'
                   ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
                   : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
