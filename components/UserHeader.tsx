@@ -8,8 +8,9 @@ import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, E
 import { useAuth } from '@/contexts/AuthContext';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 
+/** Slightly smaller on mobile than legacy h-28 to avoid clipping; stable sizes md+ for desktop nav balance */
 const LOGO_CLASS =
-  'h-28 sm:h-20 md:h-24 lg:h-28 w-auto max-w-[85vw] sm:max-w-[78vw] object-contain object-left';
+  'h-24 sm:h-20 md:h-24 lg:h-24 w-auto max-w-[85vw] sm:max-w-[78vw] object-contain object-left';
 
 function UserHeader() {
   const { user, loading, setUser, refetch } = useAuth();
@@ -88,10 +89,10 @@ function UserHeader() {
       <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] transition-all duration-300">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
           <div className="max-w-7xl mx-auto w-full">
-          <div className="relative flex items-center justify-between gap-2 min-h-[3rem] sm:min-h-[3.5rem]">
+          <div className="relative flex items-center justify-between gap-2 min-h-[3rem] sm:min-h-[3.5rem] lg:min-h-[4rem]">
             <Link href="/" className="transition-colors flex items-center group hover:opacity-90 min-w-0 shrink z-10">
-              <div className="flex items-center shrink-0 overflow-hidden rounded-lg transition-all group-hover:scale-105">
-                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
+              <div className="flex items-center shrink-0 rounded-lg transition-all group-hover:scale-105">
+                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={`${LOGO_CLASS} rounded-lg`} unoptimized priority />
               </div>
             </Link>
 
@@ -151,8 +152,8 @@ function UserHeader() {
                 <div className="max-w-7xl mx-auto w-full">
                 <div className="flex items-center justify-between mb-4">
                   <Link href="/" className="flex items-center min-w-0" onClick={() => setMobileMenuOpen(false)}>
-                    <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-                      <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
+                    <div className="flex items-center shrink-0 rounded-lg">
+                      <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={`${LOGO_CLASS} rounded-lg`} unoptimized priority />
                     </div>
                   </Link>
                   <button
@@ -242,8 +243,8 @@ function UserHeader() {
         <div className="flex items-center justify-between gap-2 min-w-0">
           {/* Logo on blue nav (no white container) */}
           <Link href="/" className="flex items-center transition-colors hover:opacity-90 min-w-0 shrink">
-            <div className="flex items-center shrink-0 overflow-hidden rounded-lg">
-              <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={LOGO_CLASS} unoptimized priority />
+            <div className="flex items-center shrink-0 rounded-lg">
+              <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className={`${LOGO_CLASS} rounded-lg`} unoptimized priority />
             </div>
           </Link>
 

@@ -59,8 +59,8 @@ export default function Home() {
                     className="hero-mobile-feature-cards sm:hidden grid grid-cols-2 gap-2 w-full max-w-xl mx-auto lg:mx-0 items-stretch text-white"
                     aria-label="Product highlights"
                   >
-                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0 flex flex-col justify-center">
-                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug">
+                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-3 py-2.5 min-w-0 flex flex-col justify-center">
+                      <ul className="flex flex-col items-start gap-1.5 text-sm leading-snug">
                         <li className="flex items-start gap-1.5 w-full text-left">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
                           <span className="min-w-0 break-words">Photo images</span>
@@ -79,8 +79,8 @@ export default function Home() {
                         </li>
                       </ul>
                     </div>
-                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-2.5 py-2 min-w-0 flex flex-col justify-center">
-                      <ul className="flex flex-col items-start gap-1.5 text-[0.75rem] leading-snug">
+                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-3 py-2.5 min-w-0 flex flex-col justify-center">
+                      <ul className="flex flex-col items-start gap-1.5 text-sm leading-snug">
                         <li className="flex items-start gap-1.5 w-full text-left">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
                           <span className="min-w-0 break-words">Voice to text</span>
@@ -99,7 +99,7 @@ export default function Home() {
 
                   {/* sm+: two pills (4 + 3) */}
                   <div className="hidden sm:flex flex-row flex-wrap items-center justify-center lg:justify-start gap-2 w-full max-w-full mx-auto lg:mx-0">
-                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full min-w-0">
+                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 w-fit max-w-full min-w-0">
                       <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
                         <li className="flex items-center gap-1 shrink-0">
                           <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
@@ -119,7 +119,7 @@ export default function Home() {
                         </li>
                       </ul>
                     </div>
-                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 w-fit max-w-full min-w-0">
+                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 w-fit max-w-full min-w-0">
                       <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
                         <li className="flex items-center gap-1 shrink-0">
                           <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
