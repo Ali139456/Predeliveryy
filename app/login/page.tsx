@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home } from 'lucide-react';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
-import AppReportBanner from '@/components/AppReportBanner';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -180,9 +179,7 @@ export default function LoginPage() {
         </div>
       </nav>
 
-      <AppReportBanner />
-
-      <div className="relative flex min-h-[calc(100dvh-11rem)] flex-col items-center justify-center p-4 py-6 sm:p-6 sm:py-10">
+      <div className="relative flex min-h-[calc(100dvh-6.5rem)] flex-col items-center justify-center p-4 py-6 sm:p-6 sm:py-10">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.06]"
           style={{
