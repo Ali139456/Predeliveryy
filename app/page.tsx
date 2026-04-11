@@ -16,7 +16,8 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero Section - always; marketing + footer below only for guests */}
-      <div className="relative bg-gradient-to-b from-[#0033FF] via-[#0029CC] to-[#0033FF] min-h-[min(100dvh,900px)] lg:min-h-0 w-full overflow-x-clip">
+      {/* Long solid #0033FF at top so it meets UserHeader/MainContent padding without a darker “second band” */}
+      <div className="relative min-h-[min(100dvh,900px)] lg:min-h-0 w-full overflow-x-clip bg-[linear-gradient(180deg,#0033FF_0%,#0033FF_min(22vh,200px),#0029CC_52%,#0033FF_100%)]">
         {/* Hero Background Image */}
         <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
           <Image
@@ -30,7 +31,7 @@ export default function Home() {
         </div>
         
         {/* Logo blue overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0033FF]/85 via-[#0029CC]/80 to-[#0033FF]/85"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0033FF]/85 via-[#0029CC]/78 to-[#0033FF]/85"></div>
         
         {/* Animated background gradient */}
         <div className="absolute inset-0 opacity-30">

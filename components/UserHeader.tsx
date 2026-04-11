@@ -62,7 +62,7 @@ function UserHeader() {
   // While auth is loading: same fixed bar + height as loaded state to avoid layout shift
   if (loading) {
     return (
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF]">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
           <div className="max-w-7xl mx-auto w-full">
             <div className="flex items-center justify-between">
@@ -85,7 +85,7 @@ function UserHeader() {
       'bg-white/20 border-white/45 text-white ring-1 ring-white/25';
 
     return (
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] shadow-lg transition-all duration-300">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] transition-all duration-300">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
           <div className="max-w-7xl mx-auto w-full">
           <div className="relative flex items-center justify-between gap-2 min-h-[3rem] sm:min-h-[3.5rem]">
@@ -236,7 +236,7 @@ function UserHeader() {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF] shadow-lg border-b border-white/10">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-[#0033FF]">
       <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
         <div className="max-w-7xl mx-auto w-full">
         <div className="flex items-center justify-between gap-2 min-w-0">
