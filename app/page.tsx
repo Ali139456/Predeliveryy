@@ -41,12 +41,12 @@ export default function Home() {
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
         
-        <div className="relative z-20 flex items-start pt-6 sm:pt-8 md:pt-12 pb-8 sm:pb-12 md:pb-10 lg:py-12">
-          <div className="container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 pt-4 sm:pt-6 md:pt-6 pb-12 sm:pb-16 md:pb-8 w-full max-w-full min-w-0 flex-1">
+        <div className="relative z-20 flex items-start pt-2 sm:pt-4 md:pt-6 pb-8 sm:pb-12 md:pb-10 lg:py-10">
+          <div className="container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 pt-1 sm:pt-2 md:pt-3 pb-12 sm:pb-16 md:pb-8 w-full max-w-full min-w-0 flex-1">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-center w-full min-w-0">
               {/* Hero content: H1, tagline, features, Built for, CTAs - all in one div */}
               <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-center lg:text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 max-w-2xl overflow-visible mx-auto lg:mx-0">
-                <h1 className="hero-h1 hyphens-none mt-6 sm:mt-10 md:mt-8 lg:mt-[3rem]">
+                <h1 className="hero-h1 hyphens-none mt-2 sm:mt-3 md:mt-4 lg:mt-6">
                   <span className="text-[#FF6600]">Pre-Delivery Inspections</span><span className="text-white"> Digitised</span>
                 </h1>
                 <p className="hero-tagline text-white/90 leading-relaxed break-words min-w-0">
@@ -157,7 +157,7 @@ export default function Home() {
               </div>
 
               {/* Mobile app hero graphic - centered on mobile; on lg right column spanning 2 rows */}
-              <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-24 lg:mb-0">
+              <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-10 lg:mb-0">
                 <div className="hero-phone w-full max-h-[min(62vh,560px)] sm:max-h-[min(64vh,600px)] md:max-h-[min(62vh,620px)] lg:max-h-[min(58vh,600px)] mx-auto flex flex-col items-center">
                   <Image
                     src={SITE_HERO_MOBILE_GRAPHICS_SRC}
