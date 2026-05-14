@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserByEmail, getUserByPhone } from '@/lib/db-users';
 import { sendEmail } from '@/lib/email';
+import { signPasswordResetToken } from '@/lib/password-reset-token';
 import { generateOTP, storeOTP } from '@/lib/otp';
 import { enforceRateLimit } from '@/lib/rateLimit';
 
@@ -52,10 +53,12 @@ export async function POST(request: NextRequest) {
       }
 
       if (email) {
-        const resetToken =
-          Math.random().toString(36).substring(2, 15) +
-          Math.random().toString(36).substring(2, 15);
-        const resetLink = `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}&email=${encodeURIComponent(user.email)}`;
+        const resetToken = signPasswordResetToken(user.id, user.email);
+        const baseUrl =
+          process.env.NEXTAUTH_URL?.replace(/\/$/, '') ||
+          process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '') ||
+          'http://localhost:3000';
+        const resetLink = `${baseUrl}/reset-password?token=${encodeURIComponent(resetToken)}&email=${encodeURIComponent(user.email)}`;
 
         await sendEmail(
           [user.email],
@@ -88,10 +91,13 @@ export async function POST(request: NextRequest) {
       }
     } catch (err: unknown) {
       console.error('Send error:', err);
+      const msg = err instanceof Error ? err.message : 'Failed to send reset instructions.';
       return NextResponse.json(
         {
           success: false,
-          error: 'Failed to send reset instructions. Please contact your administrator.',
+          error: msg.includes('Resend') || msg.includes('onboarding') || msg.includes('RESEND') || msg.includes('verified')
+            ? msg
+            : 'Failed to send reset instructions. Please contact your administrator.',
         },
         { status: 500 }
       );

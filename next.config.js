@@ -31,11 +31,18 @@ const nextConfig = {
   compress: true,
   // Optimize production builds
   productionBrowserSourceMaps: false,
-  // Do not override devtool in dev — Next.js reverts it and warns (improper-devtool). Use `npm run clean:next` if Windows + path spaces cause odd dev errors.
-  webpack: (config, { dev }) => {
-    // Windows + paths with spaces: persistent pack cache often leaves .next/server out of sync → 404 on /_next/static and "__webpack_modules__ is not a function"
+  // Do not override devtool in dev — Next.js reverts it and warns (improper-devtool).
+  // Prefer `npm run dev` (Turbopack). If you use `npm run dev:webpack`, server splitChunks are disabled in dev
+  // to avoid stale chunk IDs (Cannot find module './NNNN.js') on Windows — see scripts/clean-dev-cache.js.
+  webpack: (config, { dev, isServer }) => {
     if (dev) {
       config.cache = false;
+      if (isServer) {
+        config.optimization = {
+          ...config.optimization,
+          splitChunks: false,
+        };
+      }
     }
     return config;
   },

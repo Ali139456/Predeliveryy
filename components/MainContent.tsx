@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation';
 export default function MainContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLogin = pathname === '/login';
-  // Login has no UserHeader; all other routes need offset for the fixed bar.
-  const needsHeaderOffset = !isLogin;
+  const isResetPassword = pathname === '/reset-password';
+  // Login / reset-password have no fixed UserHeader; other routes need offset for the fixed bar.
+  const needsHeaderOffset = !isLogin && !isResetPassword;
   const isHome = pathname === '/';
 
   return (

@@ -21,13 +21,32 @@ async function createAdmin() {
   try {
     const { data: existing } = await supabase.from('users').select('id, email').eq('email', email).single();
 
+    const { data: tenantRow, error: tenantErr } = await supabase
+      .from('tenants')
+      .select('id')
+      .eq('name', 'Default')
+      .maybeSingle();
+
+    if (tenantErr || !tenantRow?.id) {
+      console.error('Could not resolve Default tenant. Run Supabase migrations (003_multi_tenant.sql) first.');
+      console.error(tenantErr?.message || '');
+      process.exit(1);
+    }
+    const tenantId = tenantRow.id;
+
     if (existing) {
       console.log('Admin user already exists. Updating password...');
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       await supabase
         .from('users')
-        .update({ password: hashedPassword, role: 'admin', is_active: true, updated_at: new Date().toISOString() })
+        .update({
+          password: hashedPassword,
+          role: 'admin',
+          is_active: true,
+          tenant_id: tenantId,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', existing.id);
       console.log('✓ Admin user updated successfully');
     } else {
@@ -42,6 +61,7 @@ async function createAdmin() {
           name,
           role: 'admin',
           is_active: true,
+          tenant_id: tenantId,
         })
         .select('id')
         .single();

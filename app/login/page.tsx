@@ -29,6 +29,13 @@ export default function LoginPage() {
   /** Remount inputs so browser autofill cannot leave stale values after we clear state */
   const [loginInputKey, setLoginInputKey] = useState(0);
   const prevPathnameRef = useRef<string | null>(null);
+  const [passwordResetDone, setPasswordResetDone] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('reset') === '1') {
+      setPasswordResetDone(true);
+    }
+  }, []);
 
   /** Clear when navigating *to* /login from another route (not on first mount / refresh). */
   useEffect(() => {
@@ -162,11 +169,21 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#0033FF] via-[#0029CC] to-[#001a80]">
       <nav className="border-b border-white/10 bg-[#0033FF]/95 backdrop-blur-md">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <Link href="/" className="flex min-w-0 shrink items-center transition-colors hover:opacity-90">
-              <div className="flex shrink-0 items-center overflow-hidden rounded-lg transition-all hover:scale-105">
-                <Image src={SITE_LOGO_SRC} alt={SITE_LOGO_ALT} width={322} height={221} className="h-14 w-auto object-contain sm:h-20 md:h-24" unoptimized priority />
-              </div>
+          <div className="flex items-center justify-between gap-3 min-w-0">
+            <Link
+              href="/"
+              className="flex shrink-0 items-center pl-0.5 transition-colors hover:opacity-90"
+              aria-label="Pre Delivery home"
+            >
+              <Image
+                src={SITE_LOGO_SRC}
+                alt={SITE_LOGO_ALT}
+                width={322}
+                height={221}
+                className="h-12 w-auto max-w-[min(280px,82vw)] object-contain object-left sm:h-16 md:h-20"
+                unoptimized
+                priority
+              />
             </Link>
             <Link
               href="/"
@@ -203,6 +220,14 @@ export default function LoginPage() {
             </div>
 
               <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
+                {passwordResetDone && (
+                  <div
+                    role="status"
+                    className="p-4 bg-green-50 border-2 border-green-200 rounded-xl text-sm text-green-800 font-medium"
+                  >
+                    Password updated. Sign in with your new password.
+                  </div>
+                )}
                 {error && (
                   <div role="alert" className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
                     <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />

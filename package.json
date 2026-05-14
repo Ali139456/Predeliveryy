@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:turbo": "next dev --turbo",
-    "dev:reset": "node scripts/clean-dev-cache.js && next dev",
+    "dev": "next dev --turbo",
+    "dev:webpack": "next dev",
+    "dev:reset": "node scripts/clean-dev-cache.js && next dev --turbo",
     "clean:next": "node scripts/clean-dev-cache.js",
     "build": "next build",
     "start": "next start",

@@ -55,8 +55,8 @@ function UserHeader() {
     }
   }, [router, setUser]);
 
-  // Don't show header on login page - AFTER all hooks
-  if (pathname === '/login') {
+  // Login and password-reset use their own compact top bar
+  if (pathname === '/login' || pathname === '/reset-password') {
     return null;
   }
 

@@ -23,20 +23,37 @@ function getResendClient(): Resend | null {
   return resend;
 }
 
-// Get the from email address (must be set in production for verified domain)
+// Get the from email address (must be on a verified Resend domain to reach arbitrary recipients)
+function derivedDefaultFromEmail(): string | null {
+  const raw =
+    process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+    process.env.NEXTAUTH_URL?.trim() ||
+    '';
+  if (!raw) return null;
+  try {
+    const host = new URL(raw).hostname.replace(/^www\./i, '');
+    if (!host || host === 'localhost' || host.endsWith('.local')) return null;
+    if (!/^[\w.-]+\.[a-z]{2,}$/i.test(host)) return null;
+    return `Pre Delivery <noreply@${host}>`;
+  } catch {
+    return null;
+  }
+}
+
 function getFromEmail(): string {
   const from = process.env.RESEND_FROM_EMAIL?.trim();
   if (from && from !== '') return from;
-  return 'onboarding@resend.dev';
+  return derivedDefaultFromEmail() ?? 'onboarding@resend.dev';
 }
 
 function ensureFromEmailForExternalSend(): void {
   const from = getFromEmail();
   if (from === 'onboarding@resend.dev') {
     throw new Error(
-      'Cannot send to external emails with onboarding@resend.dev. ' +
-      'Set RESEND_FROM_EMAIL in Vercel (Environment Variables) to an address on your verified domain, e.g. "Pre Delivery <noreply@predelivery.ai>" or "reports@predelivery.ai". ' +
-      'Then redeploy. Resend → Domains shows predelivery.ai as Verified; the app must use that domain as the sender.'
+      'Cannot send to external addresses using onboarding@resend.dev. ' +
+        'Set RESEND_FROM_EMAIL to a sender on your verified domain (e.g. Pre Delivery <noreply@predelivery.ai>), ' +
+        'or set NEXT_PUBLIC_APP_URL / NEXTAUTH_URL to your live site URL so the app can default noreply@<your-domain>. ' +
+        'Resend → Domains must show that domain as verified.'
     );
   }
 }
