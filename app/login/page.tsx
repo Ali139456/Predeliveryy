@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home, Eye, EyeOff } from 'lucide-react';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 
 export default function LoginPage() {
@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [usePhone, setUsePhone] = useState(false);
   const [password, setPassword] = useState('');
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showResetPassword, setShowResetPassword] = useState(false);
@@ -311,18 +312,26 @@ export default function LoginPage() {
                     </button>
                   </div>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
                     <input
                       key={`login-password-${loginInputKey}`}
-                      type="password"
+                      type={showLoginPassword ? 'text' : 'password'}
                       name="password"
                       autoComplete="current-password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
-                      className="w-full pl-12 pr-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
+                      className="w-full pl-12 pr-12 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:border-gray-300 hover:bg-white focus:hover:bg-white"
                       placeholder="••••••••"
                     />
+                    <button
+                      type="button"
+                      aria-label={showLoginPassword ? 'Hide password' : 'Show password'}
+                      onClick={() => setShowLoginPassword((v) => !v)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-gray-500 hover:text-gray-800 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0033FF] focus-visible:ring-offset-1"
+                    >
+                      {showLoginPassword ? <EyeOff className="h-5 w-5" aria-hidden /> : <Eye className="h-5 w-5" aria-hidden />}
+                    </button>
                   </div>
                 </div>
 

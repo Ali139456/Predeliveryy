@@ -34,59 +34,119 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrImagePreview, setOcrImagePreview] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerStartPendingRef = useRef(false);
+  const scannerStartGenerationRef = useRef(0);
   const scannerContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const startScanning = async () => {
-    try {
-      setError(null);
+  const startScanning = () => {
+    if (scannerRef.current || scannerStartPendingRef.current) return;
+    setError(null);
+    // Mount #scanner-container first (it was only rendered after start — so the element never existed when start ran).
+    setIsScanning(true);
+    scannerStartPendingRef.current = true;
+    const gen = ++scannerStartGenerationRef.current;
+    window.setTimeout(async () => {
+      if (gen !== scannerStartGenerationRef.current) {
+        scannerStartPendingRef.current = false;
+        return;
+      }
+      const el = document.getElementById('scanner-container');
+      if (!el) {
+        setError('Scanner could not start. Please try again.');
+        setIsScanning(false);
+        scannerStartPendingRef.current = false;
+        return;
+      }
       const scanner = new Html5Qrcode('scanner-container');
-      scannerRef.current = scanner;
+      let lastErr: unknown;
+      try {
+        const tryConfigs = [{ facingMode: 'environment' } as const, { facingMode: 'user' } as const];
+        let started = false;
+        for (const cameraConfig of tryConfigs) {
+          try {
+            await scanner.start(
+              cameraConfig,
+              {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+              },
+              (decodedText) => {
+                let detectedType: 'VIN' | 'COMPLIANCE' | 'OTHER' = 'OTHER';
 
-      await scanner.start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
-        (decodedText) => {
-          let detectedType: 'VIN' | 'COMPLIANCE' | 'OTHER' = 'OTHER';
-          
-          if (isValidVIN(decodedText)) {
-            detectedType = 'VIN';
-            if (scanType === 'VIN' || scanType === 'ANY') {
-              onScan(decodedText, detectedType);
-              stopScanning();
+                if (isValidVIN(decodedText)) {
+                  detectedType = 'VIN';
+                  if (scanType === 'VIN' || scanType === 'ANY') {
+                    onScan(decodedText, detectedType);
+                    void stopScanning();
+                    return;
+                  }
+                } else if (isCompliancePlate(decodedText)) {
+                  detectedType = 'COMPLIANCE';
+                  if (scanType === 'COMPLIANCE' || scanType === 'ANY') {
+                    onScan(decodedText, detectedType);
+                    void stopScanning();
+                    return;
+                  }
+                } else if (scanType === 'ANY') {
+                  onScan(decodedText, detectedType);
+                  void stopScanning();
+                  return;
+                }
+              },
+              () => {}
+            );
+            if (gen !== scannerStartGenerationRef.current) {
+              try {
+                await scanner.stop();
+                scanner.clear();
+              } catch {
+                /* */
+              }
+              setIsScanning(false);
               return;
             }
-          } else if (isCompliancePlate(decodedText)) {
-            detectedType = 'COMPLIANCE';
-            if (scanType === 'COMPLIANCE' || scanType === 'ANY') {
-              onScan(decodedText, detectedType);
-              stopScanning();
-              return;
+            started = true;
+            scannerRef.current = scanner;
+            break;
+          } catch (e) {
+            lastErr = e;
+            try {
+              await scanner.stop();
+              scanner.clear();
+            } catch {
+              /* reset between camera attempts */
             }
-          } else if (scanType === 'ANY') {
-            onScan(decodedText, detectedType);
-            stopScanning();
-            return;
           }
-          
-          // If scan type doesn't match, continue scanning
-        },
-        (errorMessage) => {
-          // Ignore scanning errors
         }
-      );
-
-      setIsScanning(true);
-    } catch (err: any) {
-      setError(err.message || 'Failed to start scanner');
-      setIsScanning(false);
-    }
+        if (!started) {
+          try {
+            scanner.clear();
+          } catch {
+            /* */
+          }
+          throw lastErr ?? new Error('Failed to start scanner');
+        }
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (/Permission|NotAllowed|denied/i.test(msg)) {
+          setError('Camera access was blocked. Allow camera for this site, or use Upload image.');
+        } else if (/HTTPS|secure context/i.test(msg)) {
+          setError('Camera needs a secure (HTTPS) connection. Use Upload image on this device.');
+        } else {
+          setError(msg || 'Failed to start scanner');
+        }
+        setIsScanning(false);
+        scannerRef.current = null;
+      } finally {
+        scannerStartPendingRef.current = false;
+      }
+    }, 0);
   };
 
   const stopScanning = async () => {
+    scannerStartGenerationRef.current += 1;
+    scannerStartPendingRef.current = false;
     if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
@@ -282,14 +342,18 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
         />
       )}
 
-      {isScanning && (
-        <div className="relative">
-          <div id="scanner-container" ref={scannerContainerRef} className="w-full max-w-md mx-auto" />
+      <div className="relative" hidden={!isScanning}>
+        <div
+          id="scanner-container"
+          ref={scannerContainerRef}
+          className="w-full max-w-md mx-auto min-h-[260px] rounded-lg bg-black/[0.03]"
+        />
+        {isScanning && (
           <p className="text-sm text-gray-600 text-center mt-2">
             Point your camera at a barcode, QR code, or compliance plate to scan
           </p>
-        </div>
-      )}
+        )}
+      </div>
 
       {ocrImagePreview && (
         <div className="space-y-2">
