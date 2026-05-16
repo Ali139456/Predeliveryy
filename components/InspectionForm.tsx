@@ -34,6 +34,7 @@ import {
   formFieldClass,
   formProgressShellClass,
 } from '@/components/admin/AdminUI';
+import InspectionChecklistStep from '@/components/inspection/InspectionChecklistStep';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -1468,263 +1469,33 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   );
 
   const renderStep4 = () => {
-    const isExterior = (categoryName: string) => {
-      const name = categoryName?.toLowerCase() || '';
-      return name.includes('exterior') || name.includes('outside') || name.includes('external');
-    };
-
-    const isInterior = (categoryName: string) => {
-      const name = categoryName?.toLowerCase() || '';
-      return name.includes('interior') || name.includes('inside') || name.includes('internal');
-    };
+    const vehicleInfo = watch('vehicleInfo') || {};
+    const vinLabel =
+      (vehicleInfo.vin as string | undefined) ||
+      (barcodeType === 'VIN' ? barcode : '') ||
+      barcode ||
+      '';
+    const vehicleTitle =
+      [vehicleInfo.year, vehicleInfo.make, vehicleInfo.model].filter(Boolean).join(' ') ||
+      'Vehicle details';
 
     return (
-      <div className={`${formPanelClass} space-y-4`}>
-        <div className={formStepHeaderClass}>
-          <div className="flex items-center flex-1 min-w-0">
-            <div className={formStepBadgeClass}>
-              <span className="text-white font-bold text-lg">4</span>
-            </div>
-            <h2 className={formStepTitleClass}>Inspection Checklist</h2>
-          </div>
-          {!readOnly && inspectionId && (
-            <button
-              type="button"
-              onClick={saveChecklist}
-              disabled={sectionSaving.checklist}
-              className={`${formSaveBtnClass} text-sm`}
-            >
-              {sectionSaving.checklist ? (
-                <>
-                  <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent mr-1.5"></div>
-                  Saving...
-                </>
-              ) : sectionSaved.checklist ? (
-                <>
-                  <CheckCircle2 className="w-3 h-3 mr-1.5" />
-                  Saved!
-                </>
-              ) : (
-                <>
-                  <Save className="w-3 h-3 mr-1.5" />
-                  Save
-                </>
-              )}
-            </button>
-          )}
-        </div>
-
-        {/* Action Codes Legend */}
-        <div className="mb-6 pb-3 border-b border-slate-100">
-          <h3 className="text-sm font-bold text-slate-800 mb-2">Action Codes</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-slate-600">
-            <div className="flex items-center gap-2">
-              <span className="font-bold">OK</span>
-              <span>= Satisfactory</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold">C</span>
-              <span>= Clean</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold">A</span>
-              <span>= Adjust</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold">R</span>
-              <span>= Repair</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold">RP</span>
-              <span>= Replace</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold">N</span>
-              <span>= Not applicable</span>
-            </div>
-          </div>
-        </div>
-
-        {(() => {
-          const total = fields.length;
-          if (!total) {
-            return (
-              <div className="rounded-xl border border-slate-200/80 p-4 bg-slate-50 text-sm text-slate-600">
-                Checklist is loading…
-              </div>
-            );
-          }
-
-          const safeIndex = Math.max(0, Math.min(activeChecklistCategory, total - 1));
-          const category = fields[safeIndex];
-          if (!category) {
-            return (
-              <div className="rounded-xl border border-slate-200/80 p-4 bg-slate-50 text-sm text-slate-600">
-                Checklist is loading…
-              </div>
-            );
-          }
-          const categoryIndex = safeIndex;
-          const categoryName = category?.category || '';
-          const isExt = isExterior(categoryName);
-          const isInt = isInterior(categoryName);
-          const progressPct = Math.round(((categoryIndex + 1) / total) * 100);
-
-          return (
-            <>
-              <div className="mb-4">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                  <div className="text-sm font-semibold text-black">
-                    Section {categoryIndex + 1} of {total}
-                  </div>
-                  <div className="text-xs font-medium text-gray-600">
-                    {progressPct}% complete
-                  </div>
-                </div>
-                <div className="mt-2 h-2 w-full rounded-full bg-gray-200 overflow-hidden">
-                  <div className="h-full rounded-full bg-[#0033FF]" style={{ width: `${progressPct}%` }} />
-                </div>
-                <div className="mt-3 flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setActiveChecklistCategory((i) => Math.max(0, i - 1))}
-                    disabled={readOnly || categoryIndex === 0}
-                    className={`px-3 py-2 text-sm rounded-lg font-semibold transition-all border ${
-                      readOnly || categoryIndex === 0
-                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                        : 'bg-white text-black border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Previous section
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveChecklistCategory((i) => Math.min(total - 1, i + 1))}
-                    disabled={readOnly || categoryIndex >= total - 1}
-                    className={`px-3 py-2 text-sm rounded-lg font-semibold transition-all border ${
-                      readOnly || categoryIndex >= total - 1
-                        ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
-                        : 'bg-white text-black border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Next section
-                  </button>
-                </div>
-              </div>
-
-              <div
-                key={category.id}
-                className={`rounded-lg p-4 border ${
-                  isExt ? 'border-blue-200' : isInt ? 'border-amber-200' : 'border-gray-200'
-                }`}
-              >
-              <input type="hidden" {...register(`checklist.${categoryIndex}.category`)} />
-              <div className="flex items-center gap-2 mb-4 px-3 py-2.5 rounded-lg border bg-sky-50 border-sky-200">
-                {isExt && <span className="text-2xl shrink-0">🚗</span>}
-                {isInt && <span className="text-2xl shrink-0">🚙</span>}
-                <h3 className="text-base sm:text-lg font-bold tracking-tight text-slate-900">
-                  {categoryName || `Category ${categoryIndex + 1}`}
-                </h3>
-              </div>
-              <p className="text-xs text-gray-600 mb-3 -mt-1">
-                Voice to notes adds text to the notes field only. Choose OK, Repair, Replace, etc. from the status dropdown for each line.
-              </p>
-
-              {category.items?.map((item: any, itemIndex: number) => {
-                const itemPhotos = watch(`checklist.${categoryIndex}.items.${itemIndex}.photos`) ?? item.photos ?? [];
-                const itemStatus = watch(`checklist.${categoryIndex}.items.${itemIndex}.status`) ?? item.status;
-                const photoRequired = itemStatus === 'R' || itemStatus === 'RP';
-                return (
-                  <div 
-                    key={itemIndex} 
-                    className="mb-3 p-3 rounded-lg border border-sky-200/80 bg-[#e8f4ff]"
-                  >
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch sm:justify-between mb-2">
-                      <textarea
-                        {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)}
-                        disabled={readOnly}
-                        className={`flex-1 w-full min-w-0 px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-y min-h-[5.5rem] ${
-                          isExt 
-                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
-                            : isInt 
-                            ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
-                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                        placeholder="Inspection item (full description)"
-                        rows={4}
-                      />
-                      <select
-                        {...register(`checklist.${categoryIndex}.items.${itemIndex}.status`)}
-                        disabled={readOnly}
-                        className={`px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black font-medium w-full sm:w-auto sm:min-w-[12.5rem] sm:max-w-[14rem] shrink-0 self-stretch sm:self-auto ${
-                          isExt 
-                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400' 
-                            : isInt 
-                            ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400' 
-                            : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
-                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                      >
-                        <option value="OK">✅ OK - Satisfactory</option>
-                        <option value="C">🧹 C - Clean</option>
-                        <option value="A">🔧 A - Adjust</option>
-                        <option value="R">🔨 R - Repair</option>
-                        <option value="RP">🔄 RP - Replace</option>
-                        <option value="N">➖ N - Not applicable</option>
-                      </select>
-                    </div>
-                    <div className="mb-2">
-                      <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
-                        <span className="text-xs font-medium text-gray-600">Notes</span>
-                        <VoiceNotesButton
-                          disabled={readOnly}
-                          onAppend={(text) => {
-                            const key = `checklist.${categoryIndex}.items.${itemIndex}.notes`;
-                            const cur = (getValues(key as `checklist.${number}.items.${number}.notes`) as string) || '';
-                            setValue(key as `checklist.${number}.items.${number}.notes`, `${cur}${text}`, { shouldDirty: true });
-                          }}
-                        />
-                      </div>
-                      <textarea
-                        {...register(`checklist.${categoryIndex}.items.${itemIndex}.notes`)}
-                        placeholder="Type notes or use Voice to notes (e.g. damage rear bumper)"
-                        disabled={readOnly}
-                        className={`w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:bg-white transition-all bg-white text-black placeholder-gray-400 resize-none ${
-                          isExt
-                            ? 'border-blue-300 focus:ring-blue-500 focus:border-blue-400'
-                            : isInt
-                              ? 'border-amber-300 focus:ring-amber-500 focus:border-amber-400'
-                              : 'border-gray-300 focus:ring-[#0033FF] focus:border-[#0033FF]'
-                        } ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
-                        rows={3}
-                      />
-                    </div>
-                    <div>
-                      {photoRequired && (
-                        <p className="text-xs font-medium text-black/80 mb-1">
-                          Photos <span className="text-red-500">*</span> required (repair items only)
-                        </p>
-                      )}
-                      <ItemPhotoUpload
-                        photos={itemPhotos}
-                        onPhotosChange={(newPhotos: any) => {
-                          if (!readOnly) {
-                            setValue(`checklist.${categoryIndex}.items.${itemIndex}.photos`, newPhotos);
-                          }
-                        }}
-                        maxPhotos={5}
-                        itemName={item.item}
-                        categoryName={categoryName}
-                        readOnly={readOnly}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-              </div>
-            </>
-          );
-        })()}
-      </div>
+      <InspectionChecklistStep
+        fields={fields}
+        activeCategoryIndex={activeChecklistCategory}
+        onCategoryChange={setActiveChecklistCategory}
+        register={register}
+        watch={watch}
+        setValue={setValue}
+        getValues={getValues}
+        readOnly={readOnly}
+        inspectionId={inspectionId}
+        onSaveSection={saveChecklist}
+        sectionSaving={sectionSaving.checklist}
+        sectionSaved={sectionSaved.checklist}
+        vehicleTitle={vehicleTitle}
+        vinLabel={vinLabel}
+      />
     );
   };
 
@@ -1880,9 +1651,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <button
                 type="button"
                 onClick={handleFooterNext}
-                className="flex items-center justify-center px-4 py-2 text-sm rounded-xl font-semibold bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white shadow-md shadow-[#0033FF]/20 hover:brightness-105 transition-all w-full sm:w-auto"
+                className={`flex items-center justify-center rounded-xl font-semibold bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white shadow-md shadow-[#0033FF]/20 hover:brightness-105 transition-all w-full sm:w-auto ${
+                  currentStep === 4
+                    ? 'px-5 py-3.5 text-sm uppercase tracking-wide'
+                    : 'px-4 py-2 text-sm'
+                }`}
               >
-                Next
+                {currentStep === 4 ? 'Continue' : 'Next'}
                 <ChevronRight className="w-4 h-4 ml-1.5" />
               </button>
             ) : (

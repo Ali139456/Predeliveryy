@@ -1,8 +1,15 @@
 import type { IInspection, InspectionChecklistCategory, InspectionPhoto } from '@/types/db';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
+import {
+  isReportItemNotApplicable,
+  isReportItemPass,
+  isReportItemReview,
+  orderChecklistForReport,
+  reportCategorySummary,
+  reportItemStatusLabel,
+} from '@/lib/checklist-template';
 
-const DEFECT_STATUSES = new Set(['R', 'RP']);
-const REVIEW_STATUSES = new Set(['C', 'A', 'R', 'RP']);
+export { orderChecklistForReport, reportItemStatusLabel, reportCategorySummary } from '@/lib/checklist-template';
 
 const PDF_TIMEZONE_AU_EASTERN = 'Australia/Sydney';
 
@@ -59,33 +66,11 @@ export function getVehicleTitle(inspection: IInspection): string {
   return v.vin ? `VIN ${v.vin}` : 'Vehicle';
 }
 
-export function normalizeItemStatus(status: string): string {
-  return String(status || '').trim().toUpperCase();
-}
+/** @deprecated Use reportItemStatusLabel from checklist-template */
+export const itemStatusLabel = reportItemStatusLabel;
 
-export function itemStatusLabel(status: string): string {
-  const s = normalizeItemStatus(status);
-  if (s === 'OK' || s === 'N' || s === 'C') return 'PASS';
-  if (s === 'R' || s === 'RP') return 'REPAIR';
-  if (s === 'A') return 'ADJUST';
-  if (s === 'PASS') return 'PASS';
-  if (s === 'FAIL') return 'FAIL';
-  return s || '—';
-}
-
-export function isItemPassing(status: string): boolean {
-  const s = normalizeItemStatus(status);
-  return s === 'OK' || s === 'N' || s === 'C' || s === 'PASS';
-}
-
-export function categorySummary(category: InspectionChecklistCategory) {
-  const items = category.items || [];
-  const total = items.length;
-  const passed = items.filter((i) => isItemPassing(i.status)).length;
-  const hasDefect = items.some((i) => DEFECT_STATUSES.has(normalizeItemStatus(i.status)));
-  const categoryPass = total > 0 && !hasDefect && passed === total;
-  return { total, passed, categoryPass, hasDefect };
-}
+/** @deprecated Use reportCategorySummary from checklist-template */
+export const categorySummary = reportCategorySummary;
 
 export function computeReportResult(inspection: IInspection) {
   let hasDefect = false;
@@ -95,13 +80,14 @@ export function computeReportResult(inspection: IInspection) {
   for (const cat of inspection.checklist || []) {
     for (const item of cat.items || []) {
       total += 1;
-      const s = normalizeItemStatus(item.status);
-      if (DEFECT_STATUSES.has(s)) hasDefect = true;
-      if (REVIEW_STATUSES.has(s)) needsReview = true;
+      if (isReportItemReview(item.status)) {
+        needsReview = true;
+        hasDefect = true;
+      }
     }
   }
 
-  const isPass = !hasDefect;
+  const isPass = !needsReview;
   return { isPass, needsReview, hasDefect, total };
 }
 
@@ -153,13 +139,12 @@ export function buildReportNotes(inspection: IInspection): string {
   const lines: string[] = [];
   for (const cat of inspection.checklist || []) {
     for (const item of cat.items || []) {
-      const s = normalizeItemStatus(item.status);
-      if (DEFECT_STATUSES.has(s) || s === 'A') {
+      if (isReportItemReview(item.status)) {
         const note = item.notes?.trim();
         lines.push(
           note
             ? `${cat.category} — ${item.item}: ${note}`
-            : `${cat.category} — ${item.item} (${itemStatusLabel(item.status)})`
+            : `${cat.category} — ${item.item} (${reportItemStatusLabel(item.status)})`
         );
       }
     }
@@ -186,7 +171,7 @@ export function buildVerificationBadges(inspection: IInspection): VerificationBa
   const exteriorCat = (inspection.checklist || []).find((c) =>
     /exterior/i.test(c.category)
   );
-  const exteriorOk = exteriorCat ? categorySummary(exteriorCat).categoryPass : true;
+  const exteriorOk = exteriorCat ? reportCategorySummary(exteriorCat).categoryPass : true;
 
   return [
     {

@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, Send, Download, FileText, Lock, Printer, List } from 'lucide-react';
+import { ArrowLeft, Send, Download, FileText, Lock, List, Printer } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageContainer from '@/components/PageContainer';
 
@@ -191,24 +191,24 @@ function InspectionDetailContent() {
 
           <div className="flex flex-wrap gap-2">
             {isCompleted && (
-              <>
-                <button
-                  type="button"
-                  onClick={handlePrint}
-                  className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all text-sm sm:text-base"
-                >
-                  <Printer className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
-                  Print Report
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode(showReport ? 'form' : 'report')}
-                  className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-800 rounded-xl font-semibold border border-slate-300 hover:bg-slate-50 transition-all text-sm sm:text-base"
-                >
-                  <List className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
-                  {showReport ? 'View full form' : 'View report'}
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => setViewMode(showReport ? 'form' : 'report')}
+                className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-800 rounded-xl font-semibold border border-slate-300 hover:bg-slate-50 transition-all text-sm sm:text-base"
+              >
+                <List className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                {showReport ? 'View full form' : 'View report'}
+              </button>
+            )}
+            {showReport && isCompleted && (
+              <button
+                type="button"
+                onClick={handlePrint}
+                className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all text-sm sm:text-base"
+              >
+                <Printer className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                Print Report
+              </button>
             )}
             <button
               onClick={() => setEmailModalOpen(true)}
@@ -217,20 +217,22 @@ function InspectionDetailContent() {
               <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
               Email Report
             </button>
-            <button
-              onClick={handleExport}
-              disabled={exportingPdf}
-              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
-              Export PDF
-            </button>
+            {(!isCompleted || !showReport) && (
+              <button
+                onClick={handleExport}
+                disabled={exportingPdf}
+                className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                Export PDF
+              </button>
+            )}
           </div>
         </div>
 
         <div
           className={`bg-white rounded-2xl shadow-2xl border-2 border-[#0033FF]/30 print:shadow-none print:border-0 print:rounded-none ${
-            showReport ? 'p-2 sm:p-4 print:p-0' : 'p-4 sm:p-6 md:p-8'
+            showReport ? 'p-0 sm:p-1 print:p-0' : 'p-4 sm:p-6 md:p-8'
           }`}
         >
           <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">

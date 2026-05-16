@@ -1,7 +1,10 @@
 /**
- * Official Pre Delivery logo (`public/Transparent Logo.png` — transparent background).
+ * Official Pre Delivery logo — orange PD mark + white wordmark (`public/Transparent Logo.png`).
  */
 export const SITE_LOGO_SRC = '/Transparent%20Logo.png' as const;
+
+/** Same asset as SITE_LOGO_SRC; use on blue report/header backgrounds */
+export const SITE_LOGO_REPORT_SRC = SITE_LOGO_SRC;
 
 export const SITE_LOGO_ALT = 'Pre Delivery' as const;
 

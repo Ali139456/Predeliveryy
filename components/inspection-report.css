@@ -16,6 +16,35 @@
   box-shadow: 0 4px 24px rgba(0, 32, 96, 0.12);
 }
 
+/* Column flow: short categories sit beside tall ones — no empty row gaps */
+.report-checklist-grid {
+  column-count: 2;
+  column-gap: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .report-checklist-grid {
+    column-count: 4;
+  }
+}
+
+.report-checklist-category {
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+.report-section-tight {
+  padding: 0.5rem 0.75rem;
+}
+
+.report-vehicle-details {
+  width: 100%;
+}
+
 @media print {
   @page {
     size: A4 portrait;
@@ -44,10 +73,16 @@
   }
 
   .report-checklist-grid {
-    break-inside: avoid;
+    column-count: 2;
+    column-gap: 4px;
   }
 
   .report-photo-cell {
     break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report-page-1 {
+    break-after: auto;
   }
 }
