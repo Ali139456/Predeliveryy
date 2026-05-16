@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search, Download, Eye, Calendar, FileText, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
+import PageContainer from '@/components/PageContainer';
 
 const PdfExportProgress = dynamic(() => import('@/components/PdfExportProgress'), { ssr: false });
 
@@ -93,7 +94,7 @@ export default function InspectionsPage() {
           onComplete={handleExportComplete}
         />
       )}
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0">
+      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mt-4 mb-4 sm:mb-6 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group text-xs sm:text-sm backdrop-blur-md"
@@ -295,7 +296,7 @@ export default function InspectionsPage() {
             </div>
           </>
         )}
-      </div>
+      </PageContainer>
     </div>
   );
 }

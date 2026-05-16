@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Toast from '@/components/Toast';
+import PageContainer from '@/components/PageContainer';
 import { ArrowLeft, FileCheck, FileEdit, PlusCircle, X } from 'lucide-react';
 import Link from 'next/link';
 
@@ -137,7 +138,7 @@ export default function NewInspectionPage() {
   if (!user) {
     return (
       <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0 max-w-full">
+        <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
           {toast && (
             <Toast
               message={toast.message}
@@ -180,14 +181,14 @@ export default function NewInspectionPage() {
               </div>
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
     );
   }
 
   return (
     <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0 max-w-full">
+      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
         <Link
           href="/"
           className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mt-4 mb-4 sm:mb-8 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group text-xs sm:text-sm backdrop-blur-md"
@@ -234,7 +235,7 @@ export default function NewInspectionPage() {
           </h2>
           <InspectionForm />
         </div>
-      </div>
+      </PageContainer>
       {toast && (
         <Toast
           message={toast.message}

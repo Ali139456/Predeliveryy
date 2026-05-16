@@ -6,6 +6,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { ArrowLeft, Send, Download, FileText, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import PageContainer from '@/components/PageContainer';
 
 // Lazy load heavy components
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
@@ -110,7 +111,7 @@ function InspectionDetailContent() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-white overflow-x-hidden">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0">
+        <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
           <div className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mb-4 bg-white/70 text-black rounded-full border border-[#0033FF]/25 shadow-sm backdrop-blur-md text-xs sm:text-sm">
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#0033FF] flex items-center justify-center shadow-sm">
               <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-white/40 border-t-white" aria-hidden />
@@ -126,7 +127,7 @@ function InspectionDetailContent() {
               <div className="h-4 w-2/3 bg-gray-100 rounded animate-pulse" aria-hidden />
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
     );
   }
@@ -160,7 +161,7 @@ function InspectionDetailContent() {
           onComplete={handleExportComplete}
         />
       )}
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 pt-10 sm:pt-6 pb-6 sm:pb-8 min-w-0 max-w-full">
+      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"
@@ -238,7 +239,7 @@ function InspectionDetailContent() {
           onSend={handleEmailSend}
           inspectionNumber={inspection?.inspectionNumber}
         />
-      </div>
+      </PageContainer>
     </div>
   );
 }

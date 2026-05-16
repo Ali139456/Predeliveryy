@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import PageContainer from '@/components/PageContainer';
 
 type LegalSection = 'terms' | 'privacy';
 
@@ -29,7 +30,7 @@ export default function LegalPageShell({
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 lg:flex-row lg:gap-12">
+      <PageContainer className="flex flex-col gap-8 py-8 lg:flex-row lg:gap-12">
         {/* Sidebar */}
         <aside className="w-full shrink-0 lg:w-64">
           <div className="lg:sticky lg:top-8">
@@ -58,7 +59,7 @@ export default function LegalPageShell({
           </div>
           <div className="legal-doc text-gray-800">{children}</div>
         </main>
-      </div>
+      </PageContainer>
     </div>
   );
 }

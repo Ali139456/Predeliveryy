@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Mail, Send, MessageSquare, User, FileText, CheckCircle, AlertCircle } from 'lucide-react';
+import PageContainer from '@/components/PageContainer';
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: '',
@@ -57,7 +58,7 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-[#0033FF] via-[#0029CC] to-[#FF6600] py-20 sm:py-24 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <PageContainer className="relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6">
               Contact Us
@@ -66,13 +67,13 @@ export default function ContactPage() {
               Have a question? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
             </p>
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Contact Form Section */}
       <div className="relative bg-white py-20 sm:py-24 overflow-hidden">
         
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <PageContainer className="relative z-10">
           <div className="max-w-3xl mx-auto">
             <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 overflow-hidden">
               <div className="p-8 sm:p-12">
@@ -211,7 +212,7 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-        </div>
+        </PageContainer>
       </div>
     </div>
   );

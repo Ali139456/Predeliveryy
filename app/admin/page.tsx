@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 import AnalyticsTab from './components/AnalyticsTab';
+import PageContainer from '@/components/PageContainer';
 
 interface Stats {
   inspections: {
@@ -114,7 +115,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-white pt-2 sm:pt-4 md:pt-6 min-w-0">
       {/* Tabs — sticky so they stay visible on mobile while scrolling; horizontal scroll for long labels */}
       <div className="sticky top-36 sm:top-32 md:top-36 lg:top-40 z-40 bg-white border-b border-[#0033FF]/30 shadow-lg">
-        <div className="container mx-auto px-3 sm:px-4 max-w-full min-w-0">
+        <PageContainer>
           <p className="sr-only">Dashboard sections. Swipe sideways on small screens to see all tabs.</p>
           <div className="flex gap-1 overflow-x-auto overflow-y-visible overscroll-x-contain pb-px -mb-px snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
             <button
@@ -168,11 +169,11 @@ export default function AdminDashboard() {
               ⚙️ Settings
             </button>
           </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
+      <PageContainer className="py-4 sm:py-6 md:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} onRefetch={fetchStats} />}
         {activeTab === 'analytics' && <AnalyticsTab />}
         {activeTab === 'users' && (
@@ -180,7 +181,7 @@ export default function AdminDashboard() {
         )}
         {activeTab === 'audit' && <AuditLogTab />}
         {activeTab === 'settings' && <SettingsTab />}
-      </div>
+      </PageContainer>
     </div>
   );
 }
