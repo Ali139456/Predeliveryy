@@ -23,6 +23,7 @@ import {
   Trash2
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
+import AnalyticsTab from './components/AnalyticsTab';
 
 interface Stats {
   inspections: {
@@ -50,7 +51,7 @@ export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'audit' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'users' | 'audit' | 'settings'>('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -127,6 +128,16 @@ export default function AdminDashboard() {
               📊 Overview
             </button>
             <button
+              onClick={() => setActiveTab('analytics')}
+              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
+                activeTab === 'analytics'
+                  ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
+                  : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
+              }`}
+            >
+              📈 Analytics
+            </button>
+            <button
               onClick={() => setActiveTab('users')}
               className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
                 activeTab === 'users'
@@ -163,6 +174,7 @@ export default function AdminDashboard() {
       {/* Content */}
       <div className="container mx-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} onRefetch={fetchStats} />}
+        {activeTab === 'analytics' && <AnalyticsTab />}
         {activeTab === 'users' && (
           <UsersTab userRole={user?.role} userTenantId={user?.tenantId as string | undefined} />
         )}

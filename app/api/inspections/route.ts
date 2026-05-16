@@ -7,6 +7,7 @@ import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
+import { syncInspectionAnalytics } from '@/lib/analytics-sync';
 
 export async function POST(request: NextRequest) {
   try {
@@ -88,6 +89,14 @@ export async function POST(request: NextRequest) {
         status: body.status ?? 'draft',
       },
     });
+
+    if (inspection && (inspection as InspectionRow).status === 'completed') {
+      try {
+        await syncInspectionAnalytics(supabase, inspection as InspectionRow);
+      } catch (syncErr) {
+        console.error('[analytics-sync] create', syncErr);
+      }
+    }
 
     return NextResponse.json({ success: true, data: inspectionData }, { status: 201 });
   } catch (error: unknown) {

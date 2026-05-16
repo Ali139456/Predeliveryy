@@ -7,6 +7,7 @@ import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
+import { deleteInspectionAnalytics, syncInspectionAnalytics } from '@/lib/analytics-sync';
 
 async function getInspectionAndUser(request: NextRequest, id: string) {
   const user = await getCurrentUser(request);
@@ -120,6 +121,12 @@ export async function PUT(
       ua
     ).catch(() => {});
 
+    try {
+      await syncInspectionAnalytics(supabase, updated as InspectionRow);
+    } catch (syncErr) {
+      console.error('[analytics-sync] update', syncErr);
+    }
+
     return NextResponse.json({ success: true, data: inspectionRowToInspection(updated as InspectionRow) });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -153,6 +160,12 @@ export async function DELETE(
       .single();
     if (!row) {
       return NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 });
+    }
+
+    try {
+      await deleteInspectionAnalytics(supabase, params.id);
+    } catch (syncErr) {
+      console.error('[analytics-sync] delete', syncErr);
     }
 
     const { error } = await supabase.from('inspections').delete().eq('id', params.id).eq('tenant_id', user.tenantId);

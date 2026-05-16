@@ -5,6 +5,7 @@ import { logAuditEventWithUser } from '@/lib/audit';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { enforceRateLimit } from '@/lib/rateLimit';
+import { deleteInspectionAnalytics } from '@/lib/analytics-sync';
 
 const bulkDeleteSchema = z.object({
   ids: z.array(z.string().uuid()).min(1).max(150),
@@ -40,6 +41,13 @@ export async function POST(request: NextRequest) {
     const { ids } = parsed.data;
 
     const supabase = getSupabase();
+    for (const id of ids) {
+      try {
+        await deleteInspectionAnalytics(supabase, id);
+      } catch {
+        /* continue */
+      }
+    }
     const { error } = await supabase.from('inspections').delete().in('id', ids).eq('tenant_id', user.tenantId);
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 500 });
 
