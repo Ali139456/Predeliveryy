@@ -735,6 +735,8 @@ function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?
                         ? 'bg-red-100 text-red-700'
                         : user.role === 'manager'
                         ? 'bg-blue-100 text-blue-700'
+                        : user.role === 'viewer'
+                        ? 'bg-amber-100 text-amber-800'
                         : 'bg-green-100 text-green-700'
                     } shadow-md`}>
                       {user.role}
@@ -1255,6 +1257,9 @@ function AddUserModal({
               <option value="manager" className="text-gray-900 bg-white">
                 Manager
               </option>
+              <option value="viewer" className="text-gray-900 bg-white">
+                Client viewer (read-only)
+              </option>
               <option value="admin" className="text-gray-900 bg-white">
                 Admin
               </option>
@@ -1583,6 +1588,9 @@ function EditUserModal({
               </option>
               <option value="manager" className="text-gray-900 bg-white">
                 Manager
+              </option>
+              <option value="viewer" className="text-gray-900 bg-white">
+                Client viewer (read-only)
               </option>
               <option value="admin" className="text-gray-900 bg-white">
                 Admin

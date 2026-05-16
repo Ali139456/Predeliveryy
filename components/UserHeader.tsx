@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { LogOut, User, LayoutDashboard, Home, Menu, X, MoreVertical, Settings, Edit, FileCheck, Search } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
+import { canMutateInspections } from '@/lib/roles';
 
 /** Slightly smaller on mobile than legacy h-28 to avoid clipping; stable sizes md+ for desktop nav balance */
 const LOGO_CLASS =
@@ -278,7 +279,7 @@ function UserHeader() {
               </Link>
             )}
 
-            {/* New Inspection & View Inspections - for all logged-in users */}
+            {canMutateInspections(user.role ?? '') && (
             <Link
               href="/inspection/new"
               onClick={() => setMobileMenuOpen(false)}
@@ -291,6 +292,7 @@ function UserHeader() {
               <FileCheck className="w-4 h-4 mr-2" />
               <span>New Inspection</span>
             </Link>
+            )}
             <Link
               href="/inspections"
               onClick={() => setMobileMenuOpen(false)}
@@ -437,6 +439,7 @@ function UserHeader() {
                   </Link>
                 )}
 
+                {canMutateInspections(user.role ?? '') && (
                 <Link
                   href="/inspection/new"
                   onClick={() => setMobileMenuOpen(false)}
@@ -449,6 +452,7 @@ function UserHeader() {
                   <FileCheck className="mr-3 h-5 w-5 shrink-0" />
                   <span>New Inspection</span>
                 </Link>
+                )}
 
                 <Link
                   href="/inspections"

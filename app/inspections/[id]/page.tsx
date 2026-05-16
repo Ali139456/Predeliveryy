@@ -8,6 +8,7 @@ import { ArrowLeft, Send, FileText, Lock, List, Printer, ClipboardCheck, Pencil 
 import { useAuth } from '@/contexts/AuthContext';
 import PageContainer from '@/components/PageContainer';
 import { captureInspectionReportHtml } from '@/lib/capture-report-html';
+import { isReadOnlyRole } from '@/lib/roles';
 
 // Lazy load heavy components
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
@@ -222,7 +223,7 @@ function InspectionDetailContent() {
                   String(inspection.inspectorEmail || '').toLowerCase();
               const readOnly = !user
                 ? false
-                : isReadOnlyView || (!isOwner && user.role !== 'admin');
+                : isReadOnlyView || isReadOnlyRole(user.role ?? '') || (user.role !== 'admin' && !isOwner);
               const statusLabel = inspection.status === 'completed' ? 'Completed' : 'Draft';
 
               return (
@@ -307,7 +308,9 @@ function InspectionDetailContent() {
                   inspection &&
                   String(user.email || '').toLowerCase() ===
                     String(inspection.inspectorEmail || '').toLowerCase();
-                return !user ? false : isReadOnlyView || (!isOwner && user.role !== 'admin');
+                return !user
+                  ? false
+                  : isReadOnlyView || isReadOnlyRole(user.role ?? '') || (user.role !== 'admin' && !isOwner);
               })()}
             />
           )}

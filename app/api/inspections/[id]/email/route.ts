@@ -13,6 +13,7 @@ import type { InspectionRow } from '@/types/db';
 import { logAuditEvent } from '@/lib/audit';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { z } from 'zod';
+import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
 
 const emailRecipientsSchema = z.object({
   recipients: z.array(z.string().email().max(320)).min(1).max(25),
@@ -41,6 +42,9 @@ export async function POST(
     if (!userDoc) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
+    if (!canMutateInspections(userDoc.role)) {
+      return NextResponse.json({ success: false, error: 'Read-only access' }, { status: 403 });
+    }
 
     const raw = await request.json();
     const parsed = emailRecipientsSchema.safeParse(raw);
@@ -64,7 +68,10 @@ export async function POST(
     }
     const inspection = inspectionRowToInspection(row as InspectionRow);
 
-    if (userDoc.role !== 'admin' && inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()) {
+    if (
+      !canViewAllTenantInspections(userDoc.role) &&
+      inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()
+    ) {
       return NextResponse.json(
         { success: false, error: 'Forbidden: You can only email your own inspections' },
         { status: 403 }

@@ -33,6 +33,13 @@ export default function LoginPage() {
   const [loginInputKey, setLoginInputKey] = useState(0);
   const prevPathnameRef = useRef<string | null>(null);
   const [passwordResetDone, setPasswordResetDone] = useState(false);
+  const [mfaStep, setMfaStep] = useState<'login' | 'verify' | 'setup'>('login');
+  const [mfaToken, setMfaToken] = useState<string | null>(null);
+  const [setupToken, setSetupToken] = useState<string | null>(null);
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaSecret, setMfaSecret] = useState<string | null>(null);
+  const [mfaOtpAuthUrl, setMfaOtpAuthUrl] = useState<string | null>(null);
+  const [mfaAdminEmail, setMfaAdminEmail] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('reset') === '1') {
@@ -78,6 +85,8 @@ export default function LoginPage() {
     }
     if (authUser.role === 'admin' || authUser.role === 'manager') {
       router.replace('/admin');
+    } else if (authUser.role === 'viewer') {
+      router.replace('/inspections');
     } else {
       router.replace('/');
     }
@@ -101,7 +110,35 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.requiresMfa) {
+        setMfaStep('verify');
+        setMfaToken(data.mfaToken);
+        setMfaAdminEmail(data.user?.email ?? email);
+        setPassword('');
+        return;
+      }
+
+      if (data.success && data.requiresMfaSetup) {
+        setMfaStep('setup');
+        setSetupToken(data.setupToken);
+        setMfaAdminEmail(data.user?.email ?? email);
+        setPassword('');
+        const setupRes = await fetch('/api/auth/mfa/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ setupToken: data.setupToken }),
+        });
+        const setupData = await setupRes.json();
+        if (setupData.success) {
+          setMfaSecret(setupData.secret);
+          setMfaOtpAuthUrl(setupData.otpauthUrl);
+        } else {
+          setError(setupData.error || 'Failed to start MFA setup');
+        }
+        return;
+      }
+
+      if (data.success && data.user) {
         setEmail('');
         setPhoneNumber('');
         setPassword('');
@@ -124,6 +161,59 @@ export default function LoginPage() {
       setPassword('');
       setLoginInputKey((k) => k + 1);
       setTimeout(() => setLoginInputKey((k) => k + 1), 0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMfaVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/auth/mfa/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mfaToken, code: mfaCode }),
+      });
+      const data = await response.json();
+      if (data.success && data.user) {
+        setMfaCode('');
+        setMfaStep('login');
+        setMfaToken(null);
+        hydrateSession(data.user);
+      } else {
+        setError(data.error || 'Invalid code');
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Verification failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMfaSetupConfirm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/auth/mfa/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ setupToken, code: mfaCode }),
+      });
+      const data = await response.json();
+      if (data.success && data.user) {
+        setMfaCode('');
+        setMfaStep('login');
+        setSetupToken(null);
+        setMfaSecret(null);
+        hydrateSession(data.user);
+      } else {
+        setError(data.error || 'Invalid code');
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Setup failed');
     } finally {
       setLoading(false);
     }
@@ -230,6 +320,100 @@ export default function LoginPage() {
               <p className="text-gray-600 text-sm sm:text-base">Sign in to your account to continue</p>
             </div>
 
+              {mfaStep === 'verify' && (
+              <form onSubmit={handleMfaVerify} className="space-y-6" autoComplete="off">
+                <p className="text-sm text-gray-600">
+                  Enter the 6-digit code from your authenticator app
+                  {mfaAdminEmail ? ` for ${mfaAdminEmail}` : ''}.
+                </p>
+                {error && (
+                  <div role="alert" className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
+                    <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-700 font-medium">{error}</p>
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-2">Authentication code</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={6}
+                    value={mfaCode}
+                    onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    required
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] bg-white text-black tracking-[0.3em] text-center text-lg font-mono"
+                    placeholder="000000"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading || mfaCode.length !== 6}
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white rounded-xl font-bold disabled:opacity-50"
+                >
+                  {loading ? 'Verifying...' : 'Verify & sign in'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMfaStep('login');
+                    setMfaToken(null);
+                    setMfaCode('');
+                    setError(null);
+                  }}
+                  className="w-full text-sm text-gray-600 hover:text-[#0033FF]"
+                >
+                  Back to sign in
+                </button>
+              </form>
+              )}
+
+              {mfaStep === 'setup' && (
+              <form onSubmit={handleMfaSetupConfirm} className="space-y-6" autoComplete="off">
+                <p className="text-sm text-gray-600">
+                  Admin accounts require two-factor authentication. Add this account to Google Authenticator (or similar), then enter a code to continue.
+                </p>
+                {error && (
+                  <div role="alert" className="p-4 bg-red-50 border-2 border-red-200 rounded-xl flex items-start">
+                    <AlertCircle className="w-5 h-5 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-700 font-medium">{error}</p>
+                  </div>
+                )}
+                {mfaSecret && (
+                  <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 text-sm space-y-2">
+                    <p className="font-semibold text-gray-900">Manual setup key</p>
+                    <p className="font-mono text-xs break-all text-gray-800 select-all">{mfaSecret}</p>
+                    {mfaOtpAuthUrl && (
+                      <a href={mfaOtpAuthUrl} className="inline-block text-[#0033FF] hover:underline text-xs font-medium">
+                        Open in authenticator app
+                      </a>
+                    )}
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-semibold text-black mb-2">Verification code</label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={mfaCode}
+                    onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    required
+                    className="w-full px-4 py-3.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] bg-white text-black tracking-[0.3em] text-center text-lg font-mono"
+                    placeholder="000000"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading || mfaCode.length !== 6}
+                  className="w-full flex items-center justify-center px-6 py-4 bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white rounded-xl font-bold disabled:opacity-50"
+                >
+                  {loading ? 'Enabling…' : 'Enable MFA & sign in'}
+                </button>
+              </form>
+              )}
+
+              {mfaStep === 'login' && (
               <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off">
                 {passwordResetDone && (
                   <div
@@ -366,6 +550,7 @@ export default function LoginPage() {
                   )}
                 </button>
               </form>
+              )}
             </div>
         </div>
       </div>

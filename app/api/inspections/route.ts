@@ -8,6 +8,7 @@ import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
 import { syncInspectionAnalytics } from '@/lib/analytics-sync';
+import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
 
 export async function POST(request: NextRequest) {
   try {
@@ -23,6 +24,9 @@ export async function POST(request: NextRequest) {
     const userDoc = await getUserById(user.userId);
     if (!userDoc) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
+    }
+    if (!canMutateInspections(userDoc.role)) {
+      return NextResponse.json({ success: false, error: 'Read-only access' }, { status: 403 });
     }
 
     const raw = await request.json();
@@ -132,7 +136,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
       .limit(100);
 
-    if (userDoc.role !== 'admin') {
+    if (!canViewAllTenantInspections(userDoc.role)) {
       query = query.eq('inspector_email', userDoc.email.toLowerCase());
     }
 

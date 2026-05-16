@@ -2,7 +2,7 @@
 
 import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
 
-export type UserRole = 'technician' | 'manager' | 'admin';
+export type UserRole = 'technician' | 'manager' | 'admin' | 'viewer';
 
 export interface TenantRow {
   id: string;
@@ -28,6 +28,8 @@ export interface UserRow {
   role: UserRole;
   is_active: boolean;
   organization?: string | null;
+  mfa_secret?: string | null;
+  mfa_enabled?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -41,6 +43,7 @@ export interface IUser {
   role: UserRole;
   isActive: boolean;
   organization?: string | null;
+  mfaEnabled?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -191,6 +194,7 @@ export function userRowToUser(row: UserRow): IUser & { _id?: string } {
     role: row.role,
     isActive: row.is_active,
     organization: row.organization ?? null,
+    mfaEnabled: Boolean(row.mfa_enabled),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

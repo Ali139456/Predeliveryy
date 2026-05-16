@@ -9,6 +9,7 @@ import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
 import { deleteInspectionAnalytics, syncInspectionAnalytics } from '@/lib/analytics-sync';
+import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
 
 async function getInspectionAndUser(request: NextRequest, id: string) {
   const user = await getCurrentUser(request);
@@ -24,7 +25,10 @@ async function getInspectionAndUser(request: NextRequest, id: string) {
     .single();
   if (error || !row) return { error: NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 }) };
   const inspection = inspectionRowToInspection(row as InspectionRow);
-  if (userDoc.role !== 'admin' && inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()) {
+  if (
+    !canViewAllTenantInspections(userDoc.role) &&
+    inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()
+  ) {
     return { error: NextResponse.json({ success: false, error: 'Forbidden: You can only view your own inspections' }, { status: 403 }) };
   }
   return { user, userDoc, inspection, supabase };
@@ -75,6 +79,9 @@ export async function PUT(
     const result = await getInspectionAndUser(request, params.id);
     if ('error' in result) return result.error;
     const { user, userDoc, inspection, supabase } = result;
+    if (!canMutateInspections(userDoc.role)) {
+      return NextResponse.json({ success: false, error: 'Read-only access' }, { status: 403 });
+    }
     if (userDoc.role !== 'admin') {
       const inspectorMatches =
         !inspection.inspectorEmail ||

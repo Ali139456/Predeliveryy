@@ -6,6 +6,8 @@ import { requireAuth } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { logAuditEvent } from '@/lib/audit';
 import { validateUploadBuffer } from '@/lib/secureUpload';
+import { canUploadFiles } from '@/lib/roles';
+import { getUserById } from '@/lib/db-users';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
@@ -46,6 +48,10 @@ export async function POST(request: NextRequest) {
     }
 
     const user = await requireAuth()(request);
+    const userDoc = await getUserById(user.userId);
+    if (!userDoc || !canUploadFiles(userDoc.role)) {
+      return NextResponse.json({ success: false, error: 'Read-only access' }, { status: 403, headers: corsHeaders });
+    }
     if (request.method !== 'POST') {
       return NextResponse.json(
         { success: false, error: `Method ${request.method} not allowed. Only POST is supported.` },

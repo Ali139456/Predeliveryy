@@ -13,6 +13,35 @@ export interface JWTPayload {
   tenantId: string;
 }
 
+type MfaPendingPayload = {
+  userId: string;
+  purpose: 'mfa_pending' | 'mfa_setup';
+};
+
+export function enforceAdminMfa(): boolean {
+  return process.env.ENFORCE_ADMIN_MFA === 'true';
+}
+
+export async function generateMfaPendingToken(
+  userId: string,
+  purpose: 'mfa_pending' | 'mfa_setup'
+): Promise<string> {
+  return jwt.sign({ userId, purpose }, JWT_SECRET as string, { expiresIn: '10m' });
+}
+
+export async function verifyMfaPendingToken(
+  token: string,
+  expectedPurpose: 'mfa_pending' | 'mfa_setup'
+): Promise<{ userId: string } | null> {
+  try {
+    const payload = jwt.verify(token, JWT_SECRET as string) as MfaPendingPayload;
+    if (payload.purpose !== expectedPurpose || !payload.userId) return null;
+    return { userId: payload.userId };
+  } catch {
+    return null;
+  }
+}
+
 export async function generateToken(user: { id: string; email: string; role: string; tenantId: string }): Promise<string> {
   return jwt.sign(
     {

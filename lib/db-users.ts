@@ -63,3 +63,38 @@ export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt(10);
   return bcrypt.hash(password, salt);
 }
+
+export async function getUserMfaFields(
+  userId: string
+): Promise<{ mfaEnabled: boolean; mfaSecret: string | null } | null> {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from('users')
+    .select('mfa_enabled, mfa_secret')
+    .eq('id', userId)
+    .single();
+  if (error || !data) return null;
+  const row = data as { mfa_enabled?: boolean; mfa_secret?: string | null };
+  return {
+    mfaEnabled: Boolean(row.mfa_enabled),
+    mfaSecret: row.mfa_secret ?? null,
+  };
+}
+
+export async function setUserMfaSecret(userId: string, secret: string): Promise<boolean> {
+  const supabase = getSupabase();
+  const { error } = await supabase
+    .from('users')
+    .update({ mfa_secret: secret, mfa_enabled: false, updated_at: new Date().toISOString() })
+    .eq('id', userId);
+  return !error;
+}
+
+export async function enableUserMfa(userId: string): Promise<boolean> {
+  const supabase = getSupabase();
+  const { error } = await supabase
+    .from('users')
+    .update({ mfa_enabled: true, updated_at: new Date().toISOString() })
+    .eq('id', userId);
+  return !error;
+}

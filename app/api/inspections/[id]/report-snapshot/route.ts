@@ -11,6 +11,7 @@ import {
   saveClientReportHtml,
 } from '@/lib/report-snapshot';
 import { z } from 'zod';
+import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
 
 export const maxDuration = 60;
 
@@ -32,6 +33,9 @@ export async function POST(
     if (!userDoc) {
       return NextResponse.json({ success: false, error: 'User not found' }, { status: 404 });
     }
+    if (!canMutateInspections(userDoc.role)) {
+      return NextResponse.json({ success: false, error: 'Read-only access' }, { status: 403 });
+    }
 
     const supabase = getSupabase();
     const { data: row, error } = await supabase
@@ -47,7 +51,7 @@ export async function POST(
 
     const inspection = inspectionRowToInspection(row as InspectionRow);
     if (
-      userDoc.role !== 'admin' &&
+      !canViewAllTenantInspections(userDoc.role) &&
       inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()
     ) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });

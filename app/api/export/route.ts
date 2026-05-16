@@ -12,6 +12,7 @@ import { inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 import { logAuditEvent } from '@/lib/audit';
 import { enforceRateLimit } from '@/lib/rateLimit';
+import { canViewAllTenantInspections } from '@/lib/roles';
 
 // Allow up to 60s for PDF generation (Vercel Pro). Hobby plan caps at 10s.
 export const maxDuration = 60;
@@ -50,7 +51,10 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ success: false, error: 'Inspection not found' }, { status: 404 });
       }
       const inspection = inspectionRowToInspection(row as InspectionRow);
-      if (userDoc.role !== 'admin' && inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()) {
+      if (
+        !canViewAllTenantInspections(userDoc.role) &&
+        inspection.inspectorEmail?.toLowerCase() !== userDoc.email.toLowerCase()
+      ) {
         return NextResponse.json(
           { success: false, error: 'Forbidden: You can only export your own inspections' },
           { status: 403 }
@@ -104,7 +108,7 @@ export async function GET(request: NextRequest) {
       .select('*')
       .eq('tenant_id', user.tenantId)
       .order('created_at', { ascending: false });
-    if (userDoc.role !== 'admin') {
+    if (!canViewAllTenantInspections(userDoc.role)) {
       query = query.eq('inspector_email', userDoc.email.toLowerCase());
     }
     const startDate = searchParams.get('startDate');

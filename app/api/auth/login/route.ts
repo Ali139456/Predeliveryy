@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getUserByEmail, getUserByPhone, comparePassword } from '@/lib/db-users';
-import { generateToken } from '@/lib/auth';
+import {
+  enforceAdminMfa,
+  generateMfaPendingToken,
+  generateToken,
+} from '@/lib/auth';
+import { getUserMfaFields } from '@/lib/db-users';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { logAuditEvent } from '@/lib/audit';
 import { notifyUserOfLoginEmail } from '@/lib/email';
@@ -47,6 +52,41 @@ export async function POST(request: NextRequest) {
     const isPasswordValid = user.password && (await comparePassword(user.password, password));
     if (!isPasswordValid) {
       return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    if (user.role === 'admin') {
+      const mfa = await getUserMfaFields(user.id);
+      const mustUseMfa = enforceAdminMfa() || Boolean(mfa?.mfaEnabled);
+
+      if (mustUseMfa && !mfa?.mfaEnabled) {
+        const setupToken = await generateMfaPendingToken(user.id, 'mfa_setup');
+        return NextResponse.json({
+          success: true,
+          requiresMfaSetup: true,
+          setupToken,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          },
+        });
+      }
+
+      if (mfa?.mfaEnabled && mfa.mfaSecret) {
+        const mfaToken = await generateMfaPendingToken(user.id, 'mfa_pending');
+        return NextResponse.json({
+          success: true,
+          requiresMfa: true,
+          mfaToken,
+          user: {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          },
+        });
+      }
     }
 
     const token = await generateToken({
