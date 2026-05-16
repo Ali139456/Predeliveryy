@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
-import { generatePDF } from '@/lib/pdfGenerator';
+import { generateReportPdf } from '@/app/api/inspections/report-pdf/generate';
 import { sendEmailWithPDF } from '@/lib/email';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
@@ -67,16 +67,30 @@ export async function POST(
       );
     }
 
-    // Lighter PDF for email (capped + compressed images). Resend ~40MB; keep margin for API/base64.
+    const origin = (() => {
+      if (request.nextUrl.origin && request.nextUrl.origin !== 'null') {
+        return request.nextUrl.origin;
+      }
+      if (process.env.NEXT_PUBLIC_APP_URL) {
+        return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '');
+      }
+      if (process.env.VERCEL_URL) {
+        const v = process.env.VERCEL_URL;
+        return v.startsWith('http') ? v : `https://${v}`;
+      }
+      return 'http://localhost:3000';
+    })();
+
+    // Same HTML layout as Print Report; photo caps keep under Resend size limit (~40MB).
     const RESEND_EMAIL_SIZE_LIMIT_BYTES = 34 * 1024 * 1024;
     let pdfBuffer: Buffer;
     try {
-      pdfBuffer = await generatePDF(inspection, { forEmail: true });
+      pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true });
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
-        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 18 });
+        pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true, maxPhotos: 18 });
       }
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
-        pdfBuffer = await generatePDF(inspection, { forEmail: true, maxChecklistPhotosEmail: 10 });
+        pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true, maxPhotos: 10 });
       }
     } catch (pdfError: unknown) {
       const msg = pdfError instanceof Error ? pdfError.message : 'Unknown error';

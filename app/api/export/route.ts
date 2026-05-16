@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
+import { generateReportPdf } from '@/app/api/inspections/report-pdf/generate';
 import { generatePDF } from '@/lib/pdfGenerator';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
@@ -53,7 +54,17 @@ export async function GET(request: NextRequest) {
       }
 
       try {
-        const pdfBuffer = await generatePDF(inspection);
+        const origin =
+          request.nextUrl.origin ||
+          process.env.NEXT_PUBLIC_APP_URL ||
+          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+
+        let pdfBuffer: Buffer;
+        try {
+          pdfBuffer = await generateReportPdf(inspection, { origin });
+        } catch {
+          pdfBuffer = await generatePDF(inspection);
+        }
         if (!pdfBuffer || pdfBuffer.length === 0) {
           return NextResponse.json({ success: false, error: 'Failed to generate PDF - empty buffer' }, { status: 500 });
         }

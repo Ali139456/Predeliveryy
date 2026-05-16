@@ -217,16 +217,14 @@ function InspectionDetailContent() {
               <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
               Email Report
             </button>
-            {(!isCompleted || !showReport) && (
-              <button
-                onClick={handleExport}
-                disabled={exportingPdf}
-                className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
-                Export PDF
-              </button>
-            )}
+            <button
+              onClick={handleExport}
+              disabled={exportingPdf}
+              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+            >
+              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+              Export PDF
+            </button>
           </div>
         </div>
 

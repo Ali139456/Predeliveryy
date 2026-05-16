@@ -69,7 +69,7 @@ function resolvePdfImageSource(photo: string | { fileName?: string; url?: string
 }
 
 // Helper function to load image as base64 (fileName can be a path or a full URL)
-async function loadImageAsBase64(fileName: string): Promise<string | null> {
+export async function loadImageAsBase64(fileName: string): Promise<string | null> {
   try {
     const fromSigned = tenantKeyFromAppSignedPhotoUrl(fileName);
     if (fromSigned) {

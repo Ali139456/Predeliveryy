@@ -8,6 +8,7 @@ const nextConfig = {
     turbo: {
       root: path.resolve(__dirname),
     },
+    serverComponentsExternalPackages: ['@sparticuz/chromium', 'puppeteer-core'],
   },
   images: {
     remotePatterns: [
