@@ -219,7 +219,7 @@ export default function AnalyticsTab() {
                     <YAxis tick={{ fontSize: 11, fill: '#64748b' }} allowDecimals={false} />
                     <Tooltip
                       contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
-                      formatter={(value: number) => [value, 'Inspections']}
+                      formatter={(value) => [Number(value ?? 0), 'Inspections']}
                     />
                     <Area type="monotone" dataKey="count" stroke="#0033FF" strokeWidth={2} fill="url(#volumeFill)" />
                   </AreaChart>
@@ -243,8 +243,8 @@ export default function AnalyticsTab() {
                       <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 10, fill: '#64748b' }} />
                       <Tooltip
                         contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
-                        formatter={(value: number, _n, props) => [
-                          value,
+                        formatter={(value, _n, props) => [
+                          Number(value ?? 0),
                           (props as { payload?: { fullName?: string } }).payload?.fullName || 'Defects',
                         ]}
                       />
