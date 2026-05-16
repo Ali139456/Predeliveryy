@@ -10,7 +10,7 @@ const COOKIE_OPTS = {
 };
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { provider: string } }
 ) {
   if (!isOAuthProvider(params.provider)) {
@@ -18,16 +18,18 @@ export async function GET(
   }
 
   try {
+    const origin = request.nextUrl.origin;
     const state = createOAuthState();
-    const url = buildAuthorizeUrl(params.provider, state);
+    const url = buildAuthorizeUrl(params.provider, state, origin);
     const response = NextResponse.redirect(url);
     response.cookies.set('oauth_state', state, COOKIE_OPTS);
     response.cookies.set('oauth_provider', params.provider, COOKIE_OPTS);
+    response.cookies.set('oauth_origin', origin, COOKIE_OPTS);
     return response;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'OAuth not configured';
     return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(message)}`, _request.nextUrl.origin)
+      new URL(`/login?error=${encodeURIComponent(message)}`, request.nextUrl.origin)
     );
   }
 }

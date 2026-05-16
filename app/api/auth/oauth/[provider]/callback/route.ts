@@ -37,8 +37,11 @@ export async function GET(
     return loginRedirect(request, { error: 'Invalid OAuth state. Please try again.' });
   }
 
+  const oauthOrigin =
+    request.cookies.get('oauth_origin')?.value || request.nextUrl.origin;
+
   try {
-    const profile = await profileFromOAuthCode(params.provider, code);
+    const profile = await profileFromOAuthCode(params.provider, code, oauthOrigin);
     const user = await getUserByEmail(profile.email);
 
     if (!user || !user.isActive) {
@@ -101,6 +104,7 @@ export async function GET(
     });
     response.cookies.delete('oauth_state');
     response.cookies.delete('oauth_provider');
+    response.cookies.delete('oauth_origin');
 
     await logAuditEventWithUser(
       user.tenantId,

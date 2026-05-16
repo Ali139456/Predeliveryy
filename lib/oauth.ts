@@ -14,16 +14,21 @@ export function appOrigin(): string {
   return base;
 }
 
-export function oauthRedirectUri(provider: OAuthProvider): string {
-  return `${appOrigin()}/api/auth/oauth/${provider}/callback`;
+export function resolveOAuthOrigin(requestOrigin?: string): string {
+  if (requestOrigin) return requestOrigin.replace(/\/$/, '');
+  return appOrigin();
+}
+
+export function oauthRedirectUri(provider: OAuthProvider, requestOrigin?: string): string {
+  return `${resolveOAuthOrigin(requestOrigin)}/api/auth/oauth/${provider}/callback`;
 }
 
 export function createOAuthState(): string {
   return randomBytes(24).toString('hex');
 }
 
-export function buildAuthorizeUrl(provider: OAuthProvider, state: string): string {
-  const redirectUri = encodeURIComponent(oauthRedirectUri(provider));
+export function buildAuthorizeUrl(provider: OAuthProvider, state: string, requestOrigin?: string): string {
+  const redirectUri = encodeURIComponent(oauthRedirectUri(provider, requestOrigin));
   const encodedState = encodeURIComponent(state);
 
   if (provider === 'google') {
@@ -62,8 +67,12 @@ type TokenResponse = {
   token_type?: string;
 };
 
-async function exchangeCode(provider: OAuthProvider, code: string): Promise<TokenResponse> {
-  const redirectUri = oauthRedirectUri(provider);
+async function exchangeCode(
+  provider: OAuthProvider,
+  code: string,
+  requestOrigin?: string
+): Promise<TokenResponse> {
+  const redirectUri = oauthRedirectUri(provider, requestOrigin);
   const body = new URLSearchParams({
     code,
     grant_type: 'authorization_code',
@@ -140,9 +149,10 @@ async function profileFromMicrosoft(accessToken: string, idToken?: string): Prom
 
 export async function profileFromOAuthCode(
   provider: OAuthProvider,
-  code: string
+  code: string,
+  requestOrigin?: string
 ): Promise<{ email: string; name?: string; provider: OAuthProvider }> {
-  const tokens = await exchangeCode(provider, code);
+  const tokens = await exchangeCode(provider, code, requestOrigin);
   const profile =
     provider === 'google'
       ? await profileFromGoogle(tokens.access_token)

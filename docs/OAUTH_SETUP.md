@@ -4,8 +4,9 @@
 
 1. [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → **Credentials**
 2. Create **OAuth client ID** (Web application)
-3. Authorized redirect URI:
+3. Authorized redirect URIs (add **both** if you use www and non-www):
    - `https://www.predelivery.ai/api/auth/oauth/google/callback`
+   - `https://predelivery.ai/api/auth/oauth/google/callback`
    - `http://localhost:3000/api/auth/oauth/google/callback` (dev)
 4. Vercel env:
    - `GOOGLE_CLIENT_ID`
