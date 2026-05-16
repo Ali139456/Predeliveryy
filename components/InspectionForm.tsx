@@ -1681,7 +1681,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                         }}
                         maxPhotos={5}
                         itemName={item.item}
-                        categoryName={checklist[categoryIndex]?.category}
+                        categoryName={categoryName}
                         readOnly={readOnly}
                       />
                     </div>
