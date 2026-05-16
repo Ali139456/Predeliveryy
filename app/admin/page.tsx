@@ -236,7 +236,7 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <AdminStatCard title="Total Inspections" value={stats?.inspections.total || 0} icon={FileText} accent="blue" />
         <AdminStatCard title="Completed" value={stats?.inspections.completed || 0} icon={CheckCircle} accent="green" />
         <AdminStatCard title="Drafts" value={stats?.inspections.draft || 0} icon={Clock} accent="amber" />

@@ -1788,20 +1788,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     <form onSubmit={(e) => { e.preventDefault(); }} className="app-surface w-full max-w-7xl mx-auto space-y-4 px-3 sm:px-4 min-w-0 max-w-full pb-8">
       {!readOnly && (
         <div className={formProgressShellClass}>
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-slate-600">
-            <span className="font-semibold text-slate-900">
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-white">
+            <span className="font-semibold text-white">
               Step {currentStep} of {totalSteps}
-              <span className="text-slate-500 font-normal"> — {steps[currentStep - 1]?.title}</span>
+              <span className="text-white/85 font-normal"> — {steps[currentStep - 1]?.title}</span>
             </span>
             {currentStep === 4 && fields.length > 0 && (
-              <span className="text-[#0033FF] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
+              <span className="text-[#7eb8ff] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
                 Checklist {activeChecklistCategory + 1}/{fields.length}
                 {activeCategoryTitle ? `: ${activeCategoryTitle}` : ''}
               </span>
             )}
-            <span className="text-slate-400 tabular-nums font-medium">{overallProgressPercent}%</span>
+            <span className="text-white tabular-nums font-medium">{overallProgressPercent}%</span>
           </div>
-          <div className="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
+          <div className="mt-2 h-2 w-full rounded-full bg-white/20 overflow-hidden">
             <div
               className="h-full rounded-full bg-[#0033FF] transition-[width] duration-300 ease-out"
               style={{ width: `${overallProgressPercent}%` }}
@@ -1817,7 +1817,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   className={`inline-flex items-center gap-1 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold border max-w-[42vw] sm:max-w-none ${
                     currentStep === s.number
                       ? 'bg-[#0033FF] text-white border-[#0033FF] shadow-sm'
-                      : 'bg-slate-100 text-slate-600 border-slate-200'
+                      : 'bg-white/10 text-white/75 border-white/20'
                   }`}
                 >
                   <Icon className="w-3 h-3 opacity-90 shrink-0" aria-hidden />

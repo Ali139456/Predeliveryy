@@ -1,0 +1,53 @@
+/* Screen + print layout for Pre-Delivery HTML report */
+.inspection-report-root {
+  --report-navy: #002060;
+  --report-blue: #0033ff;
+  --report-orange: #ff6600;
+  --report-row-alt: #eef4fc;
+  --report-border: #c5d4e8;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #0f172a;
+}
+
+.inspection-report-sheet {
+  max-width: 210mm;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0, 32, 96, 0.12);
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 6mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .inspection-report-root {
+    padding: 0 !important;
+  }
+
+  .inspection-report-sheet {
+    box-shadow: none !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .report-checklist-grid {
+    break-inside: avoid;
+  }
+
+  .report-photo-cell {
+    break-inside: avoid;
+  }
+}

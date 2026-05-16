@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, Send, Download, FileText, Lock } from 'lucide-react';
+import { ArrowLeft, Send, Download, FileText, Lock, Printer, List } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageContainer from '@/components/PageContainer';
 
@@ -24,6 +24,15 @@ const EmailModal = dynamic(() => import('@/components/EmailModal'), {
 
 const PdfExportProgress = dynamic(() => import('@/components/PdfExportProgress'), { ssr: false });
 
+const InspectionReportView = dynamic(() => import('@/components/InspectionReportView'), {
+  loading: () => (
+    <div className="flex items-center justify-center py-12">
+      <div className="animate-spin rounded-full h-8 w-8 border-4 border-slate-200 border-t-[#0033FF]" />
+    </div>
+  ),
+  ssr: false,
+});
+
 function InspectionDetailContent() {
   const params = useParams();
   const router = useRouter();
@@ -34,8 +43,15 @@ function InspectionDetailContent() {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'report' | 'form'>('report');
 
   const isReadOnlyView = searchParams.get('view') === 'readonly';
+  const isCompleted = inspection?.status === 'completed';
+  const showReport = isCompleted && viewMode === 'report';
+
+  const handlePrint = () => {
+    if (typeof window !== 'undefined') window.print();
+  };
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -161,8 +177,8 @@ function InspectionDetailContent() {
           onComplete={handleExportComplete}
         />
       )}
-      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
+      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8 print:pt-0 print:pb-0">
+        <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"
             className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mt-4 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group w-fit text-xs sm:text-sm backdrop-blur-md"
@@ -174,6 +190,26 @@ function InspectionDetailContent() {
           </Link>
 
           <div className="flex flex-wrap gap-2">
+            {isCompleted && (
+              <>
+                <button
+                  type="button"
+                  onClick={handlePrint}
+                  className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all text-sm sm:text-base"
+                >
+                  <Printer className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                  Print Report
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setViewMode(showReport ? 'form' : 'report')}
+                  className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-800 rounded-xl font-semibold border border-slate-300 hover:bg-slate-50 transition-all text-sm sm:text-base"
+                >
+                  <List className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                  {showReport ? 'View full form' : 'View report'}
+                </button>
+              </>
+            )}
             <button
               onClick={() => setEmailModalOpen(true)}
               className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#FF6600] text-white rounded-xl font-semibold hover:bg-[#E65C00] transition-all hover:scale-105 shadow-lg shadow-[#FF6600]/30 text-sm sm:text-base"
@@ -192,12 +228,19 @@ function InspectionDetailContent() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 border-2 border-[#0033FF]/30">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
+        <div
+          className={`bg-white rounded-2xl shadow-2xl border-2 border-[#0033FF]/30 print:shadow-none print:border-0 print:rounded-none ${
+            showReport ? 'p-2 sm:p-4 print:p-0' : 'p-4 sm:p-6 md:p-8'
+          }`}
+        >
+          <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
             <div className="min-w-0">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-black truncate">
-                Inspection: {inspection.inspectionNumber}
+                {showReport ? 'Inspection Report' : `Inspection: ${inspection.inspectionNumber}`}
               </h1>
+              {showReport && (
+                <p className="text-sm text-slate-600 mt-1">{inspection.inspectionNumber}</p>
+              )}
             </div>
             <div className="flex flex-wrap gap-2 shrink-0">
               {(() => {
@@ -223,14 +266,22 @@ function InspectionDetailContent() {
               })()}
             </div>
           </div>
-          <InspectionForm 
-            inspectionId={params.id as string} 
-            initialData={inspection}
-            readOnly={(() => {
-              const isOwner = user && inspection && String(user.email || '').toLowerCase() === String(inspection.inspectorEmail || '').toLowerCase();
-              return !user ? false : (isReadOnlyView || (!isOwner && user.role !== 'admin'));
-            })()}
-          />
+          {showReport ? (
+            <InspectionReportView inspection={inspection} />
+          ) : (
+            <InspectionForm
+              inspectionId={params.id as string}
+              initialData={inspection}
+              readOnly={(() => {
+                const isOwner =
+                  user &&
+                  inspection &&
+                  String(user.email || '').toLowerCase() ===
+                    String(inspection.inspectorEmail || '').toLowerCase();
+                return !user ? false : isReadOnlyView || (!isOwner && user.role !== 'admin');
+              })()}
+            />
+          )}
         </div>
 
         <EmailModal

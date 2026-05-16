@@ -132,17 +132,17 @@ export function AdminStatCard({
   const a = ACCENT[accent];
   return (
     <div
-      className={`group relative overflow-hidden rounded-2xl bg-white p-5 sm:p-6 shadow-sm hover:shadow-lg border border-slate-200/80 ring-1 ${a.ring} transition-all duration-300 hover:-translate-y-0.5`}
+      className={`group relative overflow-hidden rounded-2xl bg-white p-4 sm:p-6 shadow-sm hover:shadow-lg border border-slate-200/80 ring-1 ${a.ring} transition-all duration-300 hover:-translate-y-0.5`}
     >
       <div className={`absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b ${a.bar}`} />
-      <div className="flex items-start justify-between gap-3 pl-2">
+      <div className="flex items-start justify-between gap-2 sm:gap-3 pl-2">
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
-          <p className="text-3xl sm:text-4xl font-bold text-slate-900 mt-2 tracking-tight tabular-nums">{value}</p>
-          {sub ? <div className="mt-2 text-sm text-slate-500">{sub}</div> : null}
+          <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 leading-tight">{title}</p>
+          <p className="text-2xl sm:text-4xl font-bold text-slate-900 mt-1.5 sm:mt-2 tracking-tight tabular-nums">{value}</p>
+          {sub ? <div className="mt-1.5 sm:mt-2 text-xs sm:text-sm text-slate-500">{sub}</div> : null}
         </div>
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${a.icon}`}>
-          <Icon className="w-5 h-5" />
+        <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 ${a.icon}`}>
+          <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
         </div>
       </div>
     </div>
@@ -363,4 +363,4 @@ export const formSaveBtnClass =
 export const formFieldClass =
   'w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0033FF]/25 focus:border-[#0033FF] transition-all';
 export const formProgressShellClass =
-  'sticky top-0 z-30 -mx-0.5 px-3 py-3 mb-2 rounded-2xl bg-white/95 border border-slate-200/80 shadow-sm backdrop-blur-md';
+  'sticky top-0 z-30 -mx-0.5 px-3 py-3 mb-2 rounded-2xl bg-black border border-white/15 shadow-lg shadow-black/30';
