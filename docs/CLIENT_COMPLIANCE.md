@@ -1,24 +1,34 @@
 # Client compliance matrix (Pre Delivery)
 
+Last updated: implementation pass for remaining security items.
+
 | Requirement | Status | Notes |
-|-------------|--------|-------|
-| Multi-tenant isolation (`tenant_id`) | Done | API filters by tenant; RLS on app tables |
-| Roles: admin, technician, manager | Done | |
-| Client viewer (read-only) | Done | Role `viewer` — tenant-wide view, no edits/uploads |
-| Admin MFA (TOTP) | Done | Enable with `ENFORCE_ADMIN_MFA=true`; setup at first admin login |
-| Private object storage | Partial | S3 module in `infra/terraform`; app also supports Supabase Storage |
-| AWS Sydney (`ap-southeast-2`) | In progress | Terraform defaults to Sydney; point Supabase project to same region |
-| Signed file URLs | Done | `/api/files/signed` |
-| Audit logs (immutable) | Done | Migration `004_audit_logs_immutable.sql` |
-| Rate limiting | Done | `lib/rateLimit` |
-| Dev / staging / prod separation | Process | Separate Supabase projects + env vars per environment |
-| Daily backups + restore test | Ops | Supabase/AWS backup policies + quarterly restore drill |
-| Malware scan on uploads | Partial | MIME/size checks in `lib/secureUpload.ts`; add AV scanner (e.g. ClamAV/Lambda) for production |
-| Field-level VIN encryption | Optional | Rely on DB-at-rest + tenant isolation unless client mandates app-level encryption |
+|-------------|--------|--------|
+| Multi-tenant isolation | **Done** | `tenant_id` on API; cross-tenant key prefix on files |
+| RLS enforced | **Done** | Tables RLS on; `012` denies anon/authenticated direct access |
+| Tenant ID DB + API | **Done** | |
+| Hosting AWS Sydney | **Partial** | S3 `ap-southeast-2` ✅; app on Vercel; confirm Supabase region |
+| JWT authentication | **Done** | |
+| OAuth Google + Microsoft | **Done*** | *Requires env + OAuth app registration (`docs/OAUTH_SETUP.md`) |
+| Admin MFA (TOTP) | **Done** | `ENFORCE_ADMIN_MFA` |
+| RBAC Admin / Inspector / Client | **Done** | `admin` / `technician` / `viewer` (+ `manager`) |
+| Audit: logins | **Done** | incl. OAuth |
+| Audit: data access | **Done** | inspection view/list, file access, export |
+| Audit immutable | **Done** | `004_audit_logs_immutable.sql` |
+| Audit exportable | **Done** | Admin audit API |
+| Encryption at rest | **Done** | Supabase + S3 AES-256 |
+| TLS in transit | **Done** | HTTPS |
+| Daily backup / 30-day / restore test | **Ops** | `docs/BACKUP_RESTORE_RUNBOOK.md` |
+| Rate limiting | **Done** | |
+| Input validation | **Done** | Zod |
+| File upload scanning | **Done*** | VirusTotal optional; `UPLOAD_MALWARE_SCAN` + `VIRUSTOTAL_API_KEY` |
+| Secure secrets | **Partial** | Vercel env; use AWS Secrets Manager for full compliance |
+| Full app on AWS | **Planned** | Vercel → Amplify/ECS Sydney (Phase 2) |
 
-## Deploy checklist
+## New migrations to run
 
-1. Run Supabase migration `011_viewer_role_and_admin_mfa.sql` on each environment.
-2. Set `ENFORCE_ADMIN_MFA=true` in production when admins have enrolled MFA.
-3. Apply `infra/terraform` for Sydney S3; wire bucket credentials into Vercel/hosting env.
-4. Confirm Supabase project region is **Asia Pacific (Sydney)** or equivalent.
+- `012_rls_deny_anon.sql`
+
+## New env vars
+
+See `.env.local.example` for OAuth and malware scan.

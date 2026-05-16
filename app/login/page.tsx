@@ -40,11 +40,48 @@ export default function LoginPage() {
   const [mfaSecret, setMfaSecret] = useState<string | null>(null);
   const [mfaOtpAuthUrl, setMfaOtpAuthUrl] = useState<string | null>(null);
   const [mfaAdminEmail, setMfaAdminEmail] = useState<string | null>(null);
+  const [oauthProviders, setOauthProviders] = useState<{ google: boolean; microsoft: boolean }>({
+    google: false,
+    microsoft: false,
+  });
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('reset') === '1') {
-      setPasswordResetDone(true);
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('reset') === '1') setPasswordResetDone(true);
+    const err = params.get('error');
+    if (err) setError(decodeURIComponent(err));
+    if (params.get('requiresMfa') === '1' && params.get('mfaToken')) {
+      setMfaStep('verify');
+      setMfaToken(params.get('mfaToken'));
     }
+    if (params.get('requiresMfaSetup') === '1' && params.get('setupToken')) {
+      setMfaStep('setup');
+      setSetupToken(params.get('setupToken'));
+      const token = params.get('setupToken')!;
+      fetch('/api/auth/mfa/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ setupToken: token }),
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) {
+            setMfaSecret(data.secret);
+            setMfaOtpAuthUrl(data.otpauthUrl);
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    fetch('/api/auth/oauth/providers')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.providers) setOauthProviders(data.providers);
+      })
+      .catch(() => {});
   }, []);
 
   /** Clear when navigating *to* /login from another route (not on first mount / refresh). */
@@ -528,6 +565,28 @@ export default function LoginPage() {
                     </button>
                   </div>
                 </div>
+
+                {(oauthProviders.google || oauthProviders.microsoft) && (
+                  <div className="space-y-2">
+                    <p className="text-center text-xs text-gray-500 uppercase tracking-wide">Or continue with</p>
+                    {oauthProviders.google && (
+                      <a
+                        href="/api/auth/oauth/google"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-800 hover:border-gray-300 hover:bg-gray-50"
+                      >
+                        Sign in with Google
+                      </a>
+                    )}
+                    {oauthProviders.microsoft && (
+                      <a
+                        href="/api/auth/oauth/microsoft"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-gray-800 hover:border-gray-300 hover:bg-gray-50"
+                      >
+                        Sign in with Microsoft
+                      </a>
+                    )}
+                  </div>
+                )}
 
                 <button
                   type="submit"

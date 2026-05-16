@@ -146,6 +146,8 @@ function escapeHtml(s: string): string {
 function roleLabelForLoginEmail(role: string): string {
   if (role === 'technician') return 'Inspector';
   if (role === 'admin') return 'Administrator';
+  if (role === 'viewer') return 'Client viewer';
+  if (role === 'manager') return 'Manager';
   return role;
 }
 

@@ -8,6 +8,7 @@ import { logAuditEvent } from '@/lib/audit';
 import { validateUploadBuffer } from '@/lib/secureUpload';
 import { canUploadFiles } from '@/lib/roles';
 import { getUserById } from '@/lib/db-users';
+import { scanUploadBuffer } from '@/lib/malware-scan';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
@@ -119,6 +120,20 @@ export async function POST(request: NextRequest) {
     const uploadCheck = validateUploadBuffer(contentType, buffer);
     if (!uploadCheck.ok) {
       return NextResponse.json({ success: false, error: uploadCheck.error }, { status: 400, headers: corsHeaders });
+    }
+
+    const scan = await scanUploadBuffer(buffer, safeName);
+    if (!scan.safe) {
+      await logAuditEvent(request, {
+        action: 'file.upload_blocked',
+        resourceType: 'file',
+        resourceId: key,
+        details: { reason: 'malware_scan', detail: scan.detail },
+      });
+      return NextResponse.json(
+        { success: false, error: scan.detail || 'File failed security scan' },
+        { status: 400, headers: corsHeaders }
+      );
     }
     
     // Extract EXIF metadata using the buffer (non-blocking - don't fail upload if this fails)

@@ -36,6 +36,12 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# terraform local state (never commit secrets/state)
+infra/terraform/.terraform/
+infra/terraform/*.tfstate
+infra/terraform/*.tfstate.*
+infra/terraform/terraform.tfvars
+
 # local env files
 .env*.local
 .env
