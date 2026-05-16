@@ -13,7 +13,7 @@ const LOGO_CLASS =
   'h-24 sm:h-20 md:h-24 lg:h-24 w-auto max-w-[85vw] sm:max-w-[78vw] object-contain object-left';
 
 function UserHeader() {
-  const { user, loading, setUser, refetch } = useAuth();
+  const { user, loading, clearSession, refetch } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -39,21 +39,19 @@ function UserHeader() {
 
   const handleLogout = useCallback(async () => {
     try {
-      setUser(null);
+      clearSession();
       if (typeof window !== 'undefined') {
         sessionStorage.clear();
         localStorage.clear();
       }
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-      router.push('/login');
-      router.refresh();
+      router.replace('/login');
     } catch (error) {
       console.error('Logout error:', error);
-      setUser(null);
-      router.push('/login');
-      router.refresh();
+      clearSession();
+      router.replace('/login');
     }
-  }, [router, setUser]);
+  }, [router, clearSession]);
 
   // Login and password-reset use their own compact top bar
   if (pathname === '/login' || pathname === '/reset-password') {
@@ -517,7 +515,7 @@ function UserHeader() {
             user={user}
             onClose={() => {
               setShowProfileModal(false);
-              refetch();
+              void refetch({ silent: true });
             }}
           />
         )}

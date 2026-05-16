@@ -1104,9 +1104,35 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       
       const imageData = imageCache.get(imageSrc) ?? (fileName ? imageCache.get(fileName) : null) ?? null;
       await addImageToPDF(doc, imageData, x, y, photoWidth, photoHeight, fileName);
+
+      const photoObj = typeof photo === 'object' && photo ? (photo as Record<string, unknown>) : null;
+      const slot = (photoObj?.metadata as { slot?: string } | undefined)?.slot;
+      const aiSummary = (photoObj?.metadata as { aiDamage?: { summary?: string } } | undefined)?.aiDamage?.summary;
+      const genMarkers =
+        photoObj && Array.isArray((photoObj as { damageMarkers?: { label: string }[] }).damageMarkers)
+          ? (photoObj as { damageMarkers: { label: string }[] }).damageMarkers
+          : null;
+      let captionY = y + photoHeight + 2;
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(80, 80, 80);
+      if (slot) {
+        doc.text(String(slot).replace(/^./, (c) => c.toUpperCase()), x, captionY);
+        captionY += 3;
+      }
+      if (genMarkers?.length) {
+        doc.setTextColor(90, 50, 30);
+        const txt = `Damage: ${genMarkers.map((m) => m.label).join('; ')}`;
+        doc.text(txt.length > 70 ? `${txt.slice(0, 67)}…` : txt, x, captionY);
+      } else if (aiSummary) {
+        doc.setFont('helvetica', 'italic');
+        doc.setTextColor(90, 50, 30);
+        const txt = `AI: ${aiSummary}`;
+        doc.text(txt.length > 70 ? `${txt.slice(0, 67)}…` : txt, x, captionY);
+      }
       
       if ((i + 1) % photosPerRow === 0 || i === generalPhotos.length - 1) {
-        yPos = y + photoHeight + photoSpacing;
+        yPos = y + photoHeight + photoSpacing + (slot || genMarkers?.length || aiSummary ? 8 : 0);
       }
     }
     
@@ -1307,6 +1333,10 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
           typeof photo === 'object' && photo && Array.isArray((photo as { damageMarkers?: { label: string }[] }).damageMarkers)
             ? (photo as { damageMarkers: { label: string }[] }).damageMarkers
             : null;
+        const aiSummary =
+          typeof photo === 'object' && photo
+            ? (photo as { metadata?: { aiDamage?: { summary?: string } } }).metadata?.aiDamage?.summary
+            : undefined;
         if (markers?.length) {
           doc.setFontSize(7);
           doc.setFont('helvetica', 'normal');
@@ -1314,6 +1344,12 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
           const txt = `Damage: ${markers.map((m) => m.label).join('; ')}`;
           const short = txt.length > 95 ? `${txt.slice(0, 92)}…` : txt;
           doc.text(short, x, y + itemPhotoHeight + 3);
+        } else if (aiSummary) {
+          doc.setFontSize(7);
+          doc.setFont('helvetica', 'italic');
+          doc.setTextColor(90, 50, 30);
+          const short = aiSummary.length > 95 ? `${aiSummary.slice(0, 92)}…` : aiSummary;
+          doc.text(`AI note: ${short}`, x, y + itemPhotoHeight + 3);
         }
         
         if ((i + 1) % 3 === 0 || i === itemPhotosSlice.length - 1) {

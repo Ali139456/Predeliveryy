@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { LogIn, Mail, Lock, AlertCircle, KeyRound, Home, Eye, EyeOff } from 'lucide-react';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -27,6 +28,7 @@ export default function LoginPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const router = useRouter();
   const pathname = usePathname();
+  const { user: authUser, loading: authLoading, hydrateSession } = useAuth();
   /** Remount inputs so browser autofill cannot leave stale values after we clear state */
   const [loginInputKey, setLoginInputKey] = useState(0);
   const prevPathnameRef = useRef<string | null>(null);
@@ -50,6 +52,36 @@ export default function LoginPage() {
     setError(null);
     setLoginInputKey((k) => k + 1);
   }, [pathname]);
+
+  /** Already signed in (e.g. opened /login in a new tab): skip the form and go to the app. */
+  useEffect(() => {
+    if (pathname !== '/login' || authLoading) return;
+    if (!authUser) return;
+    const redirectParam =
+      typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null;
+    const safeRedirect = (() => {
+      if (!redirectParam || redirectParam.includes('://') || redirectParam.includes('\\')) return null;
+      const pathPart = redirectParam.split('?')[0];
+      if (!pathPart.startsWith('/') || pathPart.startsWith('//')) return null;
+      if (
+        pathPart.startsWith('/inspections') ||
+        pathPart.startsWith('/inspection/') ||
+        pathPart.startsWith('/admin')
+      ) {
+        return redirectParam;
+      }
+      return null;
+    })();
+    if (safeRedirect) {
+      router.replace(safeRedirect);
+      return;
+    }
+    if (authUser.role === 'admin' || authUser.role === 'manager') {
+      router.replace('/admin');
+    } else {
+      router.replace('/');
+    }
+  }, [pathname, authLoading, authUser, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,29 +107,7 @@ export default function LoginPage() {
         setPassword('');
         setError(null);
         setLoginInputKey((k) => k + 1);
-        const redirectParam =
-          typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('redirect') : null;
-        const safeRedirect = (() => {
-          if (!redirectParam || redirectParam.includes('://') || redirectParam.includes('\\')) return null;
-          const pathPart = redirectParam.split('?')[0];
-          if (!pathPart.startsWith('/') || pathPart.startsWith('//')) return null;
-          if (
-            pathPart.startsWith('/inspections') ||
-            pathPart.startsWith('/inspection/') ||
-            pathPart.startsWith('/admin')
-          ) {
-            return redirectParam;
-          }
-          return null;
-        })();
-        if (safeRedirect) {
-          router.push(safeRedirect);
-        } else if (data.user.role === 'admin' || data.user.role === 'manager') {
-          router.push('/admin');
-        } else {
-          router.push('/');
-        }
-        router.refresh();
+        hydrateSession(data.user);
       } else {
         setError(data.error || 'Login failed');
         setEmail('');

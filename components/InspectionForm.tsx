@@ -806,9 +806,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             message: 'Inspection completed successfully!',
             type: 'success'
           });
-          // Redirect to the inspection detail page
           setTimeout(() => {
-          window.location.href = `/inspections/${result.data._id}`;
+            router.push(`/inspections/${result.data._id}`);
           }, 1500);
         } else {
           const errorMessage = result.error || 'Failed to create inspection. Please try again.';
@@ -871,9 +870,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           message: 'Inspection completed successfully!',
           type: 'success'
         });
-        // Redirect to the inspection detail page
         setTimeout(() => {
-          window.location.href = `/inspections/${idToUse}`;
+          router.push(`/inspections/${idToUse}`);
         }, 1500);
       } else {
         setToast({
@@ -1378,16 +1376,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
         <div className="space-y-4">
           <p className="text-sm font-semibold text-black">General photos</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {(['front', 'rear', 'left', 'right'] as const).map((slot) => {
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {(['front', 'rear', 'bonnet', 'left', 'right', 'tyres'] as const).map((slot) => {
               const slotLabel =
                 slot === 'front'
                   ? 'Photo – front of vehicle'
                   : slot === 'rear'
                     ? 'Photo – rear of vehicle'
-                    : slot === 'left'
-                      ? 'Photo – left side of vehicle'
-                      : 'Photo – right side of vehicle';
+                    : slot === 'bonnet'
+                      ? 'Photo – bonnet / hood'
+                      : slot === 'left'
+                        ? 'Photo – left side of vehicle'
+                        : slot === 'right'
+                          ? 'Photo – right side of vehicle'
+                          : 'Photo – tyres / wheels';
 
               const slotPhotos = (photos as any[])
                 .map((p: any) => (typeof p === 'string' ? { fileName: p } : p))
@@ -1679,6 +1681,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                         }}
                         maxPhotos={5}
                         itemName={item.item}
+                        categoryName={checklist[categoryIndex]?.category}
                         readOnly={readOnly}
                       />
                     </div>

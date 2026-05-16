@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, useRef, memo, useCallback } from 'react';
-import { X, Camera, Image as ImageIcon, MapPin } from 'lucide-react';
+import { useState, useRef, memo, useCallback, useEffect } from 'react';
+import { X, Camera, Image as ImageIcon, MapPin, Sparkles, Loader2 } from 'lucide-react';
 import ImageLightbox from './ImageLightbox';
 import CameraCaptureModal from './CameraCaptureModal';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
+import { requestVisionDamageDetect } from '@/lib/visionDamageClient';
+import { applyVisionResultToPhoto } from '@/lib/applyVisionToPhoto';
+import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
 
 export interface DamageMarker {
   id: string;
@@ -28,6 +31,7 @@ export interface PhotoData {
     longitude?: number;
     format?: string;
     bytes?: number;
+    aiDamage?: PhotoAiDamageMetadata;
     [key: string]: unknown;
   } | null;
 }
@@ -37,7 +41,10 @@ interface ItemPhotoUploadProps {
   onPhotosChange: (photos: PhotoData[]) => void;
   maxPhotos?: number;
   itemName?: string;
+  categoryName?: string;
   readOnly?: boolean;
+  /** Run OpenAI vision damage scan after each upload (default true). */
+  enableAiDamage?: boolean;
 }
 
 function PhotoDamageEditor({
@@ -165,11 +172,17 @@ function PhotoDamageEditor({
               </button>
             </div>
           )}
+          {local.some((m) => m.id.startsWith('ai-')) && !readOnly && (
+            <p className="mt-2 text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1.5">
+              Orange markers are AI suggestions — review and edit before saving the inspection.
+            </p>
+          )}
           {local.length > 0 && (
             <ul className="mt-3 text-sm text-gray-800 space-y-1">
               {local.map((m) => (
-                <li key={m.id}>
+                <li key={m.id} className={m.id.startsWith('ai-') ? 'text-amber-900' : undefined}>
                   • {m.label}
+                  {m.id.startsWith('ai-') ? ' (AI)' : ''}
                 </li>
               ))}
             </ul>
@@ -185,12 +198,21 @@ function ItemPhotoUpload({
   onPhotosChange,
   maxPhotos = 5,
   itemName,
+  categoryName,
   readOnly = false,
+  enableAiDamage = true,
 }: ItemPhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
+  const [analyzingFileName, setAnalyzingFileName] = useState<string | null>(null);
+  const [aiNotice, setAiNotice] = useState<string | null>(null);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [annotateIndex, setAnnotateIndex] = useState<number | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
+  const photosRef = useRef(photos);
+
+  useEffect(() => {
+    photosRef.current = photos;
+  }, [photos]);
 
   const compressImage = useCallback(async (file: File): Promise<File> => {
     if (!file.type.startsWith('image/')) return file;
@@ -220,6 +242,47 @@ function ItemPhotoUpload({
     }
   }, []);
 
+  const runVisionOnPhoto = useCallback(
+    async (fileName: string) => {
+      if (!enableAiDamage || readOnly) return;
+      setAnalyzingFileName(fileName);
+      setAiNotice(null);
+      try {
+        const context = [categoryName, itemName].filter(Boolean).join(' — ');
+        const res = await requestVisionDamageDetect({
+          storageKey: fileName,
+          itemName,
+          context: context || undefined,
+        });
+        if (!res.success) {
+          if (!res.disabled) {
+            setAiNotice(res.error);
+          }
+          return;
+        }
+        const current = photosRef.current;
+        const idx = current.findIndex((p) => p.fileName === fileName);
+        if (idx < 0) return;
+        const merged = applyVisionResultToPhoto(current[idx], res.result);
+        const updated = current.map((p, i) => (i === idx ? merged : p));
+        photosRef.current = updated;
+        onPhotosChange(updated);
+        if (res.result.noDamageFound) {
+          setAiNotice('AI: no obvious damage detected — review the photo.');
+        } else if (res.result.findings.length > 0) {
+          setAiNotice(
+            `AI noted ${res.result.findings.length} possible issue(s). Check markers on the photo.`
+          );
+        }
+      } catch (e) {
+        console.error('Vision damage detect:', e);
+      } finally {
+        setAnalyzingFileName(null);
+      }
+    },
+    [categoryName, enableAiDamage, itemName, onPhotosChange, readOnly]
+  );
+
   const uploadSingleFile = useCallback(
     async (file: File) => {
       if (photos.length >= maxPhotos) {
@@ -229,6 +292,7 @@ function ItemPhotoUpload({
         return;
       }
       setUploading(true);
+      setAiNotice(null);
       try {
         const toUpload = await compressImage(file);
         const result = await uploadToVercelBlobViaAPI(toUpload);
@@ -238,8 +302,11 @@ function ItemPhotoUpload({
           metadata: result.metadata || null,
           damageMarkers: [] as DamageMarker[],
         };
-        onPhotosChange([...photos, next]);
+        const updated = [...photos, next];
+        photosRef.current = updated;
+        onPhotosChange(updated);
         setCameraOpen(false);
+        void runVisionOnPhoto(result.fileName);
       } catch (error: unknown) {
         if (typeof window !== 'undefined') {
           const errorMessage = error instanceof Error ? error.message : 'Upload failed. Please check your storage configuration.';
@@ -250,7 +317,7 @@ function ItemPhotoUpload({
         setUploading(false);
       }
     },
-    [compressImage, maxPhotos, onPhotosChange, photos]
+    [compressImage, maxPhotos, onPhotosChange, photos, runVisionOnPhoto]
   );
 
   const removePhoto = (index: number) => {
@@ -277,14 +344,21 @@ function ItemPhotoUpload({
           <button
             type="button"
             onClick={() => setCameraOpen(true)}
-            disabled={uploading || photos.length >= maxPhotos}
+            disabled={uploading || !!analyzingFileName || photos.length >= maxPhotos}
             className="flex items-center px-2 py-1 text-xs bg-[#3833FF]/50 text-white rounded-lg hover:bg-[#3833FF]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             <Camera className="w-3 h-3 mr-1" />
-            {uploading ? 'Uploading...' : 'Take'}
+            {uploading ? 'Uploading...' : analyzingFileName ? 'AI scan…' : 'Take'}
           </button>
         )}
       </div>
+
+      {aiNotice && (
+        <p className="flex items-start gap-1.5 text-xs text-violet-200 bg-violet-950/40 border border-violet-500/30 rounded-lg px-2 py-1.5">
+          <Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden />
+          <span>{aiNotice}</span>
+        </p>
+      )}
 
       <CameraCaptureModal
         isOpen={cameraOpen}
@@ -298,6 +372,7 @@ function ItemPhotoUpload({
             const imageUrl = getPhotoDisplayUrl(photo);
             if (!imageUrl) return null;
             const markerCount = photo.damageMarkers?.length ?? 0;
+            const isAnalyzing = analyzingFileName === photo.fileName;
             return (
               <div key={`${imageUrl}-${index}`} className="relative group">
                 <div
@@ -313,6 +388,12 @@ function ItemPhotoUpload({
                     decoding="async"
                     referrerPolicy="same-origin"
                   />
+                  {isAnalyzing && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-black/50 text-white text-[10px] font-medium gap-1">
+                      <Loader2 className="w-5 h-5 animate-spin" aria-hidden />
+                      AI scan
+                    </div>
+                  )}
                   {markerCount > 0 && (
                     <span className="absolute bottom-1 left-1 px-1.5 py-0.5 rounded bg-[#FF6600] text-white text-[9px] font-bold">
                       {markerCount} label{markerCount !== 1 ? 's' : ''}

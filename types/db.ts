@@ -1,5 +1,7 @@
 // Shared types for Supabase. Table rows use snake_case; app uses camelCase.
 
+import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
+
 export type UserRole = 'technician' | 'manager' | 'admin';
 
 export interface TenantRow {
@@ -155,7 +157,7 @@ export interface InspectionChecklistCategory {
     photos?: {
       fileName: string;
       url?: string;
-      metadata?: Record<string, unknown>;
+      metadata?: Record<string, unknown> & { aiDamage?: PhotoAiDamageMetadata };
       damageMarkers?: { id?: string; x: number; y: number; label: string }[];
     }[];
   }[];
