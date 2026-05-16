@@ -85,7 +85,7 @@ export default function InspectionsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="app-surface min-h-screen overflow-x-hidden">
       {exportingId && exportUrl && (
         <PdfExportProgress
           isActive={!!exportingId}

@@ -152,7 +152,7 @@ function InspectionDetailContent() {
   }
 
   return (
-    <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
+    <div className="app-surface min-h-screen min-w-0">
       {exportingPdf && exportUrl && (
         <PdfExportProgress
           isActive={exportingPdf}

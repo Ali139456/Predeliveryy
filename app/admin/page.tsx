@@ -20,11 +20,30 @@ import {
   Calendar,
   Edit,
   Check,
-  Trash2
+  Trash2,
+  Bell,
+  Mail,
+  Database,
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 import AnalyticsTab from './components/AnalyticsTab';
 import PageContainer from '@/components/PageContainer';
+import {
+  AdminShell,
+  AdminTabBar,
+  AdminStatCard,
+  AdminPanel,
+  AdminSectionHeader,
+  AdminTable,
+  AdminThead,
+  AdminTh,
+  AdminTr,
+  AdminTd,
+  AdminBtn,
+  AdminPageHeader,
+  AdminStatusBadge,
+  AdminInput,
+} from '@/components/admin/AdminUI';
 
 interface Stats {
   inspections: {
@@ -111,64 +130,24 @@ export default function AdminDashboard() {
     );
   }
 
+  const adminTabs = [
+    { id: 'overview', label: '📊 Overview' },
+    { id: 'analytics', label: '📈 Analytics' },
+    { id: 'users', label: user?.role === 'admin' ? '👥 Organisation & users' : '👥 Users' },
+    { id: 'audit', label: '🔒 Audit Logs' },
+    { id: 'settings', label: '⚙️ Settings' },
+  ];
+
   return (
-    <div className="min-h-screen bg-white pt-2 sm:pt-4 md:pt-6 min-w-0">
-      {/* Tabs — sticky so they stay visible on mobile while scrolling; horizontal scroll for long labels */}
-      <div className="sticky top-36 sm:top-32 md:top-36 lg:top-40 z-40 bg-white border-b border-[#0033FF]/30 shadow-lg">
-        <PageContainer>
+    <AdminShell>
+      <div className="sticky top-36 sm:top-32 md:top-36 lg:top-40 z-30 mb-6 sm:mb-8">
+        <PageContainer className="py-0">
           <p className="sr-only">Dashboard sections. Swipe sideways on small screens to see all tabs.</p>
-          <div className="flex gap-1 overflow-x-auto overflow-y-visible overscroll-x-contain pb-px -mb-px snap-x snap-mandatory [-webkit-overflow-scrolling:touch]">
-            <button
-              onClick={() => setActiveTab('overview')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
-                activeTab === 'overview'
-                  ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
-                  : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
-              }`}
-            >
-              📊 Overview
-            </button>
-            <button
-              onClick={() => setActiveTab('analytics')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
-                activeTab === 'analytics'
-                  ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
-                  : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
-              }`}
-            >
-              📈 Analytics
-            </button>
-            <button
-              onClick={() => setActiveTab('users')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
-                activeTab === 'users'
-                  ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
-                  : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
-              }`}
-            >
-              👥 {user?.role === 'admin' ? 'Organisation & users' : 'Users'}
-            </button>
-            <button
-              onClick={() => setActiveTab('audit')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
-                activeTab === 'audit'
-                  ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
-                  : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
-              }`}
-            >
-              🔒 Audit Logs
-            </button>
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`px-3 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium transition-all rounded-t-lg whitespace-nowrap shrink-0 snap-start ${
-                activeTab === 'settings'
-                  ? 'text-[#0033FF] border-b-2 border-[#0033FF] bg-[#0033FF]/10'
-                  : 'text-black/70 hover:text-[#0033FF] hover:bg-gray-50'
-              }`}
-            >
-              ⚙️ Settings
-            </button>
-          </div>
+          <AdminTabBar
+            tabs={adminTabs}
+            activeId={activeTab}
+            onChange={(id) => setActiveTab(id as typeof activeTab)}
+          />
         </PageContainer>
       </div>
 
@@ -182,7 +161,7 @@ export default function AdminDashboard() {
         {activeTab === 'audit' && <AuditLogTab />}
         {activeTab === 'settings' && <SettingsTab />}
       </PageContainer>
-    </div>
+    </AdminShell>
   );
 }
 
@@ -256,52 +235,16 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
   };
 
   return (
-    <div className="space-y-6">
-      {/* Stats Cards - all blue, black icons */}
+    <div className="space-y-8">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/90">Total Inspections</h3>
-            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
-              <FileText className="w-6 h-6 text-black" />
-            </div>
-          </div>
-          <p className="text-4xl font-bold">{stats?.inspections.total || 0}</p>
-        </div>
-
-        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/90">Completed</h3>
-            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
-              <CheckCircle className="w-6 h-6 text-black" />
-            </div>
-          </div>
-          <p className="text-4xl font-bold">{stats?.inspections.completed || 0}</p>
-        </div>
-
-        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/90">Drafts</h3>
-            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
-              <Clock className="w-6 h-6 text-black" />
-            </div>
-          </div>
-          <p className="text-4xl font-bold">{stats?.inspections.draft || 0}</p>
-        </div>
-
-        <div className="bg-[#0033FF] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform border-2 border-[#0033FF]/50">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white/90">Total Users</h3>
-            <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center">
-              <Users className="w-6 h-6 text-black" />
-            </div>
-          </div>
-          <p className="text-4xl font-bold">{stats?.users.total || 0}</p>
-        </div>
+        <AdminStatCard title="Total Inspections" value={stats?.inspections.total || 0} icon={FileText} accent="blue" />
+        <AdminStatCard title="Completed" value={stats?.inspections.completed || 0} icon={CheckCircle} accent="green" />
+        <AdminStatCard title="Drafts" value={stats?.inspections.draft || 0} icon={Clock} accent="amber" />
+        <AdminStatCard title="Total Users" value={stats?.users.total || 0} icon={Users} accent="violet" />
       </div>
 
       {/* Recent Inspections */}
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
+      <div className="rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 shadow-sm p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-4">
           <div className="flex items-center">
             <div className="w-10 h-10 rounded-xl bg-[#0033FF] flex items-center justify-center mr-3 shadow-lg shadow-[#0033FF]/50">
@@ -432,8 +375,8 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
         <div className="hidden lg:block overflow-x-auto min-w-0">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white w-10">
+              <tr className="bg-slate-50/90 border-b border-slate-200">
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 w-10">
                   <input
                     type="checkbox"
                     checked={filteredInspections.length > 0 && selectedIds.size === filteredInspections.length}
@@ -441,11 +384,11 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                     className="rounded border-gray-300 text-[#0033FF] focus:ring-[#0033FF]"
                   />
                 </th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspection #</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Inspector</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Status</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Date</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Actions</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Inspection #</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Inspector</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -647,21 +590,15 @@ function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center">
-        <div className="w-12 h-12 rounded-xl bg-[#0033FF] flex items-center justify-center mr-4 shadow-lg shadow-[#0033FF]/50">
-          <Users className="w-6 h-6 text-white" />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-black">
-            {userRole === 'admin' ? 'Organisation & users' : 'Users'}
-          </h2>
-          {userRole === 'admin' && (
-            <p className="text-sm text-gray-600 mt-1 max-w-2xl">
-              Manage organisations in the table below, then add users to each organisation.
-            </p>
-          )}
-        </div>
-      </div>
+      <AdminPageHeader
+        icon={Users}
+        title={userRole === 'admin' ? 'Organisation & users' : 'Users'}
+        subtitle={
+          userRole === 'admin'
+            ? 'Manage organisations in the table below, then add users to each organisation.'
+            : 'Manage team accounts for your organisation.'
+        }
+      />
 
       {userRole === 'admin' && (
         <>
@@ -682,23 +619,23 @@ function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?
             </button>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
+          <div className="rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 shadow-sm p-4 sm:p-6">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[720px]">
                 <thead>
-                  <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
-                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">
+                  <tr className="bg-slate-50/90 border-b border-slate-200">
+                    <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
                       Business name
                     </th>
-                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">ABN</th>
-                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">
+                    <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">ABN</th>
+                    <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
                       Address
                     </th>
-                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">
+                    <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">
                       Contact
                     </th>
-                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Email</th>
-                    <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Phone</th>
+                    <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Email</th>
+                    <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Phone</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -762,18 +699,18 @@ function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?
         )}
       </div>
 
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
+      <div className="rounded-2xl bg-white/90 backdrop-blur-sm border border-slate-200/80 shadow-sm p-4 sm:p-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Name</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Organisation</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Email</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Phone</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Role</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Status</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Actions</th>
+              <tr className="bg-slate-50/90 border-b border-slate-200">
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Name</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Organisation</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Email</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Phone</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Role</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
+                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1686,10 +1623,59 @@ function EditUserModal({
 }
 
 function SettingsTab() {
+  const settingsSections = [
+    {
+      icon: Bell,
+      title: 'Notifications',
+      description: 'Email alerts for completed inspections and review flags.',
+      status: 'Coming soon',
+    },
+    {
+      icon: Mail,
+      title: 'Email & reports',
+      description: 'Default recipients, PDF branding, and report templates.',
+      status: 'Coming soon',
+    },
+    {
+      icon: Database,
+      title: 'Data & retention',
+      description: 'Inspection retention periods and export policies.',
+      status: 'Coming soon',
+    },
+  ];
+
   return (
-    <div className="bg-slate-800/90 bg-slate-800/95 rounded-2xl shadow-xl p-6 border-2 border-green-500/30">
-      <h2 className="text-2xl font-bold text-green-200 mb-4">System Settings</h2>
-      <p className="text-slate-300">Settings configuration coming soon...</p>
+    <div className="space-y-6 min-w-0">
+      <AdminPageHeader
+        icon={Settings}
+        title="System Settings"
+        subtitle="Configure organisation preferences, notifications, and data policies."
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {settingsSections.map((section) => (
+          <AdminPanel key={section.title} title={section.title} icon={section.icon}>
+            <p className="text-sm text-slate-600 leading-relaxed mb-4">{section.description}</p>
+            <span className="inline-flex px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-600 ring-1 ring-slate-200/80">
+              {section.status}
+            </span>
+          </AdminPanel>
+        ))}
+      </div>
+
+      <AdminPanel title="Organisation defaults" subtitle="Applied to new inspections">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Default data retention (days)</label>
+            <AdminInput type="number" defaultValue={365} disabled className="w-full opacity-60" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-600 mb-1.5">Default inspection location label</label>
+            <AdminInput type="text" placeholder="e.g. Workshop" disabled className="w-full opacity-60" />
+          </div>
+        </div>
+        <p className="text-xs text-slate-500 mt-4">These options will be editable in a future release.</p>
+      </AdminPanel>
     </div>
   );
 }

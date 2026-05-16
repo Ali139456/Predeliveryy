@@ -137,7 +137,7 @@ export default function NewInspectionPage() {
 
   if (!user) {
     return (
-      <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
+      <div className="app-surface min-h-screen min-w-0">
         <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
           {toast && (
             <Toast
@@ -187,7 +187,7 @@ export default function NewInspectionPage() {
   }
 
   return (
-    <div className="h-screen overflow-y-auto min-w-0 scrollbar-hide bg-white">
+    <div className="app-surface min-h-screen min-w-0">
       <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8">
         <Link
           href="/"

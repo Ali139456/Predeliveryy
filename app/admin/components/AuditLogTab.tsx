@@ -1,7 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Download, Filter, Search } from 'lucide-react';
+import { Shield, Download, Filter } from 'lucide-react';
+import {
+  AdminPageHeader,
+  AdminPanel,
+  AdminBtn,
+  AdminInput,
+  AdminSelect,
+  AdminLabel,
+  AdminTable,
+  AdminThead,
+  AdminTh,
+  AdminTr,
+  AdminTd,
+} from '@/components/admin/AdminUI';
 
 interface AuditLog {
   _id: string;
@@ -11,10 +24,17 @@ interface AuditLog {
   action: string;
   resourceType: string;
   resourceId?: string;
-  details: any;
+  details: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   timestamp: string;
+}
+
+function getActionBadgeClass(action: string) {
+  if (action.includes('created')) return 'bg-emerald-50 text-emerald-700 ring-emerald-200/80';
+  if (action.includes('updated')) return 'bg-blue-50 text-blue-700 ring-blue-200/80';
+  if (action.includes('deleted') || action.includes('deactivated')) return 'bg-rose-50 text-rose-700 ring-rose-200/80';
+  return 'bg-slate-100 text-slate-600 ring-slate-200/80';
 }
 
 export default function AuditLogTab() {
@@ -79,7 +99,7 @@ export default function AuditLogTab() {
       if (filters.endDate) params.append('endDate', filters.endDate);
 
       const response = await fetch(`/api/admin/audit/export?${params.toString()}`);
-      
+
       if (format === 'csv') {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -104,68 +124,38 @@ export default function AuditLogTab() {
       }
     } catch (error) {
       console.error('Export failed:', error);
-      if (typeof window !== 'undefined') {
-        alert('Failed to export audit logs');
-      }
-      console.error('Export failed:', error);
+      alert('Failed to export audit logs');
     }
-  };
-
-  const getActionColor = (action: string) => {
-    if (action.includes('created')) return 'bg-green-100 text-green-700';
-    if (action.includes('updated')) return 'bg-blue-100 text-blue-700';
-    if (action.includes('deleted') || action.includes('deactivated')) return 'bg-red-100 text-red-700';
-    return 'bg-gray-100 text-gray-700';
   };
 
   return (
     <div className="space-y-6 min-w-0">
-      <div className="flex flex-col gap-3 min-w-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <div className="flex min-w-0 items-center">
-          <div className="mr-3 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#0033FF] shadow-md sm:mr-4 sm:h-12 sm:w-12 sm:shadow-lg">
-            <Shield className="h-5 w-5 text-white sm:h-6 sm:w-6" />
-          </div>
-          <h2 className="text-xl font-bold text-black sm:text-2xl">Audit Logs</h2>
-        </div>
-        <div className="flex w-full min-w-0 gap-2 sm:w-auto sm:shrink-0">
-          <button
-            type="button"
-            aria-label="Export audit logs as CSV"
-            onClick={() => handleExport('csv')}
-            className="flex min-h-[2.5rem] flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#0033FF] px-2.5 py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#0033FF]/90 sm:min-h-0 sm:flex-initial sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm sm:shadow-lg sm:hover:shadow-xl md:px-5"
-          >
-            <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
-            <span className="sm:hidden">CSV</span>
-            <span className="hidden sm:inline">Export CSV</span>
-          </button>
-          <button
-            type="button"
-            aria-label="Export audit logs as JSON"
-            onClick={() => handleExport('json')}
-            className="flex min-h-[2.5rem] flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#0033FF] px-2.5 py-2 text-xs font-semibold text-white shadow-md transition-all hover:bg-[#0033FF]/90 sm:min-h-0 sm:flex-initial sm:rounded-xl sm:px-4 sm:py-2.5 sm:text-sm sm:shadow-lg sm:hover:shadow-xl md:px-5"
-          >
-            <Download className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" aria-hidden />
-            <span className="sm:hidden">JSON</span>
-            <span className="hidden sm:inline">Export JSON</span>
-          </button>
-        </div>
-      </div>
+      <AdminPageHeader
+        icon={Shield}
+        title="Audit Logs"
+        subtitle="Track who did what across inspections, users, and system actions."
+        actions={
+          <>
+            <AdminBtn variant="outline" onClick={() => handleExport('csv')}>
+              <Download className="w-4 h-4" />
+              Export CSV
+            </AdminBtn>
+            <AdminBtn onClick={() => handleExport('json')}>
+              <Download className="w-4 h-4" />
+              Export JSON
+            </AdminBtn>
+          </>
+        }
+      />
 
-      {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
-        <div className="flex items-center mb-4">
-          <div className="w-10 h-10 rounded-xl bg-[#0033FF] flex items-center justify-center mr-3 shadow-lg shadow-[#0033FF]/50">
-            <Filter className="w-5 h-5 text-white" />
-          </div>
-          <h3 className="font-semibold text-black text-lg">Filters</h3>
-        </div>
+      <AdminPanel title="Filters" icon={Filter}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-black mb-2">Action</label>
-            <select
+            <AdminLabel>Action</AdminLabel>
+            <AdminSelect
               value={filters.action}
               onChange={(e) => setFilters({ ...filters, action: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full"
             >
               <option value="">All Actions</option>
               {availableFilters.actionTypes.map((action) => (
@@ -173,14 +163,14 @@ export default function AuditLogTab() {
                   {action}
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </div>
           <div>
-            <label className="block text-sm font-medium text-black mb-2">Resource Type</label>
-            <select
+            <AdminLabel>Resource Type</AdminLabel>
+            <AdminSelect
               value={filters.resourceType}
               onChange={(e) => setFilters({ ...filters, resourceType: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full"
             >
               <option value="">All Types</option>
               {availableFilters.resourceTypes.map((type) => (
@@ -188,139 +178,119 @@ export default function AuditLogTab() {
                   {type}
                 </option>
               ))}
-            </select>
+            </AdminSelect>
           </div>
           <div>
-            <label className="block text-sm font-medium text-black mb-2">User ID</label>
-            <input
+            <AdminLabel>User ID</AdminLabel>
+            <AdminInput
               type="text"
               value={filters.userId}
               onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
               placeholder="Filter by user ID"
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] transition-all bg-white text-black placeholder-gray-400 hover:bg-gray-50"
+              className="w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-black mb-2">Start Date</label>
-            <input
+            <AdminLabel>Start Date</AdminLabel>
+            <AdminInput
               type="date"
               value={filters.startDate}
               onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-black mb-2">End Date</label>
-            <input
+            <AdminLabel>End Date</AdminLabel>
+            <AdminInput
               type="date"
               value={filters.endDate}
               onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black hover:bg-white focus:hover:bg-white"
+              className="w-full"
             />
           </div>
         </div>
-      </div>
+      </AdminPanel>
 
-      {/* Logs Table */}
-      <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30">
+      <AdminPanel title="Activity log" subtitle={`Page ${page} of ${totalPages || 1}`}>
         {loading ? (
-          <div className="text-center py-8 text-black">Loading audit logs...</div>
+          <div className="text-center py-12 text-slate-500">Loading audit logs…</div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-            <thead>
-              <tr className="bg-[#0033FF] border-b-2 border-[#0033FF]/50">
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Timestamp</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">User</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Action</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Resource</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">Details</th>
-                <th className="text-left py-3 px-2 sm:px-4 text-xs sm:text-sm font-semibold text-white">IP Address</th>
-              </tr>
-            </thead>
-                <tbody>
-              {logs.map((log, index) => (
-                <tr 
-                  key={log._id} 
-                  className={`border-b border-gray-200 hover:bg-gray-50 transition-colors duration-150 ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  }`}
-                >
-                      <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
-                        {new Date(log.timestamp).toLocaleString()}
-                      </td>
-                      <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm">
-                        <div>
-                          <div className="font-medium text-black">{log.userName}</div>
-                          <div className="text-xs text-black/70">{log.userEmail}</div>
-                        </div>
-                      </td>
-                      <td className="py-3 px-2 sm:px-4">
-                        <span className={`px-2 sm:px-3 py-1 text-xs font-bold rounded-full ${getActionColor(log.action)} shadow-md`}>
-                          {log.action}
-                        </span>
-                      </td>
-                      <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
-                        <div>
-                          <div className="font-medium">{log.resourceType}</div>
-                          {log.resourceId && (
-                            <div className="text-xs text-black/70">{log.resourceId.substring(0, 8)}...</div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
-                        <details className="cursor-pointer">
-                          <summary className="text-[#0033FF] hover:text-[#0033FF]/80">
-                            View Details
-                          </summary>
-                          <pre className="mt-2 p-2 bg-gray-50 rounded text-xs overflow-auto max-w-xs">
-                            {JSON.stringify(log.details, null, 2)}
-                          </pre>
-                        </details>
-                      </td>
-                      <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">
-                        {log.ipAddress || 'N/A'}
-                      </td>
-                    </tr>
-                  ))}
-                  {logs.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="py-8 text-center text-black/70">
-                        No audit logs found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <AdminTable>
+              <AdminThead>
+                <AdminTh>Timestamp</AdminTh>
+                <AdminTh>User</AdminTh>
+                <AdminTh>Action</AdminTh>
+                <AdminTh>Resource</AdminTh>
+                <AdminTh>Details</AdminTh>
+                <AdminTh>IP Address</AdminTh>
+              </AdminThead>
+              <tbody>
+                {logs.map((log, index) => (
+                  <AdminTr key={log._id} index={index}>
+                    <AdminTd className="text-xs whitespace-nowrap">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </AdminTd>
+                    <AdminTd>
+                      <div className="font-medium text-slate-900">{log.userName}</div>
+                      <div className="text-xs text-slate-500">{log.userEmail}</div>
+                    </AdminTd>
+                    <AdminTd>
+                      <span
+                        className={`inline-flex px-2.5 py-1 text-xs font-semibold rounded-full ring-1 ${getActionBadgeClass(log.action)}`}
+                      >
+                        {log.action}
+                      </span>
+                    </AdminTd>
+                    <AdminTd>
+                      <div className="font-medium text-slate-800">{log.resourceType}</div>
+                      {log.resourceId ? (
+                        <div className="text-xs text-slate-500 font-mono">{log.resourceId.slice(0, 8)}…</div>
+                      ) : null}
+                    </AdminTd>
+                    <AdminTd>
+                      <details className="cursor-pointer">
+                        <summary className="text-[#0033FF] text-sm font-medium hover:underline">
+                          View
+                        </summary>
+                        <pre className="mt-2 p-3 bg-slate-50 rounded-xl text-xs overflow-auto max-w-xs border border-slate-200">
+                          {JSON.stringify(log.details, null, 2)}
+                        </pre>
+                      </details>
+                    </AdminTd>
+                    <AdminTd className="text-xs font-mono text-slate-600">{log.ipAddress || '—'}</AdminTd>
+                  </AdminTr>
+                ))}
+                {logs.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-sm text-slate-500">
+                      No audit logs found for these filters.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </AdminTable>
 
-            {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-slate-100">
+                <AdminBtn variant="outline" disabled={page === 1} onClick={() => setPage((p) => Math.max(1, p - 1))}>
                   Previous
-                </button>
-                <span className="text-sm text-gray-600">
+                </AdminBtn>
+                <span className="text-sm text-slate-600 font-medium">
                   Page {page} of {totalPages}
                 </span>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                <AdminBtn
+                  variant="outline"
                   disabled={page === totalPages}
-                  className="px-4 py-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 >
                   Next
-                </button>
+                </AdminBtn>
               </div>
             )}
           </>
         )}
-      </div>
+      </AdminPanel>
     </div>
   );
 }
-

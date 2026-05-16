@@ -97,6 +97,10 @@ export async function PUT(
       body.inspectorEmail = body.inspectorEmail.toLowerCase();
     }
     if (body.status !== 'completed') body.status = 'draft';
+    // Never downgrade a completed inspection (auto-save used to send status: draft)
+    if (inspection.status === 'completed' && body.status === 'draft') {
+      body.status = 'completed';
+    }
 
     const row = inspectionBodyToRow(body) as Record<string, unknown>;
     const { data: updated, error } = await supabase

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -25,6 +25,15 @@ const SignaturePad = dynamic(() => import('./SignaturePad'), {
   loading: () => <div className="text-black">Loading signature pad...</div>,
 });
 import { Save, Send, CheckCircle, CheckCircle2, ChevronLeft, ChevronRight, Check, User, Car, MapPin, ClipboardCheck, PenTool } from 'lucide-react';
+import {
+  formPanelClass,
+  formStepHeaderClass,
+  formStepBadgeClass,
+  formStepTitleClass,
+  formSaveBtnClass,
+  formFieldClass,
+  formProgressShellClass,
+} from '@/components/admin/AdminUI';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -274,6 +283,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const [draftId, setDraftId] = useState<string | null>(inspectionId || null);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(initialData?.status === 'completed');
+  const completingRef = useRef(false);
+
+  useEffect(() => {
+    if (initialData?.status === 'completed') {
+      setIsCompleted(true);
+    }
+  }, [initialData?.status]);
 
   const totalSteps = 5;
   const steps = [
@@ -467,7 +484,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   // Auto-save draft function
   const saveDraft = useCallback(async (silent = true) => {
-    if (readOnly || isSavingDraft) return; // Skip if read-only or already saving
+    if (readOnly || isSavingDraft || completingRef.current) return;
     
     const values = getValues();
     
@@ -490,7 +507,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         photos: photos || [],
         walkAroundVideos: walkAroundVideos || [],
         signatures: signatures.technician ? { technician: signatures.technician } : undefined,
-        status: 'draft' as const,
+        status: (isCompleted ? 'completed' : 'draft') as 'draft' | 'completed',
         privacyConsent: true,
       };
       
@@ -561,7 +578,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     } finally {
       setIsSavingDraft(false);
     }
-  }, [readOnly, isSavingDraft, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep]);
+  }, [readOnly, isSavingDraft, isCompleted, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep]);
 
   // Auto-save draft periodically and when data changes
   useEffect(() => {
@@ -636,6 +653,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       const updatedData = {
         ...currentData,
         ...sectionData,
+        status: currentData.status === 'completed' ? 'completed' : currentData.status ?? 'draft',
       };
 
       const response = await fetch(`/api/inspections/${idToUse}`, {
@@ -760,6 +778,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
     // Use draftId if exists, otherwise use inspectionId
     const idToUse = draftId || inspectionId;
+
+    // Block auto-save from reverting status to draft while completing
+    completingRef.current = true;
+    setIsCompleted(true);
     
     if (!idToUse) {
       // For completely new inspections, create new
@@ -802,6 +824,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         if (result.success) {
           setSuccess(true);
           setDraftId(result.data._id); // Set draftId in case user needs to continue
+          setIsCompleted(true);
           setToast({
             message: 'Inspection completed successfully!',
             type: 'success'
@@ -810,6 +833,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             router.push(`/inspections/${result.data._id}`);
           }, 1500);
         } else {
+          setIsCompleted(initialData?.status === 'completed');
+          completingRef.current = false;
           const errorMessage = result.error || 'Failed to create inspection. Please try again.';
           setToast({
             message: errorMessage,
@@ -818,6 +843,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           console.error('Form submission error:', result);
         }
       } catch (error: any) {
+        setIsCompleted(initialData?.status === 'completed');
+        completingRef.current = false;
         const errorMessage = error.message || 'An unexpected error occurred. Please try again.';
         setToast({
           message: errorMessage,
@@ -866,6 +893,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       if (result.success) {
         setSuccess(true);
+        setIsCompleted(true);
         setToast({
           message: 'Inspection completed successfully!',
           type: 'success'
@@ -874,12 +902,16 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           router.push(`/inspections/${idToUse}`);
         }, 1500);
       } else {
+        setIsCompleted(initialData?.status === 'completed');
+        completingRef.current = false;
         setToast({
           message: result.error || 'Failed to save inspection',
           type: 'error'
         });
       }
     } catch (error: any) {
+      setIsCompleted(initialData?.status === 'completed');
+      completingRef.current = false;
       setToast({
         message: error.message || 'An unexpected error occurred',
         type: 'error'
@@ -1075,20 +1107,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStep1 = () => (
-    <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 min-w-0">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30 min-w-0">
+    <div className={`${formPanelClass} space-y-4`}>
+      <div className={formStepHeaderClass}>
         <div className="flex items-center flex-1 min-w-0">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 sm:mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+          <div className={formStepBadgeClass}>
             <span className="text-white font-bold text-lg">1</span>
           </div>
-          <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Inspector Information</h2>
+          <h2 className={formStepTitleClass}>Inspector Information</h2>
         </div>
         {!readOnly && inspectionId && (
           <button
             type="button"
             onClick={saveInspectorInfo}
             disabled={sectionSaving.inspectorInfo}
-            className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
+            className={formSaveBtnClass}
           >
             {sectionSaving.inspectorInfo ? (
               <>
@@ -1118,7 +1150,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           <input
             {...register('inspectorName')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           {errors.inspectorName && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorName.message}</p>
@@ -1133,7 +1165,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="email"
             {...register('inspectorEmail')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           {errors.inspectorEmail && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectorEmail.message}</p>
@@ -1148,7 +1180,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             type="date"
             {...register('inspectionDate')}
             disabled={readOnly}
-            className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           {errors.inspectionDate && (
             <p className="text-red-400 text-xs mt-1 font-medium">{errors.inspectionDate.message}</p>
@@ -1160,15 +1192,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep2 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 min-w-0 max-w-full ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3 min-w-0">
-          <h3 className="text-base font-bold text-black shrink-0 min-w-0 pr-2">Vehicle Identification Scan</h3>
+      <div className={`${formPanelClass} max-w-full ${readOnly ? '' : 'mb-4'}`}>
+        <div className={`${formStepHeaderClass} mb-0 border-b-0 py-0`}>
+          <h3 className={`${formStepTitleClass} text-base`}>Vehicle Identification Scan</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveBarcode}
               disabled={sectionSaving.barcode}
-              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md w-fit self-start sm:self-auto shrink-0"
+              className={formSaveBtnClass}
             >
               {sectionSaving.barcode ? (
                 <>
@@ -1202,20 +1234,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         />
       </div>
 
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 ${readOnly ? 'mt-6' : ''}`}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30 min-w-0">
+      <div className={`${formPanelClass} space-y-4 ${readOnly ? 'mt-6' : ''}`}>
+        <div className={formStepHeaderClass}>
           <div className="flex items-center flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 sm:mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+            <div className={formStepBadgeClass}>
               <span className="text-white font-bold text-lg">2</span>
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Vehicle Information</h2>
+            <h2 className={formStepTitleClass}>Vehicle Information</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveVehicleInfo}
               disabled={sectionSaving.vehicleInfo}
-              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
+              className={formSaveBtnClass}
             >
               {sectionSaving.vehicleInfo ? (
                 <>
@@ -1241,43 +1273,43 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             {...register('vehicleInfo.dealer')}
             placeholder="Dealer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             {...register('vehicleInfo.make')}
             placeholder="Make"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             {...register('vehicleInfo.model')}
             placeholder="Model"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             {...register('vehicleInfo.dealerStockNo')}
             placeholder="Dealer Stock No"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             {...register('vehicleInfo.vin')}
             placeholder="VIN"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             {...register('vehicleInfo.engine')}
             placeholder="Engine"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <input
             {...register('vehicleInfo.odometer')}
             placeholder="Odometer"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
           <div>
             <label className="block text-xs text-black mb-1">Compliance Date</label>
@@ -1285,7 +1317,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {...register('vehicleInfo.complianceDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+              className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
             />
           </div>
           <div>
@@ -1294,14 +1326,14 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               {...register('vehicleInfo.buildDate')}
               type="date"
               disabled={readOnly}
-              className={`w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+              className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
             />
           </div>
           <input
             {...register('vehicleInfo.licensePlate')}
             placeholder="License Plate"
             disabled={readOnly}
-            className={`px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 ${readOnly ? 'bg-gray-100 cursor-not-allowed opacity-60' : 'hover:bg-white focus:hover:bg-white'}`}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />
         </div>
         <div>
@@ -1313,15 +1345,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep3 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 min-w-0">
-          <h3 className="text-base font-bold text-black min-w-0 pr-2">GPS Location</h3>
+      <div className={`${formPanelClass} ${readOnly ? '' : 'mb-4'}`}>
+        <div className={`${formStepHeaderClass} mb-0 border-b-0 py-0`}>
+          <h3 className={`${formStepTitleClass} text-base`}>GPS Location</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveGPSLocation}
               disabled={sectionSaving.location}
-              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
+              className={formSaveBtnClass}
             >
               {sectionSaving.location ? (
                 <>
@@ -1345,15 +1377,15 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <EnhancedGPSLocation onLocationChange={setLocation} value={location} readOnly={readOnly} />
       </div>
 
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 border-2 border-[#0033FF]/30 ${readOnly ? 'mt-6' : ''}`}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-3 min-w-0">
-          <h3 className="text-base font-bold text-black min-w-0 pr-2">General Photos</h3>
+      <div className={`${formPanelClass} ${readOnly ? 'mt-6' : ''}`}>
+        <div className={`${formStepHeaderClass} mb-0 border-b-0 py-0`}>
+          <h3 className={`${formStepTitleClass} text-base`}>General Photos</h3>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={savePhotos}
               disabled={sectionSaving.photos}
-              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
+              className={formSaveBtnClass}
             >
               {sectionSaving.photos ? (
                 <>
@@ -1447,20 +1479,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     };
 
     return (
-      <div className="bg-white rounded-xl p-4 md:p-6 space-y-4 border border-gray-200">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b border-gray-200 min-w-0">
+      <div className={`${formPanelClass} space-y-4`}>
+        <div className={formStepHeaderClass}>
           <div className="flex items-center flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-lg bg-[#0033FF] flex items-center justify-center mr-3 sm:mr-4 flex-shrink-0">
+            <div className={formStepBadgeClass}>
               <span className="text-white font-bold text-lg">4</span>
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Inspection Checklist</h2>
+            <h2 className={formStepTitleClass}>Inspection Checklist</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveChecklist}
               disabled={sectionSaving.checklist}
-              className="flex items-center justify-center px-3 py-2 text-sm bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
+              className={`${formSaveBtnClass} text-sm`}
             >
               {sectionSaving.checklist ? (
                 <>
@@ -1483,9 +1515,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         </div>
 
         {/* Action Codes Legend */}
-        <div className="mb-6 pb-3 border-b border-gray-200">
-          <h3 className="text-sm font-bold text-black mb-2">Action Codes</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-black">
+        <div className="mb-6 pb-3 border-b border-slate-100">
+          <h3 className="text-sm font-bold text-slate-800 mb-2">Action Codes</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs text-slate-600">
             <div className="flex items-center gap-2">
               <span className="font-bold">OK</span>
               <span>= Satisfactory</span>
@@ -1517,7 +1549,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           const total = fields.length;
           if (!total) {
             return (
-              <div className="rounded-lg border border-gray-200 p-4 bg-gray-50 text-sm text-gray-700">
+              <div className="rounded-xl border border-slate-200/80 p-4 bg-slate-50 text-sm text-slate-600">
                 Checklist is loading…
               </div>
             );
@@ -1527,7 +1559,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           const category = fields[safeIndex];
           if (!category) {
             return (
-              <div className="rounded-lg border border-gray-200 p-4 bg-gray-50 text-sm text-gray-700">
+              <div className="rounded-xl border border-slate-200/80 p-4 bg-slate-50 text-sm text-slate-600">
                 Checklist is loading…
               </div>
             );
@@ -1698,20 +1730,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const renderStep6 = () => (
     <>
-      <div className={`bg-white rounded-2xl shadow-xl p-4 md:p-6 space-y-4 border-2 border-[#0033FF]/30 ${readOnly ? '' : 'mb-4'}`}>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between py-4 px-1 mb-4 border-b-2 border-[#0033FF]/30 min-w-0">
+      <div className={`${formPanelClass} ${readOnly ? '' : 'mb-4'}`}>
+        <div className={formStepHeaderClass}>
           <div className="flex items-center flex-1 min-w-0">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center mr-3 sm:mr-4 shadow-lg shadow-[#0033FF]/50 flex-shrink-0 ring-2 ring-[#0033FF]/30">
+            <div className={formStepBadgeClass}>
               <span className="text-white font-bold text-lg">5</span>
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-black min-w-0 pr-2 break-words">Signatures</h2>
+            <h2 className={formStepTitleClass}>Signatures</h2>
           </div>
           {!readOnly && inspectionId && (
             <button
               type="button"
               onClick={saveSignatures}
               disabled={sectionSaving.signatures}
-              className="flex items-center justify-center px-4 py-2 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shrink-0 w-fit self-start sm:self-auto"
+              className={formSaveBtnClass}
             >
               {sectionSaving.signatures ? (
                 <>
@@ -1753,23 +1785,23 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   );
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); }} className="w-full max-w-7xl mx-auto space-y-4 px-3 sm:px-4 min-w-0 max-w-full">
+    <form onSubmit={(e) => { e.preventDefault(); }} className="app-surface w-full max-w-7xl mx-auto space-y-4 px-3 sm:px-4 min-w-0 max-w-full pb-8">
       {!readOnly && (
-        <div className="sticky top-0 z-30 -mx-0.5 px-2 py-2.5 mb-1 bg-slate-900/95 backdrop-blur-sm border border-slate-600/60 rounded-xl shadow-lg">
-          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-slate-200">
-            <span className="font-semibold text-white">
+        <div className={formProgressShellClass}>
+          <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-slate-600">
+            <span className="font-semibold text-slate-900">
               Step {currentStep} of {totalSteps}
-              <span className="text-slate-400 font-normal"> — {steps[currentStep - 1]?.title}</span>
+              <span className="text-slate-500 font-normal"> — {steps[currentStep - 1]?.title}</span>
             </span>
             {currentStep === 4 && fields.length > 0 && (
-              <span className="text-[#9ec5ff] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
+              <span className="text-[#0033FF] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
                 Checklist {activeChecklistCategory + 1}/{fields.length}
                 {activeCategoryTitle ? `: ${activeCategoryTitle}` : ''}
               </span>
             )}
             <span className="text-slate-400 tabular-nums font-medium">{overallProgressPercent}%</span>
           </div>
-          <div className="mt-2 h-2 w-full rounded-full bg-slate-700 overflow-hidden">
+          <div className="mt-2 h-2 w-full rounded-full bg-slate-200 overflow-hidden">
             <div
               className="h-full rounded-full bg-[#0033FF] transition-[width] duration-300 ease-out"
               style={{ width: `${overallProgressPercent}%` }}
@@ -1784,8 +1816,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                   key={s.number}
                   className={`inline-flex items-center gap-1 shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold border max-w-[42vw] sm:max-w-none ${
                     currentStep === s.number
-                      ? 'bg-[#0033FF] text-white border-[#0033FF]'
-                      : 'bg-slate-800/80 text-slate-400 border-slate-600/50'
+                      ? 'bg-[#0033FF] text-white border-[#0033FF] shadow-sm'
+                      : 'bg-slate-100 text-slate-600 border-slate-200'
                   }`}
                 >
                   <Icon className="w-3 h-3 opacity-90 shrink-0" aria-hidden />
@@ -1832,16 +1864,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
       {/* Navigation Buttons - Only show for new/editing inspections (overflow-hidden prevents scrollbar on button hover) */}
       {!readOnly && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 mt-4 border-t-2 border-slate-700/50 overflow-hidden">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 mt-6 border-t border-slate-200 overflow-hidden">
           <button
             type="button"
             onClick={handleFooterPrevious}
             disabled={currentStep === 1}
-            className={`flex items-center justify-center px-4 py-2 text-sm rounded-lg font-semibold transition-all shadow-md w-full sm:w-auto ${
-              currentStep === 1
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-gray-700 text-white hover:bg-gray-800'
-            }`}
+            className={`flex items-center justify-center px-4 py-2 text-sm rounded-xl font-semibold transition-all w-full sm:w-auto ${currentStep === 1 ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-700 text-white hover:bg-slate-800 shadow-sm'}`}
           >
             <ChevronLeft className="w-4 h-4 mr-1.5" />
             Previous
@@ -1852,7 +1880,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               <button
                 type="button"
                 onClick={handleFooterNext}
-                className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-semibold hover:bg-[#0033FF]/90 transition-all shadow-lg shadow-[#0033FF]/50 w-full sm:w-auto"
+                className="flex items-center justify-center px-4 py-2 text-sm rounded-xl font-semibold bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white shadow-md shadow-[#0033FF]/20 hover:brightness-105 transition-all w-full sm:w-auto"
               >
                 Next
                 <ChevronRight className="w-4 h-4 ml-1.5" />
@@ -1864,17 +1892,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     type="button"
                     onClick={() => handleSubmit(onSubmit)()}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm rounded-xl font-bold bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white shadow-lg shadow-[#0033FF]/25 hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full sm:w-auto"
                   >
                     {submitting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-1.5"></div>
-                        Saving All...
+                        Submitting...
                       </>
                     ) : (
                       <>
-                        <Save className="w-4 h-4 mr-1.5" />
-                        Save All Sections
+                        <CheckCircle className="w-4 h-4 mr-1.5" />
+                        Submit Report
                       </>
                     )}
                   </button>
@@ -1897,10 +1925,10 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                       )();
                     }}
                     disabled={submitting}
-                    className="flex items-center justify-center px-4 py-2 text-sm bg-[#0033FF] text-white rounded-lg font-bold shadow-lg shadow-[#0033FF]/50 hover:bg-[#0033FF]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 text-sm rounded-xl font-bold bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white shadow-lg shadow-[#0033FF]/25 hover:brightness-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all w-full sm:w-auto"
                   >
-                    <Save className="w-4 h-4 mr-1.5" />
-                    {submitting ? 'Completing...' : 'Complete Inspection'}
+                    <CheckCircle className="w-4 h-4 mr-1.5" />
+                    {submitting ? 'Submitting...' : 'Submit Report'}
                   </button>
                 )}
                 {inspectionId && (

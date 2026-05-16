@@ -12,18 +12,14 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import { Car, CheckCircle, Search, Clock, Camera, BarChart3, Loader2 } from 'lucide-react';
 import {
-  Car,
-  CheckCircle,
-  Search,
-  Clock,
-  Camera,
-  TrendingUp,
-  TrendingDown,
-  BarChart3,
-  Loader2,
-  type LucideIcon,
-} from 'lucide-react';
+  AdminKpiCard,
+  AdminPageHeader,
+  AdminPanel,
+  AdminInput,
+  AdminSelect,
+} from '@/components/admin/AdminUI';
 
 type KpiChange = { value: number | null; changePct?: number | null; changeMinutes?: number | null };
 
@@ -47,50 +43,8 @@ function formatDisplayDate(iso: string): string {
   return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
 }
 
-function KpiCard({
-  title,
-  value,
-  sub,
-  positiveIsGood = true,
-  icon: Icon,
-}: {
-  title: string;
-  value: string;
-  sub?: string | null;
-  positiveIsGood?: boolean;
-  icon: LucideIcon;
-}) {
-  const trendUp = sub?.startsWith('+');
-  const trendDown = sub?.startsWith('-');
-  const trendGood =
-    (trendUp && positiveIsGood) || (trendDown && !positiveIsGood) || sub === '0% vs yesterday';
-  const trendBad =
-    (trendUp && !positiveIsGood) || (trendDown && positiveIsGood);
-
-  return (
-    <div className="bg-[#0033FF] rounded-2xl shadow-lg p-5 sm:p-6 text-white border-2 border-[#0033FF]/50 transform hover:scale-[1.02] transition-transform">
-      <div className="flex items-center justify-between mb-3 gap-2">
-        <h3 className="text-xs sm:text-sm font-medium text-white/90 leading-tight">{title}</h3>
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white flex items-center justify-center shrink-0">
-          <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-black" />
-        </div>
-      </div>
-      <p className="text-3xl sm:text-4xl font-bold tracking-tight">{value}</p>
-      {sub ? (
-        <p
-          className={`mt-2 text-xs sm:text-sm font-medium flex items-center gap-1 ${
-            trendGood ? 'text-green-200' : trendBad ? 'text-red-200' : 'text-white/70'
-          }`}
-        >
-          {trendUp && <TrendingUp className="w-3.5 h-3.5 shrink-0" />}
-          {trendDown && <TrendingDown className="w-3.5 h-3.5 shrink-0" />}
-          {sub}
-        </p>
-      ) : (
-        <p className="mt-2 text-xs text-white/60">No prior day data</p>
-      )}
-    </div>
-  );
+function trendFlags(sub?: string | null) {
+  return { trendUp: !!sub?.startsWith('+'), trendDown: !!sub?.startsWith('-') };
 }
 
 export default function AnalyticsTab() {
@@ -158,45 +112,36 @@ export default function AnalyticsTab() {
 
   return (
     <div className="space-y-6 min-w-0">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-black flex items-center gap-2">
-            <BarChart3 className="w-6 h-6 text-[#0033FF]" />
-            Analytics
-          </h2>
-          <p className="text-sm text-black/60 mt-1">
-            Organisation inspection intelligence — completed inspections only.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <label className="flex flex-col text-xs font-semibold text-black gap-1">
-            Date
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-200 rounded-xl text-sm text-black bg-white focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF]"
-            />
-          </label>
-          <label className="flex flex-col text-xs font-semibold text-black gap-1">
-            Location
-            <select
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              className="px-3 py-2 border-2 border-gray-200 rounded-xl text-sm text-black bg-white min-w-[140px] focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF]"
-            >
-              {(data?.locations || ['all']).map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc === 'all' ? 'All Locations' : loc}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </div>
+      <AdminPageHeader
+        icon={BarChart3}
+        title="Analytics"
+        subtitle="Organisation inspection intelligence — completed inspections only."
+        actions={
+          <div className="flex flex-wrap gap-3">
+            <label className="flex flex-col text-xs font-semibold text-slate-600 gap-1.5">
+              Date
+              <AdminInput type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+            </label>
+            <label className="flex flex-col text-xs font-semibold text-slate-600 gap-1.5">
+              Location
+              <AdminSelect
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                className="min-w-[140px]"
+              >
+                {(data?.locations || ['all']).map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc === 'all' ? 'All Locations' : loc}
+                  </option>
+                ))}
+              </AdminSelect>
+            </label>
+          </div>
+        }
+      />
 
       {error && (
-        <div className="p-4 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 text-sm">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
           {error}
           {error.includes('does not exist') || error.includes('relation') ? (
             <p className="mt-2 text-xs">
@@ -210,99 +155,94 @@ export default function AnalyticsTab() {
       {loading ? (
         <div className="flex items-center justify-center py-20 text-[#0033FF]">
           <Loader2 className="w-8 h-8 animate-spin mr-2" />
-          <span className="text-black font-medium">Loading analytics…</span>
+          <span className="text-slate-700 font-medium">Loading analytics…</span>
         </div>
       ) : (
         <>
-          <p className="text-sm text-black/50 -mt-2">
-            Showing data for <span className="font-semibold text-black">{formatDisplayDate(date)}</span>
+          <p className="text-sm text-slate-500">
+            Showing data for <span className="font-semibold text-slate-900">{formatDisplayDate(date)}</span>
             {location !== 'all' ? ` · ${location}` : ''}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
-            <KpiCard
+            <AdminKpiCard
               title="Vehicles inspected"
               value={String(k?.vehiclesInspected.value ?? 0)}
               sub={vehiclesSub}
               icon={Car}
+              {...trendFlags(vehiclesSub)}
             />
-            <KpiCard
+            <AdminKpiCard
               title="Pass rate"
               value={`${k?.passRate.value ?? 0}%`}
               sub={passSub}
               icon={CheckCircle}
+              {...trendFlags(passSub)}
             />
-            <KpiCard
+            <AdminKpiCard
               title="Review rate"
               value={`${k?.reviewRate.value ?? 0}%`}
               sub={reviewSub}
               positiveIsGood={false}
               icon={Search}
+              {...trendFlags(reviewSub)}
             />
-            <KpiCard
+            <AdminKpiCard
               title="Avg inspection time"
               value={k?.avgInspectionMinutes.value != null ? `${k.avgInspectionMinutes.value}m` : '—'}
               sub={timeSub}
               icon={Clock}
+              {...trendFlags(timeSub)}
             />
-            <KpiCard
+            <AdminKpiCard
               title="Photos captured"
               value={(k?.photosCaptured.value ?? 0).toLocaleString()}
               sub={photosSub}
               icon={Camera}
+              {...trendFlags(photosSub)}
             />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30 min-w-0">
-              <h3 className="text-lg font-bold text-black mb-4">Inspection volume (7 days)</h3>
-              <div className="h-64 w-full min-h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
+            <AdminPanel title="Inspection volume (7 days)" className="min-w-0">
+              <div className="h-64 w-full min-h-[256px] min-w-0">
+                <ResponsiveContainer width="100%" height={256} minHeight={200}>
                   <AreaChart data={data?.volume7Days || []} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
                     <defs>
                       <linearGradient id="volumeFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#0033FF" stopOpacity={0.45} />
-                        <stop offset="100%" stopColor="#0033FF" stopOpacity={0.05} />
+                        <stop offset="0%" stopColor="#0033FF" stopOpacity={0.35} />
+                        <stop offset="100%" stopColor="#0033FF" stopOpacity={0.02} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#374151' }} />
-                    <YAxis tick={{ fontSize: 11, fill: '#374151' }} allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                    <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#64748b' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#64748b' }} allowDecimals={false} />
                     <Tooltip
-                      contentStyle={{ borderRadius: 12, border: '1px solid #0033FF40' }}
+                      contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                       formatter={(value: number) => [value, 'Inspections']}
                     />
-                    <Area
-                      type="monotone"
-                      dataKey="count"
-                      stroke="#0033FF"
-                      strokeWidth={2}
-                      fill="url(#volumeFill)"
-                    />
+                    <Area type="monotone" dataKey="count" stroke="#0033FF" strokeWidth={2} fill="url(#volumeFill)" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </div>
+            </AdminPanel>
 
-            <div className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 border-2 border-[#0033FF]/30 min-w-0">
-              <h3 className="text-lg font-bold text-black mb-4">Top defect categories</h3>
-              <p className="text-xs text-black/50 mb-3">Repair / replace items in the last 7 days</p>
+            <AdminPanel
+              title="Top defect categories"
+              subtitle="Repair / replace items in the last 7 days"
+              className="min-w-0"
+            >
               {defectChart.length === 0 ? (
-                <p className="text-sm text-black/50 py-12 text-center">No defect data for this period.</p>
+                <p className="text-sm text-slate-500 py-12 text-center">No defect data for this period.</p>
               ) : (
-                <div className="h-64 w-full min-h-[200px]">
-                  <ResponsiveContainer width="100%" height="100%">
+                <div className="h-64 w-full min-h-[256px] min-w-0">
+                  <ResponsiveContainer width="100%" height={256} minHeight={200}>
                     <BarChart data={defectChart} layout="vertical" margin={{ top: 4, right: 16, left: 4, bottom: 4 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" horizontal={false} />
-                      <XAxis type="number" tick={{ fontSize: 11, fill: '#374151' }} allowDecimals={false} />
-                      <YAxis
-                        type="category"
-                        dataKey="name"
-                        width={120}
-                        tick={{ fontSize: 10, fill: '#374151' }}
-                      />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" horizontal={false} />
+                      <XAxis type="number" tick={{ fontSize: 11, fill: '#64748b' }} allowDecimals={false} />
+                      <YAxis type="category" dataKey="name" width={120} tick={{ fontSize: 10, fill: '#64748b' }} />
                       <Tooltip
-                        contentStyle={{ borderRadius: 12, border: '1px solid #0033FF40' }}
+                        contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
                         formatter={(value: number, _n, props) => [
                           value,
                           (props as { payload?: { fullName?: string } }).payload?.fullName || 'Defects',
@@ -313,10 +253,10 @@ export default function AnalyticsTab() {
                   </ResponsiveContainer>
                 </div>
               )}
-              <p className="text-xs text-[#0033FF] mt-3 font-medium">
+              <p className="text-xs text-slate-500 mt-3">
                 Pass = no repair/replace items · Review = inspection flagged C, A, R, or RP
               </p>
-            </div>
+            </AdminPanel>
           </div>
         </>
       )}
