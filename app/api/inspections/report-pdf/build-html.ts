@@ -17,6 +17,7 @@ import {
   type ReportPhoto,
 } from '@/lib/inspection-report-data';
 import { loadImageAsBase64 } from '@/lib/pdfGenerator';
+import { wrapReportHtmlDocument } from '@/lib/report-html-document';
 import { SITE_LOGO_ALT, SITE_LOGO_REPORT_SRC } from '@/lib/siteLogo';
 
 export type BuildReportHtmlOptions = {
@@ -251,23 +252,8 @@ export async function buildInspectionReportHtml(
     signatureSrc: signatureSrc || technicianSig,
   });
 
-  const cssPath = path.join(process.cwd(), 'components', 'inspection-report.css');
-  const css = fs.readFileSync(cssPath, 'utf8');
-  const printExtras = `
-    @page { size: A4 portrait; margin: 6mm; }
-    html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .inspection-report-root { padding: 0 !important; }
-    .inspection-report-sheet { box-shadow: none !important; max-width: none !important; width: 100% !important; }
-    .report-checklist-grid { column-count: 2; column-gap: 4px; }
-  `;
-
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Inspection ${esc(inspection.inspectionNumber || inspection.id || '')}</title>
-  <style>${css}\n${printExtras}</style>
-</head>
-<body>${body}</body>
-</html>`;
+  return wrapReportHtmlDocument(
+    body,
+    `Inspection ${inspection.inspectionNumber || inspection.id || ''}`
+  );
 }

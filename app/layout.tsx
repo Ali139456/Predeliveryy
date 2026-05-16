@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import MainContent from '@/components/MainContent';
+import SuppressExtensionConsoleNoise from '@/components/SuppressExtensionConsoleNoise';
 
 const UserHeader = dynamic(() => import('@/components/UserHeader'), {
   ssr: true,
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AuthProvider>
+          <SuppressExtensionConsoleNoise />
           <div className="no-print">
             <UserHeader />
           </div>

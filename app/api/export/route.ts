@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
-import { generateReportPdf } from '@/app/api/inspections/report-pdf/generate';
 import { generatePDF } from '@/lib/pdfGenerator';
+import {
+  ensureInspectionReportHtml,
+  pdfFromReportHtml,
+  resolveAppOrigin,
+} from '@/lib/report-snapshot';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
@@ -54,14 +58,18 @@ export async function GET(request: NextRequest) {
       }
 
       try {
-        const origin =
-          request.nextUrl.origin ||
-          process.env.NEXT_PUBLIC_APP_URL ||
-          (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+        const origin = resolveAppOrigin(request.nextUrl.origin);
 
         let pdfBuffer: Buffer;
         try {
-          pdfBuffer = await generateReportPdf(inspection, { origin });
+          const reportHtml = await ensureInspectionReportHtml(
+            supabase,
+            row as InspectionRow,
+            inspection,
+            origin,
+            { force: false }
+          );
+          pdfBuffer = await pdfFromReportHtml(reportHtml);
         } catch {
           pdfBuffer = await generatePDF(inspection);
         }

@@ -4,9 +4,10 @@ import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { ArrowLeft, Send, Download, FileText, Lock, List, Printer } from 'lucide-react';
+import { ArrowLeft, Send, FileText, Lock, List, Printer, ClipboardCheck, Pencil } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageContainer from '@/components/PageContainer';
+import { captureInspectionReportHtml } from '@/lib/capture-report-html';
 
 // Lazy load heavy components
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
@@ -21,8 +22,6 @@ const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
 const EmailModal = dynamic(() => import('@/components/EmailModal'), {
   ssr: false,
 });
-
-const PdfExportProgress = dynamic(() => import('@/components/PdfExportProgress'), { ssr: false });
 
 const InspectionReportView = dynamic(() => import('@/components/InspectionReportView'), {
   loading: () => (
@@ -41,8 +40,6 @@ function InspectionDetailContent() {
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
-  const [exportingPdf, setExportingPdf] = useState(false);
-  const [exportUrl, setExportUrl] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'report' | 'form'>('report');
 
   const isReadOnlyView = searchParams.get('view') === 'readonly';
@@ -81,6 +78,22 @@ function InspectionDetailContent() {
   };
 
   const handleEmailSend = async (emailList: string[]) => {
+    if (isCompleted && showReport) {
+      const captured = captureInspectionReportHtml();
+      const snapRes = await fetch(`/api/inspections/${params.id}/report-snapshot`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(captured ? { html: captured, force: true } : { force: true }),
+      });
+      if (!snapRes.ok) {
+        const snapErr = await snapRes.json().catch(() => ({}));
+        throw new Error(
+          (snapErr as { error?: string }).error || 'Could not save report for email. Try Print Report first.'
+        );
+      }
+    }
+
     const response = await fetch(`/api/inspections/${params.id}/email`, {
       method: 'POST',
       credentials: 'include',
@@ -103,25 +116,6 @@ function InspectionDetailContent() {
     if (!result.success) {
       throw new Error(result.error || 'Failed to send email');
     }
-  };
-
-  const handleExport = () => {
-    setExportUrl(`/api/export?id=${params.id}`);
-    setExportingPdf(true);
-  };
-
-  const handleExportComplete = (error?: Error) => {
-    setExportingPdf(false);
-    setExportUrl(null);
-    if (error && typeof window !== 'undefined') {
-      alert(`Error exporting PDF: ${error.message}`);
-    }
-  };
-
-  const getExportFileName = (response: Response) => {
-    const contentDisposition = response.headers.get('Content-Disposition');
-    const filenameMatch = contentDisposition?.match(/filename="?([^";\s]+)"?/);
-    return filenameMatch ? filenameMatch[1] : `${(inspection?.inspectionNumber || params.id)?.toString().replace(/[^a-z0-9.-]/gi, '_')}.pdf`;
   };
 
   if (authLoading || loading) {
@@ -169,19 +163,11 @@ function InspectionDetailContent() {
 
   return (
     <div className="app-surface min-h-screen min-w-0">
-      {exportingPdf && exportUrl && (
-        <PdfExportProgress
-          isActive={exportingPdf}
-          exportUrl={exportUrl}
-          getFileName={getExportFileName}
-          onComplete={handleExportComplete}
-        />
-      )}
       <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8 print:pt-0 print:pb-0">
-        <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
+        <div className="no-print flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"
-            className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mt-4 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group w-fit text-xs sm:text-sm backdrop-blur-md"
+            className="inline-flex items-center gap-2 px-2.5 sm:px-4 py-2 sm:py-2.5 mt-4 sm:mt-0 bg-white/70 hover:bg-white text-black rounded-full border border-[#0033FF]/25 hover:border-[#0033FF]/40 shadow-sm hover:shadow-md transition-all duration-200 group w-fit self-start text-xs sm:text-sm backdrop-blur-md"
           >
             <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#0033FF] flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm shrink-0">
               <ArrowLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:-translate-x-0.5 transition-transform" />
@@ -189,12 +175,12 @@ function InspectionDetailContent() {
             <span className="font-semibold tracking-tight">Back to Inspections</span>
           </Link>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-row flex-wrap justify-end gap-2 w-full sm:w-auto sm:ml-auto">
             {isCompleted && (
               <button
                 type="button"
                 onClick={() => setViewMode(showReport ? 'form' : 'report')}
-                className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-800 rounded-xl font-semibold border border-slate-300 hover:bg-slate-50 transition-all text-sm sm:text-base"
+                className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-white text-slate-800 rounded-xl font-semibold border border-slate-300 hover:bg-slate-50 transition-all text-sm sm:text-base shrink-0"
               >
                 <List className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                 {showReport ? 'View full form' : 'View report'}
@@ -204,7 +190,7 @@ function InspectionDetailContent() {
               <button
                 type="button"
                 onClick={handlePrint}
-                className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all text-sm sm:text-base"
+                className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all text-sm sm:text-base shrink-0"
               >
                 <Printer className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                 Print Report
@@ -212,18 +198,10 @@ function InspectionDetailContent() {
             )}
             <button
               onClick={() => setEmailModalOpen(true)}
-              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#FF6600] text-white rounded-xl font-semibold hover:bg-[#E65C00] transition-all hover:scale-105 shadow-lg shadow-[#FF6600]/30 text-sm sm:text-base"
+              className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#FF6600] text-white rounded-xl font-semibold hover:bg-[#E65C00] transition-all hover:scale-105 shadow-lg shadow-[#FF6600]/30 text-sm sm:text-base shrink-0"
             >
               <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
               Email Report
-            </button>
-            <button
-              onClick={handleExport}
-              disabled={exportingPdf}
-              className="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0033FF]/90 transition-all hover:scale-105 shadow-lg shadow-[#0033FF]/50 text-sm sm:text-base disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              <Download className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
-              Export PDF
             </button>
           </div>
         </div>
@@ -233,38 +211,89 @@ function InspectionDetailContent() {
             showReport ? 'p-0 sm:p-1 print:p-0' : 'p-4 sm:p-6 md:p-8'
           }`}
         >
-          <div className="no-print flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
-            <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-black truncate">
-                {showReport ? 'Inspection Report' : `Inspection: ${inspection.inspectionNumber}`}
-              </h1>
-              {showReport && (
-                <p className="text-sm text-slate-600 mt-1">{inspection.inspectionNumber}</p>
-              )}
-            </div>
-            <div className="flex flex-wrap gap-2 shrink-0">
-              {(() => {
-                const isOwner = user && inspection && String(user.email || '').toLowerCase() === String(inspection.inspectorEmail || '').toLowerCase();
-                const readOnly = !user ? false : (isReadOnlyView || (!isOwner && user.role !== 'admin'));
-                if (readOnly) {
-                  return (
-                    <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-yellow-900/50 border-2 border-yellow-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
-                      <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400 mr-1.5 sm:mr-2 shrink-0" />
-                      <span className="text-yellow-300 font-semibold">View Only Mode</span>
+          <div
+            className={`no-print mb-5 sm:mb-6 ${showReport ? 'px-4 pt-4 sm:px-5 sm:pt-5' : ''}`}
+          >
+            {(() => {
+              const isOwner =
+                user &&
+                inspection &&
+                String(user.email || '').toLowerCase() ===
+                  String(inspection.inspectorEmail || '').toLowerCase();
+              const readOnly = !user
+                ? false
+                : isReadOnlyView || (!isOwner && user.role !== 'admin');
+              const statusLabel = inspection.status === 'completed' ? 'Completed' : 'Draft';
+
+              return (
+                <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-gradient-to-br from-white via-white to-slate-50/80 shadow-sm shadow-slate-200/60 ring-1 ring-slate-100/80">
+                  <div
+                    className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#0033FF] via-[#3366FF] to-[#FF6600]"
+                    aria-hidden
+                  />
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-5 pl-5 sm:pl-6">
+                    <div className="flex items-start gap-3 sm:gap-4 min-w-0">
+                      <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-[#0033FF] to-[#0029CC] flex items-center justify-center shadow-md shadow-[#0033FF]/25 shrink-0 ring-2 ring-[#0033FF]/10">
+                        {showReport ? (
+                          <ClipboardCheck className="w-5 h-5 sm:w-6 sm:h-6 text-white" aria-hidden />
+                        ) : (
+                          <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" aria-hidden />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2 mb-1">
+                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-[#0033FF]">
+                            {showReport ? 'Pre-delivery report' : 'Inspection workspace'}
+                          </span>
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold ring-1 ${
+                              isCompleted
+                                ? 'bg-emerald-50 text-emerald-700 ring-emerald-200/80'
+                                : 'bg-slate-100 text-slate-600 ring-slate-200/80'
+                            }`}
+                          >
+                            {statusLabel}
+                          </span>
+                        </div>
+                        <h1 className="text-lg sm:text-2xl font-bold text-slate-900 tracking-tight truncate">
+                          {showReport
+                            ? 'Inspection Report'
+                            : `Inspection ${inspection.inspectionNumber}`}
+                        </h1>
+                        <p className="text-sm text-slate-500 mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                          <span className="font-mono text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100/80 px-2 py-0.5 rounded-md">
+                            {inspection.inspectionNumber}
+                          </span>
+                          {inspection.inspectorName ? (
+                            <>
+                              <span className="text-slate-300 hidden sm:inline" aria-hidden>
+                                ·
+                              </span>
+                              <span className="truncate max-w-[14rem] sm:max-w-none">
+                                {inspection.inspectorName}
+                              </span>
+                            </>
+                          ) : null}
+                        </p>
+                      </div>
                     </div>
-                  );
-                }
-                if (user?.role === 'admin') {
-                  return (
-                    <div className="flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-green-900/50 border-2 border-green-500/50 rounded-lg bg-slate-800/95 text-sm sm:text-base">
-                      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-green-400 mr-1.5 sm:mr-2 shrink-0" />
-                      <span className="text-green-300 font-semibold">Edit Mode</span>
+                    <div className="flex flex-wrap items-center gap-2 shrink-0 sm:justify-end">
+                      {readOnly ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 ring-1 ring-amber-200/80 shadow-sm">
+                          <Lock className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                          View only
+                        </span>
+                      ) : user?.role === 'admin' ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#0033FF]/10 text-[#0033FF] ring-1 ring-[#0033FF]/20 shadow-sm">
+                          <Pencil className="w-3.5 h-3.5 shrink-0" aria-hidden />
+                          Edit mode
+                        </span>
+                      ) : null}
                     </div>
-                  );
-                }
-                return null;
-              })()}
-            </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
           {showReport ? (
             <InspectionReportView inspection={inspection} />

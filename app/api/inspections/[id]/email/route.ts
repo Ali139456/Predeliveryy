@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
-import { generateReportPdf } from '@/app/api/inspections/report-pdf/generate';
+import {
+  ensureInspectionReportHtml,
+  pdfFromReportHtml,
+  resolveAppOrigin,
+} from '@/lib/report-snapshot';
 import { sendEmailWithPDF } from '@/lib/email';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
@@ -67,30 +71,39 @@ export async function POST(
       );
     }
 
-    const origin = (() => {
-      if (request.nextUrl.origin && request.nextUrl.origin !== 'null') {
-        return request.nextUrl.origin;
-      }
-      if (process.env.NEXT_PUBLIC_APP_URL) {
-        return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, '');
-      }
-      if (process.env.VERCEL_URL) {
-        const v = process.env.VERCEL_URL;
-        return v.startsWith('http') ? v : `https://${v}`;
-      }
-      return 'http://localhost:3000';
-    })();
+    const origin = resolveAppOrigin(request.nextUrl.origin);
 
-    // Same HTML layout as Print Report; photo caps keep under Resend size limit (~40MB).
+    // Use frozen report HTML from DB (same as print); refresh if missing or stale.
     const RESEND_EMAIL_SIZE_LIMIT_BYTES = 34 * 1024 * 1024;
     let pdfBuffer: Buffer;
     try {
-      pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true });
+      let reportHtml = await ensureInspectionReportHtml(
+        supabase,
+        row as InspectionRow,
+        inspection,
+        origin,
+        { force: false }
+      );
+      pdfBuffer = await pdfFromReportHtml(reportHtml);
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
-        pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true, maxPhotos: 18 });
+        reportHtml = await ensureInspectionReportHtml(
+          supabase,
+          row as InspectionRow,
+          inspection,
+          origin,
+          { force: true, maxPhotos: 18 }
+        );
+        pdfBuffer = await pdfFromReportHtml(reportHtml);
       }
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
-        pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true, maxPhotos: 10 });
+        reportHtml = await ensureInspectionReportHtml(
+          supabase,
+          row as InspectionRow,
+          inspection,
+          origin,
+          { force: true, maxPhotos: 10 }
+        );
+        pdfBuffer = await pdfFromReportHtml(reportHtml);
       }
     } catch (pdfError: unknown) {
       const msg = pdfError instanceof Error ? pdfError.message : 'Unknown error';
@@ -101,7 +114,7 @@ export async function POST(
         {
           success: false,
           error:
-            'This report is still too large to email after compressing images. Please use Export PDF and share the file or a link instead.',
+            'This report is still too large to email after compressing images. Please use Print Report and save as PDF, or share a link instead.',
         },
         { status: 413 }
       );

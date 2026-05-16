@@ -27,13 +27,20 @@ const BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || 'pre-delivery-inspections'
 // Local storage directory for fallback
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
-// Ensure upload directory exists for local fallback (never throw — serverless FS is read-only and would crash route imports)
-if (!hasAWSCredentials) {
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads');
+/** Create a directory tree; safe when the path already exists (Node recursive mkdir). */
+function ensureDirSync(dirPath: string): void {
   try {
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
+    fs.mkdirSync(dirPath, { recursive: true });
+  } catch (err: unknown) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code !== 'EEXIST') throw err;
+  }
+}
+
+// Ensure upload directory exists for local fallback (never throw — serverless FS is read-only)
+if (!hasAWSCredentials) {
+  try {
+    ensureDirSync(UPLOAD_DIR);
   } catch {
     /* Supabase/S3 used in production; local uploads dir only for dev */
   }
@@ -52,14 +59,7 @@ export async function uploadToS3(file: Buffer, fileName: string, contentType: st
     // Only use local storage in non-serverless environments
     try {
       const localPath = path.join(UPLOAD_DIR, fileName);
-      const dir = path.dirname(localPath);
-      
-      // Ensure directory exists
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-      
-      // Write file to local storage
+      ensureDirSync(path.dirname(localPath));
       fs.writeFileSync(localPath, file);
       return fileName;
     } catch (error: any) {
@@ -91,14 +91,7 @@ export async function uploadToS3(file: Buffer, fileName: string, contentType: st
     try {
       console.warn('S3 upload failed, falling back to local storage:', error.message);
       const localPath = path.join(UPLOAD_DIR, fileName);
-      const dir = path.dirname(localPath);
-      
-      // Ensure directory exists
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
-      
-      // Write file to local storage
+      ensureDirSync(path.dirname(localPath));
       fs.writeFileSync(localPath, file);
       return fileName;
     } catch (localError: any) {

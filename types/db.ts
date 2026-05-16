@@ -95,6 +95,8 @@ export interface InspectionRow {
   signatures: { technician?: string; manager?: string };
   privacy_consent: boolean;
   data_retention_days: number | null;
+  report_html?: string | null;
+  report_html_at?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -116,6 +118,8 @@ export interface IInspection {
   signatures?: { technician?: string; manager?: string };
   privacyConsent: boolean;
   dataRetentionDays?: number;
+  reportHtml?: string | null;
+  reportHtmlAt?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -211,6 +215,8 @@ export function inspectionRowToInspection(row: InspectionRow): IInspection & { _
     signatures: row.signatures,
     privacyConsent: row.privacy_consent,
     dataRetentionDays: row.data_retention_days ?? undefined,
+    reportHtml: row.report_html ?? undefined,
+    reportHtmlAt: row.report_html_at ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

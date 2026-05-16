@@ -38,13 +38,18 @@ async function launchBrowser() {
   });
 }
 
-async function htmlToPdfBuffer(html: string): Promise<Buffer> {
+/** Render stored or generated report HTML to PDF (print media, Tailwind CDN in document). */
+export async function pdfBufferFromHtml(html: string): Promise<Buffer> {
   const browser = await launchBrowser();
   try {
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'load', timeout: 55_000 });
+    await page.setContent(html, {
+      waitUntil: 'networkidle0' as 'load',
+      timeout: 90_000,
+    });
+    await page.emulateMediaType('print');
     const pdf = await page.pdf({
-      format: 'A4',
+      preferCSSPageSize: true,
       printBackground: true,
       margin: { top: '6mm', right: '6mm', bottom: '6mm', left: '6mm' },
     });
@@ -64,5 +69,5 @@ export async function generateReportPdf(
     origin: options.origin,
     maxPhotos,
   });
-  return htmlToPdfBuffer(html);
+  return pdfBufferFromHtml(html);
 }

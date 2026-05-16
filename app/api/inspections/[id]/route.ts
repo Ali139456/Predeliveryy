@@ -4,6 +4,7 @@ import { logAuditEventWithUser } from '@/lib/audit';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
+import { generateAndSaveReportHtml, resolveAppOrigin } from '@/lib/report-snapshot';
 import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
@@ -129,6 +130,14 @@ export async function PUT(
       await syncInspectionAnalytics(supabase, updated as InspectionRow);
     } catch (syncErr) {
       console.error('[analytics-sync] update', syncErr);
+    }
+
+    if (updated.status === 'completed') {
+      const completedInspection = inspectionRowToInspection(updated as InspectionRow);
+      const origin = resolveAppOrigin(request.nextUrl.origin);
+      generateAndSaveReportHtml(supabase, completedInspection, origin).catch((snapErr) => {
+        console.error('[report-snapshot] on complete', snapErr);
+      });
     }
 
     return NextResponse.json({ success: true, data: inspectionRowToInspection(updated as InspectionRow) });
