@@ -1,6 +1,10 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import type { IInspection } from '@/types/db';
+import type { IInspection, InspectionPhoto } from '@/types/db';
+
+type GeneralPhotoPdf = InspectionPhoto & {
+  damageMarkers?: { label: string }[];
+};
 import fs from 'fs';
 import path from 'path';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
@@ -1105,13 +1109,15 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
       const imageData = imageCache.get(imageSrc) ?? (fileName ? imageCache.get(fileName) : null) ?? null;
       await addImageToPDF(doc, imageData, x, y, photoWidth, photoHeight, fileName);
 
-      const photoObj = typeof photo === 'object' && photo ? (photo as Record<string, unknown>) : null;
-      const slot = (photoObj?.metadata as { slot?: string } | undefined)?.slot;
-      const aiSummary = (photoObj?.metadata as { aiDamage?: { summary?: string } } | undefined)?.aiDamage?.summary;
+      const photoObj: GeneralPhotoPdf | null =
+        typeof photo === 'object' && photo ? (photo as GeneralPhotoPdf) : null;
+      const meta = photoObj?.metadata as
+        | ({ slot?: string; aiDamage?: { summary?: string } })
+        | undefined;
+      const slot = meta?.slot;
+      const aiSummary = meta?.aiDamage?.summary;
       const genMarkers =
-        photoObj && Array.isArray((photoObj as { damageMarkers?: { label: string }[] }).damageMarkers)
-          ? (photoObj as { damageMarkers: { label: string }[] }).damageMarkers
-          : null;
+        photoObj && Array.isArray(photoObj.damageMarkers) ? photoObj.damageMarkers : null;
       let captionY = y + photoHeight + 2;
       doc.setFontSize(7);
       doc.setFont('helvetica', 'normal');
