@@ -49,23 +49,24 @@ test.describe('Navigation', () => {
     await expect(page.getByRole('textbox', { name: /email|Email/i }).first()).toBeVisible();
   });
 
-  test('inspections route redirects to login when unauthenticated (or shows list with session)', async ({
+  test('inspections route redirects home when unauthenticated (or shows list with session)', async ({
     page,
   }) => {
     await page.goto('/inspections');
-    await expect(page).toHaveURL(/\/login|\/inspections/, { timeout: 10000 });
+    await expect(page).toHaveURL(/\/(?:\?.*)?$|\/inspections/, { timeout: 10000 });
     const url = page.url();
-    if (url.includes('/login')) {
-      await expect(page.getByRole('button', { name: 'Sign In' })).toBeVisible({ timeout: 10000 });
-      await expect(url).toMatch(/redirect=.*inspections/i);
+    if (url.match(/\/$/)) {
+      await expect(page.getByRole('heading', { name: /Pre-Delivery Inspections/i })).toBeVisible({
+        timeout: 10000,
+      });
     } else {
       await expect(page.getByText(/Inspection History|Back to Home/i).first()).toBeVisible({ timeout: 10000 });
     }
   });
 
-  test('unauthenticated user visiting /admin is redirected to login', async ({ page }) => {
+  test('unauthenticated user visiting /admin is redirected to home', async ({ page }) => {
     await page.goto('/admin');
-    await expect(page).toHaveURL(/\/login/);
+    await expect(page).toHaveURL(/\/$/);
   });
 
   test('privacy page is reachable', async ({ page }) => {

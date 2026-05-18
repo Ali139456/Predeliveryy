@@ -39,18 +39,16 @@ function UserHeader() {
   }, [pathname]);
 
   const handleLogout = useCallback(async () => {
+    router.replace('/');
+    clearSession();
+    if (typeof window !== 'undefined') {
+      sessionStorage.clear();
+      localStorage.clear();
+    }
     try {
-      clearSession();
-      if (typeof window !== 'undefined') {
-        sessionStorage.clear();
-        localStorage.clear();
-      }
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-      router.replace('/login');
     } catch (error) {
       console.error('Logout error:', error);
-      clearSession();
-      router.replace('/login');
     }
   }, [router, clearSession]);
 

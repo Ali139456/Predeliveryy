@@ -11,11 +11,8 @@ export function middleware(request: NextRequest) {
 
   if (!looksLikeJwt) {
     const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    const dest = request.nextUrl.pathname + request.nextUrl.search;
-    if (dest && dest !== '/login') {
-      url.searchParams.set('redirect', dest);
-    }
+    url.pathname = '/';
+    url.search = '';
     return NextResponse.redirect(url);
   }
 

@@ -58,7 +58,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const clearSession = useCallback(() => {
     setUser(null);
-    sessionCheckedRef.current = false;
+    setLoading(false);
+    // Avoid /api/auth/me refetch flash right after logout (user is already null).
+    sessionCheckedRef.current = true;
   }, []);
 
   const refetch = useCallback(async (options?: { silent?: boolean }) => {

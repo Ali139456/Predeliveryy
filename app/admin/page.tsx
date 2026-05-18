@@ -93,10 +93,10 @@ export default function AdminDashboard() {
         }
         setUser(data.user);
       } else {
-        router.push('/login');
+        router.replace('/');
       }
     } catch (error) {
-      router.push('/login');
+      router.replace('/');
     } finally {
       setLoading(false);
     }
@@ -115,8 +115,8 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.push('/login');
+    router.replace('/');
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
   };
 
   if (loading) {
