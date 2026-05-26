@@ -313,14 +313,24 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     }
   }, [initialData?.status]);
 
-  const totalSteps = 5;
-  const steps = [
-    { number: 1, title: 'Inspector Info', icon: User },
-    { number: 2, title: 'Vehicle & Identification', shortTitle: 'Vehicle', icon: Car },
-    { number: 3, title: 'GPS & Photos', shortTitle: 'GPS', icon: MapPin },
-    { number: 4, title: 'Checklist', icon: ClipboardCheck },
-    { number: 5, title: 'Signatures', icon: PenTool },
-  ] as const;
+  // Blue/Pink slip is a regulatory checklist — no PDI-style vehicle ID step
+  // (it lives inside the checklist) and no separate GPS/general-photos step.
+  type StepKey = 'inspector' | 'vehicle' | 'gps' | 'checklist' | 'signatures';
+  const stepKeyOrder: StepKey[] = isBlueOrPink
+    ? ['inspector', 'checklist', 'signatures']
+    : ['inspector', 'vehicle', 'gps', 'checklist', 'signatures'];
+  const stepDefs: Record<StepKey, { title: string; shortTitle?: string; icon: typeof User }> = {
+    inspector: { title: 'Inspector Info', icon: User },
+    vehicle: { title: 'Vehicle & Identification', shortTitle: 'Vehicle', icon: Car },
+    gps: { title: 'GPS & Photos', shortTitle: 'GPS', icon: MapPin },
+    checklist: { title: 'Checklist', icon: ClipboardCheck },
+    signatures: { title: 'Signatures', icon: PenTool },
+  };
+  const steps = stepKeyOrder.map((k, i) => ({ number: i + 1, ...stepDefs[k] }));
+  const totalSteps = steps.length;
+  const getStepKey = (n: number): StepKey | undefined => stepKeyOrder[n - 1];
+  const checklistStepNumber = stepKeyOrder.indexOf('checklist') + 1;
+  const signaturesStepNumber = stepKeyOrder.indexOf('signatures') + 1;
 
   // Restore step from URL on mount (so refresh keeps you on the same step)
   useEffect(() => {
@@ -386,21 +396,21 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   const overallProgressPercent = useMemo(() => {
     const catCount = Math.max(1, fields.length);
-    if (currentStep === 5) return 100;
-    if (currentStep <= 3) return Math.round((currentStep / totalSteps) * 100);
-    const base = (3 / totalSteps) * 100;
+    if (currentStep === signaturesStepNumber) return 100;
+    if (currentStep < checklistStepNumber) return Math.round((currentStep / totalSteps) * 100);
+    const base = ((checklistStepNumber - 1) / totalSteps) * 100;
     const span = (1 / totalSteps) * 100;
     return Math.min(99, Math.round(base + ((activeChecklistCategory + 1) / catCount) * span));
-  }, [currentStep, totalSteps, fields.length, activeChecklistCategory]);
+  }, [currentStep, totalSteps, fields.length, activeChecklistCategory, checklistStepNumber, signaturesStepNumber]);
 
   useEffect(() => {
-    if (currentStep !== 4) {
+    if (currentStep !== checklistStepNumber) {
       setActiveChecklistCategory(0);
       return;
     }
     const maxIdx = Math.max(0, fields.length - 1);
     setActiveChecklistCategory((i) => Math.min(i, maxIdx));
-  }, [currentStep, fields.length]);
+  }, [currentStep, fields.length, checklistStepNumber]);
 
   // Sync inspection date from initialData to yyyy-MM-dd so the date input displays correctly in view mode
   useEffect(() => {
@@ -990,8 +1000,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   // Step validation
   const validateStep = (step: number): { valid: boolean; error?: string } => {
     const values = getValues();
-    switch (step) {
-      case 1:
+    const key = getStepKey(step);
+    switch (key) {
+      case 'inspector':
         if (!values.inspectorName || values.inspectorName.trim() === '') {
           return { valid: false, error: 'Inspector name is required' };
         }
@@ -1005,20 +1016,20 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           return { valid: false, error: 'Inspection date is required' };
         }
         return { valid: true };
-      case 2:
+      case 'vehicle':
         // Vehicle info validation - at least VIN or License Plate should be provided
         const vehicleInfo = values.vehicleInfo || {};
         if (!vehicleInfo.vin && !vehicleInfo.licensePlate) {
           return { valid: false, error: 'Please provide at least VIN or License Plate' };
         }
         return { valid: true };
-      case 3:
+      case 'gps':
         // GPS required; general photos optional (repair items carry photos on checklist)
         if (!location || (!location.current && !location.start)) {
           return { valid: false, error: 'Please capture GPS location before proceeding' };
         }
         return { valid: true };
-      case 4:
+      case 'checklist':
         // Checklist validation
         const checklist = values.checklist || [];
         if (!checklist || checklist.length === 0) {
@@ -1054,7 +1065,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           }
         }
         return { valid: true };
-      case 5:
+      case 'signatures':
         // Signatures (client terms handled via ToS)
         if (!signatures.technician) {
           return { valid: false, error: 'Technician signature is required' };
@@ -1105,7 +1116,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   /** Footer Previous: on checklist step, go to previous category before leaving the step. */
   const handleFooterPrevious = () => {
-    if (currentStep === 4 && fields.length > 0 && activeChecklistCategory > 0) {
+    if (currentStep === checklistStepNumber && fields.length > 0 && activeChecklistCategory > 0) {
       setActiveChecklistCategory((i) => Math.max(0, i - 1));
       return;
     }
@@ -1114,7 +1125,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   /** Footer Next: on checklist step, advance section until the last, then proceed to signatures. */
   const handleFooterNext = async () => {
-    if (currentStep === 4 && fields.length > 0) {
+    if (currentStep === checklistStepNumber && fields.length > 0) {
       const lastIdx = fields.length - 1;
       const safeIdx = Math.max(0, Math.min(activeChecklistCategory, lastIdx));
       if (safeIdx < lastIdx) {
@@ -1126,16 +1137,17 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   };
 
   const renderStepContent = () => {
-    switch (currentStep) {
-      case 1:
+    const key = getStepKey(currentStep);
+    switch (key) {
+      case 'inspector':
         return renderStep1();
-      case 2:
+      case 'vehicle':
         return renderStep2();
-      case 3:
+      case 'gps':
         return renderStep3();
-      case 4:
+      case 'checklist':
         return renderStep4();
-      case 5:
+      case 'signatures':
         return renderStep6();
       default:
         return null;
@@ -1578,7 +1590,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <div className={formStepHeaderClass}>
           <div className="flex items-center flex-1 min-w-0">
             <div className={formStepBadgeClass}>
-              <span className="text-white font-bold text-lg">5</span>
+              <span className="text-white font-bold text-lg">{signaturesStepNumber}</span>
             </div>
             <h2 className={formStepTitleClass}>Signatures</h2>
           </div>
@@ -1656,7 +1668,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               Step {currentStep} of {totalSteps}
               <span className="text-white/85 font-normal"> — {steps[currentStep - 1]?.title}</span>
             </span>
-            {currentStep === 4 && fields.length > 0 && (
+            {currentStep === checklistStepNumber && fields.length > 0 && (
               <span className="text-[#7eb8ff] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
                 Checklist {activeChecklistCategory + 1}/{fields.length}
                 {activeCategoryTitle ? `: ${activeCategoryTitle}` : ''}
@@ -1710,11 +1722,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       <div className="flex flex-col min-w-0">
         <div className={`w-full min-w-0 ${readOnly ? 'space-y-6' : ''}`}>
           {readOnly ? (
-            // View mode: Show all sections at once
+            // View mode: Show all sections at once. Blue/Pink slip skip the
+            // PDI-only vehicle and GPS sections — they don't apply.
             <>
               {renderStep1()}
-              {renderStep2()}
-              {renderStep3()}
+              {!isBlueOrPink && renderStep2()}
+              {!isBlueOrPink && renderStep3()}
               {renderStep4()}
               {renderStep6()}
             </>
@@ -1744,12 +1757,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                 type="button"
                 onClick={handleFooterNext}
                 className={`flex items-center justify-center rounded-xl font-semibold bg-gradient-to-r from-[#0033FF] to-[#0029CC] text-white shadow-md shadow-[#0033FF]/20 hover:brightness-105 transition-all w-full sm:w-auto ${
-                  currentStep === 4
+                  currentStep === checklistStepNumber
                     ? 'px-5 py-3.5 text-sm uppercase tracking-wide'
                     : 'px-4 py-2 text-sm'
                 }`}
               >
-                {currentStep === 4 ? 'Continue' : 'Next'}
+                {currentStep === checklistStepNumber ? 'Continue' : 'Next'}
                 <ChevronRight className="w-4 h-4 ml-1.5" />
               </button>
             ) : (
