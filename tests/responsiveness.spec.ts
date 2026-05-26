@@ -41,7 +41,7 @@ test.describe('Responsiveness', () => {
   test('key content visible on mobile without layout break', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Pre-Delivery/i })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Book a demo/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Pre-Delivery Inspections/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Book a demo/i }).first()).toBeVisible();
   });
 });
