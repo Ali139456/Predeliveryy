@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 import AnalyticsTab from './components/AnalyticsTab';
+import BookingsTab from './components/BookingsTab';
 import PageContainer from '@/components/PageContainer';
 import {
   AdminShell,
@@ -71,7 +72,7 @@ export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'users' | 'audit' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'bookings' | 'users' | 'audit' | 'settings'>('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -133,6 +134,7 @@ export default function AdminDashboard() {
   const adminTabs = [
     { id: 'overview', label: '📊 Overview' },
     { id: 'analytics', label: '📈 Analytics' },
+    { id: 'bookings', label: '📅 Bookings' },
     { id: 'users', label: user?.role === 'admin' ? '👥 Organisation & users' : '👥 Users' },
     { id: 'audit', label: '🔒 Audit Logs' },
     { id: 'settings', label: '⚙️ Settings' },
@@ -155,6 +157,7 @@ export default function AdminDashboard() {
       <PageContainer className="py-4 sm:py-6 md:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} onRefetch={fetchStats} />}
         {activeTab === 'analytics' && <AnalyticsTab />}
+        {activeTab === 'bookings' && <BookingsTab />}
         {activeTab === 'users' && (
           <UsersTab userRole={user?.role} userTenantId={user?.tenantId as string | undefined} />
         )}

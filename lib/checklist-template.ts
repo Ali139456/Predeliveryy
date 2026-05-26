@@ -1,5 +1,31 @@
 import type { InspectionChecklistCategory } from '@/types/db';
 
+/** Supported inspection product types. */
+export const INSPECTION_TYPES = ['pdi', 'blue_slip', 'pink_slip'] as const;
+export type InspectionType = (typeof INSPECTION_TYPES)[number];
+
+export function inspectionTypeLabel(type: InspectionType): string {
+  switch (type) {
+    case 'pdi':
+      return 'Pre-Delivery Inspection';
+    case 'blue_slip':
+      return 'Blue Slip (AUVIS)';
+    case 'pink_slip':
+      return 'Pink Slip (eSafety)';
+  }
+}
+
+export function inspectionTypeShortLabel(type: InspectionType): string {
+  switch (type) {
+    case 'pdi':
+      return 'PDI';
+    case 'blue_slip':
+      return 'Blue Slip';
+    case 'pink_slip':
+      return 'Pink Slip';
+  }
+}
+
 /** Matches `defaultChecklist` category order in InspectionForm */
 export const CHECKLIST_CATEGORY_ORDER = [
   'Pre delivery Inspection',
@@ -81,3 +107,239 @@ export function reportCategorySummary(category: InspectionChecklistCategory) {
 
   return { total, passed, needsReview, categoryPass };
 }
+
+// ---------------------------------------------------------------------------
+// Blue Slip (NSW AUVIS) — identity + comprehensive safety inspection.
+// Used for unregistered vehicles, imports, defect clearances, or vehicles
+// out of registration for more than 3 months.
+// ---------------------------------------------------------------------------
+type SeedItem = { item: string; status: 'OK'; notes: string; photos: [] };
+type SeedCategory = { category: string; items: SeedItem[] };
+
+function makeItems(items: string[]): SeedItem[] {
+  return items.map((item) => ({ item, status: 'OK' as const, notes: '', photos: [] }));
+}
+
+export const BLUE_SLIP_CHECKLIST_TEMPLATE: SeedCategory[] = [
+  {
+    category: 'Vehicle Identity Verification',
+    items: makeItems([
+      'VIN verified against records',
+      'VIN plate authentic',
+      'Compliance plate present',
+      'Engine number recorded',
+      'Vehicle colour verified',
+      'Odometer reading recorded',
+    ]),
+  },
+  {
+    category: 'Registration & Documentation',
+    items: makeItems([
+      'Ownership documentation',
+      'Previous registration records',
+      'Import approval (if applicable)',
+      'Proof of acquisition',
+    ]),
+  },
+  {
+    category: 'Exterior Condition',
+    items: makeItems([
+      'Body damage affecting safety',
+      'Sharp edges',
+      'Doors functioning',
+      'Mirrors fitted',
+    ]),
+  },
+  {
+    category: 'Steering System',
+    items: makeItems([
+      'Steering rack secure',
+      'Steering joints not worn',
+      'Steering free play acceptable',
+    ]),
+  },
+  {
+    category: 'Suspension System',
+    items: makeItems([
+      'Springs intact',
+      'Shock absorbers working',
+      'Control arms secure',
+      'Bushings intact',
+    ]),
+  },
+  {
+    category: 'Wheels & Tyres',
+    items: makeItems([
+      'Tyres compliant with regulations',
+      'Tread depth adequate',
+      'Wheels undamaged',
+    ]),
+  },
+  {
+    category: 'Brake System',
+    items: makeItems([
+      'Brake pedal function',
+      'Brake fluid leaks',
+      'Brake pads / shoes adequate',
+      'Parking brake works',
+    ]),
+  },
+  {
+    category: 'Engine & Driveline',
+    items: makeItems([
+      'Oil leaks',
+      'Fuel leaks',
+      'Engine mounts secure',
+      'Driveline secure',
+    ]),
+  },
+  {
+    category: 'Exhaust System',
+    items: makeItems([
+      'Exhaust secure',
+      'Catalytic converter present',
+      'Noise levels acceptable',
+    ]),
+  },
+  {
+    category: 'Electrical & Lighting',
+    items: makeItems([
+      'Headlights',
+      'Indicators',
+      'Brake lights',
+      'Reverse lights',
+      'Dashboard warning lights',
+    ]),
+  },
+  {
+    category: 'Windscreen & Visibility',
+    items: makeItems([
+      'Windscreen damage',
+      'Wipers working',
+      'Washers functioning',
+      'Window tint compliant',
+    ]),
+  },
+  {
+    category: 'Seatbelts & Restraints',
+    items: makeItems([
+      'Seatbelts working',
+      'Anchor points secure',
+      'Child restraint anchors',
+    ]),
+  },
+  {
+    category: 'Structural Integrity',
+    items: makeItems([
+      'Chassis damage',
+      'Corrosion',
+      'Previous crash repairs',
+    ]),
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Pink Slip (NSW eSafety check) — annual safety inspection for cars >5 years.
+// ---------------------------------------------------------------------------
+export const PINK_SLIP_CHECKLIST_TEMPLATE: SeedCategory[] = [
+  {
+    category: 'Vehicle Identification',
+    items: makeItems([
+      'Registration plate matches vehicle',
+      'VIN readable',
+      'Odometer recorded',
+    ]),
+  },
+  {
+    category: 'Lights & Electrical',
+    items: makeItems([
+      'Headlights working',
+      'Brake lights working',
+      'Indicators functioning',
+      'Hazard lights working',
+      'Number plate light',
+      'Horn operational',
+    ]),
+  },
+  {
+    category: 'Tyres & Wheels',
+    items: makeItems([
+      'Minimum tread depth',
+      'Tyres free of major damage',
+      'Tyres correct type for vehicle',
+      'Wheel rims not cracked or bent',
+      'Wheel nuts secure',
+    ]),
+  },
+  {
+    category: 'Steering & Suspension',
+    items: makeItems([
+      'Steering free play acceptable',
+      'Steering components secure',
+      'Shock absorbers not leaking',
+      'Suspension components secure',
+      'No excessive movement in joints',
+    ]),
+  },
+  {
+    category: 'Brakes',
+    items: makeItems([
+      'Brake pedal operation',
+      'Brake system free of leaks',
+      'Brake pad thickness adequate',
+      'Handbrake operational',
+    ]),
+  },
+  {
+    category: 'Windscreen & Wipers',
+    items: makeItems([
+      'Windscreen not cracked in driver view',
+      'Wipers working',
+      'Washer jets functioning',
+    ]),
+  },
+  {
+    category: 'Seatbelts & Seats',
+    items: makeItems([
+      'Seatbelts retract correctly',
+      'Seatbelt anchor points secure',
+      'Seats securely mounted',
+    ]),
+  },
+  {
+    category: 'Body & Structure',
+    items: makeItems([
+      'Doors open and latch properly',
+      'No dangerous rust',
+      'Bonnet latch secure',
+    ]),
+  },
+  {
+    category: 'Exhaust & Emissions',
+    items: makeItems([
+      'Exhaust secure',
+      'No excessive smoke',
+      'No major leaks',
+    ]),
+  },
+  {
+    category: 'Road Test',
+    items: makeItems([
+      'Vehicle drives normally',
+      'No abnormal steering behaviour',
+      'No braking issues',
+    ]),
+  },
+];
+
+/**
+ * Returns the seed checklist for a given inspection type. The PDI template
+ * lives in `components/InspectionForm.tsx` as `defaultChecklist`; this helper
+ * only knows the Blue/Pink variants. Callers handle the PDI default.
+ */
+export function getNonPdiChecklistTemplate(type: InspectionType): SeedCategory[] | null {
+  if (type === 'blue_slip') return BLUE_SLIP_CHECKLIST_TEMPLATE;
+  if (type === 'pink_slip') return PINK_SLIP_CHECKLIST_TEMPLATE;
+  return null;
+}
+
