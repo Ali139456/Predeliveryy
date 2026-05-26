@@ -81,3 +81,29 @@ export async function PATCH(request: NextRequest) {
 
   return NextResponse.json({ success: true, booking: data });
 }
+
+export async function DELETE(request: NextRequest) {
+  const user = await getCurrentUser(request);
+  if (!user) {
+    return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+  }
+  // Hard delete is admin-only — managers can mark cancelled but cannot purge.
+  if (user.role !== 'admin') {
+    return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
+  }
+
+  const url = new URL(request.url);
+  const id = (url.searchParams.get('id') || '').trim();
+  if (!id) {
+    return NextResponse.json({ success: false, error: 'Booking id is required.' }, { status: 400 });
+  }
+
+  const supabase = getSupabase();
+  const { error } = await supabase.from('inspection_bookings').delete().eq('id', id);
+  if (error) {
+    console.error('Delete booking error:', error);
+    return NextResponse.json({ success: false, error: 'Could not delete booking.' }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}

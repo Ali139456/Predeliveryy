@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Calendar, ClipboardCheck, Loader2, RefreshCw, Stamp, Wrench } from 'lucide-react';
+import { Calendar, ClipboardCheck, Loader2, RefreshCw, Stamp, Trash2, Wrench } from 'lucide-react';
 import {
   AdminPanel,
   AdminPageHeader,
@@ -55,6 +55,7 @@ export default function BookingsTab() {
   const [error, setError] = useState<string | null>(null);
   const [statusFilter, setStatusFilter] = useState<'' | Booking['status']>('');
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -94,6 +95,25 @@ export default function BookingsTab() {
       alert(err instanceof Error ? err.message : 'Could not update booking');
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const deleteBooking = async (b: Booking) => {
+    const label = `${b.customer_name || b.customer_email || 'this booking'}`;
+    if (!window.confirm(`Delete booking from ${label}? This cannot be undone.`)) return;
+    setDeletingId(b.id);
+    try {
+      const res = await fetch(`/api/admin/bookings?id=${encodeURIComponent(b.id)}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.error || 'Delete failed');
+      setBookings((prev) => prev.filter((row) => row.id !== b.id));
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Could not delete booking');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -177,6 +197,7 @@ export default function BookingsTab() {
                 <AdminTh>Preferred</AdminTh>
                 <AdminTh>Submitted</AdminTh>
                 <AdminTh>Status</AdminTh>
+                <AdminTh>Actions</AdminTh>
               </AdminThead>
               <tbody>
                 {bookings.map((b) => {
@@ -241,6 +262,22 @@ export default function BookingsTab() {
                             ))}
                           </select>
                         </div>
+                      </AdminTd>
+                      <AdminTd>
+                        <button
+                          type="button"
+                          onClick={() => void deleteBooking(b)}
+                          disabled={deletingId === b.id || updatingId === b.id}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors shadow-sm"
+                          aria-label={`Delete booking from ${b.customer_name || b.customer_email}`}
+                        >
+                          {deletingId === b.id ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3.5 h-3.5" />
+                          )}
+                          Delete
+                        </button>
                       </AdminTd>
                     </AdminTr>
                   );
