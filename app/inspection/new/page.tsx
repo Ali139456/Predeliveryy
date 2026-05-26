@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Toast from '@/components/Toast';
 import PageContainer from '@/components/PageContainer';
-import { ArrowLeft, ClipboardCheck, FileCheck, FileEdit, PlusCircle, Stamp, Wrench, X } from 'lucide-react';
+import { ArrowLeft, ClipboardCheck, FileCheck, FileEdit, PlusCircle, Stamp, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import type { InspectionType } from '@/lib/checklist-template';
 
@@ -58,6 +58,7 @@ const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
 interface DraftInspection {
   _id: string;
   inspectionNumber: string;
+  inspectionType?: InspectionType;
 }
 
 function NewInspectionPageInner() {
@@ -66,12 +67,21 @@ function NewInspectionPageInner() {
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [drafts, setDrafts] = useState<DraftInspection[]>([]);
   const [draftsLoading, setDraftsLoading] = useState(false);
-  const [draftBannerDismissed, setDraftBannerDismissed] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const typeParam = searchParams.get('type');
   const selectedType: InspectionType | null =
     typeParam && ALLOWED_TYPES.has(typeParam) ? (typeParam as InspectionType) : null;
+
+  // Pre-migration drafts have no inspection_type; default them to PDI so we
+  // surface the right "Continue draft" CTA inside the matching type card.
+  const draftByType = useMemo(() => {
+    const map: Partial<Record<InspectionType, DraftInspection>> = {};
+    for (const d of drafts) {
+      const t: InspectionType = d.inspectionType ?? 'pdi';
+      if (!map[t]) map[t] = d;
+    }
+    return map;
+  }, [drafts]);
 
   // Fetch user's drafts when logged in (for "Continue draft" choice)
   useEffect(() => {
@@ -240,35 +250,6 @@ function NewInspectionPageInner() {
           <span className="font-semibold tracking-tight">Back to Home</span>
         </Link>
 
-        {!draftsLoading && drafts.length > 0 && !draftBannerDismissed && (
-          <div className="mb-6 p-4 sm:p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl max-w-7xl mx-auto relative">
-            <button
-              type="button"
-              onClick={() => setDraftBannerDismissed(true)}
-              className="absolute top-3 right-3 p-1 rounded-lg text-amber-700 hover:bg-amber-200/80 focus:ring-2 focus:ring-amber-400 transition-colors"
-              aria-label="Dismiss"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <p className="text-sm font-semibold text-amber-900 mb-3 pr-8">You have a saved draft. Choose one:</p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                href={`/inspections/${drafts[0]._id}`}
-                className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0029CC] transition-all shadow-md"
-              >
-                <FileEdit className="w-4 h-4" />
-                Continue draft {drafts[0].inspectionNumber ? `(${drafts[0].inspectionNumber})` : ''}
-              </Link>
-              <span className="self-center text-black/60 text-sm">or scroll down to start a new inspection</span>
-            </div>
-            {drafts.length > 1 && (
-              <p className="text-xs text-amber-800/80 mt-2">
-                You have {drafts.length} drafts. Opening the most recent above; others are in Inspection History.
-              </p>
-            )}
-          </div>
-        )}
-
         {!selectedType ? (
           <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 max-w-5xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
             <h2 className="text-lg sm:text-xl font-semibold text-black mb-2 flex items-center gap-2">
@@ -281,11 +262,11 @@ function NewInspectionPageInner() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {TYPE_OPTIONS.map((opt) => {
                 const Icon = opt.Icon;
+                const draft = draftByType[opt.value];
                 return (
-                  <Link
+                  <div
                     key={opt.value}
-                    href={`/inspection/new?type=${opt.value}`}
-                    className={`group block rounded-2xl bg-white p-5 border-2 hover:shadow-lg transition-all ${opt.accent}`}
+                    className={`group flex flex-col rounded-2xl bg-white p-5 border-2 hover:shadow-lg transition-all ${opt.accent}`}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#0033FF] text-white">
@@ -297,13 +278,36 @@ function NewInspectionPageInner() {
                     </div>
                     <h3 className="text-lg font-bold text-slate-900 mb-1">{opt.label}</h3>
                     <p className="text-sm text-slate-600 leading-relaxed">{opt.blurb}</p>
-                    <p className="mt-4 text-sm font-semibold text-[#0033FF] group-hover:underline">
-                      Start →
-                    </p>
-                  </Link>
+                    <div className="mt-4 flex flex-col gap-2">
+                      {draft && (
+                        <Link
+                          href={`/inspections/${draft._id}`}
+                          className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-amber-100 text-amber-900 border border-amber-300 rounded-xl font-semibold text-sm hover:bg-amber-200 transition-colors"
+                        >
+                          <FileEdit className="w-4 h-4" />
+                          Continue draft{draft.inspectionNumber ? ` (${draft.inspectionNumber})` : ''}
+                        </Link>
+                      )}
+                      <Link
+                        href={`/inspection/new?type=${opt.value}`}
+                        className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-colors ${
+                          draft
+                            ? 'bg-white text-[#0033FF] border border-[#0033FF]/40 hover:bg-[#0033FF]/5'
+                            : 'bg-[#0033FF] text-white hover:bg-[#0029CC]'
+                        }`}
+                      >
+                        {draft ? 'Start new' : 'Start →'}
+                      </Link>
+                    </div>
+                  </div>
                 );
               })}
             </div>
+            {!draftsLoading && drafts.length > 1 && (
+              <p className="text-xs text-slate-500 mt-5">
+                You have {drafts.length} saved drafts in total. Older drafts of each type are available in Inspection History.
+              </p>
+            )}
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
