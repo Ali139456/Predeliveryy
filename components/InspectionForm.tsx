@@ -1653,7 +1653,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         {inspectionType !== 'pdi' && (
           <span
             className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide text-white shrink-0 ${
-              inspectionType === 'blue_slip' ? 'bg-[#0033FF]' : 'bg-[#FF6600]'
+              inspectionType === 'blue_slip' ? 'bg-[#0033FF]' : 'bg-[#EC4899]'
             }`}
           >
             {inspectionType === 'blue_slip' ? 'NSW AUVIS' : 'NSW eSafety'}

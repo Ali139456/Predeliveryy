@@ -194,22 +194,22 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* PDI */}
-              <div className="group relative bg-white rounded-2xl p-7 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl flex flex-col">
-                <div className="w-14 h-14 rounded-xl bg-[#0033FF] flex items-center justify-center mb-5">
+              <div className="group relative bg-white rounded-2xl p-7 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl flex flex-col">
+                <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-5">
                   <ClipboardCheck className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-gray-900">Pre-Delivery Inspection</h3>
-                <p className="text-sm font-semibold text-[#0033FF] mb-3">For dealers, OEMs &amp; fleets</p>
+                <p className="text-sm font-semibold text-[#FF6600] mb-3">For dealers, OEMs &amp; fleets</p>
                 <p className="text-gray-600 text-sm leading-relaxed mb-5">
                   Verify vehicle condition before customer handover. Captures photos, VIN, condition data and digital sign-off — a defensible delivery record every time.
                 </p>
                 <ul className="space-y-2 mb-6 text-sm text-gray-700">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#0033FF] mt-0.5 shrink-0" />Complete digital checklist</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#0033FF] mt-0.5 shrink-0" />Photos + GPS + VIN scan</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#0033FF] mt-0.5 shrink-0" />Digital signatures &amp; PDF report</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Complete digital checklist</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Photos + GPS + VIN scan</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Digital signatures &amp; PDF report</li>
                 </ul>
                 <div className="mt-auto">
-                  <Link href="/book?type=pdi" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold transition-colors">
+                  <Link href="/book?type=pdi" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold transition-colors">
                     <Calendar className="w-4 h-4" />
                     Book PDI
                   </Link>
@@ -241,23 +241,23 @@ export default function Home() {
               </div>
 
               {/* Pink Slip */}
-              <div className="group relative bg-white rounded-2xl p-7 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl flex flex-col">
-                <div className="absolute -top-3 right-5 px-3 py-1 rounded-full bg-[#FF6600] text-white text-[11px] font-bold tracking-wide">NSW eSafety</div>
-                <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-5">
+              <div className="group relative bg-white rounded-2xl p-7 border-2 border-gray-200 hover:border-[#EC4899] transition-all duration-300 hover:shadow-xl flex flex-col">
+                <div className="absolute -top-3 right-5 px-3 py-1 rounded-full bg-[#EC4899] text-white text-[11px] font-bold tracking-wide">NSW eSafety</div>
+                <div className="w-14 h-14 rounded-xl bg-[#EC4899] flex items-center justify-center mb-5">
                   <Wrench className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-gray-900">Pink Slip Inspection</h3>
-                <p className="text-sm font-semibold text-[#FF6600] mb-3">Annual safety check</p>
+                <p className="text-sm font-semibold text-[#EC4899] mb-3">Annual safety check</p>
                 <p className="text-gray-600 text-sm leading-relaxed mb-5">
                   NSW annual eSafety check required for light vehicles older than 5 years to renew registration. Results submitted electronically to Transport for NSW.
                 </p>
                 <ul className="space-y-2 mb-6 text-sm text-gray-700">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Brakes, lights, tyres, steering</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Photo evidence for every item</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Fast turnaround &amp; clear pass/fail</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#EC4899] mt-0.5 shrink-0" />Brakes, lights, tyres, steering</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#EC4899] mt-0.5 shrink-0" />Photo evidence for every item</li>
+                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#EC4899] mt-0.5 shrink-0" />Fast turnaround &amp; clear pass/fail</li>
                 </ul>
                 <div className="mt-auto">
-                  <Link href="/book?type=pink_slip" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold transition-colors">
+                  <Link href="/book?type=pink_slip" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#EC4899] hover:bg-[#DB2777] text-white font-semibold transition-colors">
                     <Calendar className="w-4 h-4" />
                     Book Pink Slip
                   </Link>

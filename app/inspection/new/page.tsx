@@ -14,7 +14,18 @@ const TYPE_OPTIONS: Array<{
   label: string;
   blurb: string;
   Icon: typeof ClipboardCheck;
+  /** Card border colour class. */
   accent: string;
+  /** Solid background colour class for icon tile + primary CTA. */
+  iconBg: string;
+  /** Hover variant of `iconBg` for the primary CTA. */
+  iconBgHover: string;
+  /** Text colour for the inline "Start new" outlined CTA. */
+  textColor: string;
+  /** Border colour for the inline "Start new" outlined CTA. */
+  outlineBorder: string;
+  /** Faint background for the outlined CTA on hover. */
+  outlineHoverBg: string;
   badge: string;
 }> = [
   {
@@ -22,7 +33,12 @@ const TYPE_OPTIONS: Array<{
     label: 'Pre-Delivery Inspection',
     blurb: 'New vehicle handover check for dealers, OEMs and fleets.',
     Icon: ClipboardCheck,
-    accent: 'border-[#0033FF]',
+    accent: 'border-[#FF6600]',
+    iconBg: 'bg-[#FF6600]',
+    iconBgHover: 'hover:bg-[#E65C00]',
+    textColor: 'text-[#FF6600]',
+    outlineBorder: 'border-[#FF6600]/40',
+    outlineHoverBg: 'hover:bg-[#FF6600]/5',
     badge: 'PDI',
   },
   {
@@ -31,6 +47,11 @@ const TYPE_OPTIONS: Array<{
     blurb: 'Identity + comprehensive safety inspection.',
     Icon: Stamp,
     accent: 'border-[#0033FF]',
+    iconBg: 'bg-[#0033FF]',
+    iconBgHover: 'hover:bg-[#0029CC]',
+    textColor: 'text-[#0033FF]',
+    outlineBorder: 'border-[#0033FF]/40',
+    outlineHoverBg: 'hover:bg-[#0033FF]/5',
     badge: 'AUVIS',
   },
   {
@@ -38,7 +59,12 @@ const TYPE_OPTIONS: Array<{
     label: 'Pink Slip (NSW eSafety)',
     blurb: 'Annual safety check for vehicles over 5 years.',
     Icon: Wrench,
-    accent: 'border-[#FF6600]',
+    accent: 'border-[#EC4899]',
+    iconBg: 'bg-[#EC4899]',
+    iconBgHover: 'hover:bg-[#DB2777]',
+    textColor: 'text-[#EC4899]',
+    outlineBorder: 'border-[#EC4899]/40',
+    outlineHoverBg: 'hover:bg-[#EC4899]/5',
     badge: 'eSafety',
   },
 ];
@@ -269,7 +295,7 @@ function NewInspectionPageInner() {
                     className={`group flex flex-col rounded-2xl bg-white p-5 border-2 hover:shadow-lg transition-all ${opt.accent}`}
                   >
                     <div className="flex items-start justify-between mb-3">
-                      <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#0033FF] text-white">
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${opt.iconBg}`}>
                         <Icon className="w-6 h-6" />
                       </div>
                       <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
@@ -292,8 +318,8 @@ function NewInspectionPageInner() {
                         href={`/inspection/new?type=${opt.value}`}
                         className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-colors ${
                           draft
-                            ? 'bg-white text-[#0033FF] border border-[#0033FF]/40 hover:bg-[#0033FF]/5'
-                            : 'bg-[#0033FF] text-white hover:bg-[#0029CC]'
+                            ? `bg-white border ${opt.textColor} ${opt.outlineBorder} ${opt.outlineHoverBg}`
+                            : `text-white ${opt.iconBg} ${opt.iconBgHover}`
                         }`}
                       >
                         {draft ? 'Start new' : 'Start →'}

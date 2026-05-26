@@ -11,7 +11,9 @@ const INSPECTION_OPTIONS = [
     label: 'Pre-Delivery Inspection',
     blurb: 'New vehicle handover check for dealers, OEMs and fleets.',
     Icon: ClipboardCheck,
-    accent: 'border-[#0033FF]',
+    accent: 'border-[#FF6600]',
+    iconBg: 'bg-[#FF6600]',
+    iconText: 'text-[#FF6600]',
     badge: 'PDI',
   },
   {
@@ -20,6 +22,8 @@ const INSPECTION_OPTIONS = [
     blurb: 'Identity + comprehensive safety for unregistered or imported vehicles.',
     Icon: Stamp,
     accent: 'border-[#0033FF]',
+    iconBg: 'bg-[#0033FF]',
+    iconText: 'text-[#0033FF]',
     badge: 'NSW AUVIS',
   },
   {
@@ -27,7 +31,9 @@ const INSPECTION_OPTIONS = [
     label: 'Pink Slip (NSW eSafety)',
     blurb: 'Annual safety check for light vehicles over 5 years old.',
     Icon: Wrench,
-    accent: 'border-[#FF6600]',
+    accent: 'border-[#EC4899]',
+    iconBg: 'bg-[#EC4899]',
+    iconText: 'text-[#EC4899]',
     badge: 'NSW eSafety',
   },
 ] as const;
@@ -41,6 +47,13 @@ function BookFormInner() {
   const [inspectionType, setInspectionType] = useState<InspectionValue>(
     INSPECTION_OPTIONS.some((o) => o.value === initialType) ? initialType : 'pdi'
   );
+  // Submit button colour follows the active inspection type so the CTA
+  // reads as a continuation of the picked card.
+  const submitColour = {
+    pdi: { bg: 'bg-[#FF6600]', hover: 'hover:bg-[#E65C00]' },
+    blue_slip: { bg: 'bg-[#0033FF]', hover: 'hover:bg-[#0029CC]' },
+    pink_slip: { bg: 'bg-[#EC4899]', hover: 'hover:bg-[#DB2777]' },
+  }[inspectionType];
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -134,10 +147,10 @@ function BookFormInner() {
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${active ? 'bg-[#0033FF] text-white' : 'bg-gray-100 text-gray-700'}`}>
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${active ? `${opt.iconBg} text-white` : 'bg-gray-100 text-gray-700'}`}>
                       <Icon className="w-5 h-5" />
                     </div>
-                    {active && <CheckCircle2 className="w-5 h-5 text-[#0033FF]" />}
+                    {active && <CheckCircle2 className={`w-5 h-5 ${opt.iconText}`} />}
                   </div>
                   <p className="text-[11px] font-bold uppercase tracking-wider text-gray-500 mb-1">{opt.badge}</p>
                   <p className="font-semibold text-gray-900 leading-tight">{opt.label}</p>
@@ -281,7 +294,7 @@ function BookFormInner() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold shadow-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl ${submitColour.bg} ${submitColour.hover} text-white font-semibold shadow-sm transition-colors disabled:opacity-60 disabled:cursor-not-allowed`}
               >
                 {submitting ? (
                   <>

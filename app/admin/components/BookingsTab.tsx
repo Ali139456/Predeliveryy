@@ -44,8 +44,8 @@ const STATUS_OPTIONS: Array<{ value: Booking['status']; label: string }> = [
 
 function typeMeta(t: Booking['inspection_type']) {
   if (t === 'blue_slip') return { label: 'Blue Slip', Icon: Stamp, color: 'text-[#0033FF]' };
-  if (t === 'pink_slip') return { label: 'Pink Slip', Icon: Wrench, color: 'text-[#FF6600]' };
-  return { label: 'PDI', Icon: ClipboardCheck, color: 'text-slate-700' };
+  if (t === 'pink_slip') return { label: 'Pink Slip', Icon: Wrench, color: 'text-[#EC4899]' };
+  return { label: 'PDI', Icon: ClipboardCheck, color: 'text-[#FF6600]' };
 }
 
 
