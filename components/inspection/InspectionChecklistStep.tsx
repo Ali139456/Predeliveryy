@@ -186,39 +186,70 @@ function ChecklistItemCard({
     <div className="rounded-2xl border-2 border-[#0033FF]/15 bg-white shadow-sm overflow-hidden">
       <input type="hidden" {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)} />
 
-      {/* Header strip: number + title + status pill */}
-      <div className="px-3 sm:px-4 py-3 flex items-start gap-3 bg-[#EEF2FF]">
-        <div className="shrink-0 w-9 h-9 rounded-lg bg-[#0033FF] text-white text-sm font-bold flex items-center justify-center">
-          {number}
+      {/* Header strip: number + title (full line on mobile), status pill right-aligned below on mobile / inline on sm+ */}
+      <div className="px-3 sm:px-4 py-3 bg-[#EEF2FF]">
+        <div className="flex items-start gap-3">
+          <div className="shrink-0 w-9 h-9 rounded-lg bg-[#0033FF] text-white text-sm font-bold flex items-center justify-center">
+            {number}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <p className="text-[15px] font-semibold text-slate-900 leading-snug">
+              {itemTitle}
+            </p>
+          </div>
+
+          {/* Inline on sm+ */}
+          <div className="hidden sm:block shrink-0">
+            <div className={`relative rounded-xl border-2 ${visual.wrap}`}>
+              <StatusIcon
+                className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
+                aria-hidden
+              />
+              <select
+                {...register(statusPath)}
+                disabled={readOnly}
+                aria-label="Status"
+                className={`appearance-none bg-transparent pl-8 pr-7 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0033FF]/20 rounded-xl disabled:opacity-70 ${visual.text}`}
+              >
+                {STATUS_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value} className="text-slate-900">
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown
+                className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
+                aria-hidden
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="flex-1 min-w-0">
-          <p className="text-[15px] font-semibold text-slate-900 leading-snug">
-            {itemTitle}
-          </p>
-        </div>
-
-        <div className={`shrink-0 relative rounded-xl border-2 ${visual.wrap}`}>
-          <StatusIcon
-            className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
-            aria-hidden
-          />
-          <select
-            {...register(statusPath)}
-            disabled={readOnly}
-            aria-label="Status"
-            className={`appearance-none bg-transparent pl-8 pr-7 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0033FF]/20 rounded-xl disabled:opacity-70 ${visual.text}`}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value} className="text-slate-900">
-                {opt.label}
-              </option>
-            ))}
-          </select>
-          <ChevronDown
-            className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
-            aria-hidden
-          />
+        {/* Full row on mobile, right-aligned */}
+        <div className="mt-3 flex justify-end sm:hidden">
+          <div className={`relative rounded-xl border-2 ${visual.wrap}`}>
+            <StatusIcon
+              className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
+              aria-hidden
+            />
+            <select
+              {...register(statusPath)}
+              disabled={readOnly}
+              aria-label="Status (mobile)"
+              className={`appearance-none bg-transparent pl-8 pr-7 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0033FF]/20 rounded-xl disabled:opacity-70 ${visual.text}`}
+            >
+              {STATUS_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value} className="text-slate-900">
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
+              aria-hidden
+            />
+          </div>
         </div>
       </div>
 
