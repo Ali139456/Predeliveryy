@@ -1,4 +1,4 @@
-/* Screen + print layout for Pre-Delivery HTML report */
+﻿/* Screen + print layout for Pre-Delivery HTML report */
 .inspection-report-root {
   --report-navy: #002060;
   --report-blue: #0033ff;
@@ -16,7 +16,7 @@
   box-shadow: 0 4px 24px rgba(0, 32, 96, 0.12);
 }
 
-/* Column flow: short categories sit beside tall ones — no empty row gaps */
+/* Column flow: short categories sit beside tall ones - no empty row gaps */
 .report-checklist-grid {
   column-count: 2;
   column-gap: 0.5rem;

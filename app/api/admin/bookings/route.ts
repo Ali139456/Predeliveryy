@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
 import { getCurrentUser } from '@/lib/auth';
 import { canAccessAdminPanel } from '@/lib/roles';
@@ -87,7 +87,7 @@ export async function DELETE(request: NextRequest) {
   if (!user) {
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
   }
-  // Hard delete is admin-only — managers can mark cancelled but cannot purge.
+  // Hard delete is admin-only - managers can mark cancelled but cannot purge.
   if (user.role !== 'admin') {
     return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
   }

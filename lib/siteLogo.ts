@@ -1,5 +1,5 @@
-/**
- * Official Pre Delivery logo — orange PD mark + white wordmark (`public/Transparent Logo.png`).
+﻿/**
+ * Official Pre Delivery logo - orange PD mark + white wordmark (`public/Transparent Logo.png`).
  */
 export const SITE_LOGO_SRC = '/Transparent%20Logo.png' as const;
 

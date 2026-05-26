@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import LegalPageShell from '@/components/LegalPageShell';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Predelivery.ai',
   description:
-    'Privacy Policy for Predelivery.ai — how we collect, use and protect your personal information under Australian privacy law.',
+    'Privacy Policy for Predelivery.ai - how we collect, use and protect your personal information under Australian privacy law.',
 };
 
 export default function PrivacyPolicyPage() {

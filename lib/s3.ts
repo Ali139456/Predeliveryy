@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
+﻿import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import fs from 'fs';
 import path from 'path';
@@ -37,7 +37,7 @@ function ensureDirSync(dirPath: string): void {
   }
 }
 
-// Ensure upload directory exists for local fallback (never throw — serverless FS is read-only)
+// Ensure upload directory exists for local fallback (never throw - serverless FS is read-only)
 if (!hasAWSCredentials) {
   try {
     ensureDirSync(UPLOAD_DIR);

@@ -1,4 +1,4 @@
-import getSupabase from '@/lib/supabase';
+﻿import getSupabase from '@/lib/supabase';
 
 type SupabaseClient = ReturnType<typeof getSupabase>;
 
@@ -102,7 +102,7 @@ export async function getSupabaseStoragePublicUrl(
 }
 
 /**
- * Expiring signed URL for private buckets only (no getPublicUrl fallback — avoids durable public links).
+ * Expiring signed URL for private buckets only (no getPublicUrl fallback - avoids durable public links).
  * Used by /api/files/signed and PDF image fetch.
  */
 export async function getSupabaseStorageSignedOrPublicUrl(

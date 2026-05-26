@@ -1,4 +1,4 @@
-import { Resend } from 'resend';
+﻿import { Resend } from 'resend';
 
 // Check if Resend is configured
 function isResendConfigured(): boolean {
@@ -153,7 +153,7 @@ function roleLabelForLoginEmail(role: string): string {
 
 /**
  * Alerts the user that their account was used to sign in (admin / inspector).
- * Never throws — login must succeed even if Resend is down or misconfigured.
+ * Never throws - login must succeed even if Resend is down or misconfigured.
  */
 export async function notifyUserOfLoginEmail(
   toEmail: string | null | undefined,
@@ -187,7 +187,7 @@ export async function notifyUserOfLoginEmail(
   try {
     await sendEmail([email], subject, html);
   } catch {
-    // Intentionally ignore — do not block login
+    // Intentionally ignore - do not block login
   }
 }
 

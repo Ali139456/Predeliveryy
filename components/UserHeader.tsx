@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useCallback, memo } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -391,7 +391,7 @@ function UserHeader() {
               className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
               onClick={() => setMobileMenuOpen(false)}
             />
-            {/* Full-screen menu — brand blue (matches public site / login) */}
+            {/* Full-screen menu - brand blue (matches public site / login) */}
             <div className="fixed inset-0 z-50 flex max-h-[100dvh] flex-col overflow-hidden bg-gradient-to-b from-[#0033FF] via-[#0033FF] to-[#0029CC] lg:hidden">
               <div className="flex shrink-0 items-center justify-between border-b border-white/20 px-3 py-4 sm:px-4">
                 <Link href="/" className="flex min-w-0 items-center transition-colors" onClick={() => setMobileMenuOpen(false)}>

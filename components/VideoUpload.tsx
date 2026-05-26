@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, memo } from 'react';
 import { X, Upload, Film } from 'lucide-react';
@@ -82,7 +82,7 @@ function VideoUpload({
         )}
       </div>
       <p className="text-xs text-gray-600">
-        Short walk-around clips of the vehicle (MP4/WebM). Optional — stored with this inspection.
+        Short walk-around clips of the vehicle (MP4/WebM). Optional - stored with this inspection.
       </p>
 
       <input

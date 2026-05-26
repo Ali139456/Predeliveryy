@@ -1,4 +1,4 @@
-import jsPDF from 'jspdf';
+﻿import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import type { IInspection, InspectionPhoto } from '@/types/db';
 
@@ -19,7 +19,7 @@ import {
   downloadSupabaseStorageObject,
 } from '@/lib/supabase-storage';
 
-/** Stored upload `url` may be `/api/files/signed?key=…` (no cookie on PDF server) — resolve to object key. */
+/** Stored upload `url` may be `/api/files/signed?key=…` (no cookie on PDF server) - resolve to object key. */
 function tenantKeyFromAppSignedPhotoUrl(u: string): string | null {
   try {
     const parsed = u.startsWith('http://') || u.startsWith('https://')
@@ -75,7 +75,7 @@ export async function loadImageAsBase64(fileName: string): Promise<string | null
     if (fromSigned) {
       return loadImageAsBase64(fromSigned);
     }
-    // Browser-style path: /api/files/tenants/… (no cookie in PDF job — resolve to storage key)
+    // Browser-style path: /api/files/tenants/… (no cookie in PDF job - resolve to storage key)
     if (fileName.startsWith('/api/files/') && !fileName.startsWith('/api/files/signed')) {
       const rest = decodeURIComponent(fileName.slice('/api/files/'.length).split('?')[0]);
       if (rest.startsWith('tenants/')) {
@@ -466,7 +466,7 @@ async function addImageToPDF(
   }
 }
 
-/** Australian Eastern (Sydney) — AEST/AEDT handled automatically. */
+/** Australian Eastern (Sydney) - AEST/AEDT handled automatically. */
 const PDF_TIMEZONE_AU_EASTERN = 'Australia/Sydney';
 
 function formatDateTimeAustraliaEastern(value: Date | string | number | null | undefined): string {

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -115,7 +115,7 @@ export default function AnalyticsTab() {
       <AdminPageHeader
         icon={BarChart3}
         title="Analytics"
-        subtitle="Organisation inspection intelligence — completed inspections only."
+        subtitle="Organisation inspection intelligence - completed inspections only."
         actions={
           <div className="flex flex-wrap gap-3">
             <label className="flex flex-col text-xs font-semibold text-slate-600 gap-1.5">
@@ -189,7 +189,7 @@ export default function AnalyticsTab() {
             />
             <AdminKpiCard
               title="Avg inspection time"
-              value={k?.avgInspectionMinutes.value != null ? `${k.avgInspectionMinutes.value}m` : '—'}
+              value={k?.avgInspectionMinutes.value != null ? `${k.avgInspectionMinutes.value}m` : '-'}
               sub={timeSub}
               icon={Clock}
               {...trendFlags(timeSub)}

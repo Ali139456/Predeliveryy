@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
 import { sendEmail } from '@/lib/email';
 import { enforceRateLimit } from '@/lib/rateLimit';
@@ -135,19 +135,19 @@ export async function POST(request: NextRequest) {
     }
 
     const typeLabel = inspectionTypeLabel(inspectionTypeRaw);
-    const vehicleSummary = [vehicleYear, vehicleMake, vehicleModel].filter(Boolean).join(' ').trim() || '—';
+    const vehicleSummary = [vehicleYear, vehicleMake, vehicleModel].filter(Boolean).join(' ').trim() || '-';
     const html = `
       <div style="font-family: system-ui, sans-serif; line-height: 1.5; color: #111;">
         <p style="margin: 0 0 12px;"><strong>New ${escapeHtml(typeLabel)} booking</strong> from the website.</p>
         <table style="border-collapse: collapse; max-width: 600px;">
           <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Customer</td><td style="padding: 4px 0;">${escapeHtml(customerName)}</td></tr>
           <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Email</td><td style="padding: 4px 0;"><a href="mailto:${encodeURIComponent(customerEmail)}">${escapeHtml(customerEmail)}</a></td></tr>
-          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Phone</td><td style="padding: 4px 0;">${escapeHtml(customerPhone || '—')}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Phone</td><td style="padding: 4px 0;">${escapeHtml(customerPhone || '-')}</td></tr>
           <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Inspection</td><td style="padding: 4px 0;"><strong>${escapeHtml(typeLabel)}</strong></td></tr>
           <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Vehicle</td><td style="padding: 4px 0;">${escapeHtml(vehicleSummary)}</td></tr>
-          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Rego</td><td style="padding: 4px 0;">${escapeHtml(vehicleRego || '—')}</td></tr>
-          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">VIN</td><td style="padding: 4px 0;">${escapeHtml(vehicleVin || '—')}</td></tr>
-          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Preferred date</td><td style="padding: 4px 0;">${escapeHtml(preferredDate || '—')} ${escapeHtml(preferredTimeSlot || '')}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Rego</td><td style="padding: 4px 0;">${escapeHtml(vehicleRego || '-')}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">VIN</td><td style="padding: 4px 0;">${escapeHtml(vehicleVin || '-')}</td></tr>
+          <tr><td style="padding: 4px 12px 4px 0; color: #64748b;">Preferred date</td><td style="padding: 4px 0;">${escapeHtml(preferredDate || '-')} ${escapeHtml(preferredTimeSlot || '')}</td></tr>
         </table>
         ${
           notes
@@ -163,7 +163,7 @@ export async function POST(request: NextRequest) {
 
     // Best-effort email; do not fail the booking if email is misconfigured.
     try {
-      await sendEmail([BOOKING_INBOX], `New ${typeLabel} booking — ${customerName}`, html);
+      await sendEmail([BOOKING_INBOX], `New ${typeLabel} booking - ${customerName}`, html);
     } catch (mailErr) {
       console.warn('Booking email failed (saved anyway):', mailErr);
     }

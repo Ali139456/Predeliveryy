@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -313,7 +313,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     }
   }, [initialData?.status]);
 
-  // Blue/Pink slip is a regulatory checklist — no PDI-style vehicle ID step
+  // Blue/Pink slip is a regulatory checklist - no PDI-style vehicle ID step
   // (it lives inside the checklist) and no separate GPS/general-photos step.
   type StepKey = 'inspector' | 'vehicle' | 'gps' | 'checklist' | 'signatures';
   const stepKeyOrder: StepKey[] = isBlueOrPink
@@ -1540,7 +1540,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             })}
           </div>
           <p className="text-xs text-gray-600">
-            General photos are not required to continue—repair items use photos on the checklist.
+            General photos are not required to continue-repair items use photos on the checklist.
           </p>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-200">
@@ -1666,7 +1666,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-white">
             <span className="font-semibold text-white">
               Step {currentStep} of {totalSteps}
-              <span className="text-white/85 font-normal"> — {steps[currentStep - 1]?.title}</span>
+              <span className="text-white/85 font-normal"> - {steps[currentStep - 1]?.title}</span>
             </span>
             {currentStep === checklistStepNumber && fields.length > 0 && (
               <span className="text-[#7eb8ff] font-medium truncate max-w-[min(100%,14rem)] sm:max-w-[20rem]" title={String(activeCategoryTitle || '')}>
@@ -1723,7 +1723,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <div className={`w-full min-w-0 ${readOnly ? 'space-y-6' : ''}`}>
           {readOnly ? (
             // View mode: Show all sections at once. Blue/Pink slip skip the
-            // PDI-only vehicle and GPS sections — they don't apply.
+            // PDI-only vehicle and GPS sections - they don't apply.
             <>
               {renderStep1()}
               {!isBlueOrPink && renderStep2()}

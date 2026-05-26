@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { Shield, Download, Filter } from 'lucide-react';
@@ -258,7 +258,7 @@ export default function AuditLogTab() {
                         </pre>
                       </details>
                     </AdminTd>
-                    <AdminTd className="text-xs font-mono text-slate-600">{log.ipAddress || '—'}</AdminTd>
+                    <AdminTd className="text-xs font-mono text-slate-600">{log.ipAddress || '-'}</AdminTd>
                   </AdminTr>
                 ))}
                 {logs.length === 0 && (

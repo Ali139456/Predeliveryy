@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
 import type { InspectionRow } from '@/types/db';
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
         inspectorName: row.inspector_name,
         status: row.status,
         createdAt: row.created_at,
-        // Pre-migration rows have no inspection_type — default to PDI client-side
+        // Pre-migration rows have no inspection_type - default to PDI client-side
         inspectionType: row.inspection_type ?? 'pdi',
       };
     });

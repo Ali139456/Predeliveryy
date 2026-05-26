@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -161,7 +161,7 @@ export default function Home() {
                 <div className="hero-phone w-full max-h-[min(62vh,560px)] sm:max-h-[min(64vh,600px)] md:max-h-[min(62vh,620px)] lg:max-h-[min(58vh,600px)] mx-auto flex flex-col items-center">
                   <Image
                     src={SITE_HERO_MOBILE_GRAPHICS_SRC}
-                    alt="Pre Delivery mobile app — verified before your drive"
+                    alt="Pre Delivery mobile app - verified before your drive"
                     width={7411}
                     height={7263}
                     className="w-[min(560px,100%)] max-w-full h-auto max-h-[min(58vh,480px)] sm:max-h-[min(62vh,520px)] md:max-h-[min(60vh,540px)] lg:max-h-[min(54vh,560px)] object-contain object-center drop-shadow-2xl"
@@ -178,14 +178,14 @@ export default function Home() {
 
       {showMarketingSections && (
         <>
-      {/* Our Services — PDI / Blue Slip / Pink Slip with booking CTA */}
+      {/* Our Services - PDI / Blue Slip / Pink Slip with booking CTA */}
       <div id="services" className="relative bg-white pt-8 sm:pt-12 pb-8 sm:pb-12 scroll-mt-20">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-14">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Our Services</span>
               <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
-                Vehicle Inspections — Done Right
+                Vehicle Inspections - Done Right
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 From new-vehicle handover checks to NSW Blue Slip and Pink Slip safety inspections, book the right inspection for your vehicle in minutes.
@@ -201,7 +201,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold mb-2 text-gray-900">Pre-Delivery Inspection</h3>
                 <p className="text-sm font-semibold text-[#FF6600] mb-3">For dealers, OEMs &amp; fleets</p>
                 <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  Verify vehicle condition before customer handover. Captures photos, VIN, condition data and digital sign-off — a defensible delivery record every time.
+                  Verify vehicle condition before customer handover. Captures photos, VIN, condition data and digital sign-off - a defensible delivery record every time.
                 </p>
                 <ul className="space-y-2 mb-6 text-sm text-gray-700">
                   <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Complete digital checklist</li>

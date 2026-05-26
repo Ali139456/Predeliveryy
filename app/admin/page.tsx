@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -76,7 +76,7 @@ function inspectionTypeLabelShort(t?: string): string {
   return 'PDI';
 }
 
-/** Pre-built class tuple per type — Tailwind can't see dynamic colour interpolation. */
+/** Pre-built class tuple per type - Tailwind can't see dynamic colour interpolation. */
 function inspectionTypePillClass(t?: string): string {
   if (t === 'blue_slip') return 'bg-[#0033FF]/10 text-[#0033FF] ring-[#0033FF]/30';
   if (t === 'pink_slip') return 'bg-[#EC4899]/10 text-[#EC4899] ring-[#EC4899]/30';
@@ -691,19 +691,19 @@ function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?
                         }`}
                       >
                         <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">
-                          {t.businessName || t.name || '—'}
+                          {t.businessName || t.name || '-'}
                         </td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.abn || '—'}</td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.abn || '-'}</td>
                         <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black max-w-[200px]">
                           <span className="line-clamp-2" title={t.businessAddress}>
-                            {t.businessAddress || '—'}
+                            {t.businessAddress || '-'}
                           </span>
                         </td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.contactName || '—'}</td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.contactName || '-'}</td>
                         <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black break-all max-w-[160px]">
-                          {t.contactEmail || '—'}
+                          {t.contactEmail || '-'}
                         </td>
-                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.contactNumber || '—'}</td>
+                        <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{t.contactNumber || '-'}</td>
                       </tr>
                     ))
                   )}
@@ -758,7 +758,7 @@ function UsersTab({ userRole, userTenantId }: { userRole?: string; userTenantId?
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black">{user.name}</td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black max-w-[200px]">
                     <span className="line-clamp-2" title={user.organizationDisplay || ''}>
-                      {user.organizationDisplay || '—'}
+                      {user.organizationDisplay || '-'}
                     </span>
                   </td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black">{user.email}</td>

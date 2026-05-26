@@ -1,4 +1,4 @@
-import fs from 'fs';
+﻿import fs from 'fs';
 import path from 'path';
 import {
   downloadSupabaseStorageObject,
@@ -158,7 +158,7 @@ Output ONLY valid JSON with this exact shape:
   "noDamageFound": boolean,
   "findings": [
     {
-      "label": "short description e.g. Scratch — driver front door",
+      "label": "short description e.g. Scratch - driver front door",
       "severity": "minor" | "moderate" | "major",
       "x": 0.0-1.0,
       "y": 0.0-1.0,

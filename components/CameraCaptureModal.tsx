@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { X, Camera } from 'lucide-react';
@@ -119,7 +119,7 @@ export default function CameraCaptureModal({ isOpen, onClose, onCaptured }: Prop
           </button>
         </div>
         <p className="text-[11px] text-gray-500 mt-2 leading-snug">
-          Only live camera capture is allowed—no photo library or file picker (fraud prevention).
+          Only live camera capture is allowed-no photo library or file picker (fraud prevention).
         </p>
       </div>
     </div>

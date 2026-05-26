@@ -1,4 +1,4 @@
-/** OpenAI vision damage detection — shared client/server types */
+﻿/** OpenAI vision damage detection - shared client/server types */
 
 export type DamageSeverity = 'minor' | 'moderate' | 'major' | 'unknown';
 

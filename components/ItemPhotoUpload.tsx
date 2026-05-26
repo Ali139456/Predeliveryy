@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, memo, useCallback, useEffect } from 'react';
 import { X, Camera, Image as ImageIcon, MapPin, Sparkles, Loader2 } from 'lucide-react';
@@ -164,7 +164,7 @@ function PhotoDamageEditor({
                 type="text"
                 value={labelInput}
                 onChange={(e) => setLabelInput(e.target.value)}
-                placeholder="e.g. Scratch — left door"
+                placeholder="e.g. Scratch - left door"
                 className="flex-1 min-w-[200px] px-3 py-2 border rounded-lg text-sm text-black"
                 autoFocus
               />
@@ -178,7 +178,7 @@ function PhotoDamageEditor({
           )}
           {local.some((m) => m.id.startsWith('ai-')) && !readOnly && (
             <p className="mt-2 text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1.5">
-              Orange markers are AI suggestions — review and edit before saving the inspection.
+              Orange markers are AI suggestions - review and edit before saving the inspection.
             </p>
           )}
           {local.length > 0 && (
@@ -269,7 +269,7 @@ function ItemPhotoUpload({
       setAnalyzingFileName(fileName);
       setAiNotice(null);
       try {
-        const context = [categoryName, itemName].filter(Boolean).join(' — ');
+        const context = [categoryName, itemName].filter(Boolean).join(' - ');
         const res = await requestVisionDamageDetect({
           storageKey: fileName,
           itemName,
@@ -289,7 +289,7 @@ function ItemPhotoUpload({
         photosRef.current = updated;
         onPhotosChange(updated);
         if (res.result.noDamageFound) {
-          setAiNotice('AI: no obvious damage detected — review the photo.');
+          setAiNotice('AI: no obvious damage detected - review the photo.');
         } else if (res.result.findings.length > 0) {
           setAiNotice(
             `AI noted ${res.result.findings.length} possible issue(s). Check markers on the photo.`

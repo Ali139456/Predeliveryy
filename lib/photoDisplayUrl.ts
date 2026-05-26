@@ -1,9 +1,9 @@
-/**
+﻿/**
  * Returns the display URL for a photo (for <img src>).
  * - Supabase: `fileName` `tenants/…` → `/api/files/signed?key=…` (auth + expiring redirect).
  * - If `url` is already `/api/files/signed?…` or an absolute signed URL, use it (avoids `/api/files/{fileName}` 404
  *   when `fileName` is a display label or legacy basename).
- * - Local dev: `url` like `/uploads/tenants/...` — static file under public/.
+ * - Local dev: `url` like `/uploads/tenants/...` - static file under public/.
  * - Legacy https URLs (S3 presign, Blob, old public links).
  */
 function isSignedFilesUrl(u: string): boolean {

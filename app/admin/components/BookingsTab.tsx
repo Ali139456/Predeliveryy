@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Calendar, ClipboardCheck, Loader2, RefreshCw, Stamp, Trash2, Wrench } from 'lucide-react';
@@ -203,7 +203,7 @@ export default function BookingsTab() {
                 {bookings.map((b) => {
                   const tm = typeMeta(b.inspection_type);
                   const Icon = tm.Icon;
-                  const vehicle = [b.vehicle_year, b.vehicle_make, b.vehicle_model].filter(Boolean).join(' ') || '—';
+                  const vehicle = [b.vehicle_year, b.vehicle_make, b.vehicle_model].filter(Boolean).join(' ') || '-';
                   const idShort = b.id.slice(0, 8);
                   return (
                     <AdminTr key={b.id}>
@@ -238,7 +238,7 @@ export default function BookingsTab() {
                         )}
                       </AdminTd>
                       <AdminTd>
-                        <div className="text-slate-900">{b.preferred_date || '—'}</div>
+                        <div className="text-slate-900">{b.preferred_date || '-'}</div>
                         <div className="text-xs text-slate-500">{b.preferred_time_slot || ''}</div>
                       </AdminTd>
                       <AdminTd>

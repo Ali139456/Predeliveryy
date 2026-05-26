@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { QrCode, X, Upload, Loader2 } from 'lucide-react';
@@ -42,7 +42,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
   const startScanning = () => {
     if (scannerRef.current || scannerStartPendingRef.current) return;
     setError(null);
-    // Mount #scanner-container first (it was only rendered after start — so the element never existed when start ran).
+    // Mount #scanner-container first (it was only rendered after start - so the element never existed when start ran).
     setIsScanning(true);
     scannerStartPendingRef.current = true;
     const gen = ++scannerStartGenerationRef.current;

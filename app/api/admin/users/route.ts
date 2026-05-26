@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+﻿import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
 import { requireAuth } from '@/lib/auth';
 import { logAuditEvent } from '@/lib/audit';
@@ -39,7 +39,7 @@ function mapUserListRow(r: Record<string, unknown>) {
   const business = (t?.business_name as string) || '';
   const tenantName = (t?.name as string) || '';
   const customOrg = typeof r.organization === 'string' ? r.organization.trim() : '';
-  const organizationDisplay = customOrg || business || tenantName || '—';
+  const organizationDisplay = customOrg || business || tenantName || '-';
   return {
     ...base,
     tenantBusinessName: business || null,

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useRef, memo, useCallback, useEffect } from 'react';
 import { Camera, X, Loader2, Sparkles } from 'lucide-react';
@@ -43,10 +43,10 @@ interface PhotoUploadProps {
 }
 
 const SLOT_PANEL_HINTS: Record<string, string> = {
-  front: 'Front of vehicle — bonnet, grille, bumper',
-  rear: 'Rear of vehicle — tailgate, bumper',
-  left: 'Left side — doors and panels',
-  right: 'Right side — doors and panels',
+  front: 'Front of vehicle - bonnet, grille, bumper',
+  rear: 'Rear of vehicle - tailgate, bumper',
+  left: 'Left side - doors and panels',
+  right: 'Right side - doors and panels',
   bonnet: 'Bonnet / hood',
   tyres: 'Tyres and wheels',
 };

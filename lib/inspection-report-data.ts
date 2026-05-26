@@ -1,4 +1,4 @@
-import type { IInspection, InspectionChecklistCategory, InspectionPhoto } from '@/types/db';
+﻿import type { IInspection, InspectionChecklistCategory, InspectionPhoto } from '@/types/db';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import {
   isReportItemNotApplicable,
@@ -119,7 +119,7 @@ export function collectReportPhotos(inspection: IInspection): ReportPhoto[] {
   for (const cat of inspection.checklist || []) {
     for (const item of cat.items || []) {
       for (const p of item.photos || []) {
-        add(p, `${cat.category} — ${item.item}`);
+        add(p, `${cat.category} - ${item.item}`);
       }
     }
   }
@@ -143,8 +143,8 @@ export function buildReportNotes(inspection: IInspection): string {
         const note = item.notes?.trim();
         lines.push(
           note
-            ? `${cat.category} — ${item.item}: ${note}`
-            : `${cat.category} — ${item.item} (${reportItemStatusLabel(item.status)})`
+            ? `${cat.category} - ${item.item}: ${note}`
+            : `${cat.category} - ${item.item} (${reportItemStatusLabel(item.status)})`
         );
       }
     }

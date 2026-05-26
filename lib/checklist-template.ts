@@ -1,4 +1,4 @@
-import type { InspectionChecklistCategory } from '@/types/db';
+﻿import type { InspectionChecklistCategory } from '@/types/db';
 
 /** Supported inspection product types. */
 export const INSPECTION_TYPES = ['pdi', 'blue_slip', 'pink_slip'] as const;
@@ -56,7 +56,7 @@ export function reportItemStatusLabel(status: string): string {
   if (s === 'OK' || s === 'PASS') return 'PASS';
   if (s === 'N') return 'N/A';
   if (s === 'C' || s === 'A' || s === 'R' || s === 'RP' || s === 'FAIL') return 'REVIEW';
-  return s || '—';
+  return s || '-';
 }
 
 export function isReportItemPass(status: string): boolean {
@@ -109,7 +109,7 @@ export function reportCategorySummary(category: InspectionChecklistCategory) {
 }
 
 // ---------------------------------------------------------------------------
-// Blue Slip (NSW AUVIS) — identity + comprehensive safety inspection.
+// Blue Slip (NSW AUVIS) - identity + comprehensive safety inspection.
 // Used for unregistered vehicles, imports, defect clearances, or vehicles
 // out of registration for more than 3 months.
 // ---------------------------------------------------------------------------
@@ -239,7 +239,7 @@ export const BLUE_SLIP_CHECKLIST_TEMPLATE: SeedCategory[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Pink Slip (NSW eSafety check) — annual safety inspection for cars >5 years.
+// Pink Slip (NSW eSafety check) - annual safety inspection for cars >5 years.
 // ---------------------------------------------------------------------------
 export const PINK_SLIP_CHECKLIST_TEMPLATE: SeedCategory[] = [
   {
