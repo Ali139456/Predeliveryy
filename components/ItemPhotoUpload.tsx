@@ -45,6 +45,10 @@ interface ItemPhotoUploadProps {
   readOnly?: boolean;
   /** Run OpenAI vision damage scan after each upload (default true). */
   enableAiDamage?: boolean;
+  /** Hide the built-in header row (label + Take button) when the parent renders its own controls. */
+  hideHeader?: boolean;
+  /** Parent can trigger the camera by calling this ref's current callback. */
+  openCameraRef?: React.MutableRefObject<(() => void) | null>;
 }
 
 function PhotoDamageEditor({
@@ -201,6 +205,8 @@ function ItemPhotoUpload({
   categoryName,
   readOnly = false,
   enableAiDamage = true,
+  hideHeader = false,
+  openCameraRef,
 }: ItemPhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [analyzingFileName, setAnalyzingFileName] = useState<string | null>(null);
@@ -213,6 +219,21 @@ function ItemPhotoUpload({
   useEffect(() => {
     photosRef.current = photos;
   }, [photos]);
+
+  useEffect(() => {
+    if (!openCameraRef) return;
+    openCameraRef.current = () => {
+      if (readOnly) return;
+      if (photos.length >= maxPhotos) {
+        if (typeof window !== 'undefined') alert(`Maximum ${maxPhotos} photos allowed for this item`);
+        return;
+      }
+      setCameraOpen(true);
+    };
+    return () => {
+      if (openCameraRef) openCameraRef.current = null;
+    };
+  }, [openCameraRef, maxPhotos, photos.length, readOnly]);
 
   const compressImage = useCallback(async (file: File): Promise<File> => {
     if (!file.type.startsWith('image/')) return file;
@@ -335,23 +356,25 @@ function ItemPhotoUpload({
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <label className="text-xs font-medium text-slate-300 flex items-center">
-          <ImageIcon className="w-3 h-3 mr-1" />
-          Photos ({photos.length}/{maxPhotos})
-        </label>
-        {!readOnly && (
-          <button
-            type="button"
-            onClick={() => setCameraOpen(true)}
-            disabled={uploading || !!analyzingFileName || photos.length >= maxPhotos}
-            className="flex items-center px-2 py-1 text-xs bg-[#3833FF]/50 text-white rounded-lg hover:bg-[#3833FF]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <Camera className="w-3 h-3 mr-1" />
-            {uploading ? 'Uploading...' : analyzingFileName ? 'AI scan…' : 'Take'}
-          </button>
-        )}
-      </div>
+      {!hideHeader && (
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium text-slate-300 flex items-center">
+            <ImageIcon className="w-3 h-3 mr-1" />
+            Photos ({photos.length}/{maxPhotos})
+          </label>
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={() => setCameraOpen(true)}
+              disabled={uploading || !!analyzingFileName || photos.length >= maxPhotos}
+              className="flex items-center px-2 py-1 text-xs bg-[#3833FF]/50 text-white rounded-lg hover:bg-[#3833FF]/70 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <Camera className="w-3 h-3 mr-1" />
+              {uploading ? 'Uploading...' : analyzingFileName ? 'AI scan…' : 'Take'}
+            </button>
+          )}
+        </div>
+      )}
 
       {aiNotice && (
         <p className="flex items-start gap-1.5 text-xs text-violet-200 bg-violet-950/40 border border-violet-500/30 rounded-lg px-2 py-1.5">

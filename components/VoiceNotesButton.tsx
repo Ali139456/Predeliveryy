@@ -7,10 +7,12 @@ type Props = {
   onAppend: (text: string) => void;
   disabled?: boolean;
   className?: string;
+  /** Visual style. `outline` (default) = compact outlined pill; `solid` = full blue button. */
+  variant?: 'outline' | 'solid';
 };
 
 /** Browser speech-to-text (Chrome / Edge / Safari). Phrases are polished via API when logged in (AI if OPENAI_API_KEY is set). */
-export default function VoiceNotesButton({ onAppend, disabled, className = '' }: Props) {
+export default function VoiceNotesButton({ onAppend, disabled, className = '', variant = 'outline' }: Props) {
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
   const [polishing, setPolishing] = useState(false);
@@ -136,6 +138,37 @@ export default function VoiceNotesButton({ onAppend, disabled, className = '' }:
       <span className={`text-xs text-gray-500 ${className}`} title="Voice input requires Chrome, Edge, or Safari">
         Voice notes unavailable
       </span>
+    );
+  }
+
+  if (variant === 'solid') {
+    return (
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => (listening ? stop() : start())}
+        className={`inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl shadow-sm transition-colors ${
+          listening
+            ? 'bg-red-600 text-white animate-pulse'
+            : 'bg-[#0033FF] text-white hover:bg-[#0029cc]'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+        title={
+          listening
+            ? 'Stop recording'
+            : polishing
+              ? 'Turning speech into report wording…'
+              : 'Speak to add notes (e.g. damage rear bumper); wording is polished for the report'
+        }
+      >
+        {listening ? (
+          <Square className="w-4 h-4 fill-current" />
+        ) : polishing ? (
+          <Loader2 className="w-4 h-4 animate-spin" />
+        ) : (
+          <Mic className="w-4 h-4" />
+        )}
+        {listening ? 'Stop' : polishing ? 'Wording…' : 'Voice to text'}
+      </button>
     );
   }
 
