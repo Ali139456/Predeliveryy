@@ -80,6 +80,9 @@ export interface IAuditLog {
   createdAt: string;
 }
 
+export type InspectionProductType = 'pdi' | 'blue_slip' | 'pink_slip';
+export type InspectionResult = 'pass' | 'fail';
+
 // Inspection: nested objects stay as-is in JSONB; only top-level keys are snake_case in DB
 export interface InspectionRow {
   id: string;
@@ -100,6 +103,10 @@ export interface InspectionRow {
   data_retention_days: number | null;
   report_html?: string | null;
   report_html_at?: string | null;
+  inspection_type?: InspectionProductType | null;
+  ais_station?: string | null;
+  inspector_licence_no?: string | null;
+  result?: InspectionResult | null;
   created_at: string;
   updated_at: string;
 }
@@ -123,6 +130,10 @@ export interface IInspection {
   dataRetentionDays?: number;
   reportHtml?: string | null;
   reportHtmlAt?: string | null;
+  inspectionType?: InspectionProductType;
+  aisStation?: string;
+  inspectorLicenceNo?: string;
+  result?: InspectionResult;
   createdAt: string;
   updatedAt: string;
 }
@@ -221,6 +232,10 @@ export function inspectionRowToInspection(row: InspectionRow): IInspection & { _
     dataRetentionDays: row.data_retention_days ?? undefined,
     reportHtml: row.report_html ?? undefined,
     reportHtmlAt: row.report_html_at ?? undefined,
+    inspectionType: row.inspection_type ?? undefined,
+    aisStation: row.ais_station ?? undefined,
+    inspectorLicenceNo: row.inspector_licence_no ?? undefined,
+    result: row.result ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -247,7 +262,7 @@ export function auditRowToLog(row: AuditLogRow): IAuditLog & { _id?: string } {
 
 // Build inspection row for insert/update from app-shaped body
 export function inspectionBodyToRow(body: Record<string, unknown>): Record<string, unknown> {
-  return {
+  const row: Record<string, unknown> = {
     tenant_id: body.tenantId,
     inspection_number: body.inspectionNumber,
     inspector_name: body.inspectorName,
@@ -264,4 +279,10 @@ export function inspectionBodyToRow(body: Record<string, unknown>): Record<strin
     privacy_consent: body.privacyConsent,
     data_retention_days: body.dataRetentionDays ?? 365,
   };
+  if (typeof body.inspectionType === 'string') row.inspection_type = body.inspectionType;
+  if (typeof body.aisStation === 'string') row.ais_station = body.aisStation || null;
+  if (typeof body.inspectorLicenceNo === 'string')
+    row.inspector_licence_no = body.inspectorLicenceNo || null;
+  if (typeof body.result === 'string') row.result = body.result;
+  return row;
 }
