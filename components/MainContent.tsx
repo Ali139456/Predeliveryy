@@ -9,7 +9,6 @@ export default function MainContent({ children }: { children: React.ReactNode })
   const isResetPassword = pathname === '/reset-password';
   // Login / reset-password have no fixed UserHeader; other routes need offset for the fixed bar.
   const needsHeaderOffset = !isLogin && !isResetPassword;
-  const isHome = pathname === '/';
 
   // Reset window scroll when navigating (e.g. form → admin). Preserved scroll + sticky tabs caused overlap.
   useLayoutEffect(() => {
@@ -22,7 +21,10 @@ export default function MainContent({ children }: { children: React.ReactNode })
     <div
       className={
         needsHeaderOffset
-          ? `pt-36 sm:pt-32 md:pt-36 lg:pt-40 print:pt-0${isHome ? ' bg-[#0033FF]' : ''}`
+          // Blue padding band sits flush against the fixed brand header on
+          // every route so children (white surfaces, gradients, etc.) render
+          // below it without exposing the body's default white background.
+          ? 'pt-36 sm:pt-32 md:pt-36 lg:pt-40 print:pt-0 bg-[#0033FF]'
           : ''
       }
     >
