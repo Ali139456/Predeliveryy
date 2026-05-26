@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
@@ -81,6 +81,32 @@ function inspectionTypePillClass(t?: string): string {
   if (t === 'blue_slip') return 'bg-[#0033FF]/10 text-[#0033FF] ring-[#0033FF]/30';
   if (t === 'pink_slip') return 'bg-[#EC4899]/10 text-[#EC4899] ring-[#EC4899]/30';
   return 'bg-[#FF6600]/10 text-[#FF6600] ring-[#FF6600]/30';
+}
+
+/** Filter pill button used in the Recent Inspections type / status rows. */
+function FilterPill({
+  active,
+  onClick,
+  activeClass,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  /** Tailwind classes applied when the pill is the selected one. */
+  activeClass: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+        active ? activeClass : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+      }`}
+    >
+      {children}
+    </button>
+  );
 }
 
 export default function AdminDashboard() {
@@ -185,6 +211,8 @@ export default function AdminDashboard() {
 
 function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: () => Promise<void> }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'' | 'pdi' | 'blue_slip' | 'pink_slip'>('');
+  const [statusFilter, setStatusFilter] = useState<'' | 'draft' | 'completed'>('');
   const [filteredInspections, setFilteredInspections] = useState(stats?.recent || []);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -196,13 +224,19 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
       return;
     }
 
-    if (!searchTerm.trim()) {
-      setFilteredInspections(stats.recent);
-      return;
-    }
+    const searchLower = searchTerm.trim().toLowerCase();
 
     const filtered = stats.recent.filter((inspection) => {
-      const searchLower = searchTerm.toLowerCase();
+      // Type pill filter (legacy/null rows fold into PDI).
+      if (typeFilter && (inspection.inspectionType ?? 'pdi') !== typeFilter) {
+        return false;
+      }
+      // Status pill filter.
+      if (statusFilter && inspection.status !== statusFilter) {
+        return false;
+      }
+      // Free-text search across number / inspector / status / type label.
+      if (!searchLower) return true;
       return (
         inspection.inspectionNumber?.toLowerCase().includes(searchLower) ||
         inspection.inspectorName?.toLowerCase().includes(searchLower) ||
@@ -212,7 +246,33 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
     });
 
     setFilteredInspections(filtered);
-  }, [searchTerm, stats?.recent]);
+    // Drop any selected ids that are no longer visible after filtering.
+    setSelectedIds((prev) => {
+      const visible = new Set(filtered.map((i) => (i.id ?? i._id) as string).filter(Boolean));
+      const next = new Set<string>();
+      prev.forEach((id) => {
+        if (visible.has(id)) next.add(id);
+      });
+      return next;
+    });
+  }, [searchTerm, typeFilter, statusFilter, stats?.recent]);
+
+  // Per-type counts (for the filter pills) computed once over the unfiltered list.
+  const typeCounts = useMemo(() => {
+    const acc: Record<'pdi' | 'blue_slip' | 'pink_slip', number> = { pdi: 0, blue_slip: 0, pink_slip: 0 };
+    (stats?.recent ?? []).forEach((r) => {
+      const t = (r.inspectionType ?? 'pdi') as 'pdi' | 'blue_slip' | 'pink_slip';
+      acc[t] = (acc[t] ?? 0) + 1;
+    });
+    return acc;
+  }, [stats?.recent]);
+  const statusCounts = useMemo(() => {
+    const acc: Record<'draft' | 'completed', number> = { draft: 0, completed: 0 };
+    (stats?.recent ?? []).forEach((r) => {
+      if (r.status === 'draft' || r.status === 'completed') acc[r.status] = (acc[r.status] ?? 0) + 1;
+    });
+    return acc;
+  }, [stats?.recent]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
@@ -298,6 +358,78 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
               Delete selected ({selectedIds.size})
             </button>
           )}
+        </div>
+
+        {/* Filter pills: type + status. Counts reflect the unfiltered dataset. */}
+        <div className="flex flex-col gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mr-1">Type</span>
+            <FilterPill
+              active={typeFilter === ''}
+              onClick={() => setTypeFilter('')}
+              activeClass="bg-slate-800 text-white border-slate-800"
+            >
+              All ({stats?.recent?.length ?? 0})
+            </FilterPill>
+            <FilterPill
+              active={typeFilter === 'pdi'}
+              onClick={() => setTypeFilter('pdi')}
+              activeClass="bg-[#FF6600] text-white border-[#FF6600]"
+            >
+              PDI ({typeCounts.pdi})
+            </FilterPill>
+            <FilterPill
+              active={typeFilter === 'blue_slip'}
+              onClick={() => setTypeFilter('blue_slip')}
+              activeClass="bg-[#0033FF] text-white border-[#0033FF]"
+            >
+              Blue Slip ({typeCounts.blue_slip})
+            </FilterPill>
+            <FilterPill
+              active={typeFilter === 'pink_slip'}
+              onClick={() => setTypeFilter('pink_slip')}
+              activeClass="bg-[#EC4899] text-white border-[#EC4899]"
+            >
+              Pink Slip ({typeCounts.pink_slip})
+            </FilterPill>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mr-1">Status</span>
+            <FilterPill
+              active={statusFilter === ''}
+              onClick={() => setStatusFilter('')}
+              activeClass="bg-slate-800 text-white border-slate-800"
+            >
+              All
+            </FilterPill>
+            <FilterPill
+              active={statusFilter === 'draft'}
+              onClick={() => setStatusFilter('draft')}
+              activeClass="bg-amber-500 text-white border-amber-500"
+            >
+              Draft ({statusCounts.draft})
+            </FilterPill>
+            <FilterPill
+              active={statusFilter === 'completed'}
+              onClick={() => setStatusFilter('completed')}
+              activeClass="bg-emerald-600 text-white border-emerald-600"
+            >
+              Completed ({statusCounts.completed})
+            </FilterPill>
+            {(typeFilter !== '' || statusFilter !== '' || searchTerm) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setTypeFilter('');
+                  setStatusFilter('');
+                  setSearchTerm('');
+                }}
+                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile: stacked cards (avoids clipped table columns) */}
