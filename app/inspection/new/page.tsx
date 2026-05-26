@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Toast from '@/components/Toast';
 import PageContainer from '@/components/PageContainer';
-import { ArrowLeft, ClipboardCheck, FileCheck, FileEdit, PlusCircle, Stamp, Wrench } from 'lucide-react';
+import { ArrowLeft, ClipboardCheck, FileCheck, FileEdit, PlusCircle, Receipt, Stamp } from 'lucide-react';
 import Link from 'next/link';
 import type { InspectionType } from '@/lib/checklist-template';
 
@@ -58,7 +58,7 @@ const TYPE_OPTIONS: Array<{
     value: 'pink_slip',
     label: 'Pink Slip (NSW eSafety)',
     blurb: 'Annual safety check for vehicles over 5 years.',
-    Icon: Wrench,
+    Icon: Receipt,
     accent: 'border-[#EC4899]',
     iconBg: 'bg-[#EC4899]',
     iconBgHover: 'hover:bg-[#DB2777]',

@@ -1,7 +1,7 @@
 ﻿'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Calendar, ClipboardCheck, Loader2, RefreshCw, Stamp, Trash2, Wrench } from 'lucide-react';
+import { Calendar, ClipboardCheck, Loader2, Receipt, RefreshCw, Stamp, Trash2 } from 'lucide-react';
 import {
   AdminPanel,
   AdminPageHeader,
@@ -44,7 +44,7 @@ const STATUS_OPTIONS: Array<{ value: Booking['status']; label: string }> = [
 
 function typeMeta(t: Booking['inspection_type']) {
   if (t === 'blue_slip') return { label: 'Blue Slip', Icon: Stamp, color: 'text-[#0033FF]' };
-  if (t === 'pink_slip') return { label: 'Pink Slip', Icon: Wrench, color: 'text-[#EC4899]' };
+  if (t === 'pink_slip') return { label: 'Pink Slip', Icon: Receipt, color: 'text-[#EC4899]' };
   return { label: 'PDI', Icon: ClipboardCheck, color: 'text-[#FF6600]' };
 }
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Wrench, Stamp } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Receipt, Stamp } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SITE_HERO_MOBILE_GRAPHICS_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 
@@ -244,7 +244,7 @@ export default function Home() {
               <div className="group relative bg-white rounded-2xl p-7 border-2 border-[#EC4899]/30 hover:border-[#EC4899] transition-all duration-300 hover:shadow-xl flex flex-col ring-1 ring-[#EC4899]/10">
                 <div className="absolute -top-3 right-5 px-3 py-1 rounded-full bg-[#EC4899] text-white text-[11px] font-bold tracking-wide">NSW eSafety</div>
                 <div className="w-14 h-14 rounded-xl bg-[#EC4899] flex items-center justify-center mb-5">
-                  <Wrench className="w-7 h-7 text-white" strokeWidth={2.5} />
+                  <Receipt className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
                 <h3 className="text-xl font-bold mb-2 text-gray-900">Pink Slip Inspection</h3>
                 <p className="text-sm font-semibold text-[#EC4899] mb-3">Annual safety check</p>

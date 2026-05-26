@@ -3,7 +3,7 @@
 import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Calendar, CheckCircle2, ClipboardCheck, Loader2, Stamp, Wrench } from 'lucide-react';
+import { Calendar, CheckCircle2, ClipboardCheck, Loader2, Receipt, Stamp } from 'lucide-react';
 
 const INSPECTION_OPTIONS = [
   {
@@ -30,7 +30,7 @@ const INSPECTION_OPTIONS = [
     value: 'pink_slip',
     label: 'Pink Slip (NSW eSafety)',
     blurb: 'Annual safety check for light vehicles over 5 years old.',
-    Icon: Wrench,
+    Icon: Receipt,
     accent: 'border-[#EC4899]',
     iconBg: 'bg-[#EC4899]',
     iconText: 'text-[#EC4899]',
