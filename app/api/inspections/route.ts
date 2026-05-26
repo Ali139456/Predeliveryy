@@ -48,18 +48,31 @@ export async function POST(request: NextRequest) {
 
     const supabase = getSupabase();
     if (!body.inspectionNumber) {
-      // Tenant-scoped numbering (max across tenant only)
+      // Per-type numbering: each inspection type gets its own counter so the
+      // three product lines never share a number. Legacy "PD 1031"-style
+      // PDIs continue seamlessly via the digit regex below.
+      const PREFIX_BY_TYPE: Record<'pdi' | 'blue_slip' | 'pink_slip', string> = {
+        pdi: 'PD',
+        blue_slip: 'BS',
+        pink_slip: 'PS',
+      };
+      const inspectionType = ((body.inspectionType as 'pdi' | 'blue_slip' | 'pink_slip' | undefined) ?? 'pdi');
+      const prefix = PREFIX_BY_TYPE[inspectionType] ?? 'PD';
+
       const { data: rows } = await supabase
         .from('inspections')
         .select('inspection_number')
         .eq('tenant_id', user.tenantId)
-        .like('inspection_number', 'PD %');
-      let maxNum = 1000;
+        .eq('inspection_type', inspectionType);
+
+      let maxNum = 0;
       (rows || []).forEach((r: { inspection_number?: string }) => {
-        const n = parseInt(String(r?.inspection_number ?? '').replace(/^PD\s*/i, ''), 10);
+        const match = String(r?.inspection_number ?? '').match(/(\d+)/);
+        const n = match ? parseInt(match[1], 10) : NaN;
         if (!Number.isNaN(n)) maxNum = Math.max(maxNum, n);
       });
-      body.inspectionNumber = `PD ${maxNum + 1}`;
+
+      body.inspectionNumber = `${prefix}-${String(maxNum + 1).padStart(4, '0')}`;
     }
 
     const row = inspectionBodyToRow(body) as Record<string, unknown>;
