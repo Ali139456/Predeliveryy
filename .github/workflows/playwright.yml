@@ -8,6 +8,15 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    # Dev-server boot env. Navigation/UI specs don't need real Supabase, but
+    # lib/auth.ts throws at module load without JWT_SECRET so we provide a
+    # throwaway value. Real secrets live in Vercel + Supabase, not CI.
+    env:
+      JWT_SECRET: ci-placeholder-jwt-secret-not-used-anywhere-real
+      NEXT_PUBLIC_SUPABASE_URL: https://ci-placeholder.supabase.co
+      SUPABASE_SERVICE_ROLE_KEY: ci-placeholder-service-role-key
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NODE_ENV: development
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
