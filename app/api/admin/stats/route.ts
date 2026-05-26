@@ -48,14 +48,17 @@ export async function GET(request: NextRequest) {
       .sort((a, b) => (a._id.year !== b._id.year ? a._id.year - b._id.year : a._id.month - b._id.month));
 
     const recent = (recentRows || []).map((r) => {
-      const id = (r as InspectionRow).id;
+      const row = r as InspectionRow;
+      const id = row.id;
       return {
         id,
         _id: id,
-        inspectionNumber: (r as InspectionRow).inspection_number,
-        inspectorName: (r as InspectionRow).inspector_name,
-        status: (r as InspectionRow).status,
-        createdAt: (r as InspectionRow).created_at,
+        inspectionNumber: row.inspection_number,
+        inspectorName: row.inspector_name,
+        status: row.status,
+        createdAt: row.created_at,
+        // Pre-migration rows have no inspection_type — default to PDI client-side
+        inspectionType: row.inspection_type ?? 'pdi',
       };
     });
 
