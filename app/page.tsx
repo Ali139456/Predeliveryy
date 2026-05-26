@@ -241,7 +241,7 @@ export default function Home() {
               </div>
 
               {/* Pink Slip */}
-              <div className="group relative bg-white rounded-2xl p-7 border-2 border-gray-200 hover:border-[#EC4899] transition-all duration-300 hover:shadow-xl flex flex-col">
+              <div className="group relative bg-white rounded-2xl p-7 border-2 border-[#EC4899]/30 hover:border-[#EC4899] transition-all duration-300 hover:shadow-xl flex flex-col ring-1 ring-[#EC4899]/10">
                 <div className="absolute -top-3 right-5 px-3 py-1 rounded-full bg-[#EC4899] text-white text-[11px] font-bold tracking-wide">NSW eSafety</div>
                 <div className="w-14 h-14 rounded-xl bg-[#EC4899] flex items-center justify-center mb-5">
                   <Wrench className="w-7 h-7 text-white" strokeWidth={2.5} />
