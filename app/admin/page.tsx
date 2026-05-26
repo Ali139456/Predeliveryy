@@ -83,31 +83,6 @@ function inspectionTypePillClass(t?: string): string {
   return 'bg-[#FF6600]/10 text-[#FF6600] ring-[#FF6600]/30';
 }
 
-/** Filter pill button used in the Recent Inspections type / status rows. */
-function FilterPill({
-  active,
-  onClick,
-  activeClass,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  /** Tailwind classes applied when the pill is the selected one. */
-  activeClass: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-        active ? activeClass : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-      }`}
-    >
-      {children}
-    </button>
-  );
-}
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
@@ -360,76 +335,46 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
           )}
         </div>
 
-        {/* Filter pills: type + status. Counts reflect the unfiltered dataset. */}
-        <div className="flex flex-col gap-2 mb-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mr-1">Type</span>
-            <FilterPill
-              active={typeFilter === ''}
-              onClick={() => setTypeFilter('')}
-              activeClass="bg-slate-800 text-white border-slate-800"
+        {/* Filter dropdowns: type + status on one row, counts reflect the unfiltered dataset. */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-600">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Type</span>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
+              className="text-sm rounded-lg border border-slate-300 bg-white px-3 py-1.5 pr-8 focus:ring-2 focus:ring-[#0033FF]/20 focus:border-[#0033FF] text-slate-900"
             >
-              All ({stats?.recent?.length ?? 0})
-            </FilterPill>
-            <FilterPill
-              active={typeFilter === 'pdi'}
-              onClick={() => setTypeFilter('pdi')}
-              activeClass="bg-[#FF6600] text-white border-[#FF6600]"
+              <option value="">All ({stats?.recent?.length ?? 0})</option>
+              <option value="pdi">PDI ({typeCounts.pdi})</option>
+              <option value="blue_slip">Blue Slip ({typeCounts.blue_slip})</option>
+              <option value="pink_slip">Pink Slip ({typeCounts.pink_slip})</option>
+            </select>
+          </label>
+          <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-600">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Status</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
+              className="text-sm rounded-lg border border-slate-300 bg-white px-3 py-1.5 pr-8 focus:ring-2 focus:ring-[#0033FF]/20 focus:border-[#0033FF] text-slate-900"
             >
-              PDI ({typeCounts.pdi})
-            </FilterPill>
-            <FilterPill
-              active={typeFilter === 'blue_slip'}
-              onClick={() => setTypeFilter('blue_slip')}
-              activeClass="bg-[#0033FF] text-white border-[#0033FF]"
+              <option value="">All</option>
+              <option value="draft">Draft ({statusCounts.draft})</option>
+              <option value="completed">Completed ({statusCounts.completed})</option>
+            </select>
+          </label>
+          {(typeFilter !== '' || statusFilter !== '' || searchTerm) && (
+            <button
+              type="button"
+              onClick={() => {
+                setTypeFilter('');
+                setStatusFilter('');
+                setSearchTerm('');
+              }}
+              className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             >
-              Blue Slip ({typeCounts.blue_slip})
-            </FilterPill>
-            <FilterPill
-              active={typeFilter === 'pink_slip'}
-              onClick={() => setTypeFilter('pink_slip')}
-              activeClass="bg-[#EC4899] text-white border-[#EC4899]"
-            >
-              Pink Slip ({typeCounts.pink_slip})
-            </FilterPill>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mr-1">Status</span>
-            <FilterPill
-              active={statusFilter === ''}
-              onClick={() => setStatusFilter('')}
-              activeClass="bg-slate-800 text-white border-slate-800"
-            >
-              All
-            </FilterPill>
-            <FilterPill
-              active={statusFilter === 'draft'}
-              onClick={() => setStatusFilter('draft')}
-              activeClass="bg-amber-500 text-white border-amber-500"
-            >
-              Draft ({statusCounts.draft})
-            </FilterPill>
-            <FilterPill
-              active={statusFilter === 'completed'}
-              onClick={() => setStatusFilter('completed')}
-              activeClass="bg-emerald-600 text-white border-emerald-600"
-            >
-              Completed ({statusCounts.completed})
-            </FilterPill>
-            {(typeFilter !== '' || statusFilter !== '' || searchTerm) && (
-              <button
-                type="button"
-                onClick={() => {
-                  setTypeFilter('');
-                  setStatusFilter('');
-                  setSearchTerm('');
-                }}
-                className="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
-              >
-                Clear filters
-              </button>
-            )}
-          </div>
+              Clear filters
+            </button>
+          )}
         </div>
 
         {/* Mobile: stacked cards (avoids clipped table columns) */}
