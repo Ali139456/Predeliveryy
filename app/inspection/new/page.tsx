@@ -7,7 +7,7 @@ import Toast from '@/components/Toast';
 import PageContainer from '@/components/PageContainer';
 import { ArrowLeft, ClipboardCheck, FileCheck, FileEdit, PlusCircle, Receipt, Stamp } from 'lucide-react';
 import Link from 'next/link';
-import type { InspectionType } from '@/lib/checklist-template';
+import { resolveInspectionType, type InspectionType } from '@/lib/checklist-template';
 
 const TYPE_OPTIONS: Array<{
   value: InspectionType;
@@ -98,12 +98,11 @@ function NewInspectionPageInner() {
   const selectedType: InspectionType | null =
     typeParam && ALLOWED_TYPES.has(typeParam) ? (typeParam as InspectionType) : null;
 
-  // Pre-migration drafts have no inspection_type; default them to PDI so we
-  // surface the right "Continue draft" CTA inside the matching type card.
+  // Group drafts by type (API field + number prefix fallback for legacy rows).
   const draftByType = useMemo(() => {
     const map: Partial<Record<InspectionType, DraftInspection>> = {};
     for (const d of drafts) {
-      const t: InspectionType = d.inspectionType ?? 'pdi';
+      const t = resolveInspectionType(d.inspectionNumber, d.inspectionType);
       if (!map[t]) map[t] = d;
     }
     return map;

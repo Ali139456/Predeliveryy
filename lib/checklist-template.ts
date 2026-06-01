@@ -26,6 +26,28 @@ export function inspectionTypeShortLabel(type: InspectionType): string {
   }
 }
 
+/** Infer product type from inspection number prefix (PD-, BS-, PS-). */
+export function inspectionTypeFromNumber(inspectionNumber?: string | null): InspectionType | null {
+  const n = String(inspectionNumber ?? '').trim().toUpperCase();
+  if (/^BS[-\s]/.test(n) || /^BS\d/.test(n)) return 'blue_slip';
+  if (/^PS[-\s]/.test(n) || /^PS\d/.test(n)) return 'pink_slip';
+  if (/^PD[-\s]/.test(n) || /^PD\d/.test(n)) return 'pdi';
+  return null;
+}
+
+/** Resolve type for list cards: number prefix wins over stored column (legacy rows). */
+export function resolveInspectionType(
+  inspectionNumber?: string | null,
+  inspectionType?: string | null
+): InspectionType {
+  const fromNumber = inspectionTypeFromNumber(inspectionNumber);
+  if (fromNumber) return fromNumber;
+  if (inspectionType === 'blue_slip' || inspectionType === 'pink_slip' || inspectionType === 'pdi') {
+    return inspectionType;
+  }
+  return 'pdi';
+}
+
 /** Matches `defaultChecklist` category order in InspectionForm */
 export const CHECKLIST_CATEGORY_ORDER = [
   'Pre delivery Inspection',

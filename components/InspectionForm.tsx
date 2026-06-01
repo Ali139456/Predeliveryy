@@ -346,10 +346,11 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   const goToStep = useCallback((step: number) => {
     const safeStep = Math.max(1, Math.min(step, totalSteps));
     setCurrentStep(safeStep);
-    const url = new URL(pathname, window.location.origin);
-    url.searchParams.set('step', String(safeStep));
-    router.replace(url.pathname + url.search, { scroll: false });
-  }, [pathname, router, totalSteps]);
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('step', String(safeStep));
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [pathname, router, totalSteps, searchParams]);
 
   const {
     register,
@@ -569,9 +570,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           savedDraftId = result.data._id;
           setDraftId(savedDraftId);
           
-          // Update URL without reloading page (preserve step for refresh)
-          if (typeof window !== 'undefined' && !inspectionId) {
-            window.history.replaceState({}, '', `/inspections/${savedDraftId}?step=${currentStep}`);
+          // Move to the inspection detail route so refresh and step navigation stay consistent
+          if (!inspectionId && pathname?.startsWith('/inspection/new')) {
+            router.replace(`/inspections/${savedDraftId}?step=${currentStep}`, { scroll: false });
           }
           
           if (!silent) {
@@ -619,7 +620,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     } finally {
       setIsSavingDraft(false);
     }
-  }, [readOnly, isSavingDraft, isCompleted, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep]);
+  }, [readOnly, isSavingDraft, isCompleted, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep, pathname, router, inspectionType, isBlueOrPink, aisStation, inspectorLicenceNo]);
 
   // Auto-save draft periodically and when data changes
   useEffect(() => {

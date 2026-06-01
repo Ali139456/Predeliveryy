@@ -7,6 +7,7 @@ import { inspectionBodyToRow, inspectionRowToInspection } from '@/types/db';
 import type { InspectionRow } from '@/types/db';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
+import { resolveInspectionType } from '@/lib/checklist-template';
 import { syncInspectionAnalytics } from '@/lib/analytics-sync';
 import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
 
@@ -141,7 +142,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const supabase = getSupabase();
     // List view: select only fields needed for table (no photos, checklist, signatures) for faster response
-    const listFields = 'id, inspection_number, inspector_name, inspector_email, inspection_date, status, barcode, created_at';
+    const listFields =
+      'id, inspection_number, inspection_type, inspector_name, inspector_email, inspection_date, status, barcode, created_at, updated_at';
     let query = supabase
       .from('inspections')
       .select(listFields)
@@ -182,12 +184,17 @@ export async function GET(request: NextRequest) {
       _id: r.id,
       id: r.id,
       inspectionNumber: r.inspection_number,
+      inspectionType: resolveInspectionType(
+        r.inspection_number as string | undefined,
+        r.inspection_type as string | undefined
+      ),
       inspectorName: r.inspector_name,
       inspectorEmail: r.inspector_email,
       inspectionDate: r.inspection_date,
       status: r.status,
       barcode: r.barcode ?? undefined,
       createdAt: r.created_at,
+      updatedAt: r.updated_at,
     }));
 
     await logAuditEvent(request, {
