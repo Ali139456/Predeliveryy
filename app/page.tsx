@@ -564,7 +564,7 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=800&h=600&fit=crop&q=80"
+                    src="/dealership.png"
                     alt="Dealerships - Car showroom"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -580,7 +580,7 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop&q=80"
+                    src="/fleet%20and%20leasing.png"
                     alt="Fleet & Leasing Companies - Commercial vehicles"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -596,7 +596,7 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&q=80"
+                    src="/OEM%20and%20leieveyr%20partners.png"
                     alt="OEM & Delivery Partners - Manufacturing and delivery"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -612,7 +612,7 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=600&fit=crop&q=80"
+                    src="/insurers.png"
                     alt="Insurers & Financiers - Insurance and finance"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
