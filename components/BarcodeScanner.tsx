@@ -1,11 +1,26 @@
 ﻿'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { QrCode, X, Upload, Loader2 } from 'lucide-react';
+import { QrCode, X, Upload, Loader2, Camera } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
+import {
+  parseVinPlateText,
+  primaryScanValue,
+  scanTypeFromParse,
+  type VinPlateParseResult,
+} from '@/lib/vin-plate-parser';
+
+export interface VehicleScanPayload {
+  raw: string;
+  type: 'VIN' | 'COMPLIANCE' | 'OTHER';
+  vin?: string;
+  make?: string;
+  model?: string;
+  engine?: string;
+}
 
 interface BarcodeScannerProps {
-  onScan: (barcode: string, type?: 'VIN' | 'COMPLIANCE' | 'OTHER') => void;
+  onScan: (payload: VehicleScanPayload) => void;
   value?: string;
   scanType?: 'VIN' | 'COMPLIANCE' | 'ANY';
   readOnly?: boolean;
@@ -19,30 +34,100 @@ const isValidVIN = (code: string): boolean => {
 
 // Compliance plate detection (Australian format examples)
 const isCompliancePlate = (code: string): boolean => {
-  // Common compliance plate formats
   const compliancePatterns = [
-    /^[A-Z]{2,3}\d{6,8}$/i, // Format like ABC123456
-    /^COMP\d+/i, // Starts with COMP
-    /^PLATE\d+/i, // Starts with PLATE
+    /^[A-Z]{2,3}\d{6,8}$/i,
+    /^COMP\d+/i,
+    /^PLATE\d+/i,
   ];
-  return compliancePatterns.some(pattern => pattern.test(code));
+  return compliancePatterns.some((pattern) => pattern.test(code));
 };
+
+function payloadFromBarcode(code: string, type: 'VIN' | 'COMPLIANCE' | 'OTHER'): VehicleScanPayload {
+  const parsed = parseVinPlateText(code);
+  if (type === 'VIN' && isValidVIN(code)) {
+    return {
+      raw: code,
+      type: 'VIN',
+      vin: code.toUpperCase(),
+      make: parsed.make,
+      model: parsed.model,
+      engine: parsed.engine,
+    };
+  }
+  return {
+    raw: code,
+    type,
+    vin: parsed.vin,
+    make: parsed.make,
+    model: parsed.model,
+    engine: parsed.engine,
+  };
+}
+
+function payloadFromOcrText(
+  text: string,
+  apiParsed?: {
+    vin?: string | null;
+    make?: string | null;
+    model?: string | null;
+    engine?: string | null;
+  } | null
+): VehicleScanPayload {
+  const local = parseVinPlateText(text);
+  const vin = apiParsed?.vin ?? local.vin;
+  const make = apiParsed?.make ?? local.make;
+  const model = apiParsed?.model ?? local.model;
+  const engine = apiParsed?.engine ?? local.engine;
+  const norm = (v: string | null | undefined) => (v == null ? undefined : v);
+  const merged: VinPlateParseResult = {
+    rawText: text,
+    vin: norm(vin),
+    make: norm(make),
+    model: norm(model),
+    engine: norm(engine),
+  };
+  const type = scanTypeFromParse(merged);
+  return {
+    raw: text,
+    type,
+    vin: merged.vin,
+    make: merged.make,
+    model: merged.model,
+    engine: merged.engine,
+  };
+}
 
 export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOnly = false }: BarcodeScannerProps) {
   const [isScanning, setIsScanning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isProcessingOCR, setIsProcessingOCR] = useState(false);
   const [ocrImagePreview, setOcrImagePreview] = useState<string | null>(null);
+  const [lastScanSummary, setLastScanSummary] = useState<string | null>(null);
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const scannerStartPendingRef = useRef(false);
   const scannerStartGenerationRef = useRef(0);
   const scannerContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const emitScan = (payload: VehicleScanPayload) => {
+    const primary = payload.vin || primaryScanValue({ ...payload, rawText: payload.raw });
+    if (!primary) {
+      setError('No vehicle ID detected. Try a closer, well-lit photo of the compliance plate.');
+      return;
+    }
+    const parts: string[] = [];
+    if (payload.vin) parts.push(`VIN ${payload.vin}`);
+    if (payload.make) parts.push(payload.make);
+    if (payload.model) parts.push(`Model ${payload.model}`);
+    setLastScanSummary(parts.length ? parts.join(' · ') : primary.slice(0, 40));
+    onScan({ ...payload, raw: primary });
+    setError(null);
+  };
 
   const startScanning = () => {
     if (scannerRef.current || scannerStartPendingRef.current) return;
     setError(null);
-    // Mount #scanner-container first (it was only rendered after start - so the element never existed when start ran).
     setIsScanning(true);
     scannerStartPendingRef.current = true;
     const gen = ++scannerStartGenerationRef.current;
@@ -69,7 +154,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
               cameraConfig,
               {
                 fps: 10,
-                qrbox: { width: 250, height: 250 },
+                qrbox: { width: 280, height: 180 },
               },
               (decodedText) => {
                 let detectedType: 'VIN' | 'COMPLIANCE' | 'OTHER' = 'OTHER';
@@ -77,19 +162,19 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                 if (isValidVIN(decodedText)) {
                   detectedType = 'VIN';
                   if (scanType === 'VIN' || scanType === 'ANY') {
-                    onScan(decodedText, detectedType);
+                    emitScan(payloadFromBarcode(decodedText, detectedType));
                     void stopScanning();
                     return;
                   }
                 } else if (isCompliancePlate(decodedText)) {
                   detectedType = 'COMPLIANCE';
                   if (scanType === 'COMPLIANCE' || scanType === 'ANY') {
-                    onScan(decodedText, detectedType);
+                    emitScan(payloadFromBarcode(decodedText, detectedType));
                     void stopScanning();
                     return;
                   }
                 } else if (scanType === 'ANY') {
-                  onScan(decodedText, detectedType);
+                  emitScan(payloadFromBarcode(decodedText, detectedType));
                   void stopScanning();
                   return;
                 }
@@ -115,7 +200,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
               await scanner.stop();
               scanner.clear();
             } catch {
-              /* reset between camera attempts */
+              /* */
             }
           }
         }
@@ -130,9 +215,9 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);
         if (/Permission|NotAllowed|denied/i.test(msg)) {
-          setError('Camera access was blocked. Allow camera for this site, or use Upload image.');
+          setError('Camera access was blocked. Allow camera for this site, or use Photo scan / Upload.');
         } else if (/HTTPS|secure context/i.test(msg)) {
-          setError('Camera needs a secure (HTTPS) connection. Use Upload image on this device.');
+          setError('Camera needs HTTPS. Use Photo scan or Upload image on this device.');
         } else {
           setError(msg || 'Failed to start scanner');
         }
@@ -151,43 +236,37 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
       try {
         await scannerRef.current.stop();
         scannerRef.current.clear();
-      } catch (err) {
-        // Ignore stop errors
+      } catch {
+        /* */
       }
       scannerRef.current = null;
     }
     setIsScanning(false);
   };
 
-  // Convert image file to base64
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        resolve(result);
-      };
+      reader.onload = () => resolve(reader.result as string);
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
   };
 
-  // Process image with OCR
   const processImageWithOCR = async (imageBase64: string) => {
     setIsProcessingOCR(true);
     setError(null);
     setOcrImagePreview(imageBase64);
+    setLastScanSummary(null);
 
     try {
       const response = await fetch('/api/ocr', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          imageBase64: imageBase64, // Send full base64 string (API will handle data URL prefix)
-          provider: 'auto', // Auto-select provider
+          imageBase64,
+          provider: 'auto',
         }),
       });
 
@@ -195,6 +274,12 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
         success?: boolean;
         text?: string;
         error?: string;
+        parsed?: {
+          vin?: string | null;
+          make?: string | null;
+          model?: string | null;
+          engine?: string | null;
+        };
       };
 
       if (!response.ok) {
@@ -202,65 +287,48 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
       }
 
       if (result.success && result.text) {
-        const extractedText = result.text.trim();
-        
-        // Try to detect if it's a compliance plate
-        let detectedType: 'VIN' | 'COMPLIANCE' | 'OTHER' = 'OTHER';
-        if (isValidVIN(extractedText)) {
-          detectedType = 'VIN';
-        } else if (isCompliancePlate(extractedText) || scanType === 'COMPLIANCE') {
-          detectedType = 'COMPLIANCE';
+        const payload = payloadFromOcrText(result.text, result.parsed ?? undefined);
+        if (!payload.vin && !payload.make && !payload.model) {
+          throw new Error(
+            'Could not read VIN or vehicle details. Zoom in on the compliance plate, hold steady, and ensure good lighting.'
+          );
         }
-
-        // Extract potential compliance plate numbers (alphanumeric sequences)
-        const complianceMatch = extractedText.match(/[A-Z]{2,3}\d{6,8}|COMP\d+|PLATE\d+/i);
-        if (complianceMatch) {
-          onScan(complianceMatch[0], 'COMPLIANCE');
-        } else if (extractedText.length > 0) {
-          // Use the full extracted text if no specific pattern found
-          onScan(extractedText, detectedType);
-        } else {
-          throw new Error('No text detected in the image');
-        }
+        emitScan(payload);
       } else {
         throw new Error(result.error || 'OCR extraction failed');
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to process image with OCR');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Failed to process image with OCR';
+      setError(msg);
       console.error('OCR error:', err);
     } finally {
       setIsProcessingOCR(false);
     }
   };
 
-  // Handle file upload for OCR
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
+  const handleImageFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
       setError('Please select an image file');
       return;
     }
-
-    // Validate file size (max 10MB)
     if (file.size > 10 * 1024 * 1024) {
       setError('Image size must be less than 10MB');
       return;
     }
-
     try {
       const imageBase64 = await fileToBase64(file);
       await processImageWithOCR(imageBase64);
-    } catch (err: any) {
-      setError(err.message || 'Failed to process image');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to process image');
     }
+  };
 
-    // Reset file input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    await handleImageFile(file);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   useEffect(() => {
@@ -287,8 +355,30 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                   className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md text-sm whitespace-nowrap shrink-0"
                 >
                   <QrCode className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
-                  <span className="hidden sm:inline">Vehicle ID scan</span>
-                  <span className="sm:hidden">Scan</span>
+                  <span className="hidden sm:inline">Barcode scan</span>
+                  <span className="sm:hidden">Barcode</span>
+                </button>
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => cameraInputRef.current?.click()}
+                  disabled={isProcessingOCR}
+                  className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#0033FF] text-white rounded-lg hover:bg-[#0029CC] shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
+                >
+                  {isProcessingOCR ? (
+                    <Loader2 className="w-4 h-4 mr-1.5 animate-spin flex-shrink-0" />
+                  ) : (
+                    <Camera className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
+                  )}
+                  <span className="hidden sm:inline">Photo scan (plate)</span>
+                  <span className="sm:hidden">Photo</span>
                 </button>
                 <input
                   ref={fileInputRef}
@@ -307,7 +397,6 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                     <>
                       <Loader2 className="w-4 h-4 mr-1.5 sm:mr-2 animate-spin flex-shrink-0" />
                       <span className="hidden sm:inline">Processing...</span>
-                      <span className="sm:hidden">...</span>
                     </>
                   ) : (
                     <>
@@ -325,13 +414,17 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                 className="flex items-center justify-center px-3 py-2 sm:px-4 bg-red-600 text-white rounded-lg hover:bg-red-500 shadow-md text-sm whitespace-nowrap shrink-0"
               >
                 <X className="w-4 h-4 mr-1.5 sm:mr-2 flex-shrink-0" />
-                <span className="hidden sm:inline">Stop Scanning</span>
-                <span className="sm:hidden">Stop</span>
+                Stop scanning
               </button>
             )}
           </div>
         )}
       </div>
+
+      <p className="text-xs text-slate-600 leading-relaxed">
+        For compliance / VIN plates (like Audi, BMW stickers), use <strong>Photo scan</strong> or{' '}
+        <strong>Upload image</strong> after zooming in. Barcode scan is for QR/barcodes only.
+      </p>
 
       {value && (
         <input
@@ -342,6 +435,12 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
         />
       )}
 
+      {lastScanSummary && (
+        <p className="text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+          Detected: {lastScanSummary}
+        </p>
+      )}
+
       <div className="relative" hidden={!isScanning}>
         <div
           id="scanner-container"
@@ -350,17 +449,17 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
         />
         {isScanning && (
           <p className="text-sm text-gray-600 text-center mt-2">
-            Point your camera at a barcode, QR code, or compliance plate to scan
+            Point at a barcode or QR on the vehicle. For VIN plates, stop and use Photo scan instead.
           </p>
         )}
       </div>
 
       {ocrImagePreview && (
         <div className="space-y-2">
-          <p className="text-sm text-gray-700 font-medium">OCR Preview:</p>
-          <img 
-            src={ocrImagePreview} 
-            alt="OCR preview" 
+          <p className="text-sm text-gray-700 font-medium">OCR preview</p>
+          <img
+            src={ocrImagePreview}
+            alt="OCR preview"
             className="max-w-full h-auto rounded-lg border-2 border-gray-300"
             style={{ maxHeight: '200px' }}
           />
@@ -382,5 +481,3 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
     </div>
   );
 }
-
-

@@ -1308,13 +1308,27 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             </button>
           )}
         </div>
-        <BarcodeScanner 
-          onScan={(code, type) => {
-            if (!readOnly) {
-              setBarcode(code);
-              if (type) setBarcodeType(type);
-            }
-          }} 
+        <BarcodeScanner
+          onScan={(payload) => {
+            if (readOnly) return;
+            const primary = payload.vin || payload.raw;
+            setBarcode(primary);
+            setBarcodeType(payload.type);
+            if (payload.vin) setValue('vehicleInfo.vin', payload.vin);
+            if (payload.make) setValue('vehicleInfo.make', payload.make);
+            if (payload.model) setValue('vehicleInfo.model', payload.model);
+            if (payload.engine) setValue('vehicleInfo.engine', payload.engine);
+            setToast({
+              message: [
+                payload.vin && `VIN ${payload.vin}`,
+                payload.make,
+                payload.model && `Model ${payload.model}`,
+              ]
+                .filter(Boolean)
+                .join(' · ') || 'Vehicle ID captured',
+              type: 'success',
+            });
+          }}
           value={barcode}
           scanType="ANY"
           readOnly={readOnly}

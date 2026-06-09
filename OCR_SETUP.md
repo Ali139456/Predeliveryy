@@ -79,24 +79,19 @@ AZURE_VISION_ENDPOINT=https://your-resource-name.cognitiveservices.azure.com/
 
 ## How It Works
 
-1. **Barcode/QR Code Scanning**: Uses the camera to scan barcodes and QR codes (existing functionality)
-2. **OCR Scanning**: 
-   - Click "OCR Scan" button to capture a photo with camera
-   - Or click "Upload Image" to select an image file
-   - The image is sent to the OCR API (Google or Azure)
-   - Text is extracted from the image
-   - Compliance plate numbers are automatically detected and extracted
-   - The extracted text is populated in the Vehicle Identification field
+1. **Barcode/QR scanning**: Live camera for barcodes and QR codes only.
+2. **VIN / compliance plate OCR** (recommended for stickers like Audi, BMW):
+   - **Photo scan (plate)**: Take a close-up photo with the device camera (zoom in on the plate first).
+   - **Upload image**: Choose a photo from the gallery.
+   - Image is sent to Google Cloud Vision or Azure Vision OCR.
+   - The app extracts **VIN**, **make**, **model**, and **engine code** when present and fills the vehicle fields automatically.
 
 ## Usage
 
 1. In the inspection form, go to **Step 2: Vehicle & Identification**
-2. You'll see three options:
-   - **Scan Vehicle ID**: Traditional barcode/QR code scanning
-   - **OCR Scan**: Capture photo with camera for OCR
-   - **Upload Image**: Upload an image file for OCR
-3. For compliance plates, use **OCR Scan** or **Upload Image**
-4. The extracted text will automatically populate the Vehicle Identification field
+2. Use **Photo scan (plate)** or **Upload image** for compliance/VIN stickers (not the barcode scanner).
+3. After processing, VIN, Make, and Model fields update when detected.
+4. **Barcode scan** remains for QR/barcodes only.
 
 ## Troubleshooting
 

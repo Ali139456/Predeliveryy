@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { enforceRateLimit } from '@/lib/rateLimit';
+import { parseVinPlateText } from '@/lib/vin-plate-parser';
 
 // Ensure Node.js runtime for OCR
 export const runtime = 'nodejs';
@@ -42,8 +43,8 @@ async function extractTextWithGoogleCloudVision(imageBase64: string): Promise<st
           },
           features: [
             {
-              type: 'TEXT_DETECTION',
-              maxResults: 10,
+              type: 'DOCUMENT_TEXT_DETECTION',
+              maxResults: 1,
             },
           ],
         },
@@ -58,10 +59,12 @@ async function extractTextWithGoogleCloudVision(imageBase64: string): Promise<st
 
   const data = await response.json();
   
-  if (data.responses && data.responses[0] && data.responses[0].textAnnotations) {
-    // Return the full text annotation (first one contains all text)
-    const fullTextAnnotation = data.responses[0].textAnnotations[0];
-    return fullTextAnnotation?.description || '';
+  const resp = data.responses?.[0];
+  if (resp?.fullTextAnnotation?.text) {
+    return String(resp.fullTextAnnotation.text);
+  }
+  if (resp?.textAnnotations?.[0]?.description) {
+    return String(resp.textAnnotations[0].description);
   }
 
   return '';
@@ -150,7 +153,7 @@ async function extractTextWithAzureVision(imageBase64: string): Promise<string> 
           }
         }
       }
-      return textLines.join(' ');
+      return textLines.join('\n');
     }
 
     if (result.status === 'failed') {
@@ -222,12 +225,18 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Clean up the extracted text
-      extractedText = extractedText.trim().replace(/\s+/g, ' ');
+      extractedText = extractedText.trim();
+      const parsed = parseVinPlateText(extractedText);
 
       return NextResponse.json({
         success: true,
         text: extractedText,
+        parsed: {
+          vin: parsed.vin ?? null,
+          make: parsed.make ?? null,
+          model: parsed.model ?? null,
+          engine: parsed.engine ?? null,
+        },
         provider: ocrProvider,
       }, { headers: corsHeaders });
     } catch (ocrError: any) {
