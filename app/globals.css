@@ -121,13 +121,18 @@
     perspective: 1400px;
   }
   .hero-report-3d {
-    transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg);
+    transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg) scale(1.08);
     transform-style: preserve-3d;
     will-change: transform;
   }
   @media (max-width: 1023px) {
     .hero-report-3d {
-      transform: rotateY(-5deg) rotateX(3deg) rotateZ(1deg);
+      transform: rotateY(-5deg) rotateX(3deg) rotateZ(1deg) scale(1.02);
+    }
+  }
+  @media (min-width: 1280px) {
+    .hero-report-3d {
+      transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg) scale(1.14);
     }
   }
 

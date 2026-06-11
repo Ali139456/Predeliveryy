@@ -33,7 +33,7 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-14 lg:py-16 pb-24 lg:pb-28">
           <div className="max-w-7xl mx-auto relative">
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-10 lg:gap-6 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-10 lg:gap-4 xl:gap-2 items-center">
               <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px]">
                 <span className="inline-flex self-center lg:self-start items-center px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] text-[#0033FF] bg-[#0033FF]/10">
                   AI-Powered Pre-Delivery Inspections
@@ -95,21 +95,21 @@ export default function Home() {
                   </Link>
                 </div>
 
-                <p className="text-sm text-slate-500 flex items-center justify-center lg:justify-start gap-2 lg:hidden">
-                  <Shield className="w-4 h-4 text-[#0033FF] shrink-0" />
-                  Trusted by forward-thinking dealerships across Australia.
-                </p>
               </div>
 
-              <div className="relative z-10 w-full min-w-0 flex justify-center lg:justify-end lg:-mr-6 xl:-mr-10">
+              <div className="relative z-10 w-full min-w-0 flex justify-center lg:justify-end lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible">
                 <HeroReportGraphic />
               </div>
             </div>
 
-            <p className="hidden lg:flex absolute bottom-2 right-4 xl:right-8 z-30 items-center gap-2 text-sm text-white/95 font-medium">
-              <Shield className="w-4 h-4 shrink-0" />
-              Trusted by forward-thinking dealerships across Australia.
-            </p>
+            <div className="relative z-20 mt-10 lg:mt-0 lg:absolute lg:left-0 lg:right-0 lg:bottom-8 xl:bottom-10">
+              <div className="flex justify-center lg:justify-end px-0 sm:px-2">
+                <p className="inline-flex items-center gap-2.5 text-sm font-medium text-slate-600 lg:text-white text-center lg:text-right leading-snug max-w-[20rem] sm:max-w-none lg:pr-6 xl:pr-10">
+                  <Shield className="w-4 h-4 text-[#0033FF] lg:text-white shrink-0" aria-hidden />
+                  <span>Trusted by forward-thinking dealerships across Australia.</span>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
