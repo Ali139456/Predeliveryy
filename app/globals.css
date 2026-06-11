@@ -120,15 +120,9 @@
     }
   }
 
-  /* Hero iPad mockup */
-  .hero-ipad {
+  /* Hero floating report graphic */
+  .hero-report {
     width: 100%;
-    max-width: min(560px, 94vw);
-  }
-  @media (min-width: 1024px) {
-    .hero-ipad {
-      max-width: min(600px, 46vw);
-    }
   }
 
 }

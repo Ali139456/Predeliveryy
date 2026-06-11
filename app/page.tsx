@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Receipt, Stamp, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
-import HeroIpadMockup from '@/components/HeroIpadMockup';
+import HeroReportGraphic from '@/components/HeroReportGraphic';
 
 export default function Home() {
   const { loading, user } = useAuth();
@@ -16,8 +16,8 @@ export default function Home() {
   
   return (
     <div className="bg-white">
-      {/* Hero - light marketing layout with iPad report mockup */}
-      <div className="relative w-full overflow-x-clip bg-gray-50 -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40">
+      {/* Hero - light marketing layout with floating report graphic */}
+      <div className="relative w-full overflow-visible bg-gray-50 -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40">
         <div
           className="absolute inset-0 opacity-60 pointer-events-none"
           style={{
@@ -100,8 +100,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="relative w-full min-w-0 flex flex-col items-center lg:items-end justify-center">
-              <HeroIpadMockup />
+            <div className="relative w-full min-w-0 flex flex-col items-center lg:items-end justify-center overflow-visible">
+              <HeroReportGraphic />
             </div>
           </div>
         </div>
