@@ -120,39 +120,14 @@
     }
   }
 
-  /* Hero iPhone mockup - increased width/height across breakpoints (slogan readable) */
-  .hero-phone {
+  /* Hero iPad mockup */
+  .hero-ipad {
     width: 100%;
-    max-width: min(520px, 94vw);
-  }
-  @media (min-width: 640px) {
-    .hero-phone {
-      max-width: min(560px, 90vw);
-    }
-  }
-  @media (min-width: 768px) {
-    .hero-phone {
-      max-width: min(580px, 54vw);
-    }
+    max-width: min(560px, 94vw);
   }
   @media (min-width: 1024px) {
-    .hero-phone {
-      max-width: min(640px, 50vw);
-    }
-  }
-  @media (min-width: 1280px) {
-    .hero-phone {
-      max-width: min(680px, 580px);
-    }
-  }
-  @media (min-width: 1800px) {
-    .hero-phone {
-      max-width: min(760px, 680px);
-    }
-  }
-  @media (min-width: 1900px) {
-    .hero-phone {
-      max-width: min(820px, 720px);
+    .hero-ipad {
+      max-width: min(600px, 46vw);
     }
   }
 

@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Receipt, Stamp } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Receipt, Stamp, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { SITE_HERO_MOBILE_GRAPHICS_SRC, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
+import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
+import HeroIpadMockup from '@/components/HeroIpadMockup';
 
 export default function Home() {
   const { loading, user } = useAuth();
@@ -15,162 +16,92 @@ export default function Home() {
   
   return (
     <div className="bg-white">
-      {/* Hero Section - always; marketing + footer below only for guests */}
-      {/* Long solid #0033FF at top so it meets UserHeader/MainContent padding without a darker “second band” */}
-      <div className="relative min-h-[min(100dvh,900px)] lg:min-h-0 w-full overflow-x-clip bg-[linear-gradient(180deg,#0033FF_0%,#0033FF_min(22vh,200px),#0029CC_52%,#0033FF_100%)]">
-        {/* Hero Background Image */}
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-          <Image
-            src="/predelivery-hero-shot.jpg"
-            alt="Pre Delivery Inspection Facility"
-            fill
-            priority
-            className="object-cover object-center min-h-full"
-            quality={90}
-          />
-        </div>
-        
-        {/* Logo blue overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0033FF]/85 via-[#0029CC]/78 to-[#0033FF]/85"></div>
-        
-        {/* Animated background gradient */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-[#0033FF]/50 via-[#FF6600]/20 to-[#0033FF]/50"></div>
-        </div>
-        
-        {/* Subtle grid pattern */}
-        <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
-        
-        <div className="relative z-20 flex items-start pt-2 sm:pt-4 md:pt-6 pb-8 sm:pb-12 md:pb-10 lg:py-10">
-          <div className="container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 pt-1 sm:pt-2 md:pt-3 pb-12 sm:pb-16 md:pb-8 w-full max-w-full min-w-0 flex-1">
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 lg:grid-rows-2 gap-[7px] sm:gap-2 md:gap-6 lg:gap-x-6 lg:gap-y-0 items-center w-full min-w-0">
-              {/* Hero content: H1, tagline, features, Built for, CTAs - all in one div */}
-              <div className="min-w-0 w-full pl-0 pr-2 sm:pr-4 text-center lg:text-left flex flex-col gap-[7px] sm:gap-1 md:gap-3 lg:gap-4 lg:col-span-6 lg:col-start-1 lg:row-span-2 lg:row-start-1 max-w-2xl overflow-visible mx-auto lg:mx-0">
-                <h1 className="hero-h1 hyphens-none mt-2 sm:mt-3 md:mt-4 lg:mt-6">
-                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span><span className="text-white"> Digitised</span>
-                </h1>
-                <p className="hero-tagline text-white/90 leading-relaxed break-words min-w-0">
-                  Verify vehicle condition before handover with a defensible digital record.
-                </p>
+      {/* Hero - light marketing layout with iPad report mockup */}
+      <div className="relative w-full overflow-x-clip bg-gray-50 -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40">
+        <div
+          className="absolute inset-0 opacity-60 pointer-events-none"
+          style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,51,255,0.08) 1px, transparent 0)',
+            backgroundSize: '28px 28px',
+          }}
+          aria-hidden
+        />
+        <div
+          className="absolute bottom-0 right-0 w-[min(100%,520px)] h-[min(55%,380px)] bg-[#0033FF]/10 rounded-tl-[100%] pointer-events-none"
+          aria-hidden
+        />
 
-                <div className="text-center lg:text-left min-w-0 overflow-visible">
-                  {/* Mobile: two compact pills (4 + 3) */}
+        <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0">
+              <span className="inline-flex self-center lg:self-start items-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0033FF] bg-[#0033FF]/10 border border-[#0033FF]/20">
+                AI-Powered Pre-Delivery Inspections
+              </span>
+
+              <h1 className="hero-h1 text-slate-900 hyphens-none">
+                Every car. Every check. <span className="text-[#0033FF]">Every time.</span>
+              </h1>
+
+              <p className="hero-tagline text-slate-600 leading-relaxed">
+                Pre Delivery streamlines pre-delivery inspections so you can deliver with confidence and complete every sale.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
+                {[
+                  {
+                    icon: ShieldCheck,
+                    title: '100% Compliant',
+                    blurb: 'Digital inspection records',
+                  },
+                  {
+                    icon: Zap,
+                    title: 'Save Time',
+                    blurb: 'Automate checks and workflows',
+                  },
+                  {
+                    icon: CheckCircle,
+                    title: 'Deliver Confidence',
+                    blurb: 'Better quality, happier customers',
+                  },
+                ].map(({ icon: Icon, title, blurb }) => (
                   <div
-                    className="hero-mobile-feature-cards sm:hidden grid grid-cols-2 gap-2 w-full max-w-xl mx-auto lg:mx-0 items-stretch text-white"
-                    aria-label="Product highlights"
+                    key={title}
+                    className="rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm hover:border-[#0033FF]/30 hover:shadow-md transition-all"
                   >
-                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-3 py-2.5 min-w-0 flex flex-col justify-center">
-                      <ul className="flex flex-col items-start gap-1.5 text-sm leading-snug">
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">Photo images</span>
-                        </li>
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">OCR Scanner</span>
-                        </li>
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">GPS Pinning</span>
-                        </li>
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">Video walk around</span>
-                        </li>
-                      </ul>
+                    <div className="w-9 h-9 rounded-lg bg-[#0033FF]/10 flex items-center justify-center mb-2">
+                      <Icon className="w-5 h-5 text-[#0033FF]" strokeWidth={2.25} />
                     </div>
-                    <div className="rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/15 shadow-md px-3 py-2.5 min-w-0 flex flex-col justify-center">
-                      <ul className="flex flex-col items-start gap-1.5 text-sm leading-snug">
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">Voice to text</span>
-                        </li>
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">Analytics Dashboard</span>
-                        </li>
-                        <li className="flex items-start gap-1.5 w-full text-left">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF6600] shrink-0 mt-0.5" aria-hidden />
-                          <span className="min-w-0 break-words">Secure and Compliant</span>
-                        </li>
-                      </ul>
-                    </div>
+                    <p className="text-sm font-bold text-slate-900">{title}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 leading-snug">{blurb}</p>
                   </div>
-
-                  {/* sm+: two pills (4 + 3) */}
-                  <div className="hidden sm:flex flex-row flex-wrap items-center justify-center lg:justify-start gap-2 w-full max-w-full mx-auto lg:mx-0">
-                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 w-fit max-w-full min-w-0">
-                      <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>Photo images</span>
-                        </li>
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>OCR Scanner</span>
-                        </li>
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>GPS Pinning</span>
-                        </li>
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>Video walk around</span>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="rounded-2xl sm:rounded-full bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg px-2.5 py-2 sm:px-4 sm:py-2.5 lg:px-5 lg:py-3 w-fit max-w-full min-w-0">
-                      <ul className="flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1 sm:gap-x-2 sm:gap-y-1.5 text-white/95 hero-features">
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>Voice to text</span>
-                        </li>
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>Analytics Dashboard</span>
-                        </li>
-                        <li className="flex items-center gap-1 shrink-0">
-                          <span className="w-1 h-1 rounded-full bg-[#FF6600] shrink-0" aria-hidden />
-                          <span>Secure and Compliant</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-
-                <p className="text-white/70 hero-built-for max-w-2xl break-words min-w-0">
-                  Built for OEM's, logistics delivery partners, dealerships, and fleets who need inspection certainty before delivery.
-                </p>
-
-                <div className="mt-3 lg:mt-0 text-center lg:text-left flex flex-col items-center lg:items-start">
-                  <div className="flex flex-row flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
-                    <Link href="/contact" className="bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full shadow-lg hover:scale-105 transition-all flex items-center gap-2 border border-white/30 text-sm sm:text-base">
-                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Book a demo</span>
-                    </Link>
-                    <Link href="/contact" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full border-2 border-white/30 hover:scale-105 transition-all flex items-center gap-2 shadow-lg text-sm sm:text-base">
-                      <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-                      <span>Talk to sales</span>
-                    </Link>
-                  </div>
-                </div>
+                ))}
               </div>
 
-              {/* Mobile app hero graphic - centered on mobile; on lg right column spanning 2 rows */}
-              <div className="relative w-full min-w-0 flex flex-col items-center justify-center lg:col-span-6 lg:col-start-7 lg:row-span-2 lg:row-start-1 mt-3 mb-3 lg:mt-10 lg:mb-0">
-                <div className="hero-phone w-full max-h-[min(62vh,560px)] sm:max-h-[min(64vh,600px)] md:max-h-[min(62vh,620px)] lg:max-h-[min(58vh,600px)] mx-auto flex flex-col items-center">
-                  <Image
-                    src={SITE_HERO_MOBILE_GRAPHICS_SRC}
-                    alt="Pre Delivery mobile app - verified before your drive"
-                    width={7411}
-                    height={7263}
-                    className="w-[min(560px,100%)] max-w-full h-auto max-h-[min(58vh,480px)] sm:max-h-[min(62vh,520px)] md:max-h-[min(60vh,540px)] lg:max-h-[min(54vh,560px)] object-contain object-center drop-shadow-2xl"
-                    style={{ width: 'min(560px, 100%)', height: 'auto' }}
-                    priority
-                    sizes="(max-width: 640px) 92vw, (max-width: 768px) 560px, (max-width: 1024px) 560px, (max-width: 1280px) 600px, 640px"
-                  />
-                </div>
+              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3">
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold shadow-lg hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
+                >
+                  Book a Demo
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="/#how-it-works"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white border-2 border-slate-200 hover:border-[#0033FF]/40 text-slate-800 font-semibold shadow-sm hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
+                >
+                  <Play className="w-4 h-4 text-[#0033FF]" />
+                  See How It Works
+                </Link>
               </div>
+
+              <p className="text-sm text-slate-500 flex items-center justify-center lg:justify-start gap-2">
+                <Shield className="w-4 h-4 text-[#0033FF] shrink-0" />
+                Trusted by forward-thinking dealerships across Australia.
+              </p>
+            </div>
+
+            <div className="relative w-full min-w-0 flex flex-col items-center lg:items-end justify-center">
+              <HeroIpadMockup />
             </div>
           </div>
         </div>
