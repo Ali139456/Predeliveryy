@@ -16,93 +16,100 @@ export default function Home() {
   
   return (
     <div className="bg-white">
-      {/* Hero - light marketing layout with floating report graphic */}
-      <div className="relative w-full overflow-visible bg-gray-50 -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40">
+      {/* Hero - client mockup layout */}
+      <div className="relative w-full overflow-hidden bg-[#f7f8fc] -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40 min-h-[calc(100dvh-8rem)] lg:min-h-[720px]">
         <div
-          className="absolute inset-0 opacity-60 pointer-events-none"
+          className="absolute inset-0 opacity-70 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,51,255,0.08) 1px, transparent 0)',
-            backgroundSize: '28px 28px',
+            backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(0,51,255,0.07) 1px, transparent 0)',
+            backgroundSize: '24px 24px',
           }}
           aria-hidden
         />
         <div
-          className="absolute bottom-0 right-0 w-[min(100%,520px)] h-[min(55%,380px)] bg-[#0033FF]/10 rounded-tl-[100%] pointer-events-none"
+          className="hero-wave absolute bottom-0 right-0 w-full sm:w-[88%] lg:w-[72%] h-[38%] sm:h-[42%] lg:h-[48%] bg-[#0033FF] pointer-events-none"
           aria-hidden
         />
 
-        <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-            <div className="min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0">
-              <span className="inline-flex self-center lg:self-start items-center px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider text-[#0033FF] bg-[#0033FF]/10 border border-[#0033FF]/20">
-                AI-Powered Pre-Delivery Inspections
-              </span>
+        <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-14 lg:py-16 pb-24 lg:pb-28">
+          <div className="max-w-7xl mx-auto relative">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] gap-10 lg:gap-6 items-center">
+              <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px]">
+                <span className="inline-flex self-center lg:self-start items-center px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] text-[#0033FF] bg-[#0033FF]/10">
+                  AI-Powered Pre-Delivery Inspections
+                </span>
 
-              <h1 className="hero-h1 text-slate-900 hyphens-none">
-                Every car. Every check. <span className="text-[#0033FF]">Every time.</span>
-              </h1>
+                <h1 className="hero-h1 text-slate-900 hyphens-none">
+                  Every car. Every check. <span className="text-[#0033FF]">Every time.</span>
+                </h1>
 
-              <p className="hero-tagline text-slate-600 leading-relaxed">
-                Pre Delivery streamlines pre-delivery inspections so you can deliver with confidence and complete every sale.
-              </p>
+                <p className="hero-tagline text-slate-600 leading-relaxed max-w-lg">
+                  Pre Delivery streamlines pre-delivery inspections so you can deliver with confidence and complete every sale.
+                </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-left">
-                {[
-                  {
-                    icon: ShieldCheck,
-                    title: '100% Compliant',
-                    blurb: 'Digital inspection records',
-                  },
-                  {
-                    icon: Zap,
-                    title: 'Save Time',
-                    blurb: 'Automate checks and workflows',
-                  },
-                  {
-                    icon: CheckCircle,
-                    title: 'Deliver Confidence',
-                    blurb: 'Better quality, happier customers',
-                  },
-                ].map(({ icon: Icon, title, blurb }) => (
-                  <div
-                    key={title}
-                    className="rounded-xl border border-slate-200 bg-white px-3 py-3 shadow-sm hover:border-[#0033FF]/30 hover:shadow-md transition-all"
-                  >
-                    <div className="w-9 h-9 rounded-lg bg-[#0033FF]/10 flex items-center justify-center mb-2">
-                      <Icon className="w-5 h-5 text-[#0033FF]" strokeWidth={2.25} />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-left">
+                  {[
+                    {
+                      icon: ShieldCheck,
+                      title: '100% Compliant',
+                      blurb: 'Digital inspection records',
+                    },
+                    {
+                      icon: Zap,
+                      title: 'Save Time',
+                      blurb: 'Automate checks and workflows',
+                    },
+                    {
+                      icon: CheckCircle,
+                      title: 'Deliver Confidence',
+                      blurb: 'Better quality, happier customers',
+                    },
+                  ].map(({ icon: Icon, title, blurb }) => (
+                    <div
+                      key={title}
+                      className="rounded-xl bg-white/90 backdrop-blur-sm px-3 py-3 shadow-[0_8px_24px_-12px_rgba(0,51,255,0.2)]"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-[#0033FF]/10 flex items-center justify-center mb-2">
+                        <Icon className="w-4 h-4 text-[#0033FF]" strokeWidth={2.25} />
+                      </div>
+                      <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">{title}</p>
+                      <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-snug">{blurb}</p>
                     </div>
-                    <p className="text-sm font-bold text-slate-900">{title}</p>
-                    <p className="text-xs text-slate-500 mt-0.5 leading-snug">{blurb}</p>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold shadow-lg hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
+                  >
+                    Book a Demo
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/#how-it-works"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/95 text-slate-800 font-semibold shadow-sm hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto ring-1 ring-slate-200"
+                  >
+                    <Play className="w-4 h-4 text-[#0033FF]" />
+                    See How It Works
+                  </Link>
+                </div>
+
+                <p className="text-sm text-slate-500 flex items-center justify-center lg:justify-start gap-2 lg:hidden">
+                  <Shield className="w-4 h-4 text-[#0033FF] shrink-0" />
+                  Trusted by forward-thinking dealerships across Australia.
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3">
-                <Link
-                  href="/contact"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold shadow-lg hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
-                >
-                  Book a Demo
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-                <Link
-                  href="/#how-it-works"
-                  className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white border-2 border-slate-200 hover:border-[#0033FF]/40 text-slate-800 font-semibold shadow-sm hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
-                >
-                  <Play className="w-4 h-4 text-[#0033FF]" />
-                  See How It Works
-                </Link>
+              <div className="relative z-10 w-full min-w-0 flex justify-center lg:justify-end lg:-mr-6 xl:-mr-10">
+                <HeroReportGraphic />
               </div>
-
-              <p className="text-sm text-slate-500 flex items-center justify-center lg:justify-start gap-2">
-                <Shield className="w-4 h-4 text-[#0033FF] shrink-0" />
-                Trusted by forward-thinking dealerships across Australia.
-              </p>
             </div>
 
-            <div className="relative w-full min-w-0 flex flex-col items-center lg:items-end justify-center overflow-visible">
-              <HeroReportGraphic />
-            </div>
+            <p className="hidden lg:flex absolute bottom-2 right-4 xl:right-8 z-30 items-center gap-2 text-sm text-white/95 font-medium">
+              <Shield className="w-4 h-4 shrink-0" />
+              Trusted by forward-thinking dealerships across Australia.
+            </p>
           </div>
         </div>
       </div>

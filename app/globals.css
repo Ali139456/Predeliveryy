@@ -53,24 +53,20 @@
     }
   }
 
-  /* Hero fluid typography - reduced sizes so text is never cut off */
+  /* Hero fluid typography */
   .hero-h1 {
-    font-size: clamp(1.375rem, 3.5vw + 1rem, 3rem);
-    line-height: 1.2;
-    font-weight: 700;
+    font-size: clamp(1.75rem, 4vw + 1rem, 3.5rem);
+    line-height: 1.12;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     word-wrap: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
     padding-left: 0;
   }
-  @media (min-width: 640px) {
-    .hero-h1 {
-      font-size: clamp(1.5rem, 3.5vw + 1.25rem, 2.75rem);
-    }
-  }
   @media (min-width: 1024px) {
     .hero-h1 {
-      font-size: clamp(1.75rem, 2.5vw + 1.5rem, 3.25rem);
+      font-size: clamp(2.25rem, 3.2vw + 1rem, 3.75rem);
     }
   }
 
@@ -120,9 +116,23 @@
     }
   }
 
-  /* Hero floating report graphic */
-  .hero-report {
-    width: 100%;
+  /* Hero floating report – 3D tilt like client mockup */
+  .hero-report-stage {
+    perspective: 1400px;
+  }
+  .hero-report-3d {
+    transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg);
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  @media (max-width: 1023px) {
+    .hero-report-3d {
+      transform: rotateY(-5deg) rotateX(3deg) rotateZ(1deg);
+    }
+  }
+
+  .hero-wave {
+    clip-path: ellipse(85% 100% at 100% 100%);
   }
 
 }
