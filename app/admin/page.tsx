@@ -27,7 +27,6 @@ import {
 } from 'lucide-react';
 import AuditLogTab from './components/AuditLogTab';
 import AnalyticsTab from './components/AnalyticsTab';
-import BookingsTab from './components/BookingsTab';
 import PageContainer from '@/components/PageContainer';
 import {
   AdminShell,
@@ -65,30 +64,15 @@ interface Stats {
     inspectorName: string;
     status: string;
     createdAt: string;
-    inspectionType?: 'pdi' | 'blue_slip' | 'pink_slip';
+    inspectionType?: 'pdi';
   }>;
 }
-
-/** Display label for an inspection type, defaulting unknown/legacy rows to PDI. */
-function inspectionTypeLabelShort(t?: string): string {
-  if (t === 'blue_slip') return 'Blue Slip';
-  if (t === 'pink_slip') return 'Pink Slip';
-  return 'PDI';
-}
-
-/** Pre-built class tuple per type - Tailwind can't see dynamic colour interpolation. */
-function inspectionTypePillClass(t?: string): string {
-  if (t === 'blue_slip') return 'bg-[#0033FF]/10 text-[#0033FF] ring-[#0033FF]/30';
-  if (t === 'pink_slip') return 'bg-[#EC4899]/10 text-[#EC4899] ring-[#EC4899]/30';
-  return 'bg-[#FF6600]/10 text-[#FF6600] ring-[#FF6600]/30';
-}
-
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'bookings' | 'users' | 'audit' | 'settings'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'users' | 'audit' | 'settings'>('overview');
   const router = useRouter();
 
   useEffect(() => {
@@ -150,7 +134,6 @@ export default function AdminDashboard() {
   const adminTabs = [
     { id: 'overview', label: '📊 Overview' },
     { id: 'analytics', label: '📈 Analytics' },
-    { id: 'bookings', label: '📅 Bookings' },
     { id: 'users', label: user?.role === 'admin' ? '👥 Organisation & users' : '👥 Users' },
     { id: 'audit', label: '🔒 Audit Logs' },
     { id: 'settings', label: '⚙️ Settings' },
@@ -173,7 +156,6 @@ export default function AdminDashboard() {
       <PageContainer className="py-4 sm:py-6 md:py-8">
         {activeTab === 'overview' && <OverviewTab stats={stats} onRefetch={fetchStats} />}
         {activeTab === 'analytics' && <AnalyticsTab />}
-        {activeTab === 'bookings' && <BookingsTab />}
         {activeTab === 'users' && (
           <UsersTab userRole={user?.role} userTenantId={user?.tenantId as string | undefined} />
         )}
@@ -186,7 +168,6 @@ export default function AdminDashboard() {
 
 function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: () => Promise<void> }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState<'' | 'pdi' | 'blue_slip' | 'pink_slip'>('');
   const [statusFilter, setStatusFilter] = useState<'' | 'draft' | 'completed'>('');
   const [filteredInspections, setFilteredInspections] = useState(stats?.recent || []);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -202,21 +183,14 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
     const searchLower = searchTerm.trim().toLowerCase();
 
     const filtered = stats.recent.filter((inspection) => {
-      // Type pill filter (legacy/null rows fold into PDI).
-      if (typeFilter && (inspection.inspectionType ?? 'pdi') !== typeFilter) {
-        return false;
-      }
-      // Status pill filter.
       if (statusFilter && inspection.status !== statusFilter) {
         return false;
       }
-      // Free-text search across number / inspector / status / type label.
       if (!searchLower) return true;
       return (
         inspection.inspectionNumber?.toLowerCase().includes(searchLower) ||
         inspection.inspectorName?.toLowerCase().includes(searchLower) ||
-        inspection.status?.toLowerCase().includes(searchLower) ||
-        inspectionTypeLabelShort(inspection.inspectionType).toLowerCase().includes(searchLower)
+        inspection.status?.toLowerCase().includes(searchLower)
       );
     });
 
@@ -230,17 +204,8 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
       });
       return next;
     });
-  }, [searchTerm, typeFilter, statusFilter, stats?.recent]);
+  }, [searchTerm, statusFilter, stats?.recent]);
 
-  // Per-type counts (for the filter pills) computed once over the unfiltered list.
-  const typeCounts = useMemo(() => {
-    const acc: Record<'pdi' | 'blue_slip' | 'pink_slip', number> = { pdi: 0, blue_slip: 0, pink_slip: 0 };
-    (stats?.recent ?? []).forEach((r) => {
-      const t = (r.inspectionType ?? 'pdi') as 'pdi' | 'blue_slip' | 'pink_slip';
-      acc[t] = (acc[t] ?? 0) + 1;
-    });
-    return acc;
-  }, [stats?.recent]);
   const statusCounts = useMemo(() => {
     const acc: Record<'draft' | 'completed', number> = { draft: 0, completed: 0 };
     (stats?.recent ?? []).forEach((r) => {
@@ -312,7 +277,7 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
             <input
               type="text"
-              placeholder="Search by #, inspector, status or type…"
+              placeholder="Search by #, inspector or status…"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 sm:pl-12 pr-4 py-2 sm:py-3 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0033FF] focus:border-[#0033FF] focus:bg-white transition-all bg-white text-black placeholder-gray-400 hover:bg-white focus:hover:bg-white"
@@ -335,21 +300,8 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
           )}
         </div>
 
-        {/* Filter dropdowns: type + status on one row, counts reflect the unfiltered dataset. */}
+        {/* Filter dropdowns */}
         <div className="flex flex-wrap items-center gap-2 mb-4">
-          <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-600">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Type</span>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
-              className="text-sm rounded-lg border border-slate-300 bg-white px-3 py-1.5 pr-8 focus:ring-2 focus:ring-[#0033FF]/20 focus:border-[#0033FF] text-slate-900"
-            >
-              <option value="">All ({stats?.recent?.length ?? 0})</option>
-              <option value="pdi">PDI ({typeCounts.pdi})</option>
-              <option value="blue_slip">Blue Slip ({typeCounts.blue_slip})</option>
-              <option value="pink_slip">Pink Slip ({typeCounts.pink_slip})</option>
-            </select>
-          </label>
           <label className="inline-flex items-center gap-2 text-xs font-medium text-slate-600">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Status</span>
             <select
@@ -362,11 +314,10 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
               <option value="completed">Completed ({statusCounts.completed})</option>
             </select>
           </label>
-          {(typeFilter !== '' || statusFilter !== '' || searchTerm) && (
+          {(statusFilter !== '' || searchTerm) && (
             <button
               type="button"
               onClick={() => {
-                setTypeFilter('');
                 setStatusFilter('');
                 setSearchTerm('');
               }}
@@ -399,11 +350,6 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center flex-wrap gap-1.5">
                       <span className="text-sm font-semibold text-black truncate">{inspection.inspectionNumber}</span>
-                      <span
-                        className={`shrink-0 px-2 py-0.5 text-[10px] font-semibold rounded-full ring-1 ${inspectionTypePillClass(inspection.inspectionType)}`}
-                      >
-                        {inspectionTypeLabelShort(inspection.inspectionType)}
-                      </span>
                     </div>
                     <div className="text-xs text-black/70 break-words mt-0.5">{inspection.inspectorName}</div>
                   </div>
@@ -489,7 +435,6 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                 </th>
                 <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Inspection #</th>
                 <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Inspector</th>
-                <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Type</th>
                 <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Status</th>
                 <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Date</th>
                 <th className="text-left py-3.5 px-2 sm:px-4 text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
@@ -517,13 +462,6 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                   </td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm font-medium text-black align-middle">{inspection.inspectionNumber}</td>
                   <td className="py-3 px-2 sm:px-4 text-xs sm:text-sm text-black align-middle break-words">{inspection.inspectorName}</td>
-                  <td className="py-3 px-2 sm:px-4 align-middle">
-                    <span
-                      className={`inline-block px-2 sm:px-3 py-1 text-xs font-semibold rounded-full ring-1 whitespace-nowrap ${inspectionTypePillClass(inspection.inspectionType)}`}
-                    >
-                      {inspectionTypeLabelShort(inspection.inspectionType)}
-                    </span>
-                  </td>
                   <td className="py-3 px-2 sm:px-4 align-middle">
                     <span className={`inline-block px-2 sm:px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${
                       inspection.status === 'completed' 

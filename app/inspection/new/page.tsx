@@ -1,77 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Toast from '@/components/Toast';
 import PageContainer from '@/components/PageContainer';
-import { ArrowLeft, ClipboardCheck, FileCheck, FileEdit, PlusCircle, Receipt, Stamp } from 'lucide-react';
+import { ArrowLeft, FileCheck, FileEdit, PlusCircle, X } from 'lucide-react';
 import Link from 'next/link';
-import { resolveInspectionType, type InspectionType } from '@/lib/checklist-template';
 
-const TYPE_OPTIONS: Array<{
-  value: InspectionType;
-  label: string;
-  blurb: string;
-  Icon: typeof ClipboardCheck;
-  /** Card border colour class. */
-  accent: string;
-  /** Solid background colour class for icon tile + primary CTA. */
-  iconBg: string;
-  /** Hover variant of `iconBg` for the primary CTA. */
-  iconBgHover: string;
-  /** Text colour for the inline "Start new" outlined CTA. */
-  textColor: string;
-  /** Border colour for the inline "Start new" outlined CTA. */
-  outlineBorder: string;
-  /** Faint background for the outlined CTA on hover. */
-  outlineHoverBg: string;
-  badge: string;
-}> = [
-  {
-    value: 'pdi',
-    label: 'Pre-Delivery Inspection',
-    blurb: 'New vehicle handover check for dealers, OEMs and fleets.',
-    Icon: ClipboardCheck,
-    accent: 'border-[#FF6600]',
-    iconBg: 'bg-[#FF6600]',
-    iconBgHover: 'hover:bg-[#E65C00]',
-    textColor: 'text-[#FF6600]',
-    outlineBorder: 'border-[#FF6600]/40',
-    outlineHoverBg: 'hover:bg-[#FF6600]/5',
-    badge: 'PDI',
-  },
-  {
-    value: 'blue_slip',
-    label: 'Blue Slip (NSW AUVIS)',
-    blurb: 'Identity + comprehensive safety inspection.',
-    Icon: Stamp,
-    accent: 'border-[#0033FF]',
-    iconBg: 'bg-[#0033FF]',
-    iconBgHover: 'hover:bg-[#0029CC]',
-    textColor: 'text-[#0033FF]',
-    outlineBorder: 'border-[#0033FF]/40',
-    outlineHoverBg: 'hover:bg-[#0033FF]/5',
-    badge: 'AUVIS',
-  },
-  {
-    value: 'pink_slip',
-    label: 'Pink Slip (NSW eSafety)',
-    blurb: 'Annual safety check for vehicles over 5 years.',
-    Icon: Receipt,
-    accent: 'border-[#EC4899]',
-    iconBg: 'bg-[#EC4899]',
-    iconBgHover: 'hover:bg-[#DB2777]',
-    textColor: 'text-[#EC4899]',
-    outlineBorder: 'border-[#EC4899]/40',
-    outlineHoverBg: 'hover:bg-[#EC4899]/5',
-    badge: 'eSafety',
-  },
-];
-
-const ALLOWED_TYPES: ReadonlySet<string> = new Set(['pdi', 'blue_slip', 'pink_slip']);
-
-// Lazy load heavy components
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
   loading: () => (
     <div className="flex items-center justify-center py-12">
@@ -84,31 +19,16 @@ const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
 interface DraftInspection {
   _id: string;
   inspectionNumber: string;
-  inspectionType?: InspectionType;
 }
 
-function NewInspectionPageInner() {
+export default function NewInspectionPage() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [drafts, setDrafts] = useState<DraftInspection[]>([]);
   const [draftsLoading, setDraftsLoading] = useState(false);
-  const searchParams = useSearchParams();
-  const typeParam = searchParams.get('type');
-  const selectedType: InspectionType | null =
-    typeParam && ALLOWED_TYPES.has(typeParam) ? (typeParam as InspectionType) : null;
+  const [draftBannerDismissed, setDraftBannerDismissed] = useState(false);
 
-  // Group drafts by type (API field + number prefix fallback for legacy rows).
-  const draftByType = useMemo(() => {
-    const map: Partial<Record<InspectionType, DraftInspection>> = {};
-    for (const d of drafts) {
-      const t = resolveInspectionType(d.inspectionNumber, d.inspectionType);
-      if (!map[t]) map[t] = d;
-    }
-    return map;
-  }, [drafts]);
-
-  // Fetch user's drafts when logged in (for "Continue draft" choice)
   useEffect(() => {
     if (!user?.email) {
       setDrafts([]);
@@ -136,27 +56,24 @@ function NewInspectionPageInner() {
 
   useEffect(() => {
     checkAuth();
-    
-    // Check auth when page becomes visible (user comes back to tab)
+
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         checkAuth();
       }
     };
-    
-    // Check auth on browser back/forward navigation
+
     const handlePopState = () => {
       checkAuth();
     };
-    
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('popstate', handlePopState);
-    
-    // Periodic auth check (every 2 minutes - reduced frequency)
+
     const authInterval = setInterval(() => {
       checkAuth();
     }, 120000);
-    
+
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('popstate', handlePopState);
@@ -171,22 +88,18 @@ function NewInspectionPageInner() {
       if (data.success && data.user) {
         setUser(data.user);
       } else {
-        // User is not logged in
         if (user) {
-          // User was logged in before, show toast
           setToast({
             message: 'Your session has expired. Please login again to continue',
             type: 'error'
           });
         } else {
-          // First time check - show message but don't force redirect
           setToast({
             message: 'Please login first to start an inspection',
             type: 'error'
           });
         }
         setUser(null);
-        // Don't auto-redirect - let user go back if they want
       }
     } catch (error) {
       setToast({
@@ -194,7 +107,6 @@ function NewInspectionPageInner() {
         type: 'error'
       });
       setUser(null);
-      // Don't auto-redirect - let user go back if they want
     } finally {
       setLoading(false);
     }
@@ -275,82 +187,42 @@ function NewInspectionPageInner() {
           <span className="font-semibold tracking-tight">Back to Home</span>
         </Link>
 
-        {!selectedType ? (
-          <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 max-w-5xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
-            <h2 className="text-lg sm:text-xl font-semibold text-black mb-2 flex items-center gap-2">
-              <PlusCircle className="w-5 h-5 text-[#0033FF]" />
-              Choose inspection type
-            </h2>
-            <p className="text-sm text-black/70 mb-6">
-              Pick which inspection you&apos;re about to perform. The checklist and authorisation fields adjust automatically.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {TYPE_OPTIONS.map((opt) => {
-                const Icon = opt.Icon;
-                const draft = draftByType[opt.value];
-                return (
-                  <div
-                    key={opt.value}
-                    className={`group flex flex-col rounded-2xl bg-white p-5 border-2 hover:shadow-lg transition-all ${opt.accent}`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${opt.iconBg}`}>
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                        {opt.badge}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-bold text-slate-900 mb-1">{opt.label}</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed">{opt.blurb}</p>
-                    <div className="mt-4 flex flex-col gap-2">
-                      {draft && (
-                        <Link
-                          href={`/inspections/${draft._id}`}
-                          className="inline-flex items-center justify-center gap-2 px-3 py-2 bg-amber-100 text-amber-900 border border-amber-300 rounded-xl font-semibold text-sm hover:bg-amber-200 transition-colors"
-                        >
-                          <FileEdit className="w-4 h-4" />
-                          Continue draft{draft.inspectionNumber ? ` (${draft.inspectionNumber})` : ''}
-                        </Link>
-                      )}
-                      <Link
-                        href={`/inspection/new?type=${opt.value}`}
-                        className={`inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl font-semibold text-sm transition-colors ${
-                          draft
-                            ? `bg-white border ${opt.textColor} ${opt.outlineBorder} ${opt.outlineHoverBg}`
-                            : `text-white ${opt.iconBg} ${opt.iconBgHover}`
-                        }`}
-                      >
-                        {draft ? 'Start new' : 'Start →'}
-                      </Link>
-                    </div>
-                  </div>
-                );
-              })}
+        {!draftsLoading && drafts.length > 0 && !draftBannerDismissed && (
+          <div className="mb-6 p-4 sm:p-5 bg-amber-50 border-2 border-amber-200 rounded-2xl max-w-7xl mx-auto relative">
+            <button
+              type="button"
+              onClick={() => setDraftBannerDismissed(true)}
+              className="absolute top-3 right-3 p-1 rounded-lg text-amber-700 hover:bg-amber-200/80 focus:ring-2 focus:ring-amber-400 transition-colors"
+              aria-label="Dismiss"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <p className="text-sm font-semibold text-amber-900 mb-3 pr-8">You have a saved draft. Choose one:</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Link
+                href={`/inspections/${drafts[0]._id}`}
+                className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0029CC] transition-all shadow-md"
+              >
+                <FileEdit className="w-4 h-4" />
+                Continue draft{drafts[0].inspectionNumber ? ` (${drafts[0].inspectionNumber})` : ''}
+              </Link>
+              <span className="self-center text-black/60 text-sm">or scroll down to start a new inspection</span>
             </div>
-            {!draftsLoading && drafts.length > 1 && (
-              <p className="text-xs text-slate-500 mt-5">
-                You have {drafts.length} saved drafts in total. Older drafts of each type are available in Inspection History.
+            {drafts.length > 1 && (
+              <p className="text-xs text-amber-800/80 mt-2">
+                You have {drafts.length} drafts. Opening the most recent above; others are in Inspection History.
               </p>
             )}
           </div>
-        ) : (
-          <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <h2 className="text-lg font-semibold text-black flex items-center gap-2">
-                <PlusCircle className="w-5 h-5 text-[#0033FF]" />
-                New inspection
-              </h2>
-              <Link
-                href="/inspection/new"
-                className="text-xs font-semibold text-[#0033FF] hover:underline"
-              >
-                Change type
-              </Link>
-            </div>
-            <InspectionForm inspectionType={selectedType} />
-          </div>
         )}
+
+        <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-12 max-w-7xl mx-auto animate-slide-up border-2 border-[#0033FF]/30 min-w-0">
+          <h2 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
+            <PlusCircle className="w-5 h-5 text-[#0033FF]" />
+            New inspection
+          </h2>
+          <InspectionForm />
+        </div>
       </PageContainer>
       {toast && (
         <Toast
@@ -362,19 +234,3 @@ function NewInspectionPageInner() {
     </div>
   );
 }
-
-export default function NewInspectionPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-200 border-t-[#0033FF]" />
-        </div>
-      }
-    >
-      <NewInspectionPageInner />
-    </Suspense>
-  );
-}
-
-

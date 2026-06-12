@@ -14,6 +14,9 @@ function loginRedirect(request: NextRequest, query: Record<string, string>) {
   return NextResponse.redirect(url);
 }
 
+/** Set true to require MFA setup/verify for admin OAuth logins (see lib/auth.enforceAdminMfa). */
+const ADMIN_MFA_LOGIN_GATE = false;
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { provider: string } }
@@ -59,7 +62,7 @@ export async function GET(
       });
     }
 
-    if (user.role === 'admin') {
+    if (ADMIN_MFA_LOGIN_GATE && user.role === 'admin') {
       const mfa = await getUserMfaFields(user.id);
       const mustUseMfa = enforceAdminMfa() || Boolean(mfa?.mfaEnabled);
 

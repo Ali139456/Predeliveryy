@@ -19,10 +19,7 @@ const inspectionBodySchema = z.object({
   privacyConsent: z.boolean().optional(),
   dataRetentionDays: z.number().int().min(1).max(3650).optional(),
   tenantId: z.string().uuid().optional(),
-  inspectionType: z.enum(['pdi', 'blue_slip', 'pink_slip']).optional(),
-  aisStation: z.string().max(200).optional(),
-  inspectorLicenceNo: z.string().max(64).optional(),
-  result: z.enum(['pass', 'fail']).optional(),
+  inspectionType: z.enum(['pdi']).optional(),
 });
 
 export type InspectionParseResult =

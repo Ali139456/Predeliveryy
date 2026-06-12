@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Calendar, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Receipt, Stamp, Play } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 import HeroReportGraphic from '@/components/HeroReportGraphic';
@@ -116,100 +116,6 @@ export default function Home() {
 
       {showMarketingSections && (
         <>
-      {/* Our Services - PDI / Blue Slip / Pink Slip with booking CTA */}
-      <div id="services" className="relative bg-white pt-8 sm:pt-12 pb-8 sm:pb-12 scroll-mt-20">
-        <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-10 sm:mb-14">
-              <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Our Services</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
-                Vehicle Inspections - Done Right
-              </h2>
-              <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                From new-vehicle handover checks to NSW Blue Slip and Pink Slip safety inspections, book the right inspection for your vehicle in minutes.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* PDI */}
-              <div className="group relative bg-white rounded-2xl p-7 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl flex flex-col">
-                <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-5">
-                  <ClipboardCheck className="w-7 h-7 text-white" strokeWidth={2.5} />
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">Pre-Delivery Inspection</h3>
-                <p className="text-sm font-semibold text-[#FF6600] mb-3">For dealers, OEMs &amp; fleets</p>
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  Verify vehicle condition before customer handover. Captures photos, VIN, condition data and digital sign-off - a defensible delivery record every time.
-                </p>
-                <ul className="space-y-2 mb-6 text-sm text-gray-700">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Complete digital checklist</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Photos + GPS + VIN scan</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#FF6600] mt-0.5 shrink-0" />Digital signatures &amp; PDF report</li>
-                </ul>
-                <div className="mt-auto">
-                  <Link href="/book?type=pdi" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#FF6600] hover:bg-[#E65C00] text-white font-semibold transition-colors">
-                    <Calendar className="w-4 h-4" />
-                    Book PDI
-                  </Link>
-                </div>
-              </div>
-
-              {/* Blue Slip */}
-              <div className="group relative bg-white rounded-2xl p-7 border-2 border-[#0033FF]/30 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl flex flex-col ring-1 ring-[#0033FF]/10">
-                <div className="absolute -top-3 right-5 px-3 py-1 rounded-full bg-[#0033FF] text-white text-[11px] font-bold tracking-wide">NSW AUVIS</div>
-                <div className="w-14 h-14 rounded-xl bg-[#0033FF] flex items-center justify-center mb-5">
-                  <Stamp className="w-7 h-7 text-white" strokeWidth={2.5} />
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">Blue Slip Inspection</h3>
-                <p className="text-sm font-semibold text-[#0033FF] mb-3">Identity + safety</p>
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  NSW AUVIS inspection for unregistered vehicles, imports, defect clearances, or vehicles out of registration for more than 3 months.
-                </p>
-                <ul className="space-y-2 mb-6 text-sm text-gray-700">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#0033FF] mt-0.5 shrink-0" />VIN &amp; identity verification</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#0033FF] mt-0.5 shrink-0" />13-section safety inspection</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#0033FF] mt-0.5 shrink-0" />Authorised inspector sign-off</li>
-                </ul>
-                <div className="mt-auto">
-                  <Link href="/book?type=blue_slip" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold transition-colors">
-                    <Calendar className="w-4 h-4" />
-                    Book Blue Slip
-                  </Link>
-                </div>
-              </div>
-
-              {/* Pink Slip */}
-              <div className="group relative bg-white rounded-2xl p-7 border-2 border-[#EC4899]/30 hover:border-[#EC4899] transition-all duration-300 hover:shadow-xl flex flex-col ring-1 ring-[#EC4899]/10">
-                <div className="absolute -top-3 right-5 px-3 py-1 rounded-full bg-[#EC4899] text-white text-[11px] font-bold tracking-wide">NSW eSafety</div>
-                <div className="w-14 h-14 rounded-xl bg-[#EC4899] flex items-center justify-center mb-5">
-                  <Receipt className="w-7 h-7 text-white" strokeWidth={2.5} />
-                </div>
-                <h3 className="text-xl font-bold mb-2 text-gray-900">Pink Slip Inspection</h3>
-                <p className="text-sm font-semibold text-[#EC4899] mb-3">Annual safety check</p>
-                <p className="text-gray-600 text-sm leading-relaxed mb-5">
-                  NSW annual eSafety check required for light vehicles older than 5 years to renew registration. Results submitted electronically to Transport for NSW.
-                </p>
-                <ul className="space-y-2 mb-6 text-sm text-gray-700">
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#EC4899] mt-0.5 shrink-0" />Brakes, lights, tyres, steering</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#EC4899] mt-0.5 shrink-0" />Photo evidence for every item</li>
-                  <li className="flex items-start gap-2"><Check className="w-4 h-4 text-[#EC4899] mt-0.5 shrink-0" />Fast turnaround &amp; clear pass/fail</li>
-                </ul>
-                <div className="mt-auto">
-                  <Link href="/book?type=pink_slip" className="inline-flex items-center justify-center w-full gap-2 px-5 py-3 rounded-xl bg-[#EC4899] hover:bg-[#DB2777] text-white font-semibold transition-colors">
-                    <Calendar className="w-4 h-4" />
-                    Book Pink Slip
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <p className="mt-8 text-center text-sm text-gray-500">
-              Not sure which inspection you need? <Link href="/contact" className="text-[#0033FF] font-semibold hover:underline">Talk to our team</Link>.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* Why Predelivery.ai? - White section, blue/orange accents (Spectral-style) */}
       <div id="benefits" className="relative bg-white pt-6 sm:pt-8 pb-6 sm:pb-8 scroll-mt-20">
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
@@ -230,7 +136,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl overflow-hidden">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm overflow-hidden">
                 <div className="w-14 h-14 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <AlertTriangle className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
@@ -238,7 +144,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm leading-relaxed">Document everything before handover to prevent costly disputes.</p>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl overflow-hidden">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm overflow-hidden">
                 <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                   <ShieldCheck className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
@@ -246,7 +152,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm leading-relaxed">Create verifiable records that support warranty and insurance claims.</p>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl overflow-hidden">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm overflow-hidden">
                 <div className="w-14 h-14 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <FileText className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
@@ -254,7 +160,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm leading-relaxed">Build comprehensive digital records that stand up in any dispute.</p>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl overflow-hidden">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm overflow-hidden">
                 <div className="w-14 h-14 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                   <Lock className="w-7 h-7 text-white" strokeWidth={2.5} />
                 </div>
@@ -283,7 +189,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6">
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   1
                 </div>
@@ -298,7 +204,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#FF6600] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   2
                 </div>
@@ -313,7 +219,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   3
                 </div>
@@ -328,7 +234,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-2xl p-8 border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#FF6600] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   4
                 </div>
@@ -579,7 +485,7 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#0033FF] shadow-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-[#EEF2FF] rounded-xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <Shield className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
@@ -587,7 +493,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm">Bank-level encryption and security protocols</p>
               </div>
 
-              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#FF6600] shadow-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-[#EEF2FF] rounded-xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                   <Lock className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
@@ -595,7 +501,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm">Granular permissions and access management</p>
               </div>
 
-              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#0033FF] shadow-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-[#EEF2FF] rounded-xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <FileText className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
@@ -603,7 +509,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm">Complete transparency and traceability</p>
               </div>
 
-              <div className="bg-white rounded-xl p-8 border-2 border-gray-200 hover:border-[#FF6600] shadow-sm hover:shadow-xl transition-all duration-300">
+              <div className="bg-[#EEF2FF] rounded-xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] shadow-sm hover:shadow-xl transition-all duration-300">
                 <div className="w-16 h-16 rounded-xl bg-[#FF6600] flex items-center justify-center mb-6">
                   <CheckCircle className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
@@ -626,7 +532,7 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 sm:p-8 md:p-10 lg:p-14 border-2 border-gray-200 shadow-xl hover:border-[#0033FF]/40 transition-all duration-300">
+            <div className="bg-[#EEF2FF] rounded-2xl p-5 sm:p-8 md:p-10 lg:p-14 border-2 border-[#0033FF]/15 shadow-xl hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300">
               <div className="text-center space-y-6">
                 <div className="w-20 h-20 rounded-xl bg-[#FF6600] flex items-center justify-center mx-auto mb-6">
                   <CreditCard className="w-10 h-10 text-white" strokeWidth={2.5} />
@@ -707,9 +613,6 @@ export default function Home() {
               <h3 className="text-white font-bold mb-4 text-lg">Quick Links</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="#services" className="text-white/70 hover:text-white transition-colors text-sm">Services</a>
-                </li>
-                <li>
                   <a href="#features" className="text-white/70 hover:text-white transition-colors text-sm">Features</a>
                 </li>
                 <li>
@@ -717,9 +620,6 @@ export default function Home() {
                 </li>
                 <li>
                   <a href="#benefits" className="text-white/70 hover:text-white transition-colors text-sm">Benefits</a>
-                </li>
-                <li>
-                  <Link href="/book" className="text-white/70 hover:text-white transition-colors text-sm">Book Inspection</Link>
                 </li>
                 <li>
                   <Link href="/login" className="text-white/70 hover:text-white transition-colors text-sm">Login</Link>

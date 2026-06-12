@@ -35,13 +35,6 @@ import {
   formProgressShellClass,
 } from '@/components/admin/AdminUI';
 import InspectionChecklistStep from '@/components/inspection/InspectionChecklistStep';
-import {
-  BLUE_SLIP_CHECKLIST_TEMPLATE,
-  PINK_SLIP_CHECKLIST_TEMPLATE,
-  inspectionTypeLabel,
-  inspectionTypeShortLabel,
-  type InspectionType,
-} from '@/lib/checklist-template';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -250,16 +243,9 @@ interface InspectionFormProps {
   inspectionId?: string;
   initialData?: any;
   readOnly?: boolean;
-  /** Inspection product type. Drives the seeded checklist and reveals AIS fields for Blue/Pink slip. */
-  inspectionType?: InspectionType;
 }
 
-export default function InspectionForm({ inspectionId, initialData, readOnly = false, inspectionType: inspectionTypeProp }: InspectionFormProps) {
-  const inspectionType: InspectionType =
-    inspectionTypeProp ||
-    (initialData?.inspectionType as InspectionType | undefined) ||
-    'pdi';
-  const isBlueOrPink = inspectionType === 'blue_slip' || inspectionType === 'pink_slip';
+export default function InspectionForm({ inspectionId, initialData, readOnly = false }: InspectionFormProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -293,12 +279,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
   });
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [activeChecklistCategory, setActiveChecklistCategory] = useState(0);
-  const [aisStation, setAisStation] = useState<string>(
-    typeof (initialData as any)?.aisStation === 'string' ? (initialData as any).aisStation : ''
-  );
-  const [inspectorLicenceNo, setInspectorLicenceNo] = useState<string>(
-    typeof (initialData as any)?.inspectorLicenceNo === 'string' ? (initialData as any).inspectorLicenceNo : ''
-  );
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [draftId, setDraftId] = useState<string | null>(inspectionId || null);
@@ -313,12 +293,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     }
   }, [initialData?.status]);
 
-  // Blue/Pink slip is a regulatory checklist - no PDI-style vehicle ID step
-  // (it lives inside the checklist) and no separate GPS/general-photos step.
   type StepKey = 'inspector' | 'vehicle' | 'gps' | 'checklist' | 'signatures';
-  const stepKeyOrder: StepKey[] = isBlueOrPink
-    ? ['inspector', 'checklist', 'signatures']
-    : ['inspector', 'vehicle', 'gps', 'checklist', 'signatures'];
+  const stepKeyOrder: StepKey[] = ['inspector', 'vehicle', 'gps', 'checklist', 'signatures'];
   const stepDefs: Record<StepKey, { title: string; shortTitle?: string; icon: typeof User }> = {
     inspector: { title: 'Inspector Info', icon: User },
     vehicle: { title: 'Vehicle & Identification', shortTitle: 'Vehicle', icon: Car },
@@ -374,12 +350,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           inspectorName: '',
           inspectorEmail: '',
           inspectionDate: getTodayDateString(),
-          checklist:
-            inspectionType === 'blue_slip'
-              ? BLUE_SLIP_CHECKLIST_TEMPLATE
-              : inspectionType === 'pink_slip'
-                ? PINK_SLIP_CHECKLIST_TEMPLATE
-                : defaultChecklist,
+          checklist: defaultChecklist,
           photos: [],
           walkAroundVideos: [],
           privacyConsent: true,
@@ -546,12 +517,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: (isCompleted ? 'completed' : 'draft') as 'draft' | 'completed',
         privacyConsent: true,
-        inspectionType,
+        inspectionType: 'pdi',
       };
-      if (isBlueOrPink) {
-        draftData.aisStation = aisStation || '';
-        draftData.inspectorLicenceNo = inspectorLicenceNo || '';
-      }
       
       let savedDraftId = draftId;
       
@@ -620,7 +587,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     } finally {
       setIsSavingDraft(false);
     }
-  }, [readOnly, isSavingDraft, isCompleted, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep, pathname, router, inspectionType, isBlueOrPink, aisStation, inspectorLicenceNo]);
+  }, [readOnly, isSavingDraft, isCompleted, getValues, location, barcode, photos, walkAroundVideos, signatures, draftId, inspectionId, setDraftId, setToast, currentStep, pathname, router]);
 
   // Auto-save draft periodically and when data changes
   useEffect(() => {
@@ -730,12 +697,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
       inspectorName: values.inspectorName,
       inspectorEmail: values.inspectorEmail,
       inspectionDate: values.inspectionDate,
-      inspectionType,
+      inspectionType: 'pdi',
     };
-    if (isBlueOrPink) {
-      formData.aisStation = aisStation || '';
-      formData.inspectorLicenceNo = inspectorLicenceNo || '';
-    }
     await saveSection('inspectorInfo', formData);
   };
 
@@ -1236,44 +1199,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           )}
         </div>
       </div>
-
-      {isBlueOrPink && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
-          <div className="sm:col-span-2">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-[#0033FF] mb-2">
-              {inspectionTypeShortLabel(inspectionType)} authorisation
-            </p>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-black mb-1.5">
-              AIS / AUVIS station name <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              value={aisStation}
-              onChange={(e) => setAisStation(e.target.value)}
-              disabled={readOnly}
-              maxLength={200}
-              placeholder="e.g. ABC Motors AIS"
-              className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-black mb-1.5">
-              Inspector licence no. <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="text"
-              value={inspectorLicenceNo}
-              onChange={(e) => setInspectorLicenceNo(e.target.value)}
-              disabled={readOnly}
-              maxLength={64}
-              placeholder="e.g. 123456"
-              className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -1657,25 +1582,6 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); }} className="app-surface w-full max-w-7xl mx-auto space-y-4 px-3 sm:px-4 min-w-0 max-w-full pb-8">
-      {/* Inspection type badge */}
-      <div className="flex items-center justify-between gap-3 rounded-xl bg-[#EEF2FF] border border-[#0033FF]/15 px-4 py-2.5">
-        <div className="flex items-center gap-2 min-w-0">
-          <span className="text-[11px] font-bold uppercase tracking-wider text-[#0033FF]">Inspection type</span>
-          <span className="text-sm font-semibold text-slate-900 truncate">
-            {inspectionTypeLabel(inspectionType)}
-          </span>
-        </div>
-        {inspectionType !== 'pdi' && (
-          <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide text-white shrink-0 ${
-              inspectionType === 'blue_slip' ? 'bg-[#0033FF]' : 'bg-[#EC4899]'
-            }`}
-          >
-            {inspectionType === 'blue_slip' ? 'NSW AUVIS' : 'NSW eSafety'}
-          </span>
-        )}
-      </div>
-
       {!readOnly && (
         <div className={formProgressShellClass}>
           <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[11px] sm:text-xs text-white">
@@ -1741,8 +1647,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
             // PDI-only vehicle and GPS sections - they don't apply.
             <>
               {renderStep1()}
-              {!isBlueOrPink && renderStep2()}
-              {!isBlueOrPink && renderStep3()}
+              {renderStep2()}
+              {renderStep3()}
               {renderStep4()}
               {renderStep6()}
             </>

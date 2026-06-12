@@ -80,7 +80,7 @@ export interface IAuditLog {
   createdAt: string;
 }
 
-export type InspectionProductType = 'pdi' | 'blue_slip' | 'pink_slip';
+export type InspectionProductType = 'pdi';
 export type InspectionResult = 'pass' | 'fail';
 
 // Inspection: nested objects stay as-is in JSONB; only top-level keys are snake_case in DB

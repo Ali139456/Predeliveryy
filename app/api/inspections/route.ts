@@ -49,16 +49,8 @@ export async function POST(request: NextRequest) {
 
     const supabase = getSupabase();
     if (!body.inspectionNumber) {
-      // Per-type numbering: each inspection type gets its own counter so the
-      // three product lines never share a number. Legacy "PD 1031"-style
-      // PDIs continue seamlessly via the digit regex below.
-      const PREFIX_BY_TYPE: Record<'pdi' | 'blue_slip' | 'pink_slip', string> = {
-        pdi: 'PD',
-        blue_slip: 'BS',
-        pink_slip: 'PS',
-      };
-      const inspectionType = ((body.inspectionType as 'pdi' | 'blue_slip' | 'pink_slip' | undefined) ?? 'pdi');
-      const prefix = PREFIX_BY_TYPE[inspectionType] ?? 'PD';
+      const inspectionType = 'pdi';
+      const prefix = 'PD';
 
       const { data: rows } = await supabase
         .from('inspections')

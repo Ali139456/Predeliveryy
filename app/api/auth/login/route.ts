@@ -12,6 +12,9 @@ import { notifyUserOfLoginEmail } from '@/lib/email';
 
 const ROLES_LOGIN_EMAIL_ALERT = new Set<string>(['admin', 'technician']);
 
+/** Set true to require MFA setup/verify for admin logins (see lib/auth.enforceAdminMfa). */
+const ADMIN_MFA_LOGIN_GATE = false;
+
 function clientIpHint(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
@@ -54,7 +57,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Invalid credentials' }, { status: 401 });
     }
 
-    if (user.role === 'admin') {
+    if (ADMIN_MFA_LOGIN_GATE && user.role === 'admin') {
       const mfa = await getUserMfaFields(user.id);
       const mustUseMfa = enforceAdminMfa() || Boolean(mfa?.mfaEnabled);
 

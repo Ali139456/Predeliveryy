@@ -19,7 +19,9 @@ type MfaPendingPayload = {
 };
 
 export function enforceAdminMfa(): boolean {
-  return process.env.ENFORCE_ADMIN_MFA === 'true';
+  // Temporarily disabled — re-enable when rolling out admin MFA again:
+  // return process.env.ENFORCE_ADMIN_MFA === 'true';
+  return false;
 }
 
 export async function generateMfaPendingToken(
