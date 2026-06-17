@@ -8,16 +8,14 @@ import {
   buildVerificationBadges,
   collectReportPhotos,
   computeReportResult,
-  extractLocationLabel,
   formatReportDateTime,
-  formatValue,
   getHeroPhotoUrl,
-  getVehicleTitle,
   orderChecklistForReport,
   reportItemStatusLabel,
   reportCategorySummary,
   type ReportPhoto,
 } from '@/lib/inspection-report-data';
+import { renderVehicleResultPanelHtml } from '@/lib/report-vehicle-panel';
 import { verificationBadgesHtml } from '@/lib/report-verification-badges';
 import { loadImageAsBase64 } from '@/lib/pdfGenerator';
 import { wrapReportHtmlDocument } from '@/lib/report-html-document';
@@ -88,24 +86,9 @@ function renderReportBody(
   const { logoSrc, heroUrl, photos, signatureSrc } = opts;
   const result = computeReportResult(inspection);
   const notes = buildReportNotes(inspection);
-  const v = inspection.vehicleInfo;
-  const vehicleTitle = getVehicleTitle(inspection);
-  const startTime =
-    (inspection.location as { start?: { timestamp?: string } })?.start?.timestamp ||
-    inspection.inspectionDate ||
-    inspection.createdAt;
   const checklistCategories = orderChecklistForReport(inspection.checklist || []);
   const verificationBadges = buildVerificationBadges(inspection);
   const badgesHtml = verificationBadgesHtml(verificationBadges);
-
-  const passRing = result.isPass ? 'border-[#FF6600] bg-white' : 'border-amber-500 bg-amber-50';
-  const passText = result.isPass ? 'text-[#FF6600]' : 'text-amber-600';
-  const resultLabel = result.isPass ? 'PASS' : result.needsReview ? 'REVIEW' : 'ATTENTION';
-  const resultSub = result.isPass ? 'All required checks passed.' : 'Repair or review required.';
-
-  const detail = (label: string, value: string) =>
-    `<span class="font-bold text-[#0033FF] uppercase text-[10px] leading-tight pt-0.5">${esc(label)}</span>` +
-    `<span class="text-slate-900 text-[11px] leading-snug min-w-0">${esc(value)}</span>`;
 
   const checklistHtml = checklistCategories
     .map((cat) => {
@@ -159,6 +142,8 @@ function renderReportBody(
     ? `<img src="${esc(signatureSrc)}" alt="Signature" class="max-h-14 w-full object-contain" />`
     : '<p class="text-slate-400 italic">Not provided</p>';
 
+  const vehicleResultHtml = renderVehicleResultPanelHtml(inspection, heroBlock, result);
+
   return `<div class="inspection-report-root w-full py-0">
   <article class="inspection-report-sheet overflow-hidden rounded-sm border border-slate-200">
     <header class="report-page-1 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-3 items-center px-3 py-2.5 text-white" style="background:linear-gradient(180deg,#002060 0%,#0033ff 100%)">
@@ -183,37 +168,7 @@ function renderReportBody(
         </div>
       </div>
     </header>
-    <section class="report-page-1 grid grid-cols-1 lg:grid-cols-[1fr_130px] gap-0 border-b border-[var(--report-border)]">
-      <div class="p-2.5 border-b lg:border-b-0 lg:border-r border-[var(--report-border)]">
-        <div class="flex items-center justify-between gap-2 mb-2 border-b border-[var(--report-border)] pb-2">
-          <span class="text-[10px] font-bold text-[#0033FF] uppercase tracking-wide">Vehicle information</span>
-          <span class="text-sm font-bold text-[#0033FF] text-center flex-1 px-2">${esc(vehicleTitle)}</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-2">
-          <div class="relative h-[72px] sm:h-[80px] bg-slate-100 border border-[var(--report-border)] overflow-hidden rounded-sm">${heroBlock}</div>
-          <div class="report-vehicle-details grid grid-cols-[minmax(5.75rem,8rem)_minmax(0,1fr)] gap-x-5 gap-y-1.5 min-w-0 content-start">
-            ${detail('VIN', formatValue(v?.vin))}
-            ${detail('Odometer', formatValue(v?.odometer))}
-            ${detail('Engine', formatValue(v?.engine))}
-            ${detail('Registration', formatValue(v?.licensePlate))}
-            ${detail('Dealer', formatValue(v?.dealer))}
-            ${detail('Stock No.', formatValue(v?.dealerStockNo))}
-            ${detail('Inspection type', 'Pre-Delivery Inspection')}
-            ${detail('Location', extractLocationLabel(inspection.location))}
-            ${detail('Start time', formatReportDateTime(startTime))}
-            ${detail('Technician', formatValue(inspection.inspectorName))}
-          </div>
-        </div>
-      </div>
-      <div class="flex flex-col items-center justify-center p-2 bg-slate-50/80 text-center lg:border-l border-[var(--report-border)]">
-        <p class="text-[9px] font-bold uppercase tracking-wide text-[#0033FF] mb-1">Pre-delivery result</p>
-        <div class="w-14 h-14 rounded-full border-[3px] flex items-center justify-center mb-1 ${passRing}">
-          <span class="text-lg font-black ${passText}">${result.isPass ? '✓' : '!'}</span>
-        </div>
-        <p class="text-xl font-black tracking-tight leading-none ${passText}">${resultLabel}</p>
-        <p class="text-[8px] text-slate-600 mt-1 leading-snug px-1">${result.isPass ? 'Vehicle has passed all required pre-delivery inspection checks.' : resultSub}</p>
-      </div>
-    </section>
+    ${vehicleResultHtml}
     ${badgesHtml}
     <section class="report-section-tight border-b border-[var(--report-border)]">
       <h3 class="text-[11px] font-bold text-[#0033FF] uppercase mb-2 tracking-wide">Inspection categories</h3>

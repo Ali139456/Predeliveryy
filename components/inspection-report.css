@@ -7,38 +7,72 @@
   --report-border: #c5d4e8;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   color: #0f172a;
+  width: 100%;
 }
 
 .inspection-report-sheet {
   max-width: 210mm;
+  width: 100%;
   margin: 0 auto;
   background: #fff;
   box-shadow: 0 4px 24px rgba(0, 32, 96, 0.12);
 }
 
-/* Column flow: short categories sit beside tall ones - no empty row gaps */
+/* Three equal columns — full report width (screen + print) */
 .report-checklist-grid {
-  column-count: 2;
-  column-gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
 }
 
-@media (min-width: 1024px) {
+@media (max-width: 640px) {
   .report-checklist-grid {
-    column-count: 4;
+    grid-template-columns: 1fr;
   }
 }
 
 .report-checklist-category {
-  display: inline-block;
+  display: block;
   width: 100%;
-  margin-bottom: 0.5rem;
+  min-width: 0;
   break-inside: avoid;
   page-break-inside: avoid;
-  -webkit-column-break-inside: avoid;
 }
 
 .report-section-tight {
   padding: 0.5rem 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.report-vehicle-columns {
+  width: 100%;
+}
+
+.report-vehicle-col {
+  min-width: 0;
+}
+
+.report-detail-label {
+  display: block;
+  font-weight: 700;
+  color: #0033ff;
+  text-transform: uppercase;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.report-detail-value {
+  display: block;
+  color: #0f172a;
+  font-size: 11px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.report-panel-header {
+  background: #e8eeff;
 }
 
 .report-badges-grid {
@@ -78,8 +112,10 @@
   }
 
   .report-checklist-grid {
-    column-count: 2;
-    column-gap: 4px;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    width: 100% !important;
   }
 
   .report-photo-cell {

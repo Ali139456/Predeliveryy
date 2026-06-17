@@ -50,6 +50,7 @@ const inspectionSchema = z.object({
     vin: z.string().optional(),
     engine: z.string().optional(),
     odometer: z.string().optional(),
+    colour: z.string().optional(),
     complianceDate: z.string().optional(),
     buildDate: z.string().optional(),
     year: z.string().optional(),
@@ -1334,6 +1335,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           <input
             {...register('vehicleInfo.odometer')}
             placeholder="Odometer"
+            disabled={readOnly}
+            className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
+          />
+          <input
+            {...register('vehicleInfo.colour')}
+            placeholder="Colour"
             disabled={readOnly}
             className={`${formFieldClass} ${readOnly ? 'bg-slate-100 cursor-not-allowed opacity-60' : ''}`}
           />

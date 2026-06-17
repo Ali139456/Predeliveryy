@@ -164,6 +164,7 @@ export interface VehicleInfo {
   complianceDate?: string;
   buildDate?: string;
   licensePlate?: string;
+  colour?: string;
 }
 
 export interface InspectionChecklistCategory {

@@ -5,17 +5,14 @@ import {
   buildReportNotes,
   buildVerificationBadges,
   collectReportPhotos,
-  computeReportResult,
-  extractLocationLabel,
   formatReportDateTime,
-  formatValue,
   getHeroPhotoUrl,
-  getVehicleTitle,
   orderChecklistForReport,
   reportCategorySummary,
   reportItemStatusLabel,
 } from '@/lib/inspection-report-data';
 import ReportVerificationBadges from '@/components/report/ReportVerificationBadges';
+import ReportVehicleResultPanel from '@/components/report/ReportVehicleResultPanel';
 import {
   Calendar,
   ClipboardList,
@@ -28,26 +25,10 @@ interface InspectionReportViewProps {
   inspection: IInspection;
 }
 
-function VehicleDetailCell({ label, value }: { label: string; value: string }) {
-  return (
-    <>
-      <span className="font-bold text-[#0033FF] uppercase text-[10px] leading-tight pt-0.5">{label}</span>
-      <span className="text-slate-900 text-[11px] leading-snug min-w-0">{value}</span>
-    </>
-  );
-}
-
 export default function InspectionReportView({ inspection }: InspectionReportViewProps) {
-  const result = computeReportResult(inspection);
   const photos = collectReportPhotos(inspection);
   const heroUrl = getHeroPhotoUrl(inspection);
   const notes = buildReportNotes(inspection);
-  const v = inspection.vehicleInfo;
-  const vehicleTitle = getVehicleTitle(inspection);
-  const startTime =
-    (inspection.location as { start?: { timestamp?: string } })?.start?.timestamp ||
-    inspection.inspectionDate ||
-    inspection.createdAt;
 
   const technicianSig = inspection.signatures?.technician;
   const checklistCategories = orderChecklistForReport(inspection.checklist || []);
@@ -88,68 +69,7 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
           </div>
         </header>
 
-        {/* Vehicle + result */}
-        <section className="report-page-1 grid grid-cols-1 lg:grid-cols-[1fr_130px] gap-0 border-b border-[var(--report-border)]">
-          <div className="p-2.5 border-b lg:border-b-0 lg:border-r border-[var(--report-border)]">
-            <div className="flex items-center justify-between gap-2 mb-2 border-b border-[var(--report-border)] pb-2">
-              <span className="text-[10px] font-bold text-[#0033FF] uppercase tracking-wide">
-                Vehicle information
-              </span>
-              <span className="text-sm font-bold text-[#0033FF] text-center flex-1 px-2">{vehicleTitle}</span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-[100px_1fr] gap-2">
-              <div className="relative h-[72px] sm:h-[80px] bg-slate-100 border border-[var(--report-border)] overflow-hidden rounded-sm">
-                {heroUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={heroUrl} alt="Vehicle" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-[10px] text-slate-400 p-1 text-center leading-tight">
-                    No photo
-                  </div>
-                )}
-              </div>
-              <div className="report-vehicle-details grid grid-cols-[minmax(5.75rem,8rem)_minmax(0,1fr)] gap-x-5 gap-y-1.5 min-w-0 content-start">
-                <VehicleDetailCell label="VIN" value={formatValue(v?.vin)} />
-                <VehicleDetailCell label="Odometer" value={formatValue(v?.odometer)} />
-                <VehicleDetailCell label="Engine" value={formatValue(v?.engine)} />
-                <VehicleDetailCell label="Registration" value={formatValue(v?.licensePlate)} />
-                <VehicleDetailCell label="Dealer" value={formatValue(v?.dealer)} />
-                <VehicleDetailCell label="Stock No." value={formatValue(v?.dealerStockNo)} />
-                <VehicleDetailCell label="Inspection type" value="Pre-Delivery Inspection" />
-                <VehicleDetailCell label="Location" value={extractLocationLabel(inspection.location)} />
-                <VehicleDetailCell label="Start time" value={formatReportDateTime(startTime)} />
-                <VehicleDetailCell label="Technician" value={formatValue(inspection.inspectorName)} />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col items-center justify-center p-2 bg-slate-50/80 text-center lg:border-l border-[var(--report-border)]">
-            <p className="text-[9px] font-bold uppercase tracking-wide text-[#0033FF] mb-1">
-              Pre-delivery result
-            </p>
-            <div
-              className={`w-14 h-14 rounded-full border-[3px] flex items-center justify-center mb-1 ${
-                result.isPass ? 'border-[#FF6600] bg-white' : 'border-amber-500 bg-amber-50'
-              }`}
-            >
-              <span
-                className={`text-lg font-black ${result.isPass ? 'text-[#FF6600]' : 'text-amber-600'}`}
-              >
-                {result.isPass ? '✓' : '!'}
-              </span>
-            </div>
-            <p
-              className={`text-xl font-black tracking-tight leading-none ${result.isPass ? 'text-[#FF6600]' : 'text-amber-600'}`}
-            >
-              {result.isPass ? 'PASS' : result.needsReview ? 'REVIEW' : 'ATTENTION'}
-            </p>
-            <p className="text-[8px] text-slate-600 mt-1 leading-snug px-1">
-              {result.isPass
-                ? 'Vehicle has passed all required pre-delivery inspection checks.'
-                : 'Repair or review required.'}
-            </p>
-          </div>
-        </section>
+        <ReportVehicleResultPanel inspection={inspection} heroUrl={heroUrl} />
 
         <ReportVerificationBadges badges={verificationBadges} />
 

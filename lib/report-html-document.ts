@@ -15,10 +15,7 @@ const PRINT_EXTRAS = `
   html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .inspection-report-root { padding: 0 !important; }
   .inspection-report-sheet { box-shadow: none !important; max-width: none !important; width: 100% !important; }
-  .report-checklist-grid { column-count: 2 !important; column-gap: 4px !important; }
-  @media (min-width: 1024px) {
-    .report-checklist-grid { column-count: 4 !important; }
-  }
+  .report-checklist-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 4px !important; width: 100% !important; }
 `;
 
 /** Wrap report body (from server builder or browser capture) in a full printable HTML document. */
