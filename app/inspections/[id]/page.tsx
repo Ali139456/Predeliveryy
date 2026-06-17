@@ -42,13 +42,28 @@ function InspectionDetailContent() {
   const [loading, setLoading] = useState(true);
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'report' | 'form'>('report');
+  const [printAfterReport, setPrintAfterReport] = useState(false);
 
   const isReadOnlyView = searchParams.get('view') === 'readonly';
   const isCompleted = inspection?.status === 'completed';
   const showReport = isCompleted && viewMode === 'report';
 
+  useEffect(() => {
+    if (printAfterReport && showReport) {
+      setPrintAfterReport(false);
+      const timer = window.setTimeout(() => window.print(), 300);
+      return () => window.clearTimeout(timer);
+    }
+  }, [printAfterReport, showReport]);
+
   const handlePrint = () => {
-    if (typeof window !== 'undefined') window.print();
+    if (!isCompleted || typeof window === 'undefined') return;
+    if (!showReport) {
+      setPrintAfterReport(true);
+      setViewMode('report');
+      return;
+    }
+    window.print();
   };
 
   useEffect(() => {
@@ -187,11 +202,21 @@ function InspectionDetailContent() {
                 {showReport ? 'View full form' : 'View report'}
               </button>
             )}
-            {showReport && isCompleted && (
+            {isCompleted ? (
               <button
                 type="button"
                 onClick={handlePrint}
                 className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-800 text-white rounded-xl font-semibold hover:bg-slate-900 transition-all text-sm sm:text-base shrink-0"
+              >
+                <Printer className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                Print Report
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled
+                title="Complete and submit the inspection to print the report"
+                className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-slate-200 text-slate-500 rounded-xl font-semibold cursor-not-allowed text-sm sm:text-base shrink-0"
               >
                 <Printer className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                 Print Report
