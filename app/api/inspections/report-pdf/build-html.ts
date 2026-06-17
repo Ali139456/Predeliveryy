@@ -5,6 +5,7 @@ import path from 'path';
 import type { IInspection } from '@/types/db';
 import {
   buildReportNotes,
+  buildVerificationBadges,
   collectReportPhotos,
   computeReportResult,
   extractLocationLabel,
@@ -14,8 +15,10 @@ import {
   getVehicleTitle,
   orderChecklistForReport,
   reportItemStatusLabel,
+  reportCategorySummary,
   type ReportPhoto,
 } from '@/lib/inspection-report-data';
+import { verificationBadgesHtml } from '@/lib/report-verification-badges';
 import { loadImageAsBase64 } from '@/lib/pdfGenerator';
 import { wrapReportHtmlDocument } from '@/lib/report-html-document';
 import { SITE_LOGO_ALT, SITE_LOGO_REPORT_SRC } from '@/lib/siteLogo';
@@ -92,6 +95,8 @@ function renderReportBody(
     inspection.inspectionDate ||
     inspection.createdAt;
   const checklistCategories = orderChecklistForReport(inspection.checklist || []);
+  const verificationBadges = buildVerificationBadges(inspection);
+  const badgesHtml = verificationBadgesHtml(verificationBadges);
 
   const passRing = result.isPass ? 'border-[#FF6600] bg-white' : 'border-amber-500 bg-amber-50';
   const passText = result.isPass ? 'text-[#FF6600]' : 'text-amber-600';
@@ -104,6 +109,7 @@ function renderReportBody(
 
   const checklistHtml = checklistCategories
     .map((cat) => {
+      const summary = reportCategorySummary(cat);
       const itemsHtml = (cat.items || [])
         .map((item, idx) => {
           const label = reportItemStatusLabel(item.status);
@@ -120,9 +126,12 @@ function renderReportBody(
           </li>`;
         })
         .join('');
+      const countLabel =
+        summary.total > 0 ? `${summary.passed} / ${summary.total} checks` : 'No checks';
       return `<div class="report-checklist-category border border-[var(--report-border)] rounded-sm overflow-hidden bg-white">
         <div class="bg-[#0033FF] text-white text-[10px] font-bold uppercase px-2 py-1.5 text-center">${esc(cat.category)}</div>
         <ul class="text-[9px]">${itemsHtml}</ul>
+        <p class="border-t border-[var(--report-border)] bg-slate-50 px-2 py-1 text-center text-[8px] font-bold uppercase tracking-wide text-[#0033FF]">${esc(countLabel)}</p>
       </div>`;
     })
     .join('');
@@ -155,6 +164,7 @@ function renderReportBody(
     <header class="report-page-1 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-3 items-center px-3 py-2.5 text-white" style="background:linear-gradient(180deg,#002060 0%,#0033ff 100%)">
       <div class="shrink-0 w-fit max-w-full">
         <img src="${esc(logoSrc)}" alt="${esc(SITE_LOGO_ALT)}" class="h-14 sm:h-[4.25rem] w-auto max-w-[min(100%,280px)] object-contain object-left block" />
+        <p class="mt-1 text-[9px] text-white/75 tracking-wide">Verified before your drive.</p>
       </div>
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] md:text-xs md:justify-end">
         <div class="flex items-center gap-2">
@@ -196,13 +206,15 @@ function renderReportBody(
         </div>
       </div>
       <div class="flex flex-col items-center justify-center p-2 bg-slate-50/80 text-center lg:border-l border-[var(--report-border)]">
+        <p class="text-[9px] font-bold uppercase tracking-wide text-[#0033FF] mb-1">Pre-delivery result</p>
         <div class="w-14 h-14 rounded-full border-[3px] flex items-center justify-center mb-1 ${passRing}">
           <span class="text-lg font-black ${passText}">${result.isPass ? '✓' : '!'}</span>
         </div>
         <p class="text-xl font-black tracking-tight leading-none ${passText}">${resultLabel}</p>
-        <p class="text-[8px] text-slate-600 mt-1 leading-snug px-1">${resultSub}</p>
+        <p class="text-[8px] text-slate-600 mt-1 leading-snug px-1">${result.isPass ? 'Vehicle has passed all required pre-delivery inspection checks.' : resultSub}</p>
       </div>
     </section>
+    ${badgesHtml}
     <section class="report-section-tight border-b border-[var(--report-border)]">
       <h3 class="text-[11px] font-bold text-[#0033FF] uppercase mb-2 tracking-wide">Inspection categories</h3>
       <div class="report-checklist-grid">${checklistHtml}</div>

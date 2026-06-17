@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import { SITE_HERO_REPORT_SRC } from '@/lib/siteLogo';
 
-/** Native pixel size of public/image.png — keep in sync if the asset is replaced. */
-const REPORT_IMAGE_WIDTH = 1024;
-const REPORT_IMAGE_HEIGHT = 724;
+/** Native pixel size of public/pre-delivery-hero-report.png — keep in sync if the asset is replaced. */
+const REPORT_IMAGE_WIDTH = 2736;
+const REPORT_IMAGE_HEIGHT = 1812;
 
 /** Floating 3D-tilted inspection report (matches client hero mockup). */
 export default function HeroReportGraphic() {
@@ -24,7 +24,7 @@ export default function HeroReportGraphic() {
           priority
           unoptimized
           className="relative w-full h-auto rounded-2xl shadow-[0_40px_80px_-20px_rgba(0,51,255,0.35)]"
-          sizes="(max-width: 1024px) 100vw, 1024px"
+          sizes="(max-width: 1024px) 100vw, (max-width: 1536px) 1280px, 1536px"
         />
       </div>
     </div>

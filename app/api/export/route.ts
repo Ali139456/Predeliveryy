@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
             row as InspectionRow,
             inspection,
             origin,
-            { force: false }
+            { force: true }
           );
           pdfBuffer = await pdfFromReportHtml(reportHtml);
         } catch {

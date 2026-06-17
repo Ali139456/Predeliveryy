@@ -14,6 +14,7 @@
     "test:ui": "playwright test --ui",
     "test:headed": "playwright test --headed",
     "create-admin": "node scripts/create-admin.js",
+    "prepare-hero-report": "node scripts/prepare-hero-report.mjs",
     "backfill-analytics": "node scripts/backfill-analytics.js",
     "stop": "lsof -ti:3000 | xargs kill -9 2>/dev/null || pkill -f 'next dev' || echo 'No server running'"
   },

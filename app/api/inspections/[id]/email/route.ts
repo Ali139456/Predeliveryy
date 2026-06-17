@@ -6,6 +6,7 @@ import {
   resolveAppOrigin,
 } from '@/lib/report-snapshot';
 import { sendEmailWithPDF } from '@/lib/email';
+import { buildInspectionReportEmailHtml } from '@/lib/report-email-template';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
@@ -89,7 +90,7 @@ export async function POST(
         row as InspectionRow,
         inspection,
         origin,
-        { force: false }
+        { force: true }
       );
       pdfBuffer = await pdfFromReportHtml(reportHtml);
       if (pdfBuffer.length > RESEND_EMAIL_SIZE_LIMIT_BYTES) {
@@ -128,19 +129,12 @@ export async function POST(
     }
 
     const pdfFileName = `Inspection-${inspection.inspectionNumber}-${Date.now()}.pdf`;
-    const emailBody = `
-      <h2>Pre delivery inspection Report</h2>
-      <p>Dear Recipient,</p>
-      <p>Please find attached the pre-delivery inspection report for inspection number: <strong>${inspection.inspectionNumber}</strong></p>
-      <p><strong>Inspector:</strong> ${inspection.inspectorName}</p>
-      <p><strong>Date:</strong> ${new Date(inspection.inspectionDate).toLocaleDateString()}</p>
-      <p>This is an automated email. Please do not reply.</p>
-    `;
+    const emailBody = buildInspectionReportEmailHtml(inspection);
 
     try {
       await sendEmailWithPDF(
         recipients,
-        `Pre delivery inspection Report - ${inspection.inspectionNumber}`,
+        `Pre-Delivery Inspection Report — ${inspection.inspectionNumber}`,
         emailBody,
         pdfBuffer,
         pdfFileName

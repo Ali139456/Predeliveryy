@@ -41,8 +41,13 @@
   padding: 0.5rem 0.75rem;
 }
 
-.report-vehicle-details {
+.report-badges-grid {
   width: 100%;
+}
+
+.report-badge-cell {
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 @media print {

@@ -3,6 +3,7 @@
 import type { IInspection } from '@/types/db';
 import {
   buildReportNotes,
+  buildVerificationBadges,
   collectReportPhotos,
   computeReportResult,
   extractLocationLabel,
@@ -11,8 +12,10 @@ import {
   getHeroPhotoUrl,
   getVehicleTitle,
   orderChecklistForReport,
+  reportCategorySummary,
   reportItemStatusLabel,
 } from '@/lib/inspection-report-data';
+import ReportVerificationBadges from '@/components/report/ReportVerificationBadges';
 import {
   Calendar,
   ClipboardList,
@@ -48,6 +51,7 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
 
   const technicianSig = inspection.signatures?.technician;
   const checklistCategories = orderChecklistForReport(inspection.checklist || []);
+  const verificationBadges = buildVerificationBadges(inspection);
 
   return (
     <div className="inspection-report-root w-full py-0">
@@ -64,6 +68,7 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
               alt={SITE_LOGO_ALT}
               className="h-14 sm:h-[4.25rem] w-auto max-w-[min(100%,280px)] object-contain object-left block"
             />
+            <p className="mt-1 text-[9px] text-white/75 tracking-wide">Verified before your drive.</p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] md:text-xs md:justify-end">
             <div className="flex items-center gap-2">
@@ -119,6 +124,9 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
           </div>
 
           <div className="flex flex-col items-center justify-center p-2 bg-slate-50/80 text-center lg:border-l border-[var(--report-border)]">
+            <p className="text-[9px] font-bold uppercase tracking-wide text-[#0033FF] mb-1">
+              Pre-delivery result
+            </p>
             <div
               className={`w-14 h-14 rounded-full border-[3px] flex items-center justify-center mb-1 ${
                 result.isPass ? 'border-[#FF6600] bg-white' : 'border-amber-500 bg-amber-50'
@@ -137,11 +145,13 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
             </p>
             <p className="text-[8px] text-slate-600 mt-1 leading-snug px-1">
               {result.isPass
-                ? 'All required checks passed.'
+                ? 'Vehicle has passed all required pre-delivery inspection checks.'
                 : 'Repair or review required.'}
             </p>
           </div>
         </section>
+
+        <ReportVerificationBadges badges={verificationBadges} />
 
         {/* Checklist */}
         <section className="report-section-tight border-b border-[var(--report-border)]">
@@ -149,7 +159,11 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
             Inspection categories
           </h3>
           <div className="report-checklist-grid">
-            {checklistCategories.map((cat) => (
+            {checklistCategories.map((cat) => {
+              const summary = reportCategorySummary(cat);
+              const countLabel =
+                summary.total > 0 ? `${summary.passed} / ${summary.total} checks` : 'No checks';
+              return (
                 <div
                   key={cat.category}
                   className="report-checklist-category border border-[var(--report-border)] rounded-sm overflow-hidden bg-white"
@@ -179,8 +193,12 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
                       );
                     })}
                   </ul>
+                  <p className="border-t border-[var(--report-border)] bg-slate-50 px-2 py-1 text-center text-[8px] font-bold uppercase tracking-wide text-[#0033FF]">
+                    {countLabel}
+                  </p>
                 </div>
-            ))}
+              );
+            })}
           </div>
         </section>
 

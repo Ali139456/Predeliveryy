@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Play } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
-import { SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
+import { FEATURE_IMAGES, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 import HeroReportGraphic from '@/components/HeroReportGraphic';
 
 export default function Home() {
@@ -33,18 +33,15 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-14 lg:py-16 pb-24 lg:pb-28">
           <div className="max-w-7xl mx-auto relative">
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-10 lg:gap-4 xl:gap-2 items-center">
-              <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px]">
-                <span className="inline-flex self-center lg:self-start items-center px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.12em] text-[#0033FF] bg-[#0033FF]/10">
-                  AI-Powered Pre-Delivery Inspections
-                </span>
-
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-10 lg:gap-x-4 lg:gap-y-6 items-start">
+              <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-3 lg:order-none lg:col-start-1 lg:row-start-1">
                 <h1 className="hero-h1 text-slate-900 hyphens-none">
-                  Every car. Every check. <span className="text-[#0033FF]">Every time.</span>
+                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span>{' '}
+                  <span className="text-[#0033FF]">Digitised</span>
                 </h1>
 
                 <p className="hero-tagline text-slate-600 leading-relaxed max-w-lg">
-                  Pre Delivery streamlines pre-delivery inspections so you can deliver with confidence and complete every sale.
+                  Verify vehicle condition before handover with a defensible digital record.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-left">
@@ -97,15 +94,13 @@ export default function Home() {
 
               </div>
 
-              <div className="relative z-10 w-full min-w-0 flex justify-center lg:justify-end lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible">
+              <div className="relative z-30 w-full min-w-0 flex justify-center lg:justify-end order-1 lg:order-none lg:col-start-2 lg:row-start-1 lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible">
                 <HeroReportGraphic />
               </div>
-            </div>
 
-            <div className="relative z-20 mt-10 lg:mt-0 lg:absolute lg:left-0 lg:right-0 lg:bottom-8 xl:bottom-10">
-              <div className="flex justify-center lg:justify-end px-0 sm:px-2">
-                <p className="inline-flex items-center gap-2.5 text-sm font-medium text-slate-600 lg:text-white text-center lg:text-right leading-snug max-w-[20rem] sm:max-w-none lg:pr-6 xl:pr-10">
-                  <Shield className="w-4 h-4 text-[#0033FF] lg:text-white shrink-0" aria-hidden />
+              <div className="relative z-20 w-full flex justify-center lg:justify-end order-2 lg:order-none lg:col-start-2 lg:row-start-2 mt-2 sm:mt-3 lg:mt-0 lg:pt-2 xl:pt-4 lg:pr-6 xl:pr-10 2xl:pr-16">
+                <p className="inline-flex items-center gap-2.5 text-sm font-medium text-white text-center lg:text-right leading-snug max-w-[20rem] sm:max-w-md lg:max-w-lg">
+                  <Shield className="w-4 h-4 text-white shrink-0" aria-hidden />
                   <span>Trusted by forward-thinking dealerships across Australia.</span>
                 </p>
               </div>
@@ -274,14 +269,12 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=600&fit=crop&q=80"
+                    src={FEATURE_IMAGES.photoVideo}
                     alt="Photo images and video walk around - Vehicle inspection"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full max-w-[calc(100%-2rem)] text-left leading-tight">
-                    Photo images and Video walk around
-                  </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Photo images and Video walk around</h3>
@@ -294,12 +287,12 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=600&fit=crop&q=80"
+                    src={FEATURE_IMAGES.vinCapture}
                     alt="Vehicle Identity Capture - VIN scanning"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">VIN Capture</div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Vehicle Identity Capture</h3>
@@ -310,12 +303,12 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
+                    src={FEATURE_IMAGES.gpsPinning}
                     alt="GPS Pinning - Location services"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">GPS Pinning</div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">GPS Pinning</h3>
@@ -326,12 +319,12 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop&q=80"
+                    src={FEATURE_IMAGES.analytics}
                     alt="Analytics Dashboard - Data visualization"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">Analytics</div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Analytics Dashboard</h3>
@@ -339,31 +332,33 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl flex flex-col">
+                <div className="relative h-56 shrink-0 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800&h=600&fit=crop&q=80"
-                    alt="Secure & Compliant - Data security"
+                    src={FEATURE_IMAGES.secureCompliant}
+                    alt="Secure and compliant — enterprise-grade security with audit trails, role-based access, and encrypted data"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Security</div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Secure & Compliant</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Bank-level security with audit trails and compliance records</p>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Enterprise-grade security with audit trails, role-based access, and encrypted data to keep your inspections safe and compliant.
+                  </p>
                 </div>
               </div>
 
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop&q=80"
+                    src={FEATURE_IMAGES.fastEfficient}
                     alt="Fast & Efficient - Streamlined workflow"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">Efficiency</div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Fast & Efficient</h3>
@@ -374,12 +369,12 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=600&fit=crop&q=80"
+                    src={FEATURE_IMAGES.voiceToText}
                     alt="Voice to text - Inspector documenting findings"
                     fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                    unoptimized
+                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Voice to text</div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Voice to text</h3>
@@ -489,8 +484,10 @@ export default function Home() {
                 <div className="w-16 h-16 rounded-xl bg-[#0033FF] flex items-center justify-center mb-6">
                   <Shield className="w-8 h-8 text-white" strokeWidth={2.5} />
                 </div>
-                <h3 className="text-lg font-bold mb-3 text-gray-900">Enterprise-grade data security</h3>
-                <p className="text-gray-600 text-sm">Bank-level encryption and security protocols</p>
+                <h3 className="text-lg font-bold mb-3 text-gray-900">Secure & Compliant</h3>
+                <p className="text-gray-600 text-sm">
+                  Enterprise-grade security with audit trails, role-based access, and encrypted data to keep your inspections safe and compliant.
+                </p>
               </div>
 
               <div className="bg-[#EEF2FF] rounded-xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] shadow-sm hover:shadow-xl transition-all duration-300">

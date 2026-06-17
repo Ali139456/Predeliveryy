@@ -119,6 +119,8 @@
   /* Hero floating report – 3D tilt like client mockup */
   .hero-report-stage {
     perspective: 1400px;
+    /* 3D scale/rotate extends past layout box — reserve space so content below clears the image */
+    padding-bottom: 2.5rem;
   }
   .hero-report-3d {
     transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg) scale(1.08);
@@ -130,9 +132,17 @@
       transform: rotateY(-5deg) rotateX(3deg) rotateZ(1deg) scale(1.02);
     }
   }
+  @media (min-width: 1024px) {
+    .hero-report-stage {
+      padding-bottom: 3.5rem;
+    }
+  }
   @media (min-width: 1280px) {
     .hero-report-3d {
       transform: rotateY(-10deg) rotateX(5deg) rotateZ(2deg) scale(1.14);
+    }
+    .hero-report-stage {
+      padding-bottom: 4.5rem;
     }
   }
 
