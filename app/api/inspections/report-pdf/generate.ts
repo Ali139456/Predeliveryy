@@ -43,6 +43,20 @@ export async function pdfBufferFromHtml(html: string): Promise<Buffer> {
   const browser = await launchBrowser();
   try {
     const page = await browser.newPage();
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      const url = req.url();
+      const allowed =
+        url.startsWith('data:') ||
+        url.startsWith('about:') ||
+        url.startsWith('blob:') ||
+        url.includes('cdn.tailwindcss.com');
+      if (allowed) {
+        req.continue();
+      } else {
+        req.abort();
+      }
+    });
     await page.setContent(html, {
       waitUntil: 'networkidle0' as 'load',
       timeout: 90_000,

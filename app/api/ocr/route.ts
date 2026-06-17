@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import { parseVinPlateText } from '@/lib/vin-plate-parser';
+import { getCurrentUser } from '@/lib/auth';
+import { appCorsHeaders } from '@/lib/security';
 
 // Ensure Node.js runtime for OCR
 export const runtime = 'nodejs';
@@ -168,15 +170,18 @@ async function extractTextWithAzureVision(imageBase64: string): Promise<string> 
 
 export async function POST(request: NextRequest) {
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    ...appCorsHeaders(),
     'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-    'Pragma': 'no-cache',
-    'Expires': '0',
+    Pragma: 'no-cache',
+    Expires: '0',
   };
 
   try {
+    const user = await getCurrentUser(request);
+    if (!user) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401, headers: corsHeaders });
+    }
+
     const rl = await enforceRateLimit(request, 'api:ocr:post', { windowSeconds: 60, limit: 20, scope: 'ip+user' });
     if (!rl.allowed) {
       return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429, headers: corsHeaders });
@@ -258,17 +263,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      ...appCorsHeaders(),
       'Access-Control-Max-Age': '86400',
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-      'Pragma': 'no-cache',
-      'Expires': '0',
+      Pragma: 'no-cache',
+      Expires: '0',
     },
   });
 }

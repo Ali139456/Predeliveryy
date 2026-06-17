@@ -4,6 +4,7 @@ import { sendEmail } from '@/lib/email';
 import { signPasswordResetToken } from '@/lib/password-reset-token';
 import { generateOTP, storeOTP } from '@/lib/otp';
 import { enforceRateLimit } from '@/lib/rateLimit';
+import { escapeHtml } from '@/lib/security';
 
 async function sendOTPSms(_phoneNumber: string, _otp: string): Promise<void> {
   // TODO: Integrate real SMS provider (Twilio, etc.). Do not log OTP.
@@ -60,13 +61,15 @@ export async function POST(request: NextRequest) {
           'http://localhost:3000';
         const resetLink = `${baseUrl}/reset-password?token=${encodeURIComponent(resetToken)}&email=${encodeURIComponent(user.email)}`;
 
+        const safeName = escapeHtml(user.name || 'User');
+
         await sendEmail(
           [user.email],
           'Password Reset Request - Pre delivery inspection',
           `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <h2 style="color: #6366f1;">Password Reset Request</h2>
-              <p>Hello ${user.name || 'User'},</p>
+              <p>Hello ${safeName},</p>
               <p>You requested to reset your password for your Pre delivery inspection account.</p>
               <p>Please contact your administrator to reset your password, or use the following link:</p>
               <p style="margin: 20px 0;">

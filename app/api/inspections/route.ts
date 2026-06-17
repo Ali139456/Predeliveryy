@@ -10,6 +10,7 @@ import { parseInspectionApiBody } from '@/lib/inspectionApiValidation';
 import { resolveInspectionType } from '@/lib/checklist-template';
 import { syncInspectionAnalytics } from '@/lib/analytics-sync';
 import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
+import { sanitizePostgrestSearchTerm } from '@/lib/security';
 
 export async function POST(request: NextRequest) {
   try {
@@ -161,10 +162,13 @@ export async function GET(request: NextRequest) {
 
     const searchTerm = searchParams.get('search');
     if (searchTerm) {
-      const term = `%${searchTerm}%`;
-      query = query.or(
-        `inspection_number.ilike.${term},inspector_name.ilike.${term},inspector_email.ilike.${term},barcode.ilike.${term}`
-      );
+      const safe = sanitizePostgrestSearchTerm(searchTerm);
+      if (safe) {
+        const term = `%${safe}%`;
+        query = query.or(
+          `inspection_number.ilike.${term},inspector_name.ilike.${term},inspector_email.ilike.${term},barcode.ilike.${term}`
+        );
+      }
     }
 
     const { data: rows, error } = await query;

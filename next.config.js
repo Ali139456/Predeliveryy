@@ -32,6 +32,38 @@ const nextConfig = {
   compress: true,
   // Optimize production builds
   productionBrowserSourceMaps: false,
+  async headers() {
+    const securityHeaders = [
+      { key: 'X-Frame-Options', value: 'DENY' },
+      { key: 'X-Content-Type-Options', value: 'nosniff' },
+      { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      { key: 'Permissions-Policy', value: 'camera=(self), microphone=(self), geolocation=(self)' },
+      {
+        key: 'Strict-Transport-Security',
+        value: 'max-age=63072000; includeSubDomains; preload',
+      },
+      {
+        key: 'Content-Security-Policy',
+        value: [
+          "default-src 'self'",
+          "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com",
+          "style-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com",
+          "img-src 'self' data: blob: https: http:",
+          "font-src 'self' data:",
+          "connect-src 'self' https: wss:",
+          "frame-ancestors 'none'",
+          "base-uri 'self'",
+          "form-action 'self'",
+        ].join('; '),
+      },
+    ];
+    return [
+      {
+        source: '/:path*',
+        headers: securityHeaders,
+      },
+    ];
+  },
   // Do not override devtool in dev — Next.js reverts it and warns (improper-devtool).
   // Prefer `npm run dev` (Turbopack). If you use `npm run dev:webpack`, server splitChunks are disabled in dev
   // to avoid stale chunk IDs (Cannot find module './NNNN.js') on Windows — see scripts/clean-dev-cache.js.

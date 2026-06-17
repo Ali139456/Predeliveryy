@@ -6,6 +6,11 @@ if (!JWT_SECRET) {
   throw new Error('JWT_SECRET is required');
 }
 
+const JWT_ALG = 'HS256' as const;
+const JWT_VERIFY_OPTS = { algorithms: [JWT_ALG] as jwt.Algorithm[] };
+const JWT_SIGN_OPTS = { algorithm: JWT_ALG, expiresIn: '7d' as const };
+const MFA_SIGN_OPTS = { algorithm: JWT_ALG, expiresIn: '10m' as const };
+
 export interface JWTPayload {
   userId: string;
   email: string;
@@ -28,7 +33,7 @@ export async function generateMfaPendingToken(
   userId: string,
   purpose: 'mfa_pending' | 'mfa_setup'
 ): Promise<string> {
-  return jwt.sign({ userId, purpose }, JWT_SECRET as string, { expiresIn: '10m' });
+  return jwt.sign({ userId, purpose }, JWT_SECRET as string, MFA_SIGN_OPTS);
 }
 
 export async function verifyMfaPendingToken(
@@ -36,7 +41,7 @@ export async function verifyMfaPendingToken(
   expectedPurpose: 'mfa_pending' | 'mfa_setup'
 ): Promise<{ userId: string } | null> {
   try {
-    const payload = jwt.verify(token, JWT_SECRET as string) as MfaPendingPayload;
+    const payload = jwt.verify(token, JWT_SECRET as string, JWT_VERIFY_OPTS) as MfaPendingPayload;
     if (payload.purpose !== expectedPurpose || !payload.userId) return null;
     return { userId: payload.userId };
   } catch {
@@ -53,13 +58,13 @@ export async function generateToken(user: { id: string; email: string; role: str
       tenantId: user.tenantId,
     },
     JWT_SECRET as string,
-    { expiresIn: '7d' }
+    JWT_SIGN_OPTS
   );
 }
 
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
-    return jwt.verify(token, JWT_SECRET as string) as unknown as JWTPayload;
+    return jwt.verify(token, JWT_SECRET as string, JWT_VERIFY_OPTS) as unknown as JWTPayload;
   } catch (error) {
     return null;
   }

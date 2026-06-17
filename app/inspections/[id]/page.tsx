@@ -7,7 +7,6 @@ import dynamic from 'next/dynamic';
 import { ArrowLeft, Send, FileText, Lock, List, Printer, ClipboardCheck, Pencil } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import PageContainer from '@/components/PageContainer';
-import { captureInspectionReportHtml } from '@/lib/capture-report-html';
 import { isReadOnlyRole } from '@/lib/roles';
 
 // Lazy load heavy components
@@ -94,13 +93,12 @@ function InspectionDetailContent() {
   };
 
   const handleEmailSend = async (emailList: string[]) => {
-    if (isCompleted && showReport) {
-      const captured = captureInspectionReportHtml();
+    if (isCompleted) {
       const snapRes = await fetch(`/api/inspections/${params.id}/report-snapshot`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(captured ? { html: captured, force: true } : { force: true }),
+        body: JSON.stringify({ force: true }),
       });
       if (!snapRes.ok) {
         const snapErr = await snapRes.json().catch(() => ({}));

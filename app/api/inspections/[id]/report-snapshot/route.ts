@@ -8,15 +8,14 @@ import {
   ensureInspectionReportHtml,
   generateAndSaveReportHtml,
   resolveAppOrigin,
-  saveClientReportHtml,
 } from '@/lib/report-snapshot';
+import { enforceRateLimit } from '@/lib/rateLimit';
 import { z } from 'zod';
 import { canMutateInspections, canViewAllTenantInspections } from '@/lib/roles';
 
 export const maxDuration = 60;
 
 const bodySchema = z.object({
-  html: z.string().min(50).max(6_000_000).optional(),
   force: z.boolean().optional(),
 });
 
@@ -25,6 +24,15 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
+    const { allowed } = await enforceRateLimit(request, 'api:inspections:report-snapshot', {
+      windowSeconds: 60,
+      limit: 20,
+      scope: 'ip+user',
+    });
+    if (!allowed) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
     const user = await getCurrentUser(request);
     if (!user) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
@@ -71,25 +79,19 @@ export async function POST(
     }
 
     const origin = resolveAppOrigin(request.nextUrl.origin);
-    let savedAt: string;
 
-    if (parsed.data.html) {
-      await saveClientReportHtml(supabase, inspection, parsed.data.html);
-      savedAt = new Date().toISOString();
-    } else if (parsed.data.force) {
+    if (parsed.data.force) {
       await generateAndSaveReportHtml(supabase, inspection, origin);
-      savedAt = new Date().toISOString();
     } else {
       await ensureInspectionReportHtml(supabase, row as InspectionRow, inspection, origin, {
         force: false,
       });
-      savedAt = new Date().toISOString();
     }
 
     return NextResponse.json({
       success: true,
       message: 'Report snapshot saved',
-      savedAt,
+      savedAt: new Date().toISOString(),
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to save report snapshot';

@@ -9,6 +9,7 @@ import { validateUploadBuffer } from '@/lib/secureUpload';
 import { canUploadFiles } from '@/lib/roles';
 import { getUserById } from '@/lib/db-users';
 import { scanUploadBuffer } from '@/lib/malware-scan';
+import { appCorsHeaders } from '@/lib/security';
 
 // Ensure Node.js runtime for file uploads
 export const runtime = 'nodejs';
@@ -16,30 +17,25 @@ export const maxDuration = 300; // large video uploads (up to 200MB) may need se
 export const dynamic = 'force-dynamic'; // Force dynamic rendering on Vercel
 
 // Handle OPTIONS for CORS preflight
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      ...appCorsHeaders(),
       'Access-Control-Max-Age': '86400',
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-      'Pragma': 'no-cache',
-      'Expires': '0',
+      Pragma: 'no-cache',
+      Expires: '0',
     },
   });
 }
 
 export async function POST(request: NextRequest) {
-  // Add CORS headers and cache control immediately
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    ...appCorsHeaders(),
     'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0',
-    'Pragma': 'no-cache',
-    'Expires': '0',
+    Pragma: 'no-cache',
+    Expires: '0',
   };
   
   try {

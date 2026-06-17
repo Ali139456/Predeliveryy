@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     if (!allowed) {
       return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
     }
-    await requireAuth(['admin', 'manager'])(request);
+    const authUser = await requireAuth(['admin', 'manager'])(request);
 
     const { searchParams } = new URL(request.url);
     const phoneRaw = searchParams.get('phone');
@@ -26,11 +26,11 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = getSupabase();
-    const { data } = await supabase
-      .from('users')
-      .select('id')
-      .eq('phone_number', phoneResult.data)
-      .single();
+    let query = supabase.from('users').select('id').eq('phone_number', phoneResult.data);
+    if (authUser.role === 'manager') {
+      query = query.eq('tenant_id', authUser.tenantId);
+    }
+    const { data } = await query.maybeSingle();
     return NextResponse.json({ success: true, exists: !!data });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Failed to check phone number';

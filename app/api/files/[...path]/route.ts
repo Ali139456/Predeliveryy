@@ -75,12 +75,8 @@ export async function GET(
     }
 
     const rel = params.path.join('/');
-    if (rel.includes('..')) {
+    if (rel.includes('..') || rel.includes('://')) {
       return NextResponse.json({ success: false, error: 'Invalid path' }, { status: 400 });
-    }
-
-    if (rel.startsWith('http://') || rel.startsWith('https://')) {
-      return NextResponse.redirect(rel);
     }
 
     const user = await getCurrentUser(request);

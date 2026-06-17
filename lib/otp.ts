@@ -1,4 +1,4 @@
-// OTP storage utility
+import { randomInt } from 'crypto';
 // In production, use Redis or a database collection for OTP storage
 
 interface OTPData {
@@ -13,7 +13,7 @@ const otpStore = new Map<string, OTPData>();
 
 // Generate 6-digit OTP
 export function generateOTP(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return randomInt(100_000, 1_000_000).toString();
 }
 
 // Store OTP

@@ -40,7 +40,11 @@ export async function enforceRateLimit(
   });
 
   if (error) {
-    // Fail-open: don't block requests if limiter is misconfigured.
+    console.error('[rateLimit] check_rate_limit RPC failed:', error.message);
+    // Fail closed in production — do not allow unlimited traffic if limiter is down.
+    if (process.env.NODE_ENV === 'production') {
+      return { allowed: false, key };
+    }
     return { allowed: true, key };
   }
   return { allowed: !!data, key };
