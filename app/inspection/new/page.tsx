@@ -200,7 +200,7 @@ export default function NewInspectionPage() {
             <p className="text-sm font-semibold text-amber-900 mb-3 pr-8">You have a saved draft. Choose one:</p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href={`/inspections/${drafts[0]._id}`}
+                href={`/inspections/${drafts[0]._id}?edit=1`}
                 className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0029CC] transition-all shadow-md"
               >
                 <FileEdit className="w-4 h-4" />

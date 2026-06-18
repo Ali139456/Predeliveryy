@@ -368,13 +368,23 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                   {new Date(inspection.createdAt).toLocaleDateString()}
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <Link
-                    href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
-                    className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md"
-                  >
-                    <Eye className="w-3.5 h-3.5 mr-1.5" />
-                    View
-                  </Link>
+                  {inspection.status === 'draft' ? (
+                    <Link
+                      href={`/inspections/${inspection.id ?? inspection._id}?edit=1`}
+                      className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md"
+                    >
+                      <Edit className="w-3.5 h-3.5 mr-1.5" />
+                      Edit
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
+                      className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md"
+                    >
+                      <Eye className="w-3.5 h-3.5 mr-1.5" />
+                      View
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={async () => {
@@ -476,13 +486,23 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                   </td>
                   <td className="py-3 px-2 sm:px-4 align-middle">
                     <div className="flex flex-wrap items-center gap-1 sm:gap-2">
-                      <Link
-                        href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
-                        className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105 shrink-0"
-                      >
-                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                        <span className="hidden sm:inline">View</span>
-                      </Link>
+                      {inspection.status === 'draft' ? (
+                        <Link
+                          href={`/inspections/${inspection.id ?? inspection._id}?edit=1`}
+                          className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105 shrink-0"
+                        >
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
+                          <span className="hidden sm:inline">Edit</span>
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
+                          className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105 shrink-0"
+                        >
+                          <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
+                          <span className="hidden sm:inline">View</span>
+                        </Link>
+                      )}
                       <button
                         type="button"
                         onClick={async () => {

@@ -44,8 +44,29 @@ function InspectionDetailContent() {
   const [printAfterReport, setPrintAfterReport] = useState(false);
 
   const isReadOnlyView = searchParams.get('view') === 'readonly';
+  const isEditMode =
+    searchParams.get('edit') === '1' || searchParams.get('edit') === 'true';
   const isCompleted = inspection?.status === 'completed';
   const showReport = isCompleted && viewMode === 'report';
+
+  const canEditInspection = (() => {
+    if (!user || !inspection) return false;
+    const isOwner =
+      String(user.email || '').toLowerCase() ===
+      String(inspection.inspectorEmail || '').toLowerCase();
+    if (isReadOnlyRole(user.role ?? '')) return false;
+    if (user.role === 'admin' || isOwner) return true;
+    return false;
+  })();
+
+  const isFormReadOnly = (() => {
+    if (!user) return false;
+    if (isReadOnlyView || isReadOnlyRole(user.role ?? '')) return true;
+    if (!isCompleted) {
+      return !(isEditMode && canEditInspection);
+    }
+    return !canEditInspection;
+  })();
 
   useEffect(() => {
     if (printAfterReport && showReport) {
@@ -239,14 +260,6 @@ function InspectionDetailContent() {
             className={`no-print mb-5 sm:mb-6 ${showReport ? 'px-4 pt-4 sm:px-5 sm:pt-5' : ''}`}
           >
             {(() => {
-              const isOwner =
-                user &&
-                inspection &&
-                String(user.email || '').toLowerCase() ===
-                  String(inspection.inspectorEmail || '').toLowerCase();
-              const readOnly = !user
-                ? false
-                : isReadOnlyView || isReadOnlyRole(user.role ?? '') || (user.role !== 'admin' && !isOwner);
               const statusLabel = inspection.status === 'completed' ? 'Completed' : 'Draft';
 
               return (
@@ -302,7 +315,7 @@ function InspectionDetailContent() {
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 shrink-0 sm:justify-end">
-                      {readOnly ? (
+                      {isFormReadOnly ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 ring-1 ring-amber-200/80 shadow-sm">
                           <Lock className="w-3.5 h-3.5 shrink-0" aria-hidden />
                           View only
@@ -325,16 +338,7 @@ function InspectionDetailContent() {
             <InspectionForm
               inspectionId={params.id as string}
               initialData={inspection}
-              readOnly={(() => {
-                const isOwner =
-                  user &&
-                  inspection &&
-                  String(user.email || '').toLowerCase() ===
-                    String(inspection.inspectorEmail || '').toLowerCase();
-                return !user
-                  ? false
-                  : isReadOnlyView || isReadOnlyRole(user.role ?? '') || (user.role !== 'admin' && !isOwner);
-              })()}
+              readOnly={isFormReadOnly}
             />
           )}
         </div>
