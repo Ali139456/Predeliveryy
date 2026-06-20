@@ -48,18 +48,18 @@ export default function Home() {
                   {[
                     {
                       icon: ShieldCheck,
-                      title: '100% Compliant',
-                      blurb: 'Digital inspection records',
+                      title: 'Digital Compliance',
+                      blurb: 'Photo-backed inspection records',
                     },
                     {
                       icon: Zap,
-                      title: 'Save Time',
-                      blurb: 'Automate checks and workflows',
+                      title: 'Faster Processing',
+                      blurb: 'Reduce turnaround times',
                     },
                     {
                       icon: CheckCircle,
-                      title: 'Deliver Confidence',
-                      blurb: 'Better quality, happier customers',
+                      title: 'Defect Visibility',
+                      blurb: 'Identify issues before delivery',
                     },
                   ].map(({ icon: Icon, title, blurb }) => (
                     <div
@@ -316,19 +316,21 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src={FEATURE_IMAGES.analytics}
-                    alt="Analytics Dashboard - Data visualization"
+                    src={FEATURE_IMAGES.voiceToText}
+                    alt="Voice to text - Inspector documenting findings"
                     fill
                     unoptimized
                     className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Analytics Dashboard</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Track inspection metrics and generate comprehensive reports</p>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Voice to text</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Dictate findings hands-free so inspectors can document quickly and accurately on the lot.
+                  </p>
                 </div>
               </div>
 
@@ -353,33 +355,39 @@ export default function Home() {
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src={FEATURE_IMAGES.fastEfficient}
-                    alt="Fast & Efficient - Streamlined workflow"
+                    src={FEATURE_IMAGES.analytics}
+                    alt="Analytics Dashboard - Data visualization"
                     fill
                     unoptimized
                     className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
                   />
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">
+                    Coming Soon
+                  </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Fast & Efficient</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Streamlined workflow reduces inspection time by up to 60%</p>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Analytics Dashboard</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Track inspection metrics and generate comprehensive reports</p>
                 </div>
               </div>
 
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
-                    src={FEATURE_IMAGES.voiceToText}
-                    alt="Voice to text - Inspector documenting findings"
+                    src={FEATURE_IMAGES.damageDetection}
+                    alt="AI damage detection identifying dents and scratches on vehicle bodywork"
                     fill
                     unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
+                    className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
                   />
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">
+                    Coming Soon
+                  </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Voice to text</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Damage detection</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">
-                    Dictate findings hands-free so inspectors can document quickly and accurately on the lot.
+                    AI powered damage detection identifying dents and scratches
                   </p>
                 </div>
               </div>
@@ -399,7 +407,23 @@ export default function Home() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src="/OEM%20and%20leieveyr%20partners.png"
+                    alt="OEM & Delivery Partners - Manufacturing and delivery"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">OEM Partners</div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">OEM & Delivery Partners</h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">Enforce consistent pre-delivery inspection standards at scale.</p>
+                </div>
+              </div>
+
               <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
@@ -429,38 +453,6 @@ export default function Home() {
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Fleet & Leasing Companies</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Standardise vehicle delivery across locations and suppliers.</p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src="/OEM%20and%20leieveyr%20partners.png"
-                    alt="OEM & Delivery Partners - Manufacturing and delivery"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">OEM Partners</div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">OEM & Delivery Partners</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Enforce consistent pre-delivery inspection standards at scale.</p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src="/insurers.png"
-                    alt="Insurers & Financiers - Insurance and finance"
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">Insurance</div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Insurers & Financiers</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Access verified condition records that stand up in claims and disputes.</p>
                 </div>
               </div>
             </div>

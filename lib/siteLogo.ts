@@ -22,6 +22,6 @@ export const FEATURE_IMAGES = {
   analytics: '/image%20(3).png',
   gpsPinning: '/image%20(4).png',
   secureCompliant: '/image%20(5).png',
-  fastEfficient: '/image%20(6).png',
   voiceToText: '/image%20(7).png',
+  damageDetection: '/image%201111.png',
 } as const;

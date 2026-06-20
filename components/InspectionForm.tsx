@@ -35,6 +35,7 @@ import {
   formProgressShellClass,
 } from '@/components/admin/AdminUI';
 import InspectionChecklistStep from '@/components/inspection/InspectionChecklistStep';
+import { isCaptureSessionActive } from '@/lib/capture-session';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -493,7 +494,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
 
   // Auto-save draft function
   const saveDraft = useCallback(async (silent = true) => {
-    if (readOnly || isSavingDraft || completingRef.current) return;
+    if (readOnly || isSavingDraft || completingRef.current || isCaptureSessionActive()) return;
     
     const values = getValues();
     
@@ -537,10 +538,13 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         if (result.success && result.data?._id) {
           savedDraftId = result.data._id;
           setDraftId(savedDraftId);
-          
-          // Move to the inspection detail route so refresh and step navigation stay consistent
-          if (!inspectionId && pathname?.startsWith('/inspection/new')) {
-            router.replace(`/inspections/${savedDraftId}?step=${currentStep}`, { scroll: false });
+
+          // Only navigate on explicit save — silent autosave must not remount the page mid-camera.
+          if (!silent && !inspectionId && pathname?.startsWith('/inspection/new')) {
+            router.replace(
+              `/inspections/${savedDraftId}?edit=1&step=${currentStep}`,
+              { scroll: false }
+            );
           }
           
           if (!silent) {
@@ -605,8 +609,8 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     };
     
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        saveDraft(true); // Silent save when tab becomes hidden
+      if (document.visibilityState === 'hidden' && !isCaptureSessionActive()) {
+        saveDraft(true); // Silent save when tab becomes hidden (not during camera)
       }
     };
     
@@ -625,6 +629,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     if (readOnly || !isAuthenticated) return;
     
     const debounceTimer = setTimeout(() => {
+      if (isCaptureSessionActive()) return;
       const values = getValues();
       // Only save if there's actual data entered
       if (values.inspectorName || values.inspectorEmail || values.inspectionDate || barcode || photos.length > 0 || walkAroundVideos.length > 0) {

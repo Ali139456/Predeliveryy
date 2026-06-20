@@ -9,6 +9,7 @@ import {
   scanTypeFromParse,
   type VinPlateParseResult,
 } from '@/lib/vin-plate-parser';
+import { beginCaptureSession } from '@/lib/capture-session';
 
 export interface VehicleScanPayload {
   raw: string;
@@ -332,6 +333,29 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
   };
 
   useEffect(() => {
+    if (!isScanning) return;
+    return beginCaptureSession();
+  }, [isScanning]);
+
+  useEffect(() => {
+    if (!isProcessingOCR) return;
+    return beginCaptureSession();
+  }, [isProcessingOCR]);
+
+  const openNativeImagePicker = (input: HTMLInputElement | null) => {
+    if (!input) return;
+    const endSession = beginCaptureSession();
+    const onFocus = () => {
+      window.setTimeout(() => {
+        endSession();
+        window.removeEventListener('focus', onFocus);
+      }, 400);
+    };
+    window.addEventListener('focus', onFocus);
+    input.click();
+  };
+
+  useEffect(() => {
     return () => {
       if (scannerRef.current) {
         stopScanning();
@@ -368,7 +392,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                 />
                 <button
                   type="button"
-                  onClick={() => cameraInputRef.current?.click()}
+                  onClick={() => openNativeImagePicker(cameraInputRef.current)}
                   disabled={isProcessingOCR}
                   className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#0033FF] text-white rounded-lg hover:bg-[#0029CC] shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
                 >
@@ -389,7 +413,7 @@ export default function BarcodeScanner({ onScan, value, scanType = 'ANY', readOn
                 />
                 <button
                   type="button"
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() => openNativeImagePicker(fileInputRef.current)}
                   disabled={isProcessingOCR}
                   className="flex items-center justify-center px-3 py-2 sm:px-4 bg-[#0033FF]/90 text-white rounded-lg hover:bg-[#0033FF]/80 border-2 border-[#0033FF]/50 shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm whitespace-nowrap shrink-0"
                 >

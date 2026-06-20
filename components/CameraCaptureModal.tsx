@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { X, Camera } from 'lucide-react';
+import { beginCaptureSession } from '@/lib/capture-session';
 
 type Props = {
   isOpen: boolean;
@@ -16,6 +17,11 @@ export default function CameraCaptureModal({ isOpen, onClose, onCaptured }: Prop
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    return beginCaptureSession();
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
