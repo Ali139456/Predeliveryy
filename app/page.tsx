@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Play } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Play, Mic } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { FEATURE_IMAGES, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 import HeroReportGraphic from '@/components/HeroReportGraphic';
@@ -266,131 +266,122 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.photoVideo}
-                    alt="Photo images and video walk around - Vehicle inspection"
-                    fill
-                    unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Photo images and Video walk around</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    Capture stills and video walk-arounds with GPS metadata and timestamps, organized for every inspection.
-                  </p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.vinCapture}
-                    alt="Vehicle Identity Capture - VIN scanning"
-                    fill
-                    unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Vehicle Identity Capture</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Digitally extract VIN and compliance information from vehicle labels to create a verified pre-delivery record</p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.gpsPinning}
-                    alt="GPS Pinning - Location services"
-                    fill
-                    unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">GPS Pinning</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Automatic location tracking for all inspection photos and activities</p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.voiceToText}
-                    alt="Voice to text - Inspector documenting findings"
-                    fill
-                    unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Voice to text</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    Dictate findings hands-free so inspectors can document quickly and accurately on the lot.
-                  </p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl flex flex-col">
-                <div className="relative h-56 shrink-0 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.secureCompliant}
-                    alt="Secure and compliant — enterprise-grade security with audit trails, role-based access, and encrypted data"
-                    fill
-                    unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Secure & Compliant</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    Enterprise-grade security with audit trails, role-based access, and encrypted data to keep your inspections safe and compliant.
-                  </p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.analytics}
-                    alt="Analytics Dashboard - Data visualization"
-                    fill
-                    unoptimized
-                    className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">
-                    Coming Soon
+              {[
+                {
+                  image: FEATURE_IMAGES.photoVideo,
+                  alt: 'Photo images and video walk around - Vehicle inspection',
+                  title: 'Photo images and Video walk around',
+                  badgeLabel: 'Photo images and Video walk around',
+                  BadgeIcon: Camera,
+                  description:
+                    'Capture stills and video walk-arounds with GPS metadata and timestamps, organized for every inspection.',
+                  hoverBorder: 'hover:border-[#0033FF]',
+                  titleHover: 'group-hover:text-[#0033FF]',
+                  objectPosition: 'object-center',
+                },
+                {
+                  image: FEATURE_IMAGES.vinCapture,
+                  alt: 'Vehicle Identity Capture - VIN scanning',
+                  title: 'Vehicle Identity Capture',
+                  badgeLabel: 'VIN Capture',
+                  BadgeIcon: ScanLine,
+                  description:
+                    'Digitally extract VIN and compliance information from vehicle labels to create a verified pre-delivery record',
+                  hoverBorder: 'hover:border-[#FF6600]',
+                  titleHover: 'group-hover:text-[#FF6600]',
+                  objectPosition: 'object-center',
+                },
+                {
+                  image: FEATURE_IMAGES.gpsPinning,
+                  alt: 'GPS Pinning - Location services',
+                  title: 'GPS Pinning',
+                  badgeLabel: 'GPS Pinning',
+                  BadgeIcon: MapPin,
+                  description: 'Automatic location tracking for all inspection photos and activities',
+                  hoverBorder: 'hover:border-[#0033FF]',
+                  titleHover: 'group-hover:text-[#0033FF]',
+                  objectPosition: 'object-center',
+                },
+                {
+                  image: FEATURE_IMAGES.voiceToText,
+                  alt: 'Voice to text - Inspector documenting findings',
+                  title: 'Voice to text',
+                  badgeLabel: 'Voice to text',
+                  BadgeIcon: Mic,
+                  description:
+                    'Dictate findings hands-free so inspectors can document quickly and accurately on the lot.',
+                  hoverBorder: 'hover:border-[#0033FF]',
+                  titleHover: 'group-hover:text-[#0033FF]',
+                  objectPosition: 'object-[center_45%]',
+                },
+                {
+                  image: FEATURE_IMAGES.secureCompliant,
+                  alt: 'Secure and compliant — enterprise-grade security with audit trails, role-based access, and encrypted data',
+                  title: 'Secure & Compliant',
+                  badgeLabel: 'Security',
+                  BadgeIcon: Shield,
+                  description:
+                    'Enterprise-grade security with audit trails, role-based access, and encrypted data to keep your inspections safe and compliant.',
+                  hoverBorder: 'hover:border-[#0033FF]',
+                  titleHover: 'group-hover:text-[#0033FF]',
+                  objectPosition: 'object-[center_40%]',
+                },
+                {
+                  image: FEATURE_IMAGES.analytics,
+                  alt: 'Analytics Dashboard - Data visualization',
+                  title: 'Analytics Dashboard',
+                  description: 'Track inspection metrics and generate comprehensive reports',
+                  hoverBorder: 'hover:border-[#FF6600]',
+                  titleHover: 'group-hover:text-[#FF6600]',
+                  objectPosition: 'object-center',
+                  comingSoon: true,
+                },
+                {
+                  image: FEATURE_IMAGES.damageDetection,
+                  alt: 'AI damage detection identifying dents and scratches on vehicle bodywork',
+                  title: 'Damage detection',
+                  description: 'AI powered damage detection identifying dents and scratches',
+                  hoverBorder: 'hover:border-[#0033FF]',
+                  titleHover: 'group-hover:text-[#0033FF]',
+                  objectPosition: 'object-center',
+                  comingSoon: true,
+                },
+              ].map(({ image, alt, title, badgeLabel, BadgeIcon, description, hoverBorder, titleHover, objectPosition, comingSoon }) => (
+                <div
+                  key={title}
+                  className={`group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 ${hoverBorder} transition-all duration-300 hover:shadow-xl flex flex-col`}
+                >
+                  <div className="relative h-52 sm:h-56 md:h-60 shrink-0 overflow-hidden bg-slate-100">
+                    <Image
+                      src={image}
+                      alt={alt}
+                      fill
+                      unoptimized
+                      className={`object-cover ${objectPosition} transition-transform duration-500 ease-out group-hover:scale-[1.02] origin-center`}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                    {badgeLabel && BadgeIcon ? (
+                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 inline-flex items-start gap-1.5 max-w-[calc(100%-1.25rem)] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#0033FF] text-white text-[11px] sm:text-xs font-bold rounded-lg shadow-md leading-snug pointer-events-none">
+                        <BadgeIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 mt-0.5" aria-hidden />
+                        <span>{badgeLabel}</span>
+                      </div>
+                    ) : null}
+                    {comingSoon ? (
+                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 px-3 py-1.5 bg-[#FF6600] text-white text-[11px] sm:text-xs font-bold rounded-lg shadow-md pointer-events-none">
+                        Coming Soon
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="p-5 sm:p-6 flex flex-col flex-1">
+                    <h3
+                      className={`text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900 ${titleHover} leading-snug min-h-[2.75rem] sm:min-h-[3.25rem]`}
+                    >
+                      {title}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed text-sm">{description}</p>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Analytics Dashboard</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">Track inspection metrics and generate comprehensive reports</p>
-                </div>
-              </div>
-
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={FEATURE_IMAGES.damageDetection}
-                    alt="AI damage detection identifying dents and scratches on vehicle bodywork"
-                    fill
-                    unoptimized
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">
-                    Coming Soon
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Damage detection</h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    AI powered damage detection identifying dents and scratches
-                  </p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
