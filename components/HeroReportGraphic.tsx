@@ -10,8 +10,8 @@ const REPORT_IMAGE_HEIGHT = 1812;
 /** Floating 3D-tilted inspection report (matches client hero mockup). */
 export default function HeroReportGraphic() {
   return (
-    <div className="hero-report-stage w-full flex justify-center lg:justify-end pointer-events-none select-none">
-      <div className="hero-report-3d relative w-full max-w-[min(100%,920px)] sm:max-w-[min(100%,980px)] lg:max-w-none lg:w-[128%] xl:w-[138%] 2xl:w-[148%]">
+    <div className="hero-report-stage w-full flex justify-center lg:justify-end pointer-events-none select-none max-w-full">
+      <div className="hero-report-3d relative w-full max-w-[min(100%,340px)] xs:max-w-[min(100%,400px)] sm:max-w-[min(100%,520px)] md:max-w-[min(100%,640px)] lg:max-w-none lg:w-[128%] xl:w-[138%] 2xl:w-[148%] mx-auto lg:mx-0">
         <div
           className="absolute -inset-10 sm:-inset-14 bg-[#0033FF]/12 blur-3xl rounded-[40%] pointer-events-none -z-10"
           aria-hidden

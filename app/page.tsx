@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero - client mockup layout */}
-      <div className="relative w-full overflow-hidden bg-[#f7f8fc] -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40 min-h-[calc(100dvh-8rem)] lg:min-h-[720px]">
+      <div className="relative w-full overflow-hidden bg-[#f7f8fc] -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40 min-h-0 lg:min-h-[720px]">
         <div
           className="absolute inset-0 opacity-70 pointer-events-none"
           style={{
@@ -33,8 +33,8 @@ export default function Home() {
 
         <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-14 lg:py-16 pb-24 lg:pb-28">
           <div className="max-w-7xl mx-auto relative">
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-10 lg:gap-x-4 lg:gap-y-6 items-start">
-              <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-5 sm:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-3 lg:order-none lg:col-start-1 lg:row-start-1">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-6 sm:gap-8 md:gap-10 lg:gap-x-4 lg:gap-y-6 items-start">
+              <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-4 sm:gap-5 md:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-1 lg:col-start-1 lg:row-start-1">
                 <h1 className="hero-h1 text-slate-900 hyphens-none">
                   <span className="text-[#FF6600]">Pre-Delivery Inspections</span>{' '}
                   <span className="text-[#0033FF]">Digitised</span>
@@ -94,13 +94,13 @@ export default function Home() {
 
               </div>
 
-              <div className="relative z-30 w-full min-w-0 flex justify-center lg:justify-end order-1 lg:order-none lg:col-start-2 lg:row-start-1 lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible">
+              <div className="relative z-30 w-full min-w-0 flex justify-center lg:justify-end order-2 lg:col-start-2 lg:row-start-1 lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible px-0 sm:px-2 md:px-4 lg:px-0">
                 <HeroReportGraphic />
               </div>
 
-              <div className="relative z-20 w-full flex justify-center lg:justify-end order-2 lg:order-none lg:col-start-2 lg:row-start-2 mt-2 sm:mt-3 lg:mt-0 lg:pt-2 xl:pt-4 lg:pr-6 xl:pr-10 2xl:pr-16">
-                <p className="inline-flex items-center gap-2.5 text-sm font-medium text-white text-center lg:text-right leading-snug max-w-[20rem] sm:max-w-md lg:max-w-lg">
-                  <Shield className="w-4 h-4 text-white shrink-0" aria-hidden />
+              <div className="relative z-20 w-full flex justify-center lg:justify-end order-3 lg:col-start-2 lg:row-start-2 mt-1 sm:mt-2 md:mt-3 lg:mt-0 lg:pt-2 xl:pt-4 lg:pr-6 xl:pr-10 2xl:pr-16 pb-2 sm:pb-4 lg:pb-0">
+                <p className="inline-flex items-center gap-2.5 text-sm font-medium text-slate-700 text-center lg:text-right leading-snug max-w-[20rem] sm:max-w-md lg:max-w-lg px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/95 backdrop-blur-sm shadow-md ring-1 ring-slate-200/80">
+                  <Shield className="w-4 h-4 text-[#0033FF] shrink-0" aria-hidden />
                   <span>Trusted by forward-thinking dealerships across Australia.</span>
                 </p>
               </div>
@@ -380,7 +380,7 @@ export default function Home() {
                     unoptimized
                     className="object-cover object-center group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">
                     Coming Soon
                   </div>
                 </div>

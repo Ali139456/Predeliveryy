@@ -129,7 +129,18 @@
   }
   @media (max-width: 1023px) {
     .hero-report-3d {
-      transform: rotateY(-5deg) rotateX(3deg) rotateZ(1deg) scale(1.02);
+      transform: rotateY(-4deg) rotateX(2deg) rotateZ(0.5deg) scale(1);
+    }
+    .hero-report-stage {
+      padding-bottom: 1.25rem;
+    }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .hero-report-3d {
+      transform: rotateY(-5deg) rotateX(3deg) rotateZ(1deg) scale(1.01);
+    }
+    .hero-report-stage {
+      padding-bottom: 1.75rem;
     }
   }
   @media (min-width: 1024px) {
