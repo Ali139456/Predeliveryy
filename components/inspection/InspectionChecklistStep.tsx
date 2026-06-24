@@ -254,7 +254,7 @@ function ChecklistItemCard({
       </div>
 
       {/* Notes label */}
-      <div className="px-3 sm:px-4 -mt-1 mb-2">
+      <div className="px-3 sm:px-4 pt-3 sm:pt-4 mb-2">
         <p className="text-[11px] font-bold tracking-wide text-slate-500 uppercase">Notes</p>
       </div>
 
