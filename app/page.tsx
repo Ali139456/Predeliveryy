@@ -97,13 +97,6 @@ export default function Home() {
               <div className="relative z-30 w-full min-w-0 flex justify-center lg:justify-end order-2 lg:col-start-2 lg:row-start-1 lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible px-0 sm:px-2 md:px-4 lg:px-0">
                 <HeroReportGraphic />
               </div>
-
-              <div className="relative z-20 w-full flex justify-center lg:justify-end order-3 lg:col-start-2 lg:row-start-2 mt-1 sm:mt-2 md:mt-3 lg:mt-0 lg:pt-2 xl:pt-4 lg:pr-6 xl:pr-10 2xl:pr-16 pb-2 sm:pb-4 lg:pb-0">
-                <p className="inline-flex items-center gap-2.5 text-sm font-medium text-slate-700 text-center lg:text-right leading-snug max-w-[20rem] sm:max-w-md lg:max-w-lg px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl bg-white/95 backdrop-blur-sm shadow-md ring-1 ring-slate-200/80">
-                  <Shield className="w-4 h-4 text-[#0033FF] shrink-0" aria-hidden />
-                  <span>Trusted by forward-thinking dealerships across Australia.</span>
-                </p>
-              </div>
             </div>
           </div>
         </div>
@@ -431,7 +424,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#FF6600] transition-all duration-300 hover:shadow-xl">
+              <div className="group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 hover:border-[#0033FF] transition-all duration-300 hover:shadow-xl">
                 <div className="relative h-56 overflow-hidden">
                   <Image
                     src="/fleet%20and%20leasing.png"
@@ -439,10 +432,10 @@ export default function Home() {
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#FF6600] text-white text-xs font-bold rounded-full">Fleet & Leasing</div>
+                  <div className="absolute top-4 left-4 px-3 py-1 bg-[#0033FF] text-white text-xs font-bold rounded-full">Fleet & Leasing</div>
                 </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#FF6600]">Fleet & Leasing Companies</h3>
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-[#0033FF]">Fleet & Leasing Companies</h3>
                   <p className="text-gray-600 leading-relaxed text-sm">Standardise vehicle delivery across locations and suppliers.</p>
                 </div>
               </div>
@@ -558,7 +551,6 @@ export default function Home() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
               <Link href="/contact" className="bg-[#FF6600] hover:bg-[#E65C00] text-white font-bold px-10 py-4 rounded-lg border-2 border-white/30 transition-all flex items-center gap-2 hover:scale-105 text-lg shadow-xl">
-                <Phone className="w-5 h-5" />
                 Schedule Demo
               </Link>
             </div>
