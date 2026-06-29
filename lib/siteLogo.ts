@@ -12,8 +12,8 @@ export const SITE_LOGO_ALT = 'Pre Delivery' as const;
 export const SITE_HERO_MOBILE_GRAPHICS_SRC =
   '/Pre%20Delivery%20Mobile%20App%20Graphics.png' as const;
 
-/** Hero inspection report graphic (`public/Pre Delivery Design new.png`). */
-export const SITE_HERO_REPORT_SRC = '/Pre%20Delivery%20Design%20new.png' as const;
+/** Hero inspection report graphic (`public/Pre Delivery Design (1).png`). */
+export const SITE_HERO_REPORT_SRC = '/Pre%20Delivery%20Design%20(1).png' as const;
 
 /** Powerful Features section card images (`public/image (1).png` … `image (7).png`). */
 export const FEATURE_IMAGES = {

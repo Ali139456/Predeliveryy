@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { SITE_HERO_REPORT_SRC } from '@/lib/siteLogo';
 
-/** Native pixel size of public/Pre Delivery Design new.png — keep in sync if the asset is replaced. */
+/** Native pixel size of public/Pre Delivery Design (1).png — keep in sync if the asset is replaced. */
 const REPORT_IMAGE_WIDTH = 2736;
 const REPORT_IMAGE_HEIGHT = 1812;
 
