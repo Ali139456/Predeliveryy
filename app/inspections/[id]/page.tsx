@@ -8,6 +8,7 @@ import { ArrowLeft, Send, FileText, Lock, List, Printer, ClipboardCheck, Pencil 
 import { useAuth } from '@/contexts/AuthContext';
 import PageContainer from '@/components/PageContainer';
 import { isReadOnlyRole } from '@/lib/roles';
+import { canUserEditInspection } from '@/lib/inspection-edit';
 
 // Lazy load heavy components
 const InspectionForm = dynamic(() => import('@/components/InspectionForm'), {
@@ -49,15 +50,7 @@ function InspectionDetailContent() {
   const isCompleted = inspection?.status === 'completed';
   const showReport = isCompleted && viewMode === 'report';
 
-  const canEditInspection = (() => {
-    if (!user || !inspection) return false;
-    const isOwner =
-      String(user.email || '').toLowerCase() ===
-      String(inspection.inspectorEmail || '').toLowerCase();
-    if (isReadOnlyRole(user.role ?? '')) return false;
-    if (user.role === 'admin' || isOwner) return true;
-    return false;
-  })();
+  const canEditInspection = canUserEditInspection(user, inspection);
 
   const isFormReadOnly = (() => {
     if (!user) return false;
@@ -97,6 +90,11 @@ function InspectionDetailContent() {
       setLoading(false);
     }
   }, [params.id, user, authLoading]);
+
+  useEffect(() => {
+    if (!inspection || inspection.status !== 'completed' || !isEditMode || !canEditInspection) return;
+    setViewMode('form');
+  }, [inspection, isEditMode, canEditInspection]);
 
   const fetchInspection = async () => {
     try {
@@ -211,6 +209,16 @@ function InspectionDetailContent() {
           </Link>
 
           <div className="flex flex-row flex-wrap justify-end gap-2 w-full sm:w-auto sm:ml-auto">
+            {isCompleted && canEditInspection && showReport && (
+              <button
+                type="button"
+                onClick={() => setViewMode('form')}
+                className="flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0033FF] text-white rounded-xl font-semibold hover:bg-[#0029CC] transition-all text-sm sm:text-base shrink-0"
+              >
+                <Pencil className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
+                Edit report
+              </button>
+            )}
             {isCompleted && (
               <button
                 type="button"
@@ -320,7 +328,7 @@ function InspectionDetailContent() {
                           <Lock className="w-3.5 h-3.5 shrink-0" aria-hidden />
                           View only
                         </span>
-                      ) : user?.role === 'admin' ? (
+                      ) : user?.role === 'admin' || canEditInspection ? (
                         <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#0033FF]/10 text-[#0033FF] ring-1 ring-[#0033FF]/20 shadow-sm">
                           <Pencil className="w-3.5 h-3.5 shrink-0" aria-hidden />
                           Edit mode

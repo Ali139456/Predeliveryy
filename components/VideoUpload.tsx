@@ -81,9 +81,6 @@ function VideoUpload({
           </button>
         )}
       </div>
-      <p className="text-xs text-gray-600">
-        Short walk-around clips of the vehicle (MP4/WebM). Optional - stored with this inspection.
-      </p>
 
       <input
         ref={fileInputRef}

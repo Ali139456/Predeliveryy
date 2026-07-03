@@ -376,15 +376,15 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                       <Edit className="w-3.5 h-3.5 mr-1.5" />
                       Edit
                     </Link>
-                  ) : (
-                    <Link
-                      href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
-                      className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md"
-                    >
-                      <Eye className="w-3.5 h-3.5 mr-1.5" />
-                      View
-                    </Link>
-                  )}
+                      ) : (
+                        <Link
+                          href={`/inspections/${inspection.id ?? inspection._id}?edit=1`}
+                          className="inline-flex flex-1 min-w-[8rem] items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 shadow-md"
+                        >
+                          <Edit className="w-3.5 h-3.5 mr-1.5" />
+                          Edit
+                        </Link>
+                      )}
                   <button
                     type="button"
                     onClick={async () => {
@@ -496,11 +496,11 @@ function OverviewTab({ stats, onRefetch }: { stats: Stats | null; onRefetch?: ()
                         </Link>
                       ) : (
                         <Link
-                          href={`/inspections/${inspection.id ?? inspection._id}?view=readonly`}
+                          href={`/inspections/${inspection.id ?? inspection._id}?edit=1`}
                           className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105 shrink-0"
                         >
-                          <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                          <span className="hidden sm:inline">View</span>
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
+                          <span className="hidden sm:inline">Edit</span>
                         </Link>
                       )}
                       <button

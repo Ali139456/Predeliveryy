@@ -86,9 +86,9 @@ export async function PUT(
       const inspectorMatches =
         !inspection.inspectorEmail ||
         inspection.inspectorEmail.toLowerCase() === userDoc.email?.toLowerCase();
-      if (inspection.status !== 'draft' || !inspectorMatches) {
+      if (!inspectorMatches) {
         return NextResponse.json(
-          { success: false, error: 'Forbidden: You can only edit your own draft inspections' },
+          { success: false, error: 'Forbidden: You can only edit your own inspections' },
           { status: 403 }
         );
       }

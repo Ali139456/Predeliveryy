@@ -1491,12 +1491,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
               );
             })}
           </div>
-          <p className="text-xs text-gray-600">
-            General photos are not required to continue-repair items use photos on the checklist.
-          </p>
         </div>
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <h4 className="text-sm font-bold text-black mb-2">Walk-around video (optional)</h4>
+          <h4 className="text-sm font-bold text-black mb-2">Walk-around video</h4>
           <div className="text-black">
             <VideoUpload videos={walkAroundVideos} onVideosChange={setWalkAroundVideos} readOnly={readOnly} />
           </div>
