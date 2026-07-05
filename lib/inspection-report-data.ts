@@ -1,8 +1,17 @@
 ﻿import type { IInspection, InspectionChecklistCategory, InspectionPhoto } from '@/types/db';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import {
-  hasDealerAccessoriesSelected,
-} from '@/lib/dealer-accessories';
+  accessoriesBadgeOk,
+  accessoriesBadgeStatus,
+  batteryChecksOk,
+  buildAccessoriesEvidence,
+  buildBatteryEvidence,
+  buildConditionEvidence,
+  buildOdometerEvidence,
+  buildPhotosEvidence,
+  buildVinEvidence,
+  reportCategoryAnchorId,
+} from '@/lib/verification-badge-evidence';
 import {
   isReportItemNotApplicable,
   isReportItemPass,
@@ -224,7 +233,11 @@ export type VerificationBadge = {
   label: string;
   status: string;
   ok: boolean;
+  anchorId: string;
+  evidence: string[];
 };
+
+export { reportCategoryAnchorId } from '@/lib/verification-badge-evidence';
 
 export function buildVerificationBadges(inspection: IInspection): VerificationBadge[] {
   const v = inspection.vehicleInfo;
@@ -233,6 +246,8 @@ export function buildVerificationBadges(inspection: IInspection): VerificationBa
     /exterior/i.test(c.category)
   );
   const exteriorOk = exteriorCat ? reportCategorySummary(exteriorCat).categoryPass : true;
+  const batteryOk = batteryChecksOk(inspection);
+  const accessoriesOk = accessoriesBadgeOk(inspection);
 
   return [
     {
@@ -240,36 +255,48 @@ export function buildVerificationBadges(inspection: IInspection): VerificationBa
       label: 'VIN',
       status: v?.vin ? 'Verified' : 'Pending',
       ok: !!v?.vin,
+      anchorId: 'report-field-vin',
+      evidence: buildVinEvidence(inspection),
     },
     {
       key: 'odometer',
       label: 'Odometer',
       status: v?.odometer ? 'Verified' : 'Pending',
       ok: !!v?.odometer,
+      anchorId: 'report-field-odometer',
+      evidence: buildOdometerEvidence(inspection),
     },
     {
       key: 'condition',
       label: 'Condition',
       status: exteriorOk ? 'Verified' : 'Review',
       ok: exteriorOk,
+      anchorId: reportCategoryAnchorId(exteriorCat?.category || 'Exterior'),
+      evidence: buildConditionEvidence(inspection),
     },
     {
       key: 'accessories',
       label: 'Accessories',
-      status: hasDealerAccessoriesSelected(inspection.dealerAccessoriesFitted) ? 'Verified' : 'None recorded',
-      ok: hasDealerAccessoriesSelected(inspection.dealerAccessoriesFitted),
+      status: accessoriesBadgeStatus(inspection),
+      ok: accessoriesOk,
+      anchorId: reportCategoryAnchorId('Final QC'),
+      evidence: buildAccessoriesEvidence(inspection),
     },
     {
       key: 'ev',
       label: 'EV Battery',
-      status: 'Tested',
-      ok: true,
+      status: batteryOk ? 'Tested' : 'Review',
+      ok: batteryOk,
+      anchorId: reportCategoryAnchorId('Under Bonnet'),
+      evidence: buildBatteryEvidence(inspection),
     },
     {
       key: 'photos',
       label: 'Photos',
       status: photos.length > 0 ? 'Verified' : 'Pending',
       ok: photos.length > 0,
+      anchorId: 'report-photos',
+      evidence: buildPhotosEvidence(inspection, photos),
     },
   ];
 }

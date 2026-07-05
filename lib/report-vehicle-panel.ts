@@ -58,12 +58,19 @@ function esc(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
+function fieldAnchorId(label: string): string | undefined {
+  if (label === 'VIN') return 'report-field-vin';
+  if (label === 'Odometer') return 'report-field-odometer';
+  return undefined;
+}
+
 function detailColumnHtml(pairs: VehicleDetailPair[]): string {
   return pairs
-    .map(
-      (p) =>
-        `<div class="report-detail-row"><span class="report-detail-label">${esc(p.label)}</span><span class="report-detail-value">${esc(p.value)}</span></div>`
-    )
+    .map((p) => {
+      const id = fieldAnchorId(p.label);
+      const idAttr = id ? ` id="${id}"` : '';
+      return `<div class="report-detail-row"${idAttr}><span class="report-detail-label">${esc(p.label)}</span><span class="report-detail-value">${esc(p.value)}</span></div>`;
+    })
     .join('');
 }
 

@@ -9,6 +9,7 @@ import {
   getHeroPhotoUrl,
   orderChecklistForReport,
   reportCategorySummary,
+  reportCategoryAnchorId,
   reportItemStatusLabel,
 } from '@/lib/inspection-report-data';
 import ReportVerificationBadges from '@/components/report/ReportVerificationBadges';
@@ -86,7 +87,8 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
               return (
                 <div
                   key={cat.category}
-                  className="report-checklist-category border border-[var(--report-border)] rounded-sm overflow-hidden bg-white"
+                  id={reportCategoryAnchorId(cat.category)}
+                  className="report-checklist-category border border-[var(--report-border)] rounded-sm overflow-hidden bg-white scroll-mt-24"
                 >
                   <div className="bg-[#0033FF] text-white text-[10px] font-bold uppercase px-2 py-1.5 text-center">
                     {cat.category}
@@ -123,7 +125,10 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
         </section>
 
         {/* Photos */}
-        <section className="report-section-tight border-b border-[var(--report-border)]">
+        <section
+          id="report-photos"
+          className="report-section-tight border-b border-[var(--report-border)] scroll-mt-24"
+        >
           <h3 className="text-[11px] font-bold text-[#0033FF] uppercase mb-2">
             Inspection photos ({photos.length})
           </h3>

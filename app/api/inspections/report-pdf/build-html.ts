@@ -11,6 +11,7 @@ import {
   formatReportDateTime,
   getHeroPhotoUrl,
   orderChecklistForReport,
+  reportCategoryAnchorId,
   reportItemStatusLabel,
   reportCategorySummary,
   type ReportPhoto,
@@ -111,7 +112,7 @@ function renderReportBody(
         .join('');
       const countLabel =
         summary.total > 0 ? `${summary.passed} / ${summary.total} checks` : 'No checks';
-      return `<div class="report-checklist-category border border-[var(--report-border)] rounded-sm overflow-hidden bg-white">
+      return `<div id="${esc(reportCategoryAnchorId(cat.category))}" class="report-checklist-category border border-[var(--report-border)] rounded-sm overflow-hidden bg-white">
         <div class="bg-[#0033FF] text-white text-[10px] font-bold uppercase px-2 py-1.5 text-center">${esc(cat.category)}</div>
         <ul class="text-[9px]">${itemsHtml}</ul>
         <p class="border-t border-[var(--report-border)] bg-slate-50 px-2 py-1 text-center text-[8px] font-bold uppercase tracking-wide text-[#0033FF]">${esc(countLabel)}</p>
@@ -174,7 +175,7 @@ function renderReportBody(
       <h3 class="text-[11px] font-bold text-[#0033FF] uppercase mb-2 tracking-wide">Inspection categories</h3>
       <div class="report-checklist-grid">${checklistHtml}</div>
     </section>
-    <section class="report-section-tight border-b border-[var(--report-border)]">
+    <section id="report-photos" class="report-section-tight border-b border-[var(--report-border)]">
       <h3 class="text-[11px] font-bold text-[#0033FF] uppercase mb-2">Inspection photos (${photos.length})</h3>
       ${photosHtml}
     </section>

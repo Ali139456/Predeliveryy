@@ -84,6 +84,29 @@
   page-break-inside: avoid;
 }
 
+.report-badge-target-flash {
+  animation: report-badge-flash 1.8s ease-out;
+  border-radius: 4px;
+}
+
+@keyframes report-badge-flash {
+  0%,
+  15% {
+    background-color: rgba(255, 102, 0, 0.22);
+    box-shadow: 0 0 0 2px rgba(0, 51, 255, 0.35);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+@media print {
+  .report-badge-cell button {
+    pointer-events: none;
+  }
+}
+
 @media print {
   @page {
     size: A4 portrait;

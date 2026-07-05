@@ -8,9 +8,17 @@ import {
 } from '@/lib/report-vehicle-panel';
 import { getVehicleTitle } from '@/lib/inspection-report-data';
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function DetailRow({
+  label,
+  value,
+  fieldId,
+}: {
+  label: string;
+  value: string;
+  fieldId?: string;
+}) {
   return (
-    <div className="report-detail-row space-y-0.5">
+    <div id={fieldId} className="report-detail-row space-y-0.5 scroll-mt-24">
       <span className="report-detail-label block font-bold text-[#0033FF] uppercase text-[10px] leading-tight">
         {label}
       </span>
@@ -58,7 +66,18 @@ export default function ReportVehicleResultPanel({ inspection, heroUrl }: Report
           <div className="report-vehicle-columns grid grid-cols-2 gap-0 min-w-0 divide-x divide-[var(--report-border)]">
             <div className="report-vehicle-col pr-3 space-y-2">
               {col1.map((p) => (
-                <DetailRow key={p.label} label={p.label} value={p.value} />
+                <DetailRow
+                  key={p.label}
+                  label={p.label}
+                  value={p.value}
+                  fieldId={
+                    p.label === 'VIN'
+                      ? 'report-field-vin'
+                      : p.label === 'Odometer'
+                        ? 'report-field-odometer'
+                        : undefined
+                  }
+                />
               ))}
             </div>
             <div className="report-vehicle-col pl-3 space-y-2">
