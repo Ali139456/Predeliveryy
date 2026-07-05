@@ -31,6 +31,7 @@ export async function uploadToVercelBlobViaAPI(file: File): Promise<UploadResult
   const response = await fetch('/api/upload', {
     method: 'POST',
     body: formData,
+    credentials: 'include',
   });
 
   if (!response.ok) {

@@ -5,24 +5,42 @@ import {
   hasSupabaseStorageConfig,
 } from '@/lib/supabase-storage';
 import { getS3Url } from '@/lib/s3';
+import { assertTenantScopedStorageKey } from '@/lib/file-access';
+import { isRavinDamageEnabled } from '@/lib/damage-detection/ravin';
 import type { VisionDamageFinding, VisionDamageResult } from '@/types/vision-damage';
+
+export { assertTenantScopedStorageKey };
 
 const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads');
 
-export function isVisionDamageEnabled(): boolean {
+export function isOpenAiDamageEnabled(): boolean {
   if (process.env.OPENAI_VISION_DAMAGE_ENABLED === 'false') return false;
   return !!(process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY.trim());
 }
 
-export function assertTenantScopedStorageKey(storageKey: string, tenantId: string): void {
-  const normalized = storageKey.replace(/^\/+/, '');
-  const prefix = `tenants/${tenantId}/`;
-  if (!normalized.startsWith(prefix)) {
-    throw new Error('Invalid storage key for this tenant');
+/** @deprecated Use isDamageDetectionEnabled from @/lib/damage-detection */
+export function isVisionDamageEnabled(): boolean {
+  if (process.env.DAMAGE_DETECTION_ENABLED === 'false') return false;
+  return isOpenAiDamageEnabled() || isRavinDamageEnabled();
+}
+
+function imageMimeFromBuffer(buffer: Buffer): string {
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) {
+    return 'image/jpeg';
   }
-  if (normalized.includes('..')) {
-    throw new Error('Invalid storage key');
+  if (
+    buffer.length >= 8 &&
+    buffer[0] === 0x89 &&
+    buffer[1] === 0x50 &&
+    buffer[2] === 0x4e &&
+    buffer[3] === 0x47
+  ) {
+    return 'image/png';
   }
+  if (buffer.length >= 12 && buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP') {
+    return 'image/webp';
+  }
+  return 'image/jpeg';
 }
 
 /** Load inspection image bytes from Supabase, S3 signed URL, or local uploads fallback. */
@@ -145,12 +163,14 @@ export async function detectVehicleDamageFromBuffer(
       ? `\nInspection context: ${contextParts.join('. ')}.`
       : '';
 
+  const mime = imageMimeFromBuffer(imageBuffer);
   const base64 = imageBuffer.toString('base64');
-  const dataUrl = `data:image/jpeg;base64,${base64}`;
+  const dataUrl = `data:${mime};base64,${base64}`;
 
   const systemPrompt = `You are an expert automotive pre-delivery inspection assistant for the Australian market.
-Analyse the vehicle photo for visible exterior or tyre damage (scratches, dents, chips, cracks, rust, paint damage, misalignment, curb rash, tyre wear, sidewall damage, etc.).
-Be conservative: only report damage you can reasonably see. Do not invent damage.
+Analyse the vehicle photo for visible exterior or tyre damage including scratches, scuffs, paint transfer, swirl marks, dents, chips, cracks, rust, paint damage, misalignment, curb rash, tyre wear, and sidewall damage.
+Pay special attention to subtle scuffs and light paint marks on panels — report them as minor findings when visible, even on dark paint.
+Do not invent damage that is not visible. If uncertain, include a finding with confidence "low" rather than omitting it.
 If the image is unclear, empty, or not a vehicle part, set noDamageFound true and explain briefly in summary.
 Output ONLY valid JSON with this exact shape:
 {
@@ -158,7 +178,7 @@ Output ONLY valid JSON with this exact shape:
   "noDamageFound": boolean,
   "findings": [
     {
-      "label": "short description e.g. Scratch - driver front door",
+      "label": "short description e.g. Scuff - driver front door",
       "severity": "minor" | "moderate" | "major",
       "x": 0.0-1.0,
       "y": 0.0-1.0,
@@ -167,7 +187,7 @@ Output ONLY valid JSON with this exact shape:
   ]
 }
 x and y are normalized coordinates (0=left/top, 1=right/bottom) for the centre of each visible defect.
-Maximum 8 findings. Use Australian English.`;
+Maximum 12 findings. Use Australian English.`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -184,7 +204,7 @@ Maximum 8 findings. Use Australian English.`;
           content: [
             {
               type: 'text',
-              text: `Analyse this pre-delivery inspection photo for damage.${contextLine} Return JSON only.`,
+              text: `Analyse this pre-delivery inspection photo for all visible damage including light scuffs and paint marks.${contextLine} Return JSON only.`,
             },
             { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
           ],

@@ -50,3 +50,21 @@ export function getPhotoDisplayUrl(photo: string | { fileName?: string; url?: st
   if (fileName.startsWith('http://') || fileName.startsWith('https://')) return fileName;
   return `/api/files/${fileName}`;
 }
+
+/** Same-origin stream URL for video — avoids Safari/iPad issues with auth redirect chains. */
+export function getVideoDisplayUrl(video: string | { fileName?: string; url?: string }): string {
+  if (typeof video === 'string') {
+    if (video.startsWith('http://') || video.startsWith('https://')) return video;
+    if (video.startsWith('tenants/')) {
+      return `/api/files/stream?key=${encodeURIComponent(video)}`;
+    }
+    return getPhotoDisplayUrl(video);
+  }
+
+  const fileName = video.fileName?.trim() ?? '';
+  if (fileName.startsWith('tenants/') && fileName.includes('/videos/')) {
+    return `/api/files/stream?key=${encodeURIComponent(fileName)}`;
+  }
+
+  return getPhotoDisplayUrl(video);
+}

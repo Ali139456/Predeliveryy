@@ -3,7 +3,7 @@
 import { useState, useRef, memo } from 'react';
 import { X, Upload, Film } from 'lucide-react';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
-import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
+import { getVideoDisplayUrl } from '@/lib/photoDisplayUrl';
 
 export interface WalkAroundVideo {
   fileName: string;
@@ -94,11 +94,17 @@ function VideoUpload({
       {videos.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {videos.map((v, index) => {
-            const src = getPhotoDisplayUrl(v);
+            const src = getVideoDisplayUrl(v);
             if (!src) return null;
             return (
               <div key={`${v.fileName}-${index}`} className="relative group rounded-lg overflow-hidden border border-slate-600/50 bg-black/40">
-                <video src={src} className="w-full max-h-56 object-contain" controls playsInline preload="metadata" />
+                <video
+                  src={src}
+                  className="w-full max-h-56 object-contain"
+                  controls
+                  playsInline
+                  preload="metadata"
+                />
                 {!readOnly && (
                   <button
                     type="button"

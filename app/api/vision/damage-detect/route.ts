@@ -3,10 +3,10 @@ import { getCurrentUser } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
 import {
   assertTenantScopedStorageKey,
-  detectVehicleDamageFromBuffer,
-  isVisionDamageEnabled,
-  loadInspectionImageBuffer,
-} from '@/lib/vision-damage';
+  detectVehicleDamage,
+  isDamageDetectionEnabled,
+} from '@/lib/damage-detection';
+import { loadInspectionImageBuffer } from '@/lib/vision-damage';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -28,12 +28,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!isVisionDamageEnabled()) {
+    if (!isDamageDetectionEnabled()) {
       return NextResponse.json(
         {
           success: false,
           disabled: true,
-          error: 'AI damage detection is not configured. Set OPENAI_API_KEY on the server.',
+          error:
+            'AI damage detection is not configured. Set OPENAI_API_KEY or Ravin API credentials on the server.',
         },
         { status: 503 }
       );
@@ -64,11 +65,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (buffer.length > 8 * 1024 * 1024) {
+    if (buffer.length > 12 * 1024 * 1024) {
       return NextResponse.json({ success: false, error: 'Image too large for analysis' }, { status: 400 });
     }
 
-    const result = await detectVehicleDamageFromBuffer(buffer, {
+    const result = await detectVehicleDamage(buffer, {
       itemName,
       panelHint,
       context,

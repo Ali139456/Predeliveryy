@@ -327,7 +327,7 @@ export default function Home() {
                   hoverBorder: 'hover:border-[#0033FF]',
                   titleHover: 'group-hover:text-[#0033FF]',
                   objectPosition: 'object-center',
-                  newRow: true,
+                  comingSoon: true,
                 },
                 {
                   image: FEATURE_IMAGES.analytics,
@@ -339,10 +339,10 @@ export default function Home() {
                   objectPosition: 'object-center',
                   comingSoon: true,
                 },
-              ].map(({ image, alt, title, badgeLabel, BadgeIcon, description, hoverBorder, titleHover, objectPosition, comingSoon, newRow }) => (
+              ].map(({ image, alt, title, badgeLabel, BadgeIcon, description, hoverBorder, titleHover, objectPosition, comingSoon }) => (
                 <div
                   key={title}
-                  className={`group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 ${hoverBorder} transition-all duration-300 hover:shadow-xl flex flex-col${newRow ? ' lg:col-start-1' : ''}`}
+                  className={`group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 ${hoverBorder} transition-all duration-300 hover:shadow-xl flex flex-col`}
                 >
                   <div className="relative h-52 sm:h-56 md:h-60 shrink-0 overflow-hidden bg-slate-100">
                     <Image

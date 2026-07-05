@@ -5,6 +5,7 @@ import { X, Camera, Image as ImageIcon, MapPin, Sparkles, Loader2 } from 'lucide
 import ImageLightbox from './ImageLightbox';
 import CameraCaptureModal from './CameraCaptureModal';
 import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
+import { compressInspectionImage } from '@/lib/compressInspectionImage';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { requestVisionDamageDetect } from '@/lib/visionDamageClient';
 import { applyVisionResultToPhoto } from '@/lib/applyVisionToPhoto';
@@ -236,31 +237,7 @@ function ItemPhotoUpload({
   }, [openCameraRef, maxPhotos, photos.length, readOnly]);
 
   const compressImage = useCallback(async (file: File): Promise<File> => {
-    if (!file.type.startsWith('image/')) return file;
-    try {
-      const bitmap = await createImageBitmap(file);
-      const maxDim = 1400;
-      const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
-      const targetW = Math.max(1, Math.round(bitmap.width * scale));
-      const targetH = Math.max(1, Math.round(bitmap.height * scale));
-
-      const canvas = document.createElement('canvas');
-      canvas.width = targetW;
-      canvas.height = targetH;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return file;
-      ctx.drawImage(bitmap, 0, 0, targetW, targetH);
-
-      const blob: Blob | null = await new Promise((resolve) =>
-        canvas.toBlob(resolve, 'image/jpeg', 0.76)
-      );
-      if (!blob) return file;
-
-      const name = file.name.replace(/\.(png|webp|heic|heif|jpg|jpeg)$/i, '.jpg');
-      return new File([blob], name, { type: 'image/jpeg', lastModified: Date.now() });
-    } catch {
-      return file;
-    }
+    return compressInspectionImage(file);
   }, []);
 
   const runVisionOnPhoto = useCallback(
