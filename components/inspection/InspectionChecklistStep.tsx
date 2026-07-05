@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import type { UseFormGetValues, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import ItemPhotoUpload from '@/components/ItemPhotoUpload';
+import VoiceNotesButton from '@/components/VoiceNotesButton';
 import DealerAccessoriesPicker from '@/components/DealerAccessoriesPicker';
 import type { DealerAccessoriesFitted } from '@/lib/dealer-accessories';
 
