@@ -102,15 +102,9 @@
 }
 
 @media print {
-  .report-badge-cell button {
-    pointer-events: none;
-  }
-}
-
-@media print {
   @page {
     size: A4 portrait;
-    margin: 6mm;
+    margin: 5mm;
   }
 
   html,
@@ -120,30 +114,106 @@
     print-color-adjust: exact;
   }
 
-  .no-print {
+  .no-print,
+  .report-badge-evidence-panel,
+  [id^='report-badge-detail-'] {
     display: none !important;
+  }
+
+  .app-surface,
+  .container,
+  .max-w-7xl {
+    background: #fff !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: none !important;
   }
 
   .inspection-report-root {
     padding: 0 !important;
+    margin: 0 !important;
   }
 
   .inspection-report-sheet {
     box-shadow: none !important;
+    border: none !important;
     max-width: none !important;
     width: 100% !important;
+  }
+
+  .report-section-tight {
+    padding: 0.3rem 0.45rem !important;
+  }
+
+  .report-page-1,
+  .report-vehicle-result-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report-vehicle-result-row {
+    padding: 0.35rem !important;
+  }
+
+  .report-detail-label {
+    font-size: 8px !important;
+  }
+
+  .report-detail-value {
+    font-size: 9px !important;
+  }
+
+  .report-badges-grid {
+    gap: 2px !important;
+  }
+
+  .report-badge-cell button {
+    pointer-events: none;
+  }
+
+  .report-badge-cell .h-11.w-11 {
+    height: 2rem !important;
+    width: 2rem !important;
+  }
+
+  .report-badge-cell .h-11.w-11 [class*='h-5'] {
+    height: 0.85rem !important;
+    width: 0.85rem !important;
   }
 
   .report-checklist-grid {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 4px !important;
+    gap: 3px !important;
     width: 100% !important;
   }
 
-  .report-photo-cell {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  .report-checklist-category {
+    font-size: 8px;
+  }
+
+  .report-checklist-category ul {
+    font-size: 7.5px !important;
+  }
+
+  .report-checklist-category li {
+    padding-top: 0.15rem !important;
+    padding-bottom: 0.15rem !important;
+  }
+
+  .report-photos-grid {
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+    gap: 2px !important;
+  }
+
+  .report-photo-cell img {
+    object-fit: cover;
+  }
+
+  .report-photo-cell p {
+    font-size: 6.5px !important;
+    line-height: 1.1 !important;
+    margin-top: 0.1rem !important;
   }
 
   .report-page-1 {

@@ -195,8 +195,8 @@ function InspectionDetailContent() {
   }
 
   return (
-    <div className="app-surface min-h-screen min-w-0">
-      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8 print:pt-0 print:pb-0">
+    <div className="app-surface min-h-screen min-w-0 print:min-h-0 print:bg-white">
+      <PageContainer className="pt-10 sm:pt-6 pb-6 sm:pb-8 print:pt-0 print:pb-0 print:px-0">
         <div className="no-print flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6">
           <Link
             href="/inspections"

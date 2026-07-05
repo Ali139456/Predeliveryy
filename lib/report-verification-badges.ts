@@ -15,7 +15,7 @@ export function verificationBadgesHtml(badges: VerificationBadge[]): string {
       const statusTone = badge.ok ? 'text-[#FF6600]' : 'text-slate-500';
       const evidenceHtml =
         badge.evidence.length > 0
-          ? `<ul class="mt-1 space-y-0.5 text-left">${badge.evidence
+          ? `<ul class="report-badge-evidence mt-1 space-y-0.5 text-left">${badge.evidence
               .slice(0, 3)
               .map(
                 (line) =>
@@ -34,7 +34,7 @@ export function verificationBadgesHtml(badges: VerificationBadge[]): string {
 
   return `<section class="report-section-tight border-b border-[var(--report-border)] bg-[#f7f9ff]">
     <h3 class="mb-2 text-center text-[10px] font-bold uppercase tracking-wide text-[#0033FF]">Vehicle badges</h3>
-    <p class="mb-2 text-center text-[8px] text-slate-500">Each badge links to the source data on this report</p>
+    <p class="mb-2 text-center text-[8px] text-slate-500 report-badge-evidence">Each badge links to the source data on this report</p>
     <div class="report-badges-grid grid grid-cols-3 gap-y-3 sm:grid-cols-6">${cells}</div>
   </section>`;
 }

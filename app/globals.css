@@ -301,4 +301,19 @@
 
 }
 
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    min-height: auto !important;
+  }
 
+  .app-surface {
+    background: #fff !important;
+    min-height: auto !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}

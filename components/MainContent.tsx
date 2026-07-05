@@ -24,7 +24,7 @@ export default function MainContent({ children }: { children: React.ReactNode })
           // Blue padding band sits flush against the fixed brand header on
           // every route so children (white surfaces, gradients, etc.) render
           // below it without exposing the body's default white background.
-          ? 'pt-36 sm:pt-32 md:pt-36 lg:pt-40 print:pt-0 bg-[#0033FF]'
+          ? 'pt-36 sm:pt-32 md:pt-36 lg:pt-40 print:pt-0 print:bg-white bg-[#0033FF]'
           : ''
       }
     >

@@ -26,7 +26,7 @@ export default function ReportVerificationBadges({ badges }: { badges: Verificat
       <h3 className="mb-2 text-center text-[10px] font-bold uppercase tracking-wide text-[#0033FF]">
         Vehicle badges
       </h3>
-      <p className="mb-2 text-center text-[8px] text-slate-500">Tap a badge to view verification data</p>
+      <p className="mb-2 text-center text-[8px] text-slate-500 print:hidden">Tap a badge to view verification data</p>
       <div className="report-badges-grid grid grid-cols-3 gap-y-3 sm:grid-cols-6">
         {badges.map((badge) => {
           const statusTone = badge.ok ? 'text-[#FF6600]' : 'text-slate-500';
@@ -59,7 +59,7 @@ export default function ReportVerificationBadges({ badges }: { badges: Verificat
       {activeBadge && (
         <div
           id={`report-badge-detail-${activeBadge.key}`}
-          className="mt-3 rounded-sm border border-[#0033FF]/25 bg-white px-3 py-2 text-left"
+          className="report-badge-evidence-panel mt-3 rounded-sm border border-[#0033FF]/25 bg-white px-3 py-2 text-left print:hidden"
         >
           <p className="text-[9px] font-bold uppercase tracking-wide text-[#0033FF]">
             {activeBadge.label} — verification data

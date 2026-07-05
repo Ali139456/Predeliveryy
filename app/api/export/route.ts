@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import getSupabase from '@/lib/supabase';
-import { generatePDF } from '@/lib/pdfGenerator';
 import {
   ensureInspectionReportHtml,
   pdfFromReportHtml,
   resolveAppOrigin,
 } from '@/lib/report-snapshot';
+import { generateReportPdf } from '@/app/api/inspections/report-pdf/generate';
 import { getCurrentUser } from '@/lib/auth';
 import { getUserById } from '@/lib/db-users';
 import { inspectionRowToInspection } from '@/types/db';
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
           );
           pdfBuffer = await pdfFromReportHtml(reportHtml);
         } catch {
-          pdfBuffer = await generatePDF(inspection);
+          pdfBuffer = await generateReportPdf(inspection, { origin, forEmail: true, maxPhotos: 24 });
         }
         if (!pdfBuffer || pdfBuffer.length === 0) {
           return NextResponse.json({ success: false, error: 'Failed to generate PDF - empty buffer' }, { status: 500 });

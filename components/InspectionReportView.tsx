@@ -137,7 +137,7 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
           {photos.length === 0 ? (
             <p className="text-xs text-slate-500">No photos attached to this inspection.</p>
           ) : (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 report-photos-grid">
               {photos.map((p, i) => (
                 <div key={`${p.url}-${i}`} className="report-photo-cell">
                   <div className="aspect-square border border-[var(--report-border)] bg-slate-100 overflow-hidden">

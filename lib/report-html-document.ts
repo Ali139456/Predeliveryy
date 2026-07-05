@@ -11,11 +11,16 @@ export function readInspectionReportCss(): string {
 }
 
 const PRINT_EXTRAS = `
-  @page { size: A4 portrait; margin: 6mm; }
+  @page { size: A4 portrait; margin: 5mm; }
   html, body { margin: 0; padding: 0; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .inspection-report-root { padding: 0 !important; }
-  .inspection-report-sheet { box-shadow: none !important; max-width: none !important; width: 100% !important; }
-  .report-checklist-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 4px !important; width: 100% !important; }
+  .inspection-report-root { padding: 0 !important; margin: 0 !important; }
+  .inspection-report-sheet { box-shadow: none !important; border: none !important; max-width: none !important; width: 100% !important; }
+  .report-section-tight { padding: 0.3rem 0.45rem !important; }
+  .report-checklist-grid { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 3px !important; width: 100% !important; }
+  .report-checklist-category ul { font-size: 7.5px !important; }
+  .report-photos-grid { grid-template-columns: repeat(8, minmax(0, 1fr)) !important; gap: 2px !important; }
+  .report-badge-evidence-panel, [id^="report-badge-detail-"], .report-badge-evidence { display: none !important; }
+  .report-page-1, .report-vehicle-result-row { break-inside: avoid; page-break-inside: avoid; }
 `;
 
 /** Wrap report body (from server builder or browser capture) in a full printable HTML document. */

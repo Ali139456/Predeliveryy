@@ -123,7 +123,7 @@ function renderReportBody(
   const photosHtml =
     photos.length === 0
       ? '<p class="text-xs text-slate-500">No photos attached to this inspection.</p>'
-      : `<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">${photos
+      : `<div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 report-photos-grid">${photos
           .map(
             (p) =>
               `<div class="report-photo-cell">
