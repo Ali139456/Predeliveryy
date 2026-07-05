@@ -10,9 +10,9 @@ test.describe('Buttons', () => {
     await expect(page).toHaveURL(/\/contact/, { timeout: 10000 });
   });
 
-  test('home page Talk to sales button is clickable', async ({ page }) => {
+  test('home page Contact sales for pricing button is clickable', async ({ page }) => {
     await page.goto('/');
-    const link = page.getByRole('link', { name: 'Talk to sales' });
+    const link = page.getByRole('link', { name: /Contact sales for pricing/i });
     await link.waitFor({ state: 'visible', timeout: 15000 });
     await link.scrollIntoViewIfNeeded();
     await link.click();

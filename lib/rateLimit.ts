@@ -16,11 +16,23 @@ function getClientIP(request: NextRequest): string {
   );
 }
 
+function isRateLimitBypassed(): boolean {
+  if (process.env.DISABLE_RATE_LIMIT === '1' || process.env.DISABLE_RATE_LIMIT === 'true') {
+    return true;
+  }
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
+  return url.includes('ci-placeholder') || url.includes('placeholder.supabase');
+}
+
 export async function enforceRateLimit(
   request: NextRequest,
   routeKey: string,
   config: RateLimitConfig
 ): Promise<{ allowed: boolean; key: string }> {
+  if (isRateLimitBypassed()) {
+    return { allowed: true, key: `bypass:${routeKey}` };
+  }
+
   const scope = config.scope ?? 'ip';
   const ip = getClientIP(request);
   const user = await getCurrentUser(request);
