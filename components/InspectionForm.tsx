@@ -36,6 +36,11 @@ import {
 } from '@/components/admin/AdminUI';
 import InspectionChecklistStep from '@/components/inspection/InspectionChecklistStep';
 import { isCaptureSessionActive } from '@/lib/capture-session';
+import {
+  createEmptyDealerAccessories,
+  normalizeDealerAccessories,
+  type DealerAccessoriesFitted,
+} from '@/lib/dealer-accessories';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -105,6 +110,20 @@ const inspectionSchema = z.object({
     url: z.string().optional(),
     metadata: z.any().optional().nullable(),
   })).optional(),
+  dealerAccessoriesFitted: z
+    .object({
+      bullBar: z.boolean().optional(),
+      towBar: z.boolean().optional(),
+      nudgeBars: z.boolean().optional(),
+      roofRacks: z.boolean().optional(),
+      carpetMats: z.boolean().optional(),
+      windowTints: z.boolean().optional(),
+      bonnetProjector: z.boolean().optional(),
+      doorWindProtector: z.boolean().optional(),
+      bootLiner: z.boolean().optional(),
+      evPortableCharger: z.boolean().optional(),
+    })
+    .optional(),
   signatures: z.object({
     technician: z.string().optional(),
     manager: z.string().optional(),
@@ -347,6 +366,9 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           walkAroundVideos: Array.isArray((initialData as any).walkAroundVideos)
             ? (initialData as any).walkAroundVideos
             : [],
+          dealerAccessoriesFitted: normalizeDealerAccessories(
+            (initialData as { dealerAccessoriesFitted?: DealerAccessoriesFitted }).dealerAccessoriesFitted
+          ),
         }
       : {
           inspectorName: '',
@@ -355,6 +377,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
           checklist: defaultChecklist,
           photos: [],
           walkAroundVideos: [],
+          dealerAccessoriesFitted: createEmptyDealerAccessories(),
           privacyConsent: true,
         },
   });
@@ -516,6 +539,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         barcode: barcode || undefined,
         photos: photos || [],
         walkAroundVideos: walkAroundVideos || [],
+        dealerAccessoriesFitted: normalizeDealerAccessories(values.dealerAccessoriesFitted),
         signatures: signatures.technician ? { technician: signatures.technician } : undefined,
         status: (isCompleted ? 'completed' : 'draft') as 'draft' | 'completed',
         privacyConsent: true,
@@ -737,6 +761,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
     const values = getValues();
     const formValues = {
       checklist: values.checklist || [],
+      dealerAccessoriesFitted: normalizeDealerAccessories(values.dealerAccessoriesFitted),
     };
     await saveSection('checklist', formValues);
   };
@@ -1529,6 +1554,12 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         sectionSaved={sectionSaved.checklist}
         vehicleTitle={vehicleTitle}
         vinLabel={vinLabel}
+        dealerAccessoriesFitted={
+          normalizeDealerAccessories(watch('dealerAccessoriesFitted')) as DealerAccessoriesFitted
+        }
+        onDealerAccessoriesChange={(next) =>
+          setValue('dealerAccessoriesFitted', normalizeDealerAccessories(next), { shouldDirty: true })
+        }
       />
     );
   };

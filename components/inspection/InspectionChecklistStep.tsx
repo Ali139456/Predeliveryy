@@ -15,7 +15,8 @@ import {
 } from 'lucide-react';
 import type { UseFormGetValues, UseFormRegister, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 import ItemPhotoUpload from '@/components/ItemPhotoUpload';
-import VoiceNotesButton from '@/components/VoiceNotesButton';
+import DealerAccessoriesPicker from '@/components/DealerAccessoriesPicker';
+import type { DealerAccessoriesFitted } from '@/lib/dealer-accessories';
 
 type ChecklistField = {
   id?: string;
@@ -135,6 +136,8 @@ interface InspectionChecklistStepProps {
   sectionSaved?: boolean;
   vehicleTitle: string;
   vinLabel: string;
+  dealerAccessoriesFitted?: DealerAccessoriesFitted;
+  onDealerAccessoriesChange?: (next: DealerAccessoriesFitted) => void;
 }
 
 const NOTES_MAX = 500;
@@ -333,6 +336,8 @@ export default function InspectionChecklistStep({
   sectionSaved = false,
   vehicleTitle,
   vinLabel,
+  dealerAccessoriesFitted = {},
+  onDealerAccessoriesChange,
 }: InspectionChecklistStepProps) {
   const total = fields.length;
   const safeIndex = Math.max(0, Math.min(activeCategoryIndex, Math.max(0, total - 1)));
@@ -413,6 +418,14 @@ export default function InspectionChecklistStep({
       </div>
 
       <input type="hidden" {...register(`checklist.${safeIndex}.category`)} />
+
+      {categoryName === 'Final QC' && onDealerAccessoriesChange ? (
+        <DealerAccessoriesPicker
+          value={dealerAccessoriesFitted}
+          onChange={onDealerAccessoriesChange}
+          readOnly={readOnly}
+        />
+      ) : null}
 
       {/* Item cards */}
       <div className="space-y-3">

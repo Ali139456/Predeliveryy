@@ -12,6 +12,7 @@ import { getCloudinaryUrl, hasCloudinaryConfig } from '@/lib/cloudinary';
 import https from 'https';
 import http from 'http';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
+import { formatDealerAccessoriesForReport } from '@/lib/dealer-accessories';
 import { getS3Url } from '@/lib/s3';
 import {
   hasSupabaseStorageConfig,
@@ -1208,6 +1209,20 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
     doc.setTextColor(255, 255, 255);
     doc.text(category.category, margin + 6, yPos + 2);
     yPos += 12;
+
+    if (category.category === 'Final QC') {
+      const accessoriesText = formatDealerAccessoriesForReport(inspection.dealerAccessoriesFitted);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0, 51, 255);
+      doc.text('Dealer accessories fitted:', margin + 6, yPos);
+      yPos += 5;
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(60, 60, 60);
+      const accessoryLines = doc.splitTextToSize(accessoriesText, contentWidth - 12);
+      doc.text(accessoryLines, margin + 6, yPos);
+      yPos += accessoryLines.length * 4 + 4;
+    }
     
     const items = Array.isArray(category.items) ? category.items : [];
     

@@ -14,6 +14,7 @@ const inspectionBodySchema = z.object({
   checklist: z.array(z.unknown()).max(400).optional(),
   photos: z.array(z.unknown()).max(600).optional(),
   walkAroundVideos: z.array(z.unknown()).max(100).optional(),
+  dealerAccessoriesFitted: z.record(z.string(), z.boolean()).optional(),
   status: z.enum(['draft', 'completed']).optional(),
   signatures: looseRecord.optional(),
   privacyConsent: z.boolean().optional(),

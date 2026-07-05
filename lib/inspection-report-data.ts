@@ -1,6 +1,9 @@
 ﻿import type { IInspection, InspectionChecklistCategory, InspectionPhoto } from '@/types/db';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import {
+  hasDealerAccessoriesSelected,
+} from '@/lib/dealer-accessories';
+import {
   isReportItemNotApplicable,
   isReportItemPass,
   isReportItemReview,
@@ -195,8 +198,8 @@ export function buildVerificationBadges(inspection: IInspection): VerificationBa
     {
       key: 'accessories',
       label: 'Accessories',
-      status: 'Fitted',
-      ok: true,
+      status: hasDealerAccessoriesSelected(inspection.dealerAccessoriesFitted) ? 'Verified' : 'None recorded',
+      ok: hasDealerAccessoriesSelected(inspection.dealerAccessoriesFitted),
     },
     {
       key: 'ev',

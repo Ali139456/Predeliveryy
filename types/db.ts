@@ -1,6 +1,7 @@
 // Shared types for Supabase. Table rows use snake_case; app uses camelCase.
 
 import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
+import type { DealerAccessoriesFitted } from '@/lib/dealer-accessories';
 
 export type UserRole = 'technician' | 'manager' | 'admin' | 'viewer';
 
@@ -107,6 +108,7 @@ export interface InspectionRow {
   ais_station?: string | null;
   inspector_licence_no?: string | null;
   result?: InspectionResult | null;
+  dealer_accessories_fitted?: DealerAccessoriesFitted | null;
   created_at: string;
   updated_at: string;
 }
@@ -134,6 +136,7 @@ export interface IInspection {
   aisStation?: string;
   inspectorLicenceNo?: string;
   result?: InspectionResult;
+  dealerAccessoriesFitted?: DealerAccessoriesFitted;
   createdAt: string;
   updatedAt: string;
 }
@@ -237,6 +240,7 @@ export function inspectionRowToInspection(row: InspectionRow): IInspection & { _
     aisStation: row.ais_station ?? undefined,
     inspectorLicenceNo: row.inspector_licence_no ?? undefined,
     result: row.result ?? undefined,
+    dealerAccessoriesFitted: row.dealer_accessories_fitted ?? {},
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -285,5 +289,8 @@ export function inspectionBodyToRow(body: Record<string, unknown>): Record<strin
   if (typeof body.inspectorLicenceNo === 'string')
     row.inspector_licence_no = body.inspectorLicenceNo || null;
   if (typeof body.result === 'string') row.result = body.result;
+  if (body.dealerAccessoriesFitted && typeof body.dealerAccessoriesFitted === 'object') {
+    row.dealer_accessories_fitted = body.dealerAccessoriesFitted;
+  }
   return row;
 }
