@@ -13,6 +13,7 @@ import https from 'https';
 import http from 'http';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { formatDealerAccessoriesForReport } from '@/lib/dealer-accessories';
+import { extractLocationLabel } from '@/lib/inspection-report-data';
 import { getS3Url } from '@/lib/s3';
 import {
   hasSupabaseStorageConfig,
@@ -1034,7 +1035,7 @@ export async function generatePDF(inspection: IInspection, options?: GeneratePDF
 
   const location = inspection.location || {};
   const locationData = [
-    ['Start Address', formatValue(location.start?.address)],
+    ['Start Address', extractLocationLabel(location)],
     ['Start Time', location.start?.timestamp ? formatDateTimeAustraliaEastern(location.start.timestamp) : formatValue(null)],
     ['End Time', location.end?.timestamp ? formatDateTimeAustraliaEastern(location.end.timestamp) : formatValue(null)],
   ];

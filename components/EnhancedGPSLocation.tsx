@@ -7,17 +7,20 @@ interface LocationData {
   latitude: number;
   longitude: number;
   address?: string;
+  postcode?: string;
   timestamp: Date;
 }
 
 interface EnhancedGPSLocationProps {
   onLocationChange: (location: {
     start?: LocationData;
-    current?: { latitude: number; longitude: number; address?: string };
+    current?: { latitude: number; longitude: number; address?: string; postcode?: string };
+    postcode?: string;
   }) => void;
   value?: {
     start?: LocationData;
-    current?: { latitude: number; longitude: number; address?: string };
+    current?: { latitude: number; longitude: number; address?: string; postcode?: string };
+    postcode?: string;
   };
   readOnly?: boolean;
 }
@@ -26,7 +29,12 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getCurrentLocation = (): Promise<{ latitude: number; longitude: number; address?: string }> => {
+  const getCurrentLocation = (): Promise<{
+    latitude: number;
+    longitude: number;
+    address?: string;
+    postcode?: string;
+  }> => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         reject(new Error('Geolocation is not supported by your browser'));
@@ -39,6 +47,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
           
           // Try to get address from reverse geocoding (using free service)
           let address: string | undefined;
+          let postcode: string | undefined;
           try {
             const response = await fetch(
               `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
@@ -47,11 +56,14 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
             if (data.display_name) {
               address = data.display_name;
             }
+            if (typeof data.address?.postcode === 'string') {
+              postcode = data.address.postcode.trim();
+            }
           } catch (err) {
             // Ignore geocoding errors
           }
 
-          resolve({ latitude, longitude, address });
+          resolve({ latitude, longitude, address, postcode });
         },
         (err) => {
           reject(new Error(`Failed to get location: ${err.message}`));
@@ -79,6 +91,7 @@ export default function EnhancedGPSLocation({ onLocationChange, value, readOnly 
         ...value,
         start: startData,
         current: location,
+        postcode: location.postcode,
       });
     } catch (err: any) {
       setError(err.message);

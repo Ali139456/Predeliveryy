@@ -48,17 +48,75 @@ export function formatReportDate(value: Date | string | number | null | undefine
     .toUpperCase();
 }
 
+const AU_STATE_ABBREV: Record<string, string> = {
+  'new south wales': 'NSW',
+  victoria: 'VIC',
+  queensland: 'QLD',
+  'western australia': 'WA',
+  'south australia': 'SA',
+  tasmania: 'TAS',
+  'northern territory': 'NT',
+  'australian capital territory': 'ACT',
+};
+
+function findAustralianPostcode(parts: string[]): string | undefined {
+  return parts.find((part) => /^\d{4}$/.test(part));
+}
+
+function shouldDropLocationPart(part: string, postcode?: string, stateName?: string): boolean {
+  if (/^australia$/i.test(part)) return true;
+  if (postcode && part === postcode) return true;
+  if (stateName && part.toLowerCase() === stateName.toLowerCase()) return true;
+  if (/^(sydney|melbourne|brisbane|perth|adelaide|hobart|darwin|canberra)$/i.test(part)) return true;
+  if (/north shore|shire|city of|greater /i.test(part)) return true;
+  return false;
+}
+
+/** Formats GPS address for reports with suburb, state and postcode. */
+export function formatReportLocationAddress(raw: string, storedPostcode?: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return 'Not provided';
+
+  const parts = trimmed.split(',').map((p) => p.trim()).filter(Boolean);
+  const postcode = storedPostcode?.trim() || findAustralianPostcode(parts);
+
+  const stateIdx = parts.findIndex((p) => AU_STATE_ABBREV[p.toLowerCase()]);
+  const stateAbbrev = stateIdx >= 0 ? AU_STATE_ABBREV[parts[stateIdx].toLowerCase()] : undefined;
+  const stateName = stateIdx >= 0 ? parts[stateIdx] : undefined;
+
+  const kept = parts.filter((p) => !shouldDropLocationPart(p, postcode, stateName));
+  const streetParts = kept.slice(0, 3);
+
+  if (streetParts.length && stateAbbrev && postcode) {
+    return `${streetParts.join(', ')} ${stateAbbrev} ${postcode}`;
+  }
+
+  let formatted = trimmed.replace(/,?\s*Australia\s*$/i, '').trim();
+  if (postcode && !formatted.includes(postcode)) {
+    formatted = stateAbbrev
+      ? `${formatted.replace(/,?\s*$/,'')}, ${stateAbbrev} ${postcode}`
+      : `${formatted.replace(/,?\s*$/,'')}, ${postcode}`;
+  }
+  return formatted || trimmed;
+}
+
 export function extractLocationLabel(location: unknown): string {
   if (!location || typeof location !== 'object') return 'Not provided';
   const loc = location as Record<string, unknown>;
-  const start = loc.start as { address?: string } | undefined;
-  const current = loc.current as { address?: string } | undefined;
+  const start = loc.start as { address?: string; postcode?: string } | undefined;
+  const current = loc.current as { address?: string; postcode?: string } | undefined;
+  const storedPostcode =
+    (typeof start?.postcode === 'string' && start.postcode.trim()) ||
+    (typeof current?.postcode === 'string' && current.postcode.trim()) ||
+    (typeof loc.postcode === 'string' && loc.postcode.trim()) ||
+    undefined;
   const raw =
     (typeof start?.address === 'string' && start.address.trim()) ||
     (typeof current?.address === 'string' && current.address.trim()) ||
     (typeof loc.address === 'string' && loc.address.trim()) ||
     '';
-  return raw || 'Not provided';
+  if (!raw) return storedPostcode ? `Postcode ${storedPostcode}` : 'Not provided';
+  return formatReportLocationAddress(raw, storedPostcode);
 }
 
 export function getVehicleTitle(inspection: IInspection): string {

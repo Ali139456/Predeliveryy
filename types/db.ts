@@ -142,9 +142,21 @@ export interface IInspection {
 }
 
 export interface InspectionLocation {
-  start?: { latitude?: number; longitude?: number; address?: string; timestamp?: string };
-  end?: { latitude?: number; longitude?: number; address?: string; timestamp?: string };
-  current?: { latitude?: number; longitude?: number; address?: string };
+  start?: {
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+    postcode?: string;
+    timestamp?: string;
+  };
+  end?: {
+    latitude?: number;
+    longitude?: number;
+    address?: string;
+    postcode?: string;
+    timestamp?: string;
+  };
+  current?: { latitude?: number; longitude?: number; address?: string; postcode?: string };
   roadTest?: {
     distance?: number;
     duration?: number;
@@ -153,6 +165,7 @@ export interface InspectionLocation {
   latitude?: number;
   longitude?: number;
   address?: string;
+  postcode?: string;
 }
 
 export interface VehicleInfo {
