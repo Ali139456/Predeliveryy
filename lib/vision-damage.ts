@@ -140,6 +140,52 @@ function parseVisionJson(content: string, model: string): VisionDamageResult {
   };
 }
 
+function isTyreWheelFocus(options: {
+  context?: string;
+  itemName?: string;
+  panelHint?: string;
+}): boolean {
+  const combined = [options.panelHint, options.itemName, options.context]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  return /\b(tyre|tires|tyres|wheel|wheels|rim|rims|alloy|hub|curb)\b/.test(combined);
+}
+
+const TYRE_WHEEL_FOCUS = `This photo focuses on TYRES and/or ALLOY WHEELS. You MUST carefully inspect:
+- Outer rim lip and wheel edge for curb rash, gouges, scrapes, chips, and missing lacquer (often bright silver/grey marks on a dark rim)
+- Wheel spokes and face for scuffs and scratches
+- Tyre sidewall for scuffs, abrasions, cuts, bulges, and marking damage
+Report curb rash and rim-edge scuffs even when minor — they are common pre-delivery defects. If any rim or sidewall damage is visible, set noDamageFound false and add findings with accurate x,y on the damage.`;
+
+function buildSystemPrompt(tyreWheelFocus: boolean): string {
+  const base = `You are an expert automotive pre-delivery inspection assistant for the Australian market.
+Analyse the vehicle photo for visible exterior or tyre damage including scratches, scuffs, paint transfer, swirl marks, dents, chips, cracks, rust, paint damage, misalignment, curb rash, tyre wear, and sidewall damage.
+Pay special attention to subtle scuffs and light paint marks on panels — report them as minor findings when visible, even on dark paint.
+Do not invent damage that is not visible. If uncertain, include a finding with confidence "low" rather than omitting it.
+If the image is unclear, empty, or not a vehicle part, set noDamageFound true and explain briefly in summary.`;
+
+  const focus = tyreWheelFocus ? `\n\n${TYRE_WHEEL_FOCUS}` : '';
+
+  return `${base}${focus}
+Output ONLY valid JSON with this exact shape:
+{
+  "summary": "one or two sentences for the inspection report",
+  "noDamageFound": boolean,
+  "findings": [
+    {
+      "label": "short description e.g. Curb rash - outer rim lip",
+      "severity": "minor" | "moderate" | "major",
+      "x": 0.0-1.0,
+      "y": 0.0-1.0,
+      "confidence": "high" | "medium" | "low"
+    }
+  ]
+}
+x and y are normalized coordinates (0=left/top, 1=right/bottom) for the centre of each visible defect.
+Maximum 12 findings. Use Australian English.`;
+}
+
 export async function detectVehicleDamageFromBuffer(
   imageBuffer: Buffer,
   options: {
@@ -153,7 +199,8 @@ export async function detectVehicleDamageFromBuffer(
     throw new Error('OPENAI_API_KEY is not configured');
   }
 
-  const model = process.env.OPENAI_VISION_DAMAGE_MODEL?.trim() || 'gpt-4o-mini';
+  const tyreWheelFocus = isTyreWheelFocus(options);
+  const model = process.env.OPENAI_VISION_DAMAGE_MODEL?.trim() || 'gpt-4o';
   const contextParts: string[] = [];
   if (options.panelHint) contextParts.push(`Vehicle area / panel: ${options.panelHint}`);
   if (options.itemName) contextParts.push(`Checklist item: ${options.itemName}`);
@@ -167,27 +214,10 @@ export async function detectVehicleDamageFromBuffer(
   const base64 = imageBuffer.toString('base64');
   const dataUrl = `data:${mime};base64,${base64}`;
 
-  const systemPrompt = `You are an expert automotive pre-delivery inspection assistant for the Australian market.
-Analyse the vehicle photo for visible exterior or tyre damage including scratches, scuffs, paint transfer, swirl marks, dents, chips, cracks, rust, paint damage, misalignment, curb rash, tyre wear, and sidewall damage.
-Pay special attention to subtle scuffs and light paint marks on panels — report them as minor findings when visible, even on dark paint.
-Do not invent damage that is not visible. If uncertain, include a finding with confidence "low" rather than omitting it.
-If the image is unclear, empty, or not a vehicle part, set noDamageFound true and explain briefly in summary.
-Output ONLY valid JSON with this exact shape:
-{
-  "summary": "one or two sentences for the inspection report",
-  "noDamageFound": boolean,
-  "findings": [
-    {
-      "label": "short description e.g. Scuff - driver front door",
-      "severity": "minor" | "moderate" | "major",
-      "x": 0.0-1.0,
-      "y": 0.0-1.0,
-      "confidence": "high" | "medium" | "low"
-    }
-  ]
-}
-x and y are normalized coordinates (0=left/top, 1=right/bottom) for the centre of each visible defect.
-Maximum 12 findings. Use Australian English.`;
+  const systemPrompt = buildSystemPrompt(tyreWheelFocus);
+  const userText = tyreWheelFocus
+    ? `Analyse this tyre/wheel close-up for curb rash on the rim lip, alloy scuffs, and tyre sidewall damage.${contextLine} Report all visible wheel and tyre defects. Return JSON only.`
+    : `Analyse this pre-delivery inspection photo for all visible damage including light scuffs and paint marks.${contextLine} Return JSON only.`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -204,7 +234,7 @@ Maximum 12 findings. Use Australian English.`;
           content: [
             {
               type: 'text',
-              text: `Analyse this pre-delivery inspection photo for all visible damage including light scuffs and paint marks.${contextLine} Return JSON only.`,
+              text: userText,
             },
             { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
           ],

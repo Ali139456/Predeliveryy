@@ -49,7 +49,7 @@ const SLOT_PANEL_HINTS: Record<string, string> = {
   left: 'Left side - doors and panels',
   right: 'Right side - doors and panels',
   bonnet: 'Bonnet / hood',
-  tyres: 'Tyres and wheels',
+  tyres: 'Tyres and alloy wheels — closely inspect outer rim lips for curb rash, gouges and scrapes; wheel face scuffs; tyre sidewall abrasions and scuff marks',
 };
 
 function PhotoUpload({
@@ -86,8 +86,12 @@ function PhotoUpload({
     label;
 
   const compressImage = useCallback(async (file: File): Promise<File> => {
-    return compressInspectionImage(file);
-  }, []);
+    const isTyreSlot = uploadTag?.slot === 'tyres';
+    return compressInspectionImage(
+      file,
+      isTyreSlot ? { maxDim: 2048, quality: 0.92 } : { maxDim: 1800, quality: 0.9 }
+    );
+  }, [uploadTag?.slot]);
 
   const runVisionOnPhoto = useCallback(
     async (fileName: string) => {
@@ -97,6 +101,7 @@ function PhotoUpload({
       try {
         const res = await requestVisionDamageDetect({
           storageKey: fileName,
+          itemName: label,
           panelHint: resolvedPanelHint,
           context: label,
         });
