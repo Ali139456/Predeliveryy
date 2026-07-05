@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { enforceRateLimit } from '@/lib/rateLimit';
-import {
-  assertTenantScopedStorageKey,
-  detectVehicleDamage,
-  isDamageDetectionEnabled,
-} from '@/lib/damage-detection';
+import { assertTenantScopedStorageKey } from '@/lib/file-access';
+import { detectVehicleDamage, isDamageDetectionEnabled } from '@/lib/damage-detection';
 import { loadInspectionImageBuffer } from '@/lib/vision-damage';
 
 export const runtime = 'nodejs';

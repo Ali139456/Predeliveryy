@@ -33,7 +33,7 @@ function serveBuffer(
 
   if (parsed) {
     const chunk = buffer.subarray(parsed.start, parsed.end + 1);
-    return new NextResponse(chunk, {
+    return new NextResponse(new Uint8Array(chunk), {
       status: 206,
       headers: {
         'Content-Type': contentType,
@@ -45,7 +45,7 @@ function serveBuffer(
     });
   }
 
-  return new NextResponse(buffer, {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': contentType,
       'Content-Length': String(size),
