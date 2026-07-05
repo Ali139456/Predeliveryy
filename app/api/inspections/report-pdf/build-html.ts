@@ -150,7 +150,7 @@ function renderReportBody(
     <header class="report-page-1 grid grid-cols-1 md:grid-cols-[auto_1fr] gap-3 items-center px-3 py-2.5 text-white" style="background:linear-gradient(180deg,#002060 0%,#0033ff 100%)">
       <div class="shrink-0 w-fit max-w-full">
         <img src="${esc(logoSrc)}" alt="${esc(SITE_LOGO_ALT)}" class="h-14 sm:h-[4.25rem] w-auto max-w-[min(100%,280px)] object-contain object-left block" />
-        <p class="mt-1 text-[9px] text-white/75 tracking-wide">Verified before your drive.</p>
+        <p class="mt-1 text-[10px] font-semibold text-white/90 tracking-wide">Pre Delivery Inspection Report</p>
       </div>
       <div class="flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] md:text-xs md:justify-end">
         <div class="flex items-center gap-2">

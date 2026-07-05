@@ -50,7 +50,9 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
               alt={SITE_LOGO_ALT}
               className="h-14 sm:h-[4.25rem] w-auto max-w-[min(100%,280px)] object-contain object-left block"
             />
-            <p className="mt-1 text-[9px] text-white/75 tracking-wide">Verified before your drive.</p>
+            <p className="mt-1 text-[10px] font-semibold text-white/90 tracking-wide">
+              Pre Delivery Inspection Report
+            </p>
           </div>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] md:text-xs md:justify-end">
             <div className="flex items-center gap-2">
