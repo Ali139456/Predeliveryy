@@ -255,10 +255,33 @@ export async function detectVehicleDamageFromBuffer(
   const base64 = visionBuffer.toString('base64');
   const dataUrl = `data:${mime};base64,${base64}`;
 
-  const usesMaxCompletionTokens = /^gpt-5|^o[0-9]/i.test(model);
-  const tokenLimitField = usesMaxCompletionTokens
+  const isGpt5Family = /^gpt-5|^o[0-9]/i.test(model);
+  const tokenLimitField = isGpt5Family
     ? { max_completion_tokens: 1600 }
     : { max_tokens: 1600 };
+
+  const requestBody: Record<string, unknown> = {
+    model,
+    messages: [
+      { role: 'system', content: systemPrompt },
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: userText,
+          },
+          { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
+        ],
+      },
+    ],
+    ...tokenLimitField,
+    response_format: { type: 'json_object' },
+  };
+  // GPT-5.x only supports default temperature — omit the parameter entirely.
+  if (!isGpt5Family) {
+    requestBody.temperature = 0.15;
+  }
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -266,25 +289,7 @@ export async function detectVehicleDamageFromBuffer(
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      model,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: userText,
-            },
-            { type: 'image_url', image_url: { url: dataUrl, detail: 'high' } },
-          ],
-        },
-      ],
-      ...tokenLimitField,
-      temperature: 0.15,
-      response_format: { type: 'json_object' },
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!res.ok) {
