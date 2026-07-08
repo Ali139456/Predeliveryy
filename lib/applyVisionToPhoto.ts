@@ -5,15 +5,19 @@ function findingsToDamageMarkers(
   idPrefix = 'ai'
 ): { id: string; x: number; y: number; label: string }[] {
   const ts = Date.now();
-  return findings.map((f, i) => ({
-    id: `${idPrefix}-${ts}-${i}`,
-    x: f.x,
-    y: f.y,
-    label:
-      f.severity && f.severity !== 'unknown'
-        ? `${f.label} (${f.severity})`
-        : f.label,
-  }));
+  return findings.map((f, i) => {
+    let label =
+      f.severity && f.severity !== 'unknown' ? `${f.label} (${f.severity})` : f.label;
+    if (f.repairEstimateAud) {
+      label = `${label} · est. ${f.repairEstimateAud}`;
+    }
+    return {
+      id: `${idPrefix}-${ts}-${i}`,
+      x: f.x,
+      y: f.y,
+      label,
+    };
+  });
 }
 
 export type PhotoWithAiFields = {
@@ -45,6 +49,14 @@ export function applyVisionResultToPhoto<T extends PhotoWithAiFields>(
     summary: result.summary,
     noDamageFound: result.noDamageFound,
     findingCount: result.findings.length,
+    repairEstimateSummary: result.repairEstimateSummary,
+    totalRepairEstimateAud: result.totalRepairEstimateAud,
+    findings: result.findings.map((f) => ({
+      label: f.label,
+      severity: f.severity,
+      repairEstimateAud: f.repairEstimateAud,
+      repairNotes: f.repairNotes,
+    })),
   };
 
   return {
@@ -55,4 +67,17 @@ export function applyVisionResultToPhoto<T extends PhotoWithAiFields>(
       aiDamage,
     },
   };
+}
+
+export function formatAiDamageNotice(result: VisionDamageResult): string {
+  const parts: string[] = [result.summary];
+  if (result.totalRepairEstimateAud) {
+    parts.push(`Indicative repair: ${result.totalRepairEstimateAud} AUD`);
+  } else if (result.repairEstimateSummary) {
+    parts.push(result.repairEstimateSummary);
+  }
+  if (result.findings.length > 0) {
+    parts.push(`${result.findings.length} marker(s) placed — please confirm.`);
+  }
+  return parts.join(' ');
 }

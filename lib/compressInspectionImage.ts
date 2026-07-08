@@ -6,8 +6,8 @@ export async function compressInspectionImage(
 ): Promise<File> {
   if (!file.type.startsWith('image/')) return file;
 
-  const maxDim = options.maxDim ?? 1800;
-  const quality = options.quality ?? 0.88;
+  const maxDim = options.maxDim ?? 2048;
+  const quality = options.quality ?? 0.92;
 
   try {
     const bitmap = await createImageBitmap(file);

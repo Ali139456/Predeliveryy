@@ -8,7 +8,7 @@ import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { compressInspectionImage } from '@/lib/compressInspectionImage';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { requestVisionDamageDetect } from '@/lib/visionDamageClient';
-import { applyVisionResultToPhoto } from '@/lib/applyVisionToPhoto';
+import { applyVisionResultToPhoto, formatAiDamageNotice } from '@/lib/applyVisionToPhoto';
 import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
 
 interface PhotoData {
@@ -89,7 +89,7 @@ function PhotoUpload({
     const isTyreSlot = uploadTag?.slot === 'tyres';
     return compressInspectionImage(
       file,
-      isTyreSlot ? { maxDim: 2048, quality: 0.92 } : { maxDim: 1800, quality: 0.9 }
+      isTyreSlot ? { maxDim: 2560, quality: 0.94 } : { maxDim: 2048, quality: 0.92 }
     );
   }, [uploadTag?.slot]);
 
@@ -115,7 +115,7 @@ function PhotoUpload({
         const updated = photosRef.current.map((p, i) => (i === idx ? merged : p));
         photosRef.current = updated;
         onPhotosChange(updated);
-        setAiNotice(res.result.summary);
+        setAiNotice(formatAiDamageNotice(res.result));
       } catch (e) {
         console.error('Vision damage detect:', e);
       } finally {
@@ -213,6 +213,7 @@ function PhotoUpload({
             if (!imageUrl) return null;
             const isAnalyzing = analyzingFileName === p.fileName;
             const aiSummary = p.metadata?.aiDamage?.summary;
+            const aiRepair = p.metadata?.aiDamage?.totalRepairEstimateAud;
             return (
               <div key={`${imageUrl}-${index}`} className="relative group">
                 <div
@@ -236,7 +237,8 @@ function PhotoUpload({
                 )}
                 {aiSummary && !isAnalyzing && (
                   <span className="absolute bottom-0 left-0 right-0 px-1 py-0.5 text-[8px] leading-tight text-white bg-violet-900/80 rounded-b-lg line-clamp-2">
-                    AI: {aiSummary.length > 60 ? `${aiSummary.slice(0, 57)}…` : aiSummary}
+                    AI: {aiSummary.length > 50 ? `${aiSummary.slice(0, 47)}…` : aiSummary}
+                    {aiRepair ? ` · ${aiRepair}` : ''}
                   </span>
                 )}
                 </div>

@@ -6,6 +6,7 @@ import {
 } from '@/lib/supabase-storage';
 import { getS3Url } from '@/lib/s3';
 import { assertTenantScopedStorageKey } from '@/lib/file-access';
+import { prepareImageForVisionAnalysis } from '@/lib/prepareVisionImage';
 import { isRavinDamageEnabled } from '@/lib/damage-detection/ravin';
 import type { VisionDamageFinding, VisionDamageResult } from '@/types/vision-damage';
 
@@ -102,15 +103,34 @@ function parseFindings(raw: unknown): VisionDamageFinding[] {
       x: clamp01(Number(o.x)),
       y: clamp01(Number(o.y)),
       confidence,
+      repairEstimateAud:
+        typeof o.repairEstimateAud === 'string'
+          ? o.repairEstimateAud.trim().slice(0, 80)
+          : typeof o.repairEstimate === 'string'
+            ? o.repairEstimate.trim().slice(0, 80)
+            : undefined,
+      repairNotes:
+        typeof o.repairNotes === 'string' ? o.repairNotes.trim().slice(0, 200) : undefined,
     });
   }
   return out.slice(0, 12);
 }
 
+function extractJsonObject(content: string): string {
+  const trimmed = content.trim();
+  if (trimmed.startsWith('{')) return trimmed;
+  const fenced = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  if (fenced?.[1]) return fenced[1].trim();
+  const start = trimmed.indexOf('{');
+  const end = trimmed.lastIndexOf('}');
+  if (start >= 0 && end > start) return trimmed.slice(start, end + 1);
+  return trimmed;
+}
+
 function parseVisionJson(content: string, model: string): VisionDamageResult {
   let parsed: Record<string, unknown>;
   try {
-    parsed = JSON.parse(content) as Record<string, unknown>;
+    parsed = JSON.parse(extractJsonObject(content)) as Record<string, unknown>;
   } catch {
     return {
       summary: 'Could not parse vision response.',
@@ -137,6 +157,16 @@ function parseVisionJson(content: string, model: string): VisionDamageResult {
     findings,
     model,
     detectedAt: new Date().toISOString(),
+    repairEstimateSummary:
+      typeof parsed.repairEstimateSummary === 'string'
+        ? parsed.repairEstimateSummary.trim().slice(0, 500)
+        : undefined,
+    totalRepairEstimateAud:
+      typeof parsed.totalRepairEstimateAud === 'string'
+        ? parsed.totalRepairEstimateAud.trim().slice(0, 80)
+        : typeof parsed.totalRepairEstimate === 'string'
+          ? parsed.totalRepairEstimate.trim().slice(0, 80)
+          : undefined,
   };
 }
 
@@ -159,31 +189,36 @@ const TYRE_WHEEL_FOCUS = `This photo focuses on TYRES and/or ALLOY WHEELS. You M
 Report curb rash and rim-edge scuffs even when minor — they are common pre-delivery defects. If any rim or sidewall damage is visible, set noDamageFound false and add findings with accurate x,y on the damage.`;
 
 function buildSystemPrompt(tyreWheelFocus: boolean): string {
-  const base = `You are an expert automotive pre-delivery inspection assistant for the Australian market.
-Analyse the vehicle photo for visible exterior or tyre damage including scratches, scuffs, paint transfer, swirl marks, dents, chips, cracks, rust, paint damage, misalignment, curb rash, tyre wear, and sidewall damage.
-Pay special attention to subtle scuffs and light paint marks on panels — report them as minor findings when visible, even on dark paint.
-Do not invent damage that is not visible. If uncertain, include a finding with confidence "low" rather than omitting it.
-If the image is unclear, empty, or not a vehicle part, set noDamageFound true and explain briefly in summary.`;
+  const base = `You are a senior automotive damage assessor for Australian pre-delivery inspections (PDI).
+Inspect the photo as thoroughly as you would in ChatGPT: scan the entire frame systematically (edges, corners, reflections, dark paint, wheel lips, tyre sidewalls).
+Identify ALL visible damage: scratches, scuffs, paint transfer, swirl marks, dents, chips, cracks, rust, misalignment, curb rash, gouges, tyre sidewall damage, and lacquer loss.
+Report subtle defects — light scuffs on dark paint and minor curb rash on alloy rims are common PDI catches. Use confidence "low" when unsure rather than skipping.
+Provide indicative repair guidance and AUD cost ranges using typical Australian body shop / SMART repair pricing (labour + materials). Ranges are estimates only.
+Do not invent damage not visible in the image. If the photo is unusable, set noDamageFound true and explain in summary.`;
 
   const focus = tyreWheelFocus ? `\n\n${TYRE_WHEEL_FOCUS}` : '';
 
   return `${base}${focus}
-Output ONLY valid JSON with this exact shape:
+
+Output ONLY valid JSON:
 {
-  "summary": "one or two sentences for the inspection report",
+  "summary": "2-3 sentences: condition assessment for the technician",
   "noDamageFound": boolean,
+  "repairEstimateSummary": "brief overall repair narrative (or null if none)",
+  "totalRepairEstimateAud": "indicative total AUD range e.g. \\"$0\\" or \\"$150–$450\\" (or null if none)",
   "findings": [
     {
-      "label": "short description e.g. Curb rash - outer rim lip",
+      "label": "short defect description",
       "severity": "minor" | "moderate" | "major",
       "x": 0.0-1.0,
       "y": 0.0-1.0,
-      "confidence": "high" | "medium" | "low"
+      "confidence": "high" | "medium" | "low",
+      "repairEstimateAud": "indicative AUD range for this defect e.g. \\"$80–$200\\"",
+      "repairNotes": "likely repair method e.g. buff, touch-up, panel beat"
     }
   ]
 }
-x and y are normalized coordinates (0=left/top, 1=right/bottom) for the centre of each visible defect.
-Maximum 12 findings. Use Australian English.`;
+x,y = normalized centre of each defect (0=left/top, 1=right/bottom). Max 12 findings. Australian English.`;
 }
 
 export async function detectVehicleDamageFromBuffer(
@@ -210,14 +245,15 @@ export async function detectVehicleDamageFromBuffer(
       ? `\nInspection context: ${contextParts.join('. ')}.`
       : '';
 
-  const mime = imageMimeFromBuffer(imageBuffer);
-  const base64 = imageBuffer.toString('base64');
-  const dataUrl = `data:${mime};base64,${base64}`;
-
   const systemPrompt = buildSystemPrompt(tyreWheelFocus);
   const userText = tyreWheelFocus
-    ? `Analyse this tyre/wheel close-up for curb rash on the rim lip, alloy scuffs, and tyre sidewall damage.${contextLine} Report all visible wheel and tyre defects. Return JSON only.`
-    : `Analyse this pre-delivery inspection photo for all visible damage including light scuffs and paint marks.${contextLine} Return JSON only.`;
+    ? `Perform a detailed PDI assessment of this tyre/wheel photo. Look closely at the outer rim lip for curb rash, alloy scuffs, and tyre sidewall damage.${contextLine} Include repair estimates in AUD. Return JSON only.`
+    : `Perform a detailed PDI damage assessment of this vehicle photo — include subtle scuffs and paint marks.${contextLine} Include per-defect and total repair estimates in AUD. Return JSON only.`;
+
+  const visionBuffer = await prepareImageForVisionAnalysis(imageBuffer);
+  const mime = imageMimeFromBuffer(visionBuffer);
+  const base64 = visionBuffer.toString('base64');
+  const dataUrl = `data:${mime};base64,${base64}`;
 
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -240,8 +276,8 @@ export async function detectVehicleDamageFromBuffer(
           ],
         },
       ],
-      max_tokens: 900,
-      temperature: 0.2,
+      max_tokens: 1600,
+      temperature: 0.15,
       response_format: { type: 'json_object' },
     }),
   });
@@ -263,13 +299,15 @@ export function findingsToDamageMarkers(
   idPrefix = 'ai'
 ): { id: string; x: number; y: number; label: string }[] {
   const ts = Date.now();
-  return findings.map((f, i) => ({
-    id: `${idPrefix}-${ts}-${i}`,
-    x: f.x,
-    y: f.y,
-    label:
-      f.severity && f.severity !== 'unknown'
-        ? `${f.label} (${f.severity})`
-        : f.label,
-  }));
+  return findings.map((f, i) => {
+    let label =
+      f.severity && f.severity !== 'unknown' ? `${f.label} (${f.severity})` : f.label;
+    if (f.repairEstimateAud) label = `${label} · est. ${f.repairEstimateAud}`;
+    return {
+      id: `${idPrefix}-${ts}-${i}`,
+      x: f.x,
+      y: f.y,
+      label,
+    };
+  });
 }

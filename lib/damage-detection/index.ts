@@ -18,8 +18,8 @@ export function activeDamageDetectionProvider(): 'ravin' | 'openai' | null {
   if (pref === 'ravin' && isRavinDamageEnabled()) return 'ravin';
   if (pref === 'openai' && isOpenAiDamageEnabled()) return 'openai';
   if (pref === 'auto' || !pref) {
-    if (isRavinDamageEnabled()) return 'ravin';
     if (isOpenAiDamageEnabled()) return 'openai';
+    if (isRavinDamageEnabled()) return 'ravin';
   }
   return null;
 }

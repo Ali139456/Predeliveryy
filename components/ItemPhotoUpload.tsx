@@ -8,7 +8,7 @@ import { uploadToVercelBlobViaAPI } from '@/lib/vercelBlobClient';
 import { compressInspectionImage } from '@/lib/compressInspectionImage';
 import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { requestVisionDamageDetect } from '@/lib/visionDamageClient';
-import { applyVisionResultToPhoto } from '@/lib/applyVisionToPhoto';
+import { applyVisionResultToPhoto, formatAiDamageNotice } from '@/lib/applyVisionToPhoto';
 import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
 
 export interface DamageMarker {
@@ -58,12 +58,14 @@ function PhotoDamageEditor({
   readOnly,
   onSave,
   onClose,
+  aiDamage,
 }: {
   imageUrl: string;
   markers: DamageMarker[];
   readOnly: boolean;
   onSave: (next: DamageMarker[]) => void;
   onClose: () => void;
+  aiDamage?: PhotoAiDamageMetadata;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [local, setLocal] = useState<DamageMarker[]>(() =>
@@ -128,6 +130,17 @@ function PhotoDamageEditor({
         <p className="px-3 pt-2 text-xs text-gray-600">
           {readOnly ? 'Labels show where damage was recorded.' : 'Click the image to place a marker, then describe the damage.'}
         </p>
+        {aiDamage && (aiDamage.totalRepairEstimateAud || aiDamage.repairEstimateSummary) && (
+          <div className="mx-3 mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-950">
+            <p className="font-semibold">AI repair estimate (indicative)</p>
+            {aiDamage.totalRepairEstimateAud ? (
+              <p className="mt-0.5">{aiDamage.totalRepairEstimateAud} AUD</p>
+            ) : null}
+            {aiDamage.repairEstimateSummary ? (
+              <p className="mt-0.5 text-amber-900">{aiDamage.repairEstimateSummary}</p>
+            ) : null}
+          </div>
+        )}
         <div className="p-3">
           <div
             ref={wrapRef}
@@ -184,12 +197,20 @@ function PhotoDamageEditor({
           )}
           {local.length > 0 && (
             <ul className="mt-3 text-sm text-gray-800 space-y-1">
-              {local.map((m) => (
-                <li key={m.id} className={m.id.startsWith('ai-') ? 'text-amber-900' : undefined}>
-                  • {m.label}
-                  {m.id.startsWith('ai-') ? ' (AI)' : ''}
-                </li>
-              ))}
+              {local.map((m) => {
+                const aiFinding = aiDamage?.findings?.find((f) =>
+                  m.label.includes(f.label)
+                );
+                return (
+                  <li key={m.id} className={m.id.startsWith('ai-') ? 'text-amber-900' : undefined}>
+                    • {m.label}
+                    {m.id.startsWith('ai-') ? ' (AI)' : ''}
+                    {aiFinding?.repairNotes ? (
+                      <span className="block text-xs text-gray-600 pl-3">{aiFinding.repairNotes}</span>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -237,8 +258,14 @@ function ItemPhotoUpload({
   }, [openCameraRef, maxPhotos, photos.length, readOnly]);
 
   const compressImage = useCallback(async (file: File): Promise<File> => {
-    return compressInspectionImage(file);
-  }, []);
+    const tyreWheel = /\b(tyre|tires|tyres|wheel|rim|curb)\b/i.test(
+      [categoryName, itemName].filter(Boolean).join(' ')
+    );
+    return compressInspectionImage(
+      file,
+      tyreWheel ? { maxDim: 2560, quality: 0.94 } : { maxDim: 2048, quality: 0.92 }
+    );
+  }, [categoryName, itemName]);
 
   const runVisionOnPhoto = useCallback(
     async (fileName: string) => {
@@ -250,6 +277,7 @@ function ItemPhotoUpload({
         const res = await requestVisionDamageDetect({
           storageKey: fileName,
           itemName,
+          panelHint: categoryName,
           context: context || undefined,
         });
         if (!res.success) {
@@ -265,13 +293,7 @@ function ItemPhotoUpload({
         const updated = current.map((p, i) => (i === idx ? merged : p));
         photosRef.current = updated;
         onPhotosChange(updated);
-        if (res.result.noDamageFound) {
-          setAiNotice('AI: no obvious damage detected - review the photo.');
-        } else if (res.result.findings.length > 0) {
-          setAiNotice(
-            `AI noted ${res.result.findings.length} possible issue(s). Check markers on the photo.`
-          );
-        }
+        setAiNotice(formatAiDamageNotice(res.result));
       } catch (e) {
         console.error('Vision damage detect:', e);
       } finally {
@@ -445,6 +467,7 @@ function ItemPhotoUpload({
           readOnly={readOnly}
           onSave={(next) => updateMarkers(annotateIndex, next)}
           onClose={() => setAnnotateIndex(null)}
+          aiDamage={photos[annotateIndex]?.metadata?.aiDamage}
         />
       )}
     </div>
