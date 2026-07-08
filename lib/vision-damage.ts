@@ -255,6 +255,11 @@ export async function detectVehicleDamageFromBuffer(
   const base64 = visionBuffer.toString('base64');
   const dataUrl = `data:${mime};base64,${base64}`;
 
+  const usesMaxCompletionTokens = /^gpt-5|^o[0-9]/i.test(model);
+  const tokenLimitField = usesMaxCompletionTokens
+    ? { max_completion_tokens: 1600 }
+    : { max_tokens: 1600 };
+
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -276,7 +281,7 @@ export async function detectVehicleDamageFromBuffer(
           ],
         },
       ],
-      max_tokens: 1600,
+      ...tokenLimitField,
       temperature: 0.15,
       response_format: { type: 'json_object' },
     }),
