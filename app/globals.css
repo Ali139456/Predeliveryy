@@ -27,6 +27,26 @@
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
 
+  /* Fixed UserHeader offset (py-3/4 + logo h-14 … h-20) — keep in sync with UserHeader */
+  :root {
+    --site-header-height: 5rem;
+  }
+  @media (min-width: 640px) {
+    :root {
+      --site-header-height: 6rem;
+    }
+  }
+  @media (min-width: 768px) {
+    :root {
+      --site-header-height: 6.25rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    :root {
+      --site-header-height: 7rem;
+    }
+  }
+
   /* Performance optimizations */
   * {
     @apply will-change-auto;
@@ -164,6 +184,18 @@
 }
 
 @layer utilities {
+  .pt-site-header {
+    padding-top: var(--site-header-height);
+  }
+
+  .top-site-header {
+    top: var(--site-header-height);
+  }
+
+  .-mt-site-header {
+    margin-top: calc(-1 * var(--site-header-height));
+  }
+
   .glass {
     @apply bg-white/80 backdrop-blur-sm border border-white/20;
   }

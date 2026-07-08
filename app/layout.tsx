@@ -8,7 +8,7 @@ import SuppressExtensionConsoleNoise from '@/components/SuppressExtensionConsole
 const UserHeader = dynamic(() => import('@/components/UserHeader'), {
   ssr: true,
   loading: () => (
-    <div className="fixed top-0 left-0 right-0 z-50 h-[4.5rem] sm:h-16 md:h-20 lg:h-24 bg-[#0033FF] animate-pulse" aria-hidden />
+    <div className="fixed top-0 left-0 right-0 z-50 h-[var(--site-header-height)] bg-[#0033FF] animate-pulse" aria-hidden />
   ),
 });
 

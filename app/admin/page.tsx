@@ -141,7 +141,7 @@ export default function AdminDashboard() {
 
   return (
     <AdminShell>
-      <div className="sticky top-36 sm:top-32 md:top-36 lg:top-40 z-30 mb-6 sm:mb-8">
+      <div className="sticky top-site-header z-30 mb-6 sm:mb-8">
         <PageContainer className="py-0">
           <p className="sr-only">Dashboard sections. Swipe sideways on small screens to see all tabs.</p>
           <AdminTabBar

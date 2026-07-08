@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero - client mockup layout */}
-      <div className="relative w-full overflow-hidden bg-[#f7f8fc] -mt-36 sm:-mt-32 md:-mt-36 lg:-mt-40 pt-36 sm:pt-32 md:pt-36 lg:pt-40 min-h-0 lg:min-h-[720px]">
+      <div className="relative w-full overflow-hidden bg-[#f7f8fc] -mt-site-header pt-site-header min-h-0 lg:min-h-[720px]">
         <div
           className="absolute inset-0 opacity-70 pointer-events-none"
           style={{
