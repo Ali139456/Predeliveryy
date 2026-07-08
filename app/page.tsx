@@ -327,7 +327,6 @@ export default function Home() {
                   hoverBorder: 'hover:border-[#0033FF]',
                   titleHover: 'group-hover:text-[#0033FF]',
                   objectPosition: 'object-center',
-                  comingSoon: true,
                 },
                 {
                   image: FEATURE_IMAGES.analytics,
