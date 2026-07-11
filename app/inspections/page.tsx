@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Search, Download, Eye, Calendar, FileText, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
@@ -87,8 +86,8 @@ export default function InspectionsPage() {
 
   const getViewHref = (id: string) => `/inspections/${id}`;
 
-  const getViewLabel = (status: string) =>
-    status === 'completed' ? 'View report' : 'View';
+  const actionBtnBase =
+    'inline-flex items-center justify-center gap-1.5 w-[6.25rem] shrink-0 px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold rounded-lg transition-all shadow-md';
 
   return (
     <div className="app-surface min-h-screen overflow-x-hidden">
@@ -217,17 +216,17 @@ export default function InspectionsPage() {
                   <div className="flex gap-2 pt-2">
                     <Link
                       href={getViewHref(inspection._id)}
-                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md"
+                      className={`flex-1 lg:flex-none ${actionBtnBase} bg-[#0033FF] text-white hover:bg-[#0033FF]/90`}
                     >
-                      <Eye className="w-3 h-3 mr-1.5" />
-                      {getViewLabel(inspection.status)}
+                      <Eye className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+                      View
                     </Link>
                     <button
                       onClick={() => handleExport(inspection._id)}
                       disabled={exportingId === inspection._id}
-                      className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                      className={`flex-1 lg:flex-none ${actionBtnBase} bg-[#FF6600] text-white hover:bg-[#E65C00] disabled:opacity-70 disabled:cursor-not-allowed`}
                     >
-                      <Download className="w-3 h-3 mr-1.5" />
+                      <Download className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
                       Export
                     </button>
                   </div>
@@ -276,21 +275,21 @@ export default function InspectionsPage() {
                           </span>
                         </td>
                         <td className="py-3 px-2 sm:px-4">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2">
                             <Link
                               href={getViewHref(inspection._id)}
-                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                              className={`${actionBtnBase} bg-[#0033FF] text-white hover:bg-[#0033FF]/90 hover:shadow-lg`}
                             >
-                              <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                              <span className="hidden sm:inline">{getViewLabel(inspection.status)}</span>
+                              <Eye className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+                              View
                             </Link>
                             <button
                               onClick={() => handleExport(inspection._id)}
                               disabled={exportingId === inspection._id}
-                              className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#FF6600] text-white rounded-lg hover:bg-[#E65C00] transition-all shadow-md hover:shadow-lg transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                              className={`${actionBtnBase} bg-[#FF6600] text-white hover:bg-[#E65C00] hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-md`}
                             >
-                              <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                              <span className="hidden sm:inline">Export</span>
+                              <Download className="w-3 h-3 sm:w-4 sm:h-4 shrink-0" />
+                              Export
                             </button>
                           </div>
                         </td>
