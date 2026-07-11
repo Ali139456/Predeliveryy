@@ -1483,7 +1483,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                 .filter((p: any) => (p?.metadata as any)?.slot !== slot);
 
               return (
-                <div key={slot} className="rounded-xl border border-gray-200 p-3 bg-white">
+                <div key={slot} className="rounded-xl border border-gray-200 p-3 bg-white flex flex-col min-h-[8.5rem]">
                   <PhotoUpload
                     photos={slotPhotos}
                     onPhotosChange={(nextSlotPhotos) => {
@@ -1499,6 +1499,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
                     buttonLabel="Take photo"
                     maxPhotos={1}
                     uploadTag={{ slot }}
+                    layout="stacked"
                   />
                 </div>
               );

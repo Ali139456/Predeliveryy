@@ -42,6 +42,8 @@ interface PhotoUploadProps {
   uploadTag?: Record<string, unknown>;
   panelHint?: string;
   enableAiDamage?: boolean;
+  /** Stack label above button — use in general photo slot cards for consistent alignment */
+  layout?: 'inline' | 'stacked';
 }
 
 const TYRE_WHEEL_HINT =
@@ -70,6 +72,7 @@ function PhotoUpload({
   uploadTag,
   panelHint,
   enableAiDamage = true,
+  layout = 'inline',
 }: PhotoUploadProps) {
   const [uploading, setUploading] = useState(false);
   const [analyzingFileName, setAnalyzingFileName] = useState<string | null>(null);
@@ -182,28 +185,48 @@ function PhotoUpload({
     onPhotosChange(newPhotos);
   };
 
+  const photoCount = Array.isArray(photos) ? photos.length : 0;
+  const atMaxPhotos = photoCount >= maxPhotos;
+
+  const captureButton = !readOnly ? (
+    <button
+      type="button"
+      onClick={() => setCameraOpen(true)}
+      disabled={uploading || !!analyzingFileName || atMaxPhotos}
+      className={
+        layout === 'stacked'
+          ? 'flex w-full items-center justify-center px-4 py-2 min-h-11 bg-pink-600 text-white rounded-lg hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap'
+          : 'flex items-center justify-center px-4 py-2 min-h-11 bg-pink-600 text-white rounded-lg hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap shrink-0'
+      }
+    >
+      <Camera className="w-4 h-4 mr-2 shrink-0" />
+      {uploading ? 'Uploading...' : analyzingFileName ? 'AI scan…' : buttonLabel}
+    </button>
+  ) : null;
+
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <label className="text-sm font-semibold text-black">
-          {label} <span className="text-gray-500 font-medium">({Array.isArray(photos) ? photos.length : 0}/{maxPhotos})</span>
-        </label>
-        {!readOnly && (
-          <button
-            type="button"
-            onClick={() => setCameraOpen(true)}
-            disabled={
-              uploading ||
-              !!analyzingFileName ||
-              (Array.isArray(photos) ? photos.length >= maxPhotos : false)
-            }
-            className="flex items-center justify-center px-4 py-2 min-h-11 bg-pink-600 text-white rounded-lg hover:bg-pink-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-md whitespace-nowrap"
-          >
-            <Camera className="w-4 h-4 mr-2" />
-            {uploading ? 'Uploading...' : analyzingFileName ? 'AI scan…' : buttonLabel}
-          </button>
-        )}
-      </div>
+    <div className={`space-y-3 ${layout === 'stacked' ? 'flex flex-col h-full' : 'space-y-4'}`}>
+      {layout === 'stacked' ? (
+        <div className="flex flex-col gap-3 flex-1">
+          <label className="text-sm font-semibold text-black leading-snug min-h-[2.75rem]">
+            <span className="block line-clamp-2">{label}</span>
+            <span className="text-gray-500 font-medium text-xs">
+              ({photoCount}/{maxPhotos})
+            </span>
+          </label>
+          {captureButton}
+        </div>
+      ) : (
+        <div className="flex items-center justify-between gap-3">
+          <label className="text-sm font-semibold text-black min-w-0">
+            {label}{' '}
+            <span className="text-gray-500 font-medium">
+              ({photoCount}/{maxPhotos})
+            </span>
+          </label>
+          {captureButton}
+        </div>
+      )}
 
       {aiNotice && (
         <p className="flex items-start gap-1.5 text-xs text-violet-800 bg-violet-50 border border-violet-200 rounded-lg px-2 py-1.5">
@@ -215,7 +238,13 @@ function PhotoUpload({
       <CameraCaptureModal isOpen={cameraOpen} onClose={() => setCameraOpen(false)} onCaptured={(file) => uploadSingleFile(file)} />
 
       {Array.isArray(photos) && photos.length > 0 && (
-        <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        <div
+          className={
+            layout === 'stacked'
+              ? 'grid grid-cols-1 gap-2'
+              : 'grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4'
+          }
+        >
           {photos.map((photo, index) => {
             const p = typeof photo === 'string' ? { fileName: photo } : photo;
             const imageUrl = getPhotoDisplayUrl(p);
@@ -224,16 +253,23 @@ function PhotoUpload({
             const aiSummary = p.metadata?.aiDamage?.summary;
             const aiRepair = p.metadata?.aiDamage?.totalRepairEstimateAud;
             return (
-              <div key={`${imageUrl}-${index}`} className="relative group">
+              <div
+                key={`${imageUrl}-${index}`}
+                className={`relative group ${layout === 'stacked' ? 'w-20' : ''}`}
+              >
                 <div
-                  className="relative aspect-square cursor-pointer hover:opacity-80 transition-opacity"
+                  className={`relative cursor-pointer hover:opacity-80 transition-opacity ${
+                    layout === 'stacked' ? 'w-20 h-20' : 'aspect-square'
+                  }`}
                   onClick={() => setLightboxImage(imageUrl)}
                 >
                 {/* eslint-disable-next-line @next/next/no-img-element -- API/signed/redirect URLs; next/image breaks cookies/redirects */}
                 <img
                   src={imageUrl}
                   alt={`Photo ${index + 1}`}
-                  className="w-full h-full aspect-square object-cover rounded-lg bg-gray-100"
+                  className={`object-cover rounded-lg bg-gray-100 ${
+                    layout === 'stacked' ? 'w-20 h-20' : 'w-full h-full aspect-square'
+                  }`}
                   loading="lazy"
                   decoding="async"
                   referrerPolicy="same-origin"
@@ -244,13 +280,19 @@ function PhotoUpload({
                     AI scan
                   </div>
                 )}
-                {aiSummary && !isAnalyzing && (
+                {aiSummary && !isAnalyzing && layout !== 'stacked' && (
                   <span className="absolute bottom-0 left-0 right-0 px-1 py-0.5 text-[8px] leading-tight text-white bg-violet-900/80 rounded-b-lg line-clamp-2">
                     AI: {aiSummary.length > 50 ? `${aiSummary.slice(0, 47)}…` : aiSummary}
                     {aiRepair ? ` · ${aiRepair}` : ''}
                   </span>
                 )}
                 </div>
+                {layout === 'stacked' && aiSummary && !isAnalyzing && (
+                  <p className="mt-1 text-[10px] leading-snug text-violet-800 line-clamp-2">
+                    AI: {aiSummary}
+                    {aiRepair ? ` · ${aiRepair}` : ''}
+                  </p>
+                )}
                 {!readOnly && (
                   <button
                     type="button"
@@ -258,9 +300,13 @@ function PhotoUpload({
                       e.stopPropagation();
                       removePhoto(index);
                     }}
-                    className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    className={`absolute bg-red-500 text-white rounded-full p-1 z-10 ${
+                      layout === 'stacked'
+                        ? '-top-1.5 -right-1.5 p-0.5 opacity-100'
+                        : 'top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity'
+                    }`}
                   >
-                    <X className="w-4 h-4" />
+                    <X className={layout === 'stacked' ? 'w-3 h-3' : 'w-4 h-4'} />
                   </button>
                 )}
               </div>
