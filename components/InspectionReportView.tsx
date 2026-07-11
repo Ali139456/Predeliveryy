@@ -13,6 +13,7 @@ import {
   reportItemStatusLabel,
 } from '@/lib/inspection-report-data';
 import ReportVerificationBadges from '@/components/report/ReportVerificationBadges';
+import ReportDealerAccessoriesSection from '@/components/report/ReportDealerAccessoriesSection';
 import ReportVehicleResultPanel from '@/components/report/ReportVehicleResultPanel';
 import {
   Calendar,
@@ -75,6 +76,8 @@ export default function InspectionReportView({ inspection }: InspectionReportVie
         <ReportVehicleResultPanel inspection={inspection} heroUrl={heroUrl} />
 
         <ReportVerificationBadges badges={verificationBadges} />
+
+        <ReportDealerAccessoriesSection inspection={inspection} />
 
         {/* Checklist */}
         <section className="report-section-tight border-b border-[var(--report-border)]">

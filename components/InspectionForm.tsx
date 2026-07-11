@@ -41,6 +41,7 @@ import {
   normalizeDealerAccessories,
   type DealerAccessoriesFitted,
 } from '@/lib/dealer-accessories';
+import { GENERAL_PHOTO_SLOTS } from '@/lib/general-photo-slots';
 
 const inspectionSchema = z.object({
   inspectorName: z.string().min(1, 'Inspector name is required'),
@@ -1472,20 +1473,7 @@ export default function InspectionForm({ inspectionId, initialData, readOnly = f
         <div className="space-y-4">
           <p className="text-sm font-semibold text-black">General photos</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(['front', 'rear', 'bonnet', 'left', 'right', 'tyres'] as const).map((slot) => {
-              const slotLabel =
-                slot === 'front'
-                  ? 'Photo – front of vehicle'
-                  : slot === 'rear'
-                    ? 'Photo – rear of vehicle'
-                    : slot === 'bonnet'
-                      ? 'Photo – bonnet / hood'
-                      : slot === 'left'
-                        ? 'Photo – left side of vehicle'
-                        : slot === 'right'
-                          ? 'Photo – right side of vehicle'
-                          : 'Photo – tyres / wheels';
-
+            {GENERAL_PHOTO_SLOTS.map(({ slot, label: slotLabel }) => {
               const slotPhotos = (photos as any[])
                 .map((p: any) => (typeof p === 'string' ? { fileName: p } : p))
                 .filter((p: any) => (p?.metadata as any)?.slot === slot);

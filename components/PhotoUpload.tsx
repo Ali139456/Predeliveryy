@@ -10,6 +10,7 @@ import { getPhotoDisplayUrl } from '@/lib/photoDisplayUrl';
 import { requestVisionDamageDetect } from '@/lib/visionDamageClient';
 import { applyVisionResultToPhoto, formatAiDamageNotice } from '@/lib/applyVisionToPhoto';
 import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
+import { isTyreWheelSlot } from '@/lib/general-photo-slots';
 
 interface PhotoData {
   fileName: string;
@@ -43,13 +44,20 @@ interface PhotoUploadProps {
   enableAiDamage?: boolean;
 }
 
+const TYRE_WHEEL_HINT =
+  'Tyres and alloy wheels — closely inspect outer rim lips for curb rash, gouges and scrapes; wheel face scuffs; tyre sidewall abrasions and scuff marks';
+
 const SLOT_PANEL_HINTS: Record<string, string> = {
   front: 'Front of vehicle - bonnet, grille, bumper',
   rear: 'Rear of vehicle - tailgate, bumper',
   left: 'Left side - doors and panels',
   right: 'Right side - doors and panels',
   bonnet: 'Bonnet / hood',
-  tyres: 'Tyres and alloy wheels — closely inspect outer rim lips for curb rash, gouges and scrapes; wheel face scuffs; tyre sidewall abrasions and scuff marks',
+  tyres: TYRE_WHEEL_HINT,
+  tyre_fl: TYRE_WHEEL_HINT,
+  tyre_fr: TYRE_WHEEL_HINT,
+  tyre_rl: TYRE_WHEEL_HINT,
+  tyre_rr: TYRE_WHEEL_HINT,
 };
 
 function PhotoUpload({
@@ -86,7 +94,8 @@ function PhotoUpload({
     label;
 
   const compressImage = useCallback(async (file: File): Promise<File> => {
-    const isTyreSlot = uploadTag?.slot === 'tyres';
+    const slot = typeof uploadTag?.slot === 'string' ? uploadTag.slot : undefined;
+    const isTyreSlot = isTyreWheelSlot(slot);
     return compressInspectionImage(
       file,
       isTyreSlot ? { maxDim: 2560, quality: 0.94 } : { maxDim: 2048, quality: 0.92 }

@@ -5,8 +5,8 @@ import { computeReportResult } from '@/lib/inspection-report-data';
 import {
   buildVehicleDetailColumns,
   getReportResultDisplay,
+  REPORT_PANEL_TITLE,
 } from '@/lib/report-vehicle-panel';
-import { getVehicleTitle } from '@/lib/inspection-report-data';
 
 function DetailRow({
   label,
@@ -41,8 +41,6 @@ export default function ReportVehicleResultPanel({ inspection, heroUrl }: Report
   const passRing = display.pass ? 'border-[#FF6600] bg-white' : 'border-amber-500 bg-amber-50';
   const passText = display.pass ? 'text-[#FF6600]' : 'text-amber-600';
 
-  const vehicleTitle = getVehicleTitle(inspection);
-
   return (
     <section className="report-page-1 report-vehicle-result-row grid grid-cols-1 lg:grid-cols-[1fr_minmax(148px,26%)] gap-2.5 p-2.5 border-b border-[var(--report-border)]">
       <div className="report-panel border border-[var(--report-border)] rounded-sm overflow-hidden bg-white flex flex-col min-h-0">
@@ -50,7 +48,9 @@ export default function ReportVehicleResultPanel({ inspection, heroUrl }: Report
           <span className="text-[10px] font-bold text-[#0033FF] uppercase tracking-wide">
             Vehicle information
           </span>
-          <span className="text-[11px] sm:text-sm font-bold text-[#0033FF] text-right">{vehicleTitle}</span>
+          <span className="text-[11px] sm:text-sm font-bold text-[#0033FF] text-right">
+            {REPORT_PANEL_TITLE}
+          </span>
         </div>
         <div className="p-2.5 grid grid-cols-1 sm:grid-cols-[96px_1fr] gap-3 items-start flex-1">
           <div className="relative h-[76px] sm:h-[88px] bg-slate-100 border border-[var(--report-border)] overflow-hidden rounded-sm">

@@ -18,6 +18,7 @@ import {
 } from '@/lib/inspection-report-data';
 import { renderVehicleResultPanelHtml } from '@/lib/report-vehicle-panel';
 import { verificationBadgesHtml } from '@/lib/report-verification-badges';
+import { dealerAccessoriesSectionHtml } from '@/lib/report-dealer-accessories';
 import { loadImageAsBase64 } from '@/lib/pdfGenerator';
 import { wrapReportHtmlDocument } from '@/lib/report-html-document';
 import { SITE_LOGO_ALT, SITE_LOGO_REPORT_SRC } from '@/lib/siteLogo';
@@ -171,6 +172,7 @@ function renderReportBody(
     </header>
     ${vehicleResultHtml}
     ${badgesHtml}
+    ${dealerAccessoriesSectionHtml(inspection)}
     <section class="report-section-tight border-b border-[var(--report-border)]">
       <h3 class="text-[11px] font-bold text-[#0033FF] uppercase mb-2 tracking-wide">Inspection categories</h3>
       <div class="report-checklist-grid">${checklistHtml}</div>

@@ -26,6 +26,10 @@ export default function ReportVerificationBadges({ badges }: { badges: Verificat
       <h3 className="mb-2 text-center text-[10px] font-bold uppercase tracking-wide text-[#0033FF]">
         Vehicle badges
       </h3>
+      <p className="mb-2 text-center text-[8px] leading-snug text-slate-500 print:text-[7px]">
+        VIN and odometer → vehicle details · Condition → exterior checks · Accessories → dealer
+        selections · EV battery → under-bonnet checks · Photos → captured images
+      </p>
       <p className="mb-2 text-center text-[8px] text-slate-500 print:hidden">Tap a badge to view verification data</p>
       <div className="report-badges-grid grid grid-cols-3 gap-y-3 sm:grid-cols-6">
         {badges.map((badge) => {

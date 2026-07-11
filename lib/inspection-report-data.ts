@@ -20,6 +20,7 @@ import {
   reportCategorySummary,
   reportItemStatusLabel,
 } from '@/lib/checklist-template';
+import { generalPhotoSlotLabel } from '@/lib/general-photo-slots';
 
 export { orderChecklistForReport, reportItemStatusLabel, reportCategorySummary } from '@/lib/checklist-template';
 
@@ -128,14 +129,6 @@ export function extractLocationLabel(location: unknown): string {
   return formatReportLocationAddress(raw, storedPostcode);
 }
 
-export function getVehicleTitle(inspection: IInspection): string {
-  const v = inspection.vehicleInfo;
-  if (!v) return 'Vehicle not specified';
-  const parts = [v.year, v.make, v.model].filter(Boolean);
-  if (parts.length) return parts.join(' ').toUpperCase();
-  return v.vin ? `VIN ${v.vin}` : 'Vehicle';
-}
-
 /** @deprecated Use reportItemStatusLabel from checklist-template */
 export const itemStatusLabel = reportItemStatusLabel;
 
@@ -164,9 +157,12 @@ export function computeReportResult(inspection: IInspection) {
 export type ReportPhoto = { url: string; label: string };
 
 function formatSlotLabel(slot: string): string {
-  return slot
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return (
+    generalPhotoSlotLabel(slot) ??
+    slot
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+  );
 }
 
 export function collectReportPhotos(inspection: IInspection): ReportPhoto[] {
@@ -279,7 +275,7 @@ export function buildVerificationBadges(inspection: IInspection): VerificationBa
       label: 'Accessories',
       status: accessoriesBadgeStatus(inspection),
       ok: accessoriesOk,
-      anchorId: reportCategoryAnchorId('Final QC'),
+      anchorId: 'report-accessories',
       evidence: buildAccessoriesEvidence(inspection),
     },
     {

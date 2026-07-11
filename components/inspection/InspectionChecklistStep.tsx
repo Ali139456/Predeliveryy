@@ -186,6 +186,36 @@ function ChecklistItemCard({
     openCameraRef.current?.();
   };
 
+  const onStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setValue(statusPath, e.target.value, { shouldDirty: true });
+  };
+
+  const statusSelect = (
+    <div className={`relative rounded-xl border-2 ${visual.wrap}`}>
+      <StatusIcon
+        className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
+        aria-hidden
+      />
+      <select
+        value={status}
+        onChange={onStatusChange}
+        disabled={readOnly}
+        aria-label="Status"
+        className={`relative z-10 w-full min-w-[10.5rem] appearance-none bg-transparent pl-8 pr-7 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0033FF]/20 rounded-xl disabled:opacity-70 ${visual.text}`}
+      >
+        {STATUS_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value} className="text-slate-900">
+            {opt.label}
+          </option>
+        ))}
+      </select>
+      <ChevronDown
+        className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
+        aria-hidden
+      />
+    </div>
+  );
+
   return (
     <div className="rounded-2xl border-2 border-[#0033FF]/15 bg-white shadow-sm overflow-hidden">
       <input type="hidden" {...register(`checklist.${categoryIndex}.items.${itemIndex}.item`)} />
@@ -202,59 +232,9 @@ function ChecklistItemCard({
               {itemTitle}
             </p>
           </div>
-
-          {/* Inline on sm+ */}
-          <div className="hidden sm:block shrink-0">
-            <div className={`relative rounded-xl border-2 ${visual.wrap}`}>
-              <StatusIcon
-                className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
-                aria-hidden
-              />
-              <select
-                {...register(statusPath)}
-                disabled={readOnly}
-                aria-label="Status"
-                className={`appearance-none bg-transparent pl-8 pr-7 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0033FF]/20 rounded-xl disabled:opacity-70 ${visual.text}`}
-              >
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value} className="text-slate-900">
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown
-                className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
-                aria-hidden
-              />
-            </div>
-          </div>
         </div>
 
-        {/* Full row on mobile, right-aligned */}
-        <div className="mt-3 flex justify-end sm:hidden">
-          <div className={`relative rounded-xl border-2 ${visual.wrap}`}>
-            <StatusIcon
-              className={`pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
-              aria-hidden
-            />
-            <select
-              {...register(statusPath)}
-              disabled={readOnly}
-              aria-label="Status (mobile)"
-              className={`appearance-none bg-transparent pl-8 pr-7 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#0033FF]/20 rounded-xl disabled:opacity-70 ${visual.text}`}
-            >
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value} className="text-slate-900">
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown
-              className={`pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 ${visual.icon}`}
-              aria-hidden
-            />
-          </div>
-        </div>
+        <div className="mt-3 flex justify-end">{statusSelect}</div>
       </div>
 
       {/* Notes label */}

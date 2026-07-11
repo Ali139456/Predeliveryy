@@ -209,7 +209,7 @@ function InspectionDetailContent() {
           </Link>
 
           <div className="flex flex-row flex-wrap justify-end gap-2 w-full sm:w-auto sm:ml-auto">
-            {isCompleted && canEditInspection && showReport && (
+            {isCompleted && canEditInspection && showReport && isEditMode && (
               <button
                 type="button"
                 onClick={() => setViewMode('form')}

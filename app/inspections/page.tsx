@@ -4,11 +4,9 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Search, Download, Eye, Calendar, FileText, ArrowLeft, Pencil } from 'lucide-react';
+import { Search, Download, Eye, Calendar, FileText, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import PageContainer from '@/components/PageContainer';
-import { useAuth } from '@/contexts/AuthContext';
-import { canUserEditInspection } from '@/lib/inspection-edit';
 
 const PdfExportProgress = dynamic(() => import('@/components/PdfExportProgress'), { ssr: false });
 
@@ -27,7 +25,6 @@ interface Inspection {
 }
 
 export default function InspectionsPage() {
-  const { user } = useAuth();
   const [inspections, setInspections] = useState<Inspection[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -88,15 +85,10 @@ export default function InspectionsPage() {
     return filenameMatch ? filenameMatch[1] : `inspection.pdf`.replace(/[^a-z0-9.-]/gi, '_');
   };
 
-  const getInspectionHref = (inspection: Inspection) => {
-    const id = inspection._id;
-    if (inspection.status === 'draft' || canUserEditInspection(user, inspection)) {
-      return `/inspections/${id}?edit=1`;
-    }
-    return `/inspections/${id}`;
-  };
+  const getViewHref = (id: string) => `/inspections/${id}`;
 
-  const canEdit = (inspection: Inspection) => canUserEditInspection(user, inspection);
+  const getViewLabel = (status: string) =>
+    status === 'completed' ? 'View report' : 'View';
 
   return (
     <div className="app-surface min-h-screen overflow-x-hidden">
@@ -224,20 +216,11 @@ export default function InspectionsPage() {
                   </div>
                   <div className="flex gap-2 pt-2">
                     <Link
-                      href={getInspectionHref(inspection)}
+                      href={getViewHref(inspection._id)}
                       className="flex-1 inline-flex items-center justify-center px-3 py-2 text-xs font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md"
                     >
-                      {canEdit(inspection) ? (
-                        <>
-                          <Pencil className="w-3 h-3 mr-1.5" />
-                          Edit
-                        </>
-                      ) : (
-                        <>
-                          <Eye className="w-3 h-3 mr-1.5" />
-                          View
-                        </>
-                      )}
+                      <Eye className="w-3 h-3 mr-1.5" />
+                      {getViewLabel(inspection.status)}
                     </Link>
                     <button
                       onClick={() => handleExport(inspection._id)}
@@ -295,20 +278,11 @@ export default function InspectionsPage() {
                         <td className="py-3 px-2 sm:px-4">
                           <div className="flex items-center space-x-2">
                             <Link
-                              href={getInspectionHref(inspection)}
+                              href={getViewHref(inspection._id)}
                               className="inline-flex items-center px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold bg-[#0033FF] text-white rounded-lg hover:bg-[#0033FF]/90 transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                             >
-                              {canEdit(inspection) ? (
-                                <>
-                                  <Pencil className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                                  <span className="hidden sm:inline">Edit</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
-                                  <span className="hidden sm:inline">View</span>
-                                </>
-                              )}
+                              <Eye className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-1.5" />
+                              <span className="hidden sm:inline">{getViewLabel(inspection.status)}</span>
                             </Link>
                             <button
                               onClick={() => handleExport(inspection._id)}

@@ -3,8 +3,9 @@ import {
   extractLocationLabel,
   formatReportDateTime,
   formatValue,
-  getVehicleTitle,
 } from '@/lib/inspection-report-data';
+
+export const REPORT_PANEL_TITLE = 'Pre Delivery Inspection Report';
 
 export type VehicleDetailPair = { label: string; value: string };
 
@@ -79,7 +80,6 @@ export function renderVehicleResultPanelHtml(
   heroBlock: string,
   result: { isPass: boolean; needsReview: boolean }
 ): string {
-  const vehicleTitle = getVehicleTitle(inspection);
   const { col1, col2 } = buildVehicleDetailColumns(inspection);
   const display = getReportResultDisplay(result.isPass, result.needsReview);
   const passRing = display.pass ? 'border-[#FF6600] bg-white' : 'border-amber-500 bg-amber-50';
@@ -92,7 +92,7 @@ export function renderVehicleResultPanelHtml(
   <div class="report-panel border border-[var(--report-border)] rounded-sm overflow-hidden bg-white flex flex-col min-h-0">
     <div class="report-panel-header bg-[#E8EEFF] px-3 py-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-[var(--report-border)]">
       <span class="text-[10px] font-bold text-[#0033FF] uppercase tracking-wide">Vehicle information</span>
-      <span class="text-[11px] sm:text-sm font-bold text-[#0033FF] text-right">${esc(vehicleTitle)}</span>
+      <span class="text-[11px] sm:text-sm font-bold text-[#0033FF] text-right">${esc(REPORT_PANEL_TITLE)}</span>
     </div>
     <div class="p-2.5 grid grid-cols-1 sm:grid-cols-[96px_1fr] gap-3 items-start flex-1">
       <div class="relative h-[76px] sm:h-[88px] bg-slate-100 border border-[var(--report-border)] overflow-hidden rounded-sm">${heroBlock}</div>
