@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Play, Mic } from 'lucide-react';
+import { FileCheck, Search, Camera, MapPin, QrCode, Shield, Zap, BarChart3, ArrowRight, Check, Star, MessageSquare, Phone, AlertTriangle, ShieldCheck, FileText, Lock, ClipboardCheck, CheckCircle, ScanLine, Building2, Users, Truck, CreditCard, Fingerprint, Play, Mic, Sparkles } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { FEATURE_IMAGES, SITE_LOGO_ALT, SITE_LOGO_SRC } from '@/lib/siteLogo';
 import HeroReportGraphic from '@/components/HeroReportGraphic';
@@ -323,6 +323,8 @@ export default function Home() {
                   image: FEATURE_IMAGES.damageDetection,
                   alt: 'AI damage detection identifying dents and scratches on vehicle bodywork',
                   title: 'Damage detection',
+                  badgeLabel: 'AI powered Damage Detection',
+                  BadgeIcon: Sparkles,
                   description: 'AI powered damage detection identifying dents and scratches',
                   hoverBorder: 'hover:border-[#0033FF]',
                   titleHover: 'group-hover:text-[#0033FF]',
