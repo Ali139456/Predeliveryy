@@ -2,6 +2,7 @@
 
 import type { PhotoAiDamageMetadata } from '@/types/vision-damage';
 import type { DealerAccessoriesFitted } from '@/lib/dealer-accessories';
+import type { RavinIntegrationState } from '@/types/ravin';
 
 export type UserRole = 'technician' | 'manager' | 'admin' | 'viewer';
 
@@ -109,6 +110,7 @@ export interface InspectionRow {
   inspector_licence_no?: string | null;
   result?: InspectionResult | null;
   dealer_accessories_fitted?: DealerAccessoriesFitted | null;
+  ravin_integration?: RavinIntegrationState | null;
   created_at: string;
   updated_at: string;
 }
@@ -137,6 +139,7 @@ export interface IInspection {
   inspectorLicenceNo?: string;
   result?: InspectionResult;
   dealerAccessoriesFitted?: DealerAccessoriesFitted;
+  ravinIntegration?: RavinIntegrationState | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -254,6 +257,7 @@ export function inspectionRowToInspection(row: InspectionRow): IInspection & { _
     inspectorLicenceNo: row.inspector_licence_no ?? undefined,
     result: row.result ?? undefined,
     dealerAccessoriesFitted: row.dealer_accessories_fitted ?? {},
+    ravinIntegration: row.ravin_integration ?? undefined,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };

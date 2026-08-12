@@ -2,8 +2,17 @@
   "functions": {
     "app/api/upload/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/ravin/submit/route.ts": {
+      "maxDuration": 120
     }
   },
+  "crons": [
+    {
+      "path": "/api/ravin/ingest-s3",
+      "schedule": "*/15 * * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/api/upload",

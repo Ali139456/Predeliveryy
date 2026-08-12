@@ -33,6 +33,10 @@ const InspectionReportView = dynamic(() => import('@/components/InspectionReport
   ssr: false,
 });
 
+const RavinIntegrationPanel = dynamic(() => import('@/components/RavinIntegrationPanel'), {
+  ssr: false,
+});
+
 function InspectionDetailContent() {
   const params = useParams();
   const router = useRouter();
@@ -339,6 +343,14 @@ function InspectionDetailContent() {
                 </div>
               );
             })()}
+          </div>
+          <div className={`no-print mb-4 ${showReport ? 'px-4 sm:px-5' : ''}`}>
+            <RavinIntegrationPanel
+              inspectionId={params.id as string}
+              ravin={inspection.ravinIntegration}
+              readOnly={isFormReadOnly}
+              onUpdate={(ravin) => setInspection((prev: typeof inspection) => ({ ...prev, ravinIntegration: ravin }))}
+            />
           </div>
           {showReport ? (
             <InspectionReportView inspection={inspection} />
