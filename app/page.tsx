@@ -37,12 +37,12 @@ export default function Home() {
               <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-4 sm:gap-5 md:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-1 lg:col-start-1 lg:row-start-1">
                 <h1 className="hero-h1 text-slate-900 hyphens-none">
                   <span className="text-[#0033FF]">The Digital </span>
-                  <span className="text-[#FF6600]">Pre Delivery</span>
+                  <span className="text-[#FF6600] whitespace-nowrap">Pre Delivery</span>
                   <span className="text-[#0033FF]"> Inspection Platform</span>
                 </h1>
 
                 <p className="hero-tagline text-slate-600 leading-relaxed max-w-lg">
-                  Verify vehicle condition, identity and compliance before every handover — powered by
+                  Verify vehicle condition, identity and compliance before every handover powered by
                   AI damage detection and backed by a defensible digital record.
                 </p>
 
@@ -180,7 +180,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-6">
               <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   1
                 </div>
                 <div className="relative z-10 pt-6 flex flex-col items-center">
@@ -195,7 +195,7 @@ export default function Home() {
               </div>
 
               <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#FF6600] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   2
                 </div>
                 <div className="relative z-10 pt-6 flex flex-col items-center">
@@ -210,7 +210,7 @@ export default function Home() {
               </div>
 
               <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   3
                 </div>
                 <div className="relative z-10 pt-6 flex flex-col items-center">
@@ -225,7 +225,7 @@ export default function Home() {
               </div>
 
               <div className="group relative bg-[#EEF2FF] rounded-2xl p-8 border-2 border-[#0033FF]/15 hover:border-[#0033FF]/40 hover:bg-[#E8EEFF] transition-all duration-300 hover:shadow-xl shadow-sm">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 lg:left-6 lg:translate-x-0 w-14 h-14 bg-[#FF6600] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
+                <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14 bg-[#0033FF] text-white rounded-full flex items-center justify-center font-extrabold text-xl z-30 border-4 border-white shadow-lg">
                   4
                 </div>
                 <div className="relative z-10 pt-6 flex flex-col items-center">
