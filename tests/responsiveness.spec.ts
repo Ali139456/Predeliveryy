@@ -12,7 +12,7 @@ test.describe('Responsiveness', () => {
     test(`home page renders correctly at ${name} (${width}x${height})`, async ({ page }) => {
       await page.setViewportSize({ width, height });
       await page.goto('/');
-      await expect(page.getByRole('heading', { name: /Pre-Delivery Inspections/i })).toBeVisible();
+      await expect(page.getByRole('heading', { name: /Digital Pre Delivery Inspection Platform/i })).toBeVisible();
       await expect(page.locator('body')).toBeVisible();
     });
 

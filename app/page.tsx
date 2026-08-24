@@ -36,12 +36,14 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-6 sm:gap-8 md:gap-10 lg:gap-x-4 lg:gap-y-6 items-start">
               <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-4 sm:gap-5 md:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-1 lg:col-start-1 lg:row-start-1">
                 <h1 className="hero-h1 text-slate-900 hyphens-none">
-                  <span className="text-[#FF6600]">Pre-Delivery Inspections</span>{' '}
-                  <span className="text-[#0033FF]">Digitised</span>
+                  <span className="text-[#0033FF]">The Digital </span>
+                  <span className="text-[#FF6600]">Pre Delivery</span>
+                  <span className="text-[#0033FF]"> Inspection Platform</span>
                 </h1>
 
                 <p className="hero-tagline text-slate-600 leading-relaxed max-w-lg">
-                  Verify vehicle condition before handover with a defensible digital record.
+                  Verify vehicle condition, identity and compliance before every handover — powered by
+                  AI damage detection and backed by a defensible digital record.
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-left">

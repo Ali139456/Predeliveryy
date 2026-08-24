@@ -3,8 +3,8 @@ import { test, expect } from '@playwright/test';
 test.describe('Navigation', () => {
   test('home page loads and shows hero', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Pre-Delivery Inspections/i })).toBeVisible();
-    await expect(page.getByText(/Digitised/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Digital Pre Delivery Inspection Platform/i })).toBeVisible();
+    await expect(page.getByText(/AI damage detection/i)).toBeVisible();
   });
 
   test('navigate to login from home', async ({ page }) => {
@@ -56,7 +56,7 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL(/\/(?:\?.*)?$|\/inspections/, { timeout: 10000 });
     const url = page.url();
     if (url.match(/\/$/)) {
-      await expect(page.getByRole('heading', { name: /Pre-Delivery Inspections/i })).toBeVisible({
+      await expect(page.getByRole('heading', { name: /Digital Pre Delivery Inspection Platform/i })).toBeVisible({
         timeout: 10000,
       });
     } else {
