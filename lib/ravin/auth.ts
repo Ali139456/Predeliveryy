@@ -20,7 +20,16 @@ export async function getRavinSignInToken(config: RavinConfig): Promise<string> 
 
   const data = (await res.json().catch(() => ({}))) as RavinSignInTokenResponse;
   if (!res.ok || !data.token) {
-    throw new Error(data.error || `Ravin getSignInToken failed (${res.status})`);
+    const detail =
+      data.error ||
+      (typeof (data as { message?: string }).message === 'string'
+        ? (data as { message?: string }).message
+        : undefined);
+    throw new Error(
+      detail
+        ? `Ravin getSignInToken failed (${res.status}): ${detail}`
+        : `Ravin getSignInToken failed (${res.status})`
+    );
   }
 
   const expiresInMs =

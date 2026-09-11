@@ -336,13 +336,14 @@ export default function Home() {
                   image: FEATURE_IMAGES.analytics,
                   alt: 'Analytics Dashboard - Data visualization',
                   title: 'Analytics Dashboard',
+                  badgeLabel: 'Analytics Dashboard',
+                  BadgeIcon: BarChart3,
                   description: 'Track inspection metrics and generate comprehensive reports',
-                  hoverBorder: 'hover:border-[#FF6600]',
-                  titleHover: 'group-hover:text-[#FF6600]',
+                  hoverBorder: 'hover:border-[#0033FF]',
+                  titleHover: 'group-hover:text-[#0033FF]',
                   objectPosition: 'object-center',
-                  comingSoon: true,
                 },
-              ].map(({ image, alt, title, badgeLabel, BadgeIcon, description, hoverBorder, titleHover, objectPosition, comingSoon }) => (
+              ].map(({ image, alt, title, badgeLabel, BadgeIcon, description, hoverBorder, titleHover, objectPosition }) => (
                 <div
                   key={title}
                   className={`group relative bg-white rounded-xl overflow-hidden border-2 border-gray-200 ${hoverBorder} transition-all duration-300 hover:shadow-xl flex flex-col`}
@@ -360,11 +361,6 @@ export default function Home() {
                       <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 inline-flex items-start gap-1.5 max-w-[calc(100%-1.25rem)] px-2.5 py-1.5 sm:px-3 sm:py-2 bg-[#0033FF] text-white text-[11px] sm:text-xs font-bold rounded-lg shadow-md leading-snug pointer-events-none">
                         <BadgeIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0 mt-0.5" aria-hidden />
                         <span>{badgeLabel}</span>
-                      </div>
-                    ) : null}
-                    {comingSoon ? (
-                      <div className="absolute top-3 left-3 sm:top-4 sm:left-4 z-10 px-3 py-1.5 bg-[#FF6600] text-white text-[11px] sm:text-xs font-bold rounded-lg shadow-md pointer-events-none">
-                        Coming Soon
                       </div>
                     ) : null}
                   </div>

@@ -1,3 +1,4 @@
+import { resolvePartnerToken } from '@/lib/ravin/auth';
 import type { RavinConfig } from '@/lib/ravin/config';
 import type { RavinParsedReport, RavinPresignedPostFields } from '@/types/ravin';
 import type { VisionDamageFinding, DamageSeverity } from '@/types/vision-damage';
@@ -198,6 +199,8 @@ export async function fetchRavinPresignedPost(
     fileName: string;
   }
 ): Promise<RavinPresignedPostFields> {
+  const authToken = await resolvePartnerToken(config, params.inspectionId);
+
   const presignUrl =
     config.s3PresignUrl || `${config.apiBaseUrl}/getS3UploadPolicy`;
 
@@ -206,7 +209,7 @@ export async function fetchRavinPresignedPost(
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: `Bearer ${config.clientKey}`,
+      Authorization: `Bearer ${authToken}`,
     },
     body: JSON.stringify({
       inspectionId: params.inspectionId,
