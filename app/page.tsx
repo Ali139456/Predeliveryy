@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero - client mockup layout */}
-      <div className="relative w-full overflow-hidden bg-[#f7f8fc] -mt-site-header pt-site-header min-h-0 lg:min-h-[720px]">
+      <div className="hero-section relative w-full overflow-hidden bg-[#f7f8fc] -mt-site-header pt-site-header">
         <div
           className="absolute inset-0 opacity-70 pointer-events-none"
           style={{
@@ -31,10 +31,10 @@ export default function Home() {
           aria-hidden
         />
 
-        <div className="relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-10 sm:py-14 lg:py-16 pb-24 lg:pb-28">
-          <div className="max-w-7xl mx-auto relative">
-            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] gap-6 sm:gap-8 md:gap-10 lg:gap-x-4 lg:gap-y-6 items-start">
-              <div className="relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-4 sm:gap-5 md:gap-6 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-1 lg:col-start-1 lg:row-start-1">
+        <div className="hero-section-inner relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-5 sm:py-6 lg:py-4">
+          <div className="max-w-7xl mx-auto relative h-full min-h-0">
+            <div className="hero-section-grid grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+              <div className="hero-content-col relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-4 sm:gap-5 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-1">
                 <h1 className="hero-h1 text-slate-900 hyphens-none">
                   <span className="text-[#0033FF]">The Digital </span>
                   <span className="text-[#FF6600] whitespace-nowrap">Pre Delivery</span>
@@ -46,7 +46,7 @@ export default function Home() {
                   AI damage detection and backed by a defensible digital record.
                 </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-left">
+                <div className="hero-feature-cards grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 text-left">
                   {[
                     {
                       icon: ShieldCheck,
@@ -66,28 +66,28 @@ export default function Home() {
                   ].map(({ icon: Icon, title, blurb }) => (
                     <div
                       key={title}
-                      className="rounded-xl bg-white/90 backdrop-blur-sm px-3 py-3 shadow-[0_8px_24px_-12px_rgba(0,51,255,0.2)]"
+                      className="hero-feature-card rounded-xl bg-white/95 backdrop-blur-sm px-3 py-3 sm:px-3.5 sm:py-3.5 shadow-[0_10px_28px_-12px_rgba(0,51,255,0.22)] border border-white/80"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[#0033FF]/10 flex items-center justify-center mb-2">
-                        <Icon className="w-4 h-4 text-[#0033FF]" strokeWidth={2.25} />
+                      <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#0033FF]/10 flex items-center justify-center mb-1.5 sm:mb-2">
+                        <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#0033FF]" strokeWidth={2.25} />
                       </div>
                       <p className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">{title}</p>
-                      <p className="text-[11px] sm:text-xs text-slate-500 mt-1 leading-snug">{blurb}</p>
+                      <p className="hero-feature-blurb text-[11px] sm:text-xs text-slate-500 mt-1 leading-snug">{blurb}</p>
                     </div>
                   ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3 pt-1">
+                <div className="hero-cta-row flex flex-col sm:flex-row flex-wrap items-center justify-center lg:justify-start gap-3 shrink-0 pt-1">
                   <Link
                     href="/contact"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold shadow-lg hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#0033FF] hover:bg-[#0029CC] text-white font-semibold shadow-lg shadow-[#0033FF]/25 hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto"
                   >
                     Book a Demo
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                   <Link
                     href="/#how-it-works"
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/95 text-slate-800 font-semibold shadow-sm hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto ring-1 ring-slate-200"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-slate-800 font-semibold shadow-md hover:scale-[1.02] transition-all text-sm sm:text-base w-full sm:w-auto ring-1 ring-slate-200/80"
                   >
                     <Play className="w-4 h-4 text-[#0033FF]" />
                     See How It Works
@@ -96,7 +96,7 @@ export default function Home() {
 
               </div>
 
-              <div className="relative z-30 w-full min-w-0 flex justify-center lg:justify-end order-2 lg:col-start-2 lg:row-start-1 lg:-mr-8 xl:-mr-14 2xl:-mr-20 overflow-visible px-0 sm:px-2 md:px-4 lg:px-0">
+              <div className="hero-graphic-col relative z-10 w-full min-w-0 overflow-hidden flex justify-center lg:justify-end order-2">
                 <HeroReportGraphic />
               </div>
             </div>
