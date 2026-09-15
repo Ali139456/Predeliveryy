@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="bg-white">
       {/* Hero - client mockup layout */}
-      <div className="hero-section relative w-full overflow-hidden bg-[#f7f8fc] -mt-site-header pt-site-header">
+      <div className="hero-section relative w-full overflow-x-hidden bg-[#f7f8fc] -mt-site-header pt-site-header">
         <div
           className="absolute inset-0 opacity-70 pointer-events-none"
           style={{
@@ -33,7 +33,7 @@ export default function Home() {
 
         <div className="hero-section-inner relative z-10 container mx-auto px-4 sm:px-5 md:px-6 lg:px-8 py-5 sm:py-6 lg:py-4">
           <div className="max-w-7xl mx-auto relative h-full min-h-0">
-            <div className="hero-section-grid grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+            <div className="hero-section-grid grid grid-cols-1 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] gap-8 lg:gap-8 xl:gap-10 items-center">
               <div className="hero-content-col relative z-20 min-w-0 text-center lg:text-left flex flex-col gap-4 sm:gap-5 max-w-xl mx-auto lg:mx-0 lg:max-w-[540px] order-1">
                 <h1 className="hero-h1 text-slate-900 hyphens-none">
                   <span className="text-[#0033FF]">The Digital </span>
@@ -96,7 +96,7 @@ export default function Home() {
 
               </div>
 
-              <div className="hero-graphic-col relative z-10 w-full min-w-0 overflow-hidden flex justify-center lg:justify-end order-2">
+              <div className="hero-graphic-col relative z-10 w-full min-w-0 flex justify-center lg:justify-end order-2">
                 <HeroReportGraphic />
               </div>
             </div>
