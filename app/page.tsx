@@ -112,7 +112,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Why Choose Us</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
+              <h2 className="section-heading mb-4 sm:mb-6 text-gray-900 px-2">
                 Why Predelivery.ai?
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed">
@@ -168,7 +168,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Simple Process</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
+              <h2 className="section-heading mb-4 sm:mb-6 text-gray-900 px-2">
                 How it works
               </h2>
               <div className="max-w-4xl mx-auto mb-8 sm:mb-12 px-2">
@@ -249,7 +249,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Core Features</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
+              <h2 className="section-heading mb-4 sm:mb-6 text-gray-900 px-2">
                 Powerful Features
               </h2>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-4">
@@ -385,7 +385,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Target Audience</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
+              <h2 className="section-heading mb-4 sm:mb-6 text-gray-900 px-2">
                 Who It's For?
               </h2>
             </div>
@@ -449,7 +449,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-10 sm:mb-16">
               <span className="inline-block mb-4 sm:mb-6 text-[#0033FF] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#0033FF]/10 rounded-full border border-[#0033FF]/20">Trust & Security</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
+              <h2 className="section-heading mb-4 sm:mb-6 text-gray-900 px-2">
                 Compliance and Trust
               </h2>
             </div>
@@ -499,7 +499,7 @@ export default function Home() {
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-8 sm:mb-12">
               <span className="inline-block mb-4 sm:mb-6 text-[#FF6600] font-bold text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-4 py-1.5 sm:py-2 bg-[#FF6600]/10 rounded-full border border-[#FF6600]/20">Flexible Pricing</span>
-              <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 sm:mb-6 text-gray-900 px-2">
+              <h2 className="section-heading mb-4 sm:mb-6 text-gray-900 px-2">
                 Pricing
               </h2>
             </div>
@@ -535,7 +535,7 @@ export default function Home() {
         </div>
         <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-4 sm:mb-6 px-2">
+            <h2 className="section-heading text-white mb-4 sm:mb-6 px-2">
               Ready to Transform Your Inspections?
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed px-2">
@@ -574,8 +574,14 @@ export default function Home() {
                   unoptimized
                 />
               </Link>
+              <a
+                href="https://www.predelivery.ai"
+                className="inline-block text-white font-semibold text-base sm:text-lg mb-2 hover:underline"
+              >
+                predelivery.ai
+              </a>
               <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-4">
-                Comprehensive pre-delivery inspection management system for OEM's, vehicle transport partners, dealerships, and fleets.
+                Comprehensive pre-delivery inspection management system for OEM&apos;s, vehicle transport partners, dealerships, and fleets.
               </p>
             </div>
 
@@ -637,7 +643,11 @@ export default function Home() {
           <div className="border-t border-[#0033FF]/20 pt-8">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p className="text-white/70 text-sm text-center md:text-left">
-                © 2025 Pre Delivery Inspection. All rights reserved.
+                © 2025{' '}
+                <a href="https://www.predelivery.ai" className="hover:text-white transition-colors">
+                  predelivery.ai
+                </a>
+                . All rights reserved.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
                 <Link href="/terms" className="text-white/70 hover:text-white transition-colors text-sm">Terms &amp; Conditions</Link>

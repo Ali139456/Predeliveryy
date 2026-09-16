@@ -120,9 +120,9 @@
     max-width: 100%;
   }
 
-  /* Hero fluid typography */
+  /* Hero fluid typography — slightly larger per client feedback */
   .hero-h1 {
-    font-size: clamp(1.875rem, 3.8vw + 0.75rem, 3.5rem);
+    font-size: clamp(2rem, 4.2vw + 0.85rem, 3.85rem);
     line-height: 1.08;
     font-weight: 800;
     letter-spacing: -0.025em;
@@ -133,23 +133,30 @@
   }
   @media (min-width: 1024px) {
     .hero-h1 {
-      font-size: clamp(2.125rem, 2.8vw + 0.85rem, 3.75rem);
+      font-size: clamp(2.35rem, 3.2vw + 0.95rem, 4.1rem);
     }
   }
 
   .hero-tagline {
-    font-size: clamp(0.875rem, 1.3vw + 0.55rem, 1.0625rem);
-    line-height: 1.5;
+    font-size: clamp(0.9375rem, 1.45vw + 0.6rem, 1.1875rem);
+    line-height: 1.52;
   }
   @media (min-width: 640px) {
     .hero-tagline {
-      font-size: clamp(0.9375rem, 1vw + 0.65rem, 1.125rem);
+      font-size: clamp(1rem, 1.15vw + 0.7rem, 1.25rem);
     }
   }
   @media (min-width: 1024px) {
     .hero-tagline {
-      font-size: clamp(1rem, 0.85vw + 0.7rem, 1.25rem);
+      font-size: clamp(1.0625rem, 0.95vw + 0.75rem, 1.375rem);
     }
+  }
+
+  /* Section headings — slightly smaller than before */
+  .section-heading {
+    font-size: clamp(1.375rem, 2.2vw + 0.65rem, 2.75rem);
+    line-height: 1.15;
+    font-weight: 800;
   }
 
   .hero-built-for {
@@ -245,11 +252,11 @@
   /* Short viewports / browser zoom — shrink copy, keep image tall */
   @media (max-height: 900px) and (min-width: 1024px) {
     .hero-h1 {
-      font-size: clamp(1.625rem, 2vw + 0.65rem, 2.25rem);
+      font-size: clamp(1.75rem, 2.2vw + 0.7rem, 2.5rem);
     }
     .hero-tagline {
-      font-size: 0.8125rem;
-      line-height: 1.35;
+      font-size: 0.9375rem;
+      line-height: 1.4;
     }
     .hero-feature-blurb {
       display: none;
@@ -261,7 +268,7 @@
 
   @media (max-height: 760px) and (min-width: 1024px) {
     .hero-h1 {
-      font-size: clamp(1.5rem, 1.8vw + 0.5rem, 2rem);
+      font-size: clamp(1.625rem, 2vw + 0.55rem, 2.125rem);
     }
     .hero-section-inner {
       padding-block: 0.5rem;
